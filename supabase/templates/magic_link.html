@@ -1,0 +1,30 @@
+<!-- Supabase Auth → Email Templates → "Magic Link" — วางเนื้อหานี้ใน Dashboard ของทั้ง dev และ staging
+     ต้องมี {{ .Token }} เพื่อให้ส่งเป็นรหัส 6 หลัก (verifyOtp type=email) แทนลิงก์
+     local dev: config.toml ชี้มาที่ไฟล์นี้อยู่แล้ว -->
+<div
+  style="
+    font-family: &quot;IBM Plex Sans Thai&quot;, system-ui, sans-serif;
+    line-height: 1.7;
+    color: #1a1822;
+    max-width: 480px;
+  "
+>
+  <h2 style="font-size: 20px; font-weight: 600; margin: 0 0 12px">
+    รหัสยืนยันสำหรับเข้าใช้ เข็มทิศ
+  </h2>
+  <p style="margin: 0 0 16px">ใส่รหัส 6 หลักนี้ในแอปภายใน 10 นาที</p>
+  <p
+    style="
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: 6px;
+      margin: 0 0 24px;
+      font-variant-numeric: tabular-nums;
+    "
+  >
+    {{ .Token }}
+  </p>
+  <p style="font-size: 13px; color: #5b566e; margin: 0">
+    ถ้าคุณไม่ได้ขอรหัสนี้ ไม่ต้องทำอะไร — รหัสจะหมดอายุเอง
+  </p>
+</div>

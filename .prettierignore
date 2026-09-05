@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+build
+storybook-static
+playwright-report
+test-results
+coverage
+pnpm-lock.yaml
+supabase/.temp
+supabase/.branches
+# เอกสารไทยมีตารางยาว — ไม่ให้ Prettier จัดใหม่
+*.md

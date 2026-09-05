@@ -1,0 +1,233 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+  Kemtit design tokens — จุดเดียวของทุก token (Design §3-§5, §11)
+
+  กฎการใช้ (Definition of Done §16):
+  - component ห้ามใช้ hex ดิบ — ใช้ utility จาก token เท่านั้น (lint: no-restricted-syntax ใน eslint.config.mjs)
+  - semantic token:   bg-bg-page · bg-bg-surface · bg-bg-subtle · text-text-primary · text-text-secondary
+                      text-text-muted · border-border · border-border-strong
+  - palette ตามคู่สีบังคับ §3.2: พื้น 50-100 → ตัวหนังสือ 800-900 · พื้น 500 → ตัวหนังสือขาว (neutral-0)
+  - accent-50..900 (มีเลข) = พีชชมพู ใช้เน้นจุดเดียวต่อหน้าจอ
+    accent / accent-foreground (ไม่มีเลข) = alias ของ shadcn สำหรับ hover/selected (lavender อ่อน) — ไม่ใช่สีพีช
+  - shadcn alias (background, foreground, primary, muted, ...) map มาที่ token ด้านล่างจุดเดียว ใช้ได้ใน components/ui
+  - dark mode: วางโครง [data-theme="dark"] ไว้ แต่ยังไม่ทำ UI จริงใน POC (Scope §16)
+*/
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme static {
+  /* ---- ล้าง default ของ Tailwind ที่ขัดกับระบบ token: สี, radius, เงา, type scale ---- */
+  --color-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --text-*: initial;
+
+  /* ---- Font (Design §4.1) — ตัวแปร --font-plex-thai มาจาก next/font ใน src/styles/theme.ts ---- */
+  --font-sans:
+    var(--font-plex-thai), "IBM Plex Sans Thai", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---- Brand — lavender (Design §3.1) ---- */
+  --color-brand-50: #f3f0ff;
+  --color-brand-100: #ddd4fb;
+  --color-brand-200: #b9a8f5;
+  --color-brand-300: #a08cf0;
+  --color-brand-400: #8b72ea;
+  --color-brand-500: #7a5fe0; /* primary */
+  --color-brand-600: #6549c9;
+  --color-brand-700: #513aa4;
+  --color-brand-800: #3e2b84; /* text on brand-50/100 */
+  --color-brand-900: #281a57;
+
+  /* ---- Accent — peach pink (ใช้เน้นจุดเดียวต่อหน้าจอ) ---- */
+  --color-accent-50: #fff0f3;
+  --color-accent-100: #ffd0dc;
+  --color-accent-300: #ff9db5;
+  --color-accent-500: #f5648c;
+  --color-accent-700: #c33862;
+  --color-accent-900: #7d1f3c;
+
+  /* ---- Neutral — cool gray แต้มม่วงจาง ---- */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fbfaff;
+  --color-neutral-100: #f5f3fa;
+  --color-neutral-200: #e9e6f2;
+  --color-neutral-300: #d6d2e3;
+  --color-neutral-400: #a8a3ba;
+  --color-neutral-500: #7b7590;
+  --color-neutral-600: #5b566e;
+  --color-neutral-700: #423e52;
+  --color-neutral-800: #2b2836;
+  --color-neutral-900: #1a1822;
+  --color-white: #ffffff; /* สำหรับ class ของ shadcn (text-white, bg-black/50) เท่านั้น */
+  --color-black: #000000;
+
+  /* ---- Semantic status — สดใสกว่าชุด corporate ---- */
+  --color-success-50: #e0f7f1;
+  --color-success-500: #17a88c;
+  --color-success-800: #0a5344;
+  --color-warning-50: #fff3da;
+  --color-warning-500: #e09112;
+  --color-warning-800: #6b4406;
+  --color-danger-50: #ffecec;
+  --color-danger-500: #e14b52;
+  --color-danger-800: #6e1f23;
+
+  /* ---- Life domain (Design §3.3): -bg พื้น · -dot จุดสี · -fg ตัวหนังสือ — ต้องมี label ข้อความเสมอ ---- */
+  --color-domain-work-bg: #f3f0ff;
+  --color-domain-work-dot: #8b72ea;
+  --color-domain-work-fg: #3e2b84;
+  --color-domain-health-bg: #e0f7f1;
+  --color-domain-health-dot: #17a88c;
+  --color-domain-health-fg: #0a5344;
+  --color-domain-family-bg: #fff0f3;
+  --color-domain-family-dot: #f5648c;
+  --color-domain-family-fg: #7d1f3c;
+  --color-domain-finance-bg: #e4f3ff;
+  --color-domain-finance-dot: #2e8fd8;
+  --color-domain-finance-fg: #0f4670;
+  --color-domain-growth-bg: #fff3da;
+  --color-domain-growth-dot: #e09112;
+  --color-domain-growth-fg: #6b4406;
+  --color-domain-relationships-bg: #fdeeff;
+  --color-domain-relationships-dot: #b457c9;
+  --color-domain-relationships-fg: #5c1b69;
+
+  /* ---- Semantic layer (Design §3.4) — component ใช้ชั้นนี้ ---- */
+  --color-bg-page: var(--color-neutral-50);
+  --color-bg-surface: var(--color-neutral-0);
+  --color-bg-subtle: var(--color-neutral-100);
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-600);
+  --color-text-muted: var(--color-neutral-400);
+  --color-border: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-300);
+
+  /* ---- shadcn alias → semantic (จุดเดียว — เปลี่ยน theme ที่นี่ไม่ต้องแตะ components/ui) ---- */
+  --color-background: var(--color-bg-page);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-bg-surface);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-bg-surface);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-primary: var(--color-brand-500);
+  --color-primary-foreground: var(--color-neutral-0);
+  --color-secondary: var(--color-brand-50);
+  --color-secondary-foreground: var(--color-brand-800);
+  --color-muted: var(--color-bg-subtle);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: var(--color-brand-50);
+  --color-accent-foreground: var(--color-brand-800);
+  --color-destructive: var(--color-danger-500);
+  --color-destructive-foreground: var(--color-neutral-0);
+  --color-input: var(--color-border-strong);
+  --color-ring: var(--color-brand-500);
+
+  /* ---- Radius (Design §5.2) — ใหญ่กว่า productivity app ทั่วไปหนึ่งขั้น; rounded-full สำหรับ pill/avatar/FAB ---- */
+  --radius-sm: 10px; /* input, badge เล็ก */
+  --radius-md: 14px; /* button, card เล็ก */
+  --radius-lg: 20px; /* widget card, modal */
+  --radius-xl: 28px; /* hero card, onboarding panel */
+
+  /* ---- Elevation (Design §5.3) — เงาสี brand แทนเงาเทา ---- */
+  --shadow-xs: 0 1px 3px rgb(122 95 224 / 0.08); /* alias ให้ class shadow-xs ของ shadcn = ระดับ sm */
+  --shadow-sm: 0 1px 3px rgb(122 95 224 / 0.08);
+  --shadow-md: 0 4px 12px rgb(122 95 224 / 0.1);
+  --shadow-lg: 0 12px 32px rgb(122 95 224 / 0.14);
+
+  /* ---- Type scale (Design §4.2) — ผูกชื่อ Tailwind ที่ shadcn ใช้ (xs/sm/base/lg/xl/2xl/4xl) กับสเกลไทย
+          และให้ชื่อ semantic (caption/small/body/h3/h2/h1/display) ค่าเดียวกัน ---- */
+  --text-xs: 12px;
+  --text-xs--line-height: 1.5;
+  --text-xs--font-weight: 500;
+  --text-caption: 12px;
+  --text-caption--line-height: 1.5;
+  --text-caption--font-weight: 500;
+
+  --text-sm: 13px;
+  --text-sm--line-height: 1.6;
+  --text-small: 13px;
+  --text-small--line-height: 1.6;
+
+  --text-base: 15px;
+  --text-base--line-height: 1.7;
+  --text-body: 15px;
+  --text-body--line-height: 1.7;
+
+  --text-lg: 17px;
+  --text-lg--line-height: 1.5;
+  --text-lg--font-weight: 500;
+  --text-h3: 17px;
+  --text-h3--line-height: 1.5;
+  --text-h3--font-weight: 500;
+
+  --text-xl: 20px;
+  --text-xl--line-height: 1.45;
+  --text-xl--font-weight: 600;
+  --text-h2: 20px;
+  --text-h2--line-height: 1.45;
+  --text-h2--font-weight: 600;
+
+  --text-2xl: 24px;
+  --text-2xl--line-height: 1.4;
+  --text-2xl--font-weight: 600;
+  --text-h1: 24px;
+  --text-h1--line-height: 1.4;
+  --text-h1--font-weight: 600;
+
+  --text-4xl: 36px;
+  --text-4xl--line-height: 1.25;
+  --text-4xl--font-weight: 600;
+  --text-display: 36px;
+  --text-display--line-height: 1.25;
+  --text-display--font-weight: 600;
+}
+
+/* ---- Dark mode: โครงตาม Design §3.4 — ยังไม่เปิดใช้ใน POC (พาสเทลต้องปรับสูตรใหม่ ไม่ใช่แค่กลับสี) ---- */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg-page: var(--color-neutral-900);
+  --color-bg-surface: var(--color-neutral-800);
+  --color-bg-subtle: var(--color-neutral-700);
+  --color-text-primary: var(--color-neutral-50);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-muted: var(--color-neutral-400);
+  --color-border: var(--color-neutral-700);
+  --color-border-strong: var(--color-neutral-600);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  * {
+    border-color: var(--color-border);
+    outline-color: var(--color-ring);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg-page font-sans text-body text-text-primary antialiased;
+    /* Design §4.1: ตัวเลขทุกที่ที่ค่าเปลี่ยนได้ใช้ tabular-nums — ตั้งเป็นค่าเริ่มต้นทั้งแอป */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Design §11: prefers-reduced-motion ปิด animation ทั้งหมด */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

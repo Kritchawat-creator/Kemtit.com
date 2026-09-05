@@ -109,26 +109,26 @@
 | `NEXT_PUBLIC_SUPABASE_URL` | client+server | Supabase client ทุกตัว |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` (หรือ publishable key) | client+server | client ที่ผ่าน RLS |
 | `SUPABASE_SERVICE_ROLE_KEY` | **server only** | `lib/supabase/admin.ts` — cron + webhook เท่านั้น |
-| `NEXT_PUBLIC_SITE_URL` | client+server | ลิงก์ในอีเมล/LINE, redirect |
+| `NEXT_PUBLIC_APP_URL` | client+server | ลิงก์ในอีเมล/LINE, redirect (ชื่อตาม POC Decisions M0 ข้อ 5) |
 | `CRON_SECRET` | server | bearer ของ `/api/cron/*` |
 | `LINE_CHANNEL_SECRET` | server | verify webhook |
 | `LINE_CHANNEL_ACCESS_TOKEN` | server | push/reply |
 | `NEXT_PUBLIC_LINE_OA_BASIC_ID` | client | ปุ่ม/QR เพิ่มเพื่อน |
-| `SENTRY_DSN` (ทางเลือก) | ทั้งคู่ | error monitoring |
+| `SENTRY_DSN` (ทางเลือก — ยังไม่อยู่ใน .env.example จนกว่าจะอนุมัติ) | ทั้งคู่ | error monitoring |
 
 **D. Repo scaffold + tooling** (งานผม — รายการไฟล์อยู่ท้ายเอกสารนี้ รอยืนยัน)
 - `create-next-app` (TypeScript, Tailwind v4, App Router, `src/`, ESLint) ปักหมุด Next 16 + React 19; scaffold ใน temp แล้วย้ายเข้า root เพื่อไม่ทับ `README.md`/`CLAUDE.md`/`docs/`
 - Dependencies POC: `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `react-hook-form`, `@hookform/resolvers`, `next-intl`, `date-fns`, `date-fns-tz`, `lucide-react`, `sonner`, `motion` (celebration เท่านั้น), `@serwist/next` (M7) — **ไม่ติดตั้ง** `recharts`, `react-grid-layout`
 - `shadcn init` (Tailwind v4) + map alias → semantic token ใน `src/styles/globals.css`
-- Tooling: Prettier + `prettier-plugin-tailwindcss` · ESLint + `jsx-a11y` + `eslint-plugin-boundaries` (`modules/*` ห้าม import `modules/*` อื่น; `core/**` ห้าม import `modules/**`, `services/**`; `app/**` เป็น composition root) · Vitest + RTL · Storybook (react-vite) · Playwright config (ใช้จริง M7)
-- `supabase init` + `supabase link` (dev) · migration `0001_user_profiles.sql`
-- GitHub Actions `ci.yml`: lint + typecheck + vitest ทุก PR
+- Tooling: Prettier + `prettier-plugin-tailwindcss` · ESLint + `jsx-a11y` + กฎ `no-restricted-imports`/`no-restricted-syntax` ใน `eslint.config.mjs` (`modules/*` ห้าม import `modules/*` อื่น; `core/**` ห้าม import `modules/**`, `shared-services/**`; `modules/**`, `shared-services/**`, `components/**` ห้าม import `@supabase/*` ตรง ๆ; `app/**` เป็น composition root) · Vitest + RTL · Storybook (`@storybook/nextjs-vite`) · Playwright config (ใช้จริง M7) · `cn` package ของ shadcn แทน clsx+tailwind-merge (CLI v3 generate `import { cn } from "cn"`)
+- `supabase init` + `supabase link` (dev) · migration สร้างด้วย `supabase migration new <name>` เท่านั้น (timestamp อัตโนมัติ — POC Decisions M0 ข้อ 1) ไฟล์แรก = `<timestamp>_user_profiles.sql`
+- GitHub Actions `ci.yml`: lint + typecheck + vitest + build ทุก push/PR — ยังไม่รัน Playwright (ข้อ 7); `lib/env.ts` ข้าม validation เมื่อ `CI=true` (ข้อ 3)
 - ทดสอบ R5 (Serwist/Turbopack) ตั้งแต่ตอนนี้
 
-**E. Migration แรก — `0001_user_profiles.sql`**
+**E. Migration แรก — `<timestamp>_user_profiles.sql`** (สร้างแล้วใน M0)
 - `user_profiles` ตาม Scope §6 + `updated_at`, `onboarding_completed_at`, `line_linked_at`, `line_link_code text unique`, `line_link_code_expires_at timestamptz`, `notify_overdue boolean default true`, `last_overdue_notified_on date`
 - trigger `handle_new_user` บน `auth.users` insert → สร้าง profile
-- RLS: `select`/`update` เฉพาะ `auth.uid() = id` และ `update` ห้ามแก้ `line_user_id`/`line_link_code` จาก client (ให้ผ่าน server action ที่ใช้ admin client เท่านั้น — ใช้ column-level grant หรือ trigger กัน)
+- RLS: `select`/`update` เฉพาะ `auth.uid() = id`; column-level grant ให้ client แก้ได้เฉพาะ `display_name`, `active_persona`, `notify_overdue`, `onboarding_completed_at` — คอลัมน์ `subscription_tier`/`line_*`/`last_overdue_notified_on` เขียนผ่าน service_role เท่านั้น; `anon` ไม่มีสิทธิ์เลย
 - ทดสอบ: สมัครใน Studio → มีแถว profile; user A อ่านของ B ไม่ได้
 
 **นิยาม "M0 เสร็จ"**: `pnpm dev` เปิดหน้า placeholder ไทยด้วย IBM Plex Sans Thai · Storybook เปิดได้ · `supabase db push` ผ่านบน dev · Netlify deploy preview ขึ้น · OTP ทดสอบผ่าน Resend ถึงอีเมลนอกทีม · `pnpm build` ผ่านพร้อมคำตอบเรื่อง Serwist
@@ -144,7 +144,7 @@ src/
     api/cron/{process-events,scan-overdue}/route.ts
     api/line/webhook/route.ts
     manifest.ts, sw.ts
-  core/                         # shared kernel — ห้าม import modules/ และ services/
+  core/                         # shared kernel — ห้าม import modules/ และ shared-services/
     domain/   {progress.ts, periods.ts, recurrence.ts, streak.ts}   # pure function ไม่แตะ DB (Decision 1.2)
     goals/    {schema.ts, actions.ts, queries.ts}
     tasks/    {schema.ts, actions.ts, queries.ts}
@@ -153,7 +153,7 @@ src/
     ports/    {ai-suggestion.ts, notifier.ts}                        # interface เท่านั้น
   modules/
     seller/   {persona.ts, template.ts}      # POC: template onboarding เท่านั้น ไม่มี widget/ตารางเฉพาะ
-  services/
+  shared-services/              # ชื่อตาม Scope §4 — ห้าม import @supabase/* ตรง ๆ (ผ่าน core)
     notifications/line/ {client.ts, signature.ts, messages.ts, url.ts}
     events/   {processor.ts, handlers/{goal-completed.ts, task-overdue.ts}}
     jobs/     {scan-overdue.ts}
@@ -163,18 +163,18 @@ src/
                # DomainSelect, PeriodSwitcher, DatePicker, EmptyState, StatTile
     widgets/   # WidgetShell, GoalProgressWidget, TodayTasksWidget
     layout/    # AppShell, BottomNav, Sidebar, TopBar, Fab, PageHeader
-  lib/         {utils.ts, format.ts, date.ts, supabase/{server,client,admin,proxy}.ts}
+  lib/         {utils.ts, env.ts, env.server.ts, format.ts, date.ts, supabase/{server,client,admin,proxy}.ts}
   i18n/        {request.ts}
   messages/th.json
-  styles/globals.css
-supabase/  {config.toml, migrations/, seed.sql, queries/poc-metrics.sql}
+  styles/{globals.css, theme.ts}   # theme.ts = next/font + ค่าที่ metadata ต้องใช้จาก JS
+supabase/  {config.toml, migrations/<timestamp>_<name>.sql, templates/magic_link.html, queries/poc-metrics.sql}
 .github/workflows/ {ci.yml, cron-events.yml, cron-scan-overdue.yml, keepalive.yml}
 ```
 
 ### 2.4 Work breakdown — Milestones
 
 #### M1 — Foundation: token, app shell, auth OTP, onboarding ขั้น 1-2
-- **Migration**: `0001` จาก M0
+- **Migration**: `<timestamp>_user_profiles.sql` จาก M0
 - **งาน**: `globals.css` ครบ (palette, semantic token + โครง dark, radius, shadow, type scale, reduced-motion, alias shadcn) · ฟอนต์ · shadcn primitives (Button, Input, Label, Checkbox, Badge, Skeleton, Dialog, Sheet, Select, Switch, Tabs, Tooltip, Popover, DropdownMenu, Sonner) · `th.json` + next-intl · `lib/format.ts` (`formatTHB`, `formatPercent`, `formatThaiDate` พ.ศ., `formatRelative`) + `lib/date.ts` พร้อม unit test · `lib/supabase/*` + `proxy.ts` + route guard · หน้า login (OTP auto-submit, error inline, ข้อความยินยอม 1 บรรทัด) · onboarding ขั้น 2 (4 card, seller เท่านั้น) · AppShell (BottomNav 4 แท็บ, Sidebar/TopBar desktop, FAB ยังไม่ทำงาน, placeholder ทุกแท็บ) · Storybook token + primitives
 - **รันแล้วเห็นผล**: สมัครอีเมลจริง → OTP → เลือก seller → dashboard ว่างพร้อม nav บน Netlify preview; refresh แล้ว session อยู่
 - **ทดสอบ**: unit format/date; มือบน iPhone Safari + Android Chrome

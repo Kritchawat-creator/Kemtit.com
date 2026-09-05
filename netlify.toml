@@ -1,0 +1,12 @@
+# Netlify — Next.js runtime (@netlify/plugin-nextjs) ตรวจพบ Next.js อัตโนมัติ
+# ปักหมุด Node 22 ให้ตรงกับ .nvmrc และ engines ใน package.json
+[build]
+  command = "pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

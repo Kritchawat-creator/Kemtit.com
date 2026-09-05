@@ -40,3 +40,15 @@ pnpm-debug.log*
 .vscode/
 .idea/
 *.swp
+
+# storybook / playwright / vitest
+storybook-static/
+playwright-report/
+test-results/
+# supabase local
+supabase/.temp/
+supabase/.branches/
+# misc
+*.pem
+.pnpm-debug.log*
+.eslintcache

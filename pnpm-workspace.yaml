@@ -1,0 +1,9 @@
+# pnpm 10+: build script ของ dependency ถูกบล็อกจนกว่าจะอนุญาตที่นี่
+# supabase = ต้องรัน postinstall เพื่อดาวน์โหลด CLI binary; ตัวอื่นเป็น native fallback ที่ไม่จำเป็น
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+  "@parcel/watcher": false
+  "@swc/core": false
+  esbuild: false
+  supabase: true
