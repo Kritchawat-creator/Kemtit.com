@@ -209,7 +209,9 @@
     "notFound": "ไม่พบข้อมูล อาจถูกลบไปแล้ว",
     "periodOutsideParent": "ช่วงเวลาไม่ทับกับเป้าหมายแม่ เลือกช่วงใหม่หรือเปลี่ยนเป้าแม่",
     "notMetric": "เป้านี้ไม่ได้วัดเป็นตัวเลข",
-    "invalidParent": "เป้าหมายแม่ไม่ถูกต้อง"
+    "invalidParent": "เป้าหมายแม่ไม่ถูกต้อง",
+    "invalidGoal": "เป้าหมายที่ผูกไม่ถูกต้อง",
+    "pickWeekday": "เลือกอย่างน้อย 1 วัน"
   },
   "a11y": {
     "brandHome": "ไปหน้าแดชบอร์ด",
@@ -221,7 +223,10 @@
     "openCalendar": "เปิดปฏิทิน",
     "toggleChildren": "ย่อหรือขยายเป้าย่อยของ {title}",
     "closeDialog": "ปิดหน้าต่าง",
-    "goalActions": "การกระทำกับเป้าหมาย"
+    "goalActions": "การกระทำกับเป้าหมาย",
+    "toggleTask": "ติ๊กว่าเสร็จ: {title}",
+    "openTask": "เปิดรายละเอียด {title}",
+    "weekdays": "วันในสัปดาห์"
   },
   "domains": {
     "work": "งาน",
@@ -271,5 +276,78 @@
   "dates": {
     "pick": "เลือกวันที่",
     "today": "วันนี้"
+  },
+  "tasks": {
+    "title": "งาน",
+    "new": "เพิ่มงาน",
+    "edit": "แก้ไขงาน",
+    "detail": "รายละเอียดงาน",
+    "sections": {
+      "overdue": "ค้าง",
+      "today": "วันนี้",
+      "due": "ต้องทำ",
+      "done": "เสร็จแล้ว",
+      "upcoming": "ถัดไป"
+    },
+    "recurrence": {
+      "label": "ทำซ้ำ",
+      "none": "ครั้งเดียว",
+      "daily": "ทุกวัน",
+      "weekly": "ทุกสัปดาห์",
+      "weekdaysLabel": "วันที่ทำ",
+      "badgeDaily": "ทุกวัน",
+      "badgeWeekly": "ทุกสัปดาห์"
+    },
+    "form": {
+      "title": "ชื่องาน",
+      "titlePlaceholder": "เช่น ตอบแชทลูกค้าค้าง",
+      "dueDate": "ครบกำหนด",
+      "domain": "ด้านของชีวิต",
+      "goal": "ผูกกับเป้าหมาย",
+      "noGoal": "ไม่ผูก",
+      "submitCreate": "บันทึกงาน",
+      "submitEdit": "บันทึกการแก้ไข"
+    },
+    "reschedule": {
+      "label": "เลื่อนวัน",
+      "tomorrow": "พรุ่งนี้",
+      "nextWeek": "สัปดาห์หน้า",
+      "pickDate": "เลือกวัน"
+    },
+    "toasts": {
+      "created": "เพิ่มงานแล้ว",
+      "updated": "แก้ไขงานแล้ว",
+      "deleted": "ลบ “{title}” แล้ว",
+      "restored": "นำ “{title}” กลับมาแล้ว",
+      "rescheduled": "เลื่อนไป {date} แล้ว",
+      "goalCompleted": "ทำได้แล้ว “{title}” ครบ 100%"
+    },
+    "meta": {
+      "due": "ครบกำหนด {date}",
+      "overdueSince": "เลยกำหนดตั้งแต่ {date}",
+      "goal": "เป้า: {title}",
+      "today": "วันนี้"
+    },
+    "empty": {
+      "today": {
+        "title": "วันนี้ยังไม่มีงาน",
+        "description": "เพิ่มงานเล็ก ๆ สักอย่างที่พาไปใกล้เป้าเดือนนี้",
+        "cta": "เพิ่มงาน"
+      },
+      "day": {
+        "title": "ไม่มีงานในวันนี้",
+        "description": "แตะเพิ่มงานเพื่อวางแผนล่วงหน้า",
+        "cta": "เพิ่มงาน"
+      },
+      "goal": {
+        "title": "ยังไม่มีงานที่ผูกกับเป้านี้",
+        "description": "งานคือก้าวเล็กสุดที่พาไปถึงเป้า",
+        "cta": "เพิ่มงาน"
+      }
+    },
+    "markDone": "ติ๊กว่าเสร็จ",
+    "markUndone": "ยกเลิกติ๊ก",
+    "deleteTask": "ลบงาน",
+    "streakLabel": "ทำต่อเนื่อง {days} วัน"
   }
 }

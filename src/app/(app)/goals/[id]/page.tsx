@@ -7,6 +7,7 @@ import { cn } from "cn";
 
 import { daysLeft } from "@/core/domain/periods";
 import { getGoalDetail, listParentCandidates } from "@/core/goals/queries";
+import { getGoalTaskItems } from "@/core/tasks/queries";
 import { goalUnit } from "@/core/goals/schema";
 import { todayBkk } from "@/lib/date";
 import { formatPercent, formatThaiDate, formatValueWithUnit } from "@/lib/format";
@@ -17,6 +18,7 @@ import { PaceBadge } from "@/components/domain/PaceBadge";
 import { PeriodLabel } from "@/components/domain/PeriodLabel";
 import { ProgressRing } from "@/components/domain/ProgressRing";
 import { StatTile } from "@/components/domain/StatTile";
+import { TaskList } from "@/components/domain/TaskList";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -31,10 +33,15 @@ export async function generateMetadata({ params }: PageProps<"/goals/[id]">): Pr
 /** หน้า detail (Design §8.2): hero (ชื่อ, %, target/current) → cascade tree → task ที่ผูก */
 export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]">) {
   const { id } = await params;
-  const [detail, candidates, t] = await Promise.all([getGoalDetail(id), listParentCandidates(), getTranslations()]);
+  const [detail, candidates, taskItems, t] = await Promise.all([
+    getGoalDetail(id),
+    listParentCandidates(),
+    getGoalTaskItems(id),
+    getTranslations(),
+  ]);
   if (!detail) notFound();
 
-  const { goal, parent, tree, tasks } = detail;
+  const { goal, parent, tree } = detail;
   const unit = goalUnit(goal);
   const today = todayBkk();
   const remainingDays = daysLeft(goal.period, today);
@@ -126,18 +133,26 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
             </Link>
           </Button>
         </div>
-        {tasks.length === 0 ? (
-          <EmptyState icon={CheckSquare} title={t("goals.noTasks")} />
-        ) : (
-          <ul className="divide-y divide-border rounded-lg border border-border bg-bg-surface">
-            {tasks.map((task) => (
-              <li key={task.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                <span className={cn("text-body", task.completed_at ? "text-text-muted line-through" : "text-text-primary")}>{task.title}</span>
-                <span className="text-caption text-text-secondary">{formatThaiDate(task.due_date, "short")}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <TaskList
+          items={taskItems}
+          today={today}
+          goalOptions={candidates}
+          groupByStatus={false}
+          emptyState={
+            <EmptyState
+              icon={CheckSquare}
+              title={t("tasks.empty.goal.title")}
+              description={t("tasks.empty.goal.description")}
+              action={
+                <Button asChild>
+                  <Link href={`?new=task&goal=${goal.id}`} scroll={false}>
+                    {t("tasks.empty.goal.cta")}
+                  </Link>
+                </Button>
+              }
+            />
+          }
+        />
       </section>
     </>
   );

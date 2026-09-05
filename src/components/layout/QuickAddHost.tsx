@@ -6,13 +6,15 @@ import { useCallback } from "react";
 
 import { childPeriodType, periodOf } from "@/core/domain/periods";
 import type { ParentCandidate } from "@/core/goals/schema";
+import { isISODate, todayBkk } from "@/lib/date";
 import { GoalForm } from "@/components/domain/GoalForm";
+import { TaskForm } from "@/components/domain/TaskForm";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 
 type Props = { parentCandidates: ParentCandidate[] };
 
 /**
- * อ่าน `?new=goal|task` (+ `parent`, `goal`) แล้ว render ฟอร์มใน Sheet/Dialog จุดเดียวทั้งแอป
+ * อ่าน `?new=goal|task` (+ `parent`, `goal`, `date`) แล้ว render ฟอร์มใน Sheet/Dialog จุดเดียวทั้งแอป
  * ปิด = ลบ query ออกจาก URL (ไม่เปลี่ยนหน้า)
  */
 export function QuickAddHost({ parentCandidates }: Props) {
@@ -27,6 +29,7 @@ export function QuickAddHost({ parentCandidates }: Props) {
     next.delete("new");
     next.delete("parent");
     next.delete("goal");
+    next.delete("date");
     const query = next.toString();
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }, [params, pathname, router]);
@@ -50,6 +53,24 @@ export function QuickAddHost({ parentCandidates }: Props) {
     );
   }
 
-  // kind === "task" → TaskForm มาใน M3
+  if (kind === "task") {
+    const goal = parentCandidates.find((c) => c.id === params.get("goal"));
+    const date = params.get("date");
+    return (
+      <ResponsiveDialog open onOpenChange={(open) => !open && close()} title={t("tasks.new")}>
+        <TaskForm
+          mode="create"
+          goalOptions={parentCandidates}
+          initial={{
+            goalId: goal?.id ?? null,
+            domain: goal?.domain ?? "work",
+            dueDate: date && isISODate(date) ? date : todayBkk(),
+          }}
+          onDone={close}
+        />
+      </ResponsiveDialog>
+    );
+  }
+
   return null;
 }
