@@ -52,3 +52,8 @@ supabase/.branches/
 *.pem
 .pnpm-debug.log*
 .eslintcache
+
+# serwist output (สร้างตอน build)
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js

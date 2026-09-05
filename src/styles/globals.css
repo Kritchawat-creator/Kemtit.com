@@ -102,7 +102,9 @@
   --color-bg-subtle: var(--color-neutral-100);
   --color-text-primary: var(--color-neutral-900);
   --color-text-secondary: var(--color-neutral-600);
-  --color-text-muted: var(--color-neutral-400);
+  /* Design ระบุ neutral-400 แต่บนพื้น 50 ได้ contrast ~2.2:1 ไม่ผ่าน AA (Lighthouse) → ใช้ neutral-600 สำหรับข้อความ
+     neutral-400 คงไว้สำหรับ icon/เส้นประกอบที่ไม่ใช่ข้อความเท่านั้น */
+  --color-text-muted: var(--color-neutral-600);
   --color-border: var(--color-neutral-200);
   --color-border-strong: var(--color-neutral-300);
 

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -19,7 +19,8 @@
     "db:new": "supabase migration new",
     "db:push": "supabase db push",
     "db:reset": "supabase db reset",
-    "db:diff": "supabase db diff"
+    "db:diff": "supabase db diff",
+    "build:turbopack": "next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
@@ -47,6 +48,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
+    "@serwist/next": "^9.5.12",
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/nextjs-vite": "^10.6.0",
     "@tailwindcss/postcss": "^4",
@@ -65,6 +67,7 @@
     "jsdom": "^30.0.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "serwist": "^9.5.12",
     "storybook": "^10.6.0",
     "supabase": "^2.116.0",
     "tailwindcss": "^4",

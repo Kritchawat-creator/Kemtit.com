@@ -15,3 +15,6 @@ export const plexThai = IBM_Plex_Sans_Thai({
 
 /** ค่าเดียวกับ --color-brand-500 — ใช้กับ <meta name="theme-color"> และ manifest เท่านั้น */
 export const brandThemeColor = "#7a5fe0";
+
+/** ค่าเดียวกับ --color-neutral-50 (พื้นหน้า) — ใช้กับ manifest background_color เท่านั้น */
+export const pageBackgroundColor = "#fbfaff";

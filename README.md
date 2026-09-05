@@ -28,7 +28,7 @@ Kemtit is a web app for planning your work goals and your personal life in one p
 
 ## Status
 
-Early-stage proof of concept. Most features are still being built, so things will change often.
+POC feature-complete on branch `feat/poc` (M0–M7 in `docs/implementation-plan.md`): OTP login, persona onboarding, goal cascade with progress rollup, tasks with recurring completions, fixed dashboard, LINE linking + overdue/goal-completed push (dry-run until a LINE token is set), calendar, PWA. Hosted Supabase/Netlify/LINE accounts still need to be provisioned by the owner before field testing.
 
 ## เริ่มพัฒนา (Developer setup)
 
@@ -110,3 +110,23 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build
 ### โครงสร้างโค้ด (สรุป — รายละเอียดใน `docs/implementation-plan.md` §2.3)
 
 `src/app` routes · `src/core` shared kernel (goals, tasks, domain pure functions, events, ports) · `src/modules/<persona>` · `src/shared-services` (LINE, event processor) · `src/components/{ui,domain,widgets,layout}` · `src/lib` · `src/styles/globals.css` token ทั้งหมด · `src/messages/th.json` · `supabase/migrations`
+
+### ทดสอบ end-to-end บนเครื่อง (Supabase local)
+
+```bash
+pnpm exec supabase start          # Postgres + Auth + Mailpit (ครั้งแรกดึง image ~1 GB)
+pnpm exec supabase status -o env  # คัดลอก API_URL / ANON_KEY / SERVICE_ROLE_KEY ลง .env.local
+pnpm db:reset                     # apply migrations ทั้งหมด
+pnpm exec supabase gen types typescript --local > src/types/database.ts
+pnpm e2e --project=mobile-chrome  # Playwright สตาร์ท next dev เอง; OTP อ่านจาก Mailpit http://127.0.0.1:54324
+```
+
+`.env.local` สำหรับ local: `LINE_CHANNEL_SECRET` ใส่ค่าอะไรก็ได้ (ใช้เซ็น webhook ใน E2E) และเว้น `LINE_CHANNEL_ACCESS_TOKEN` ว่างเพื่อให้ระบบอยู่ในโหมด dry-run
+
+### LINE, cron และ PWA
+
+- **LINE dry-run**: ถ้าไม่มี `LINE_CHANNEL_ACCESS_TOKEN` ระบบจะ log ข้อความแทนส่งจริงและบันทึก `notification.sent` ด้วย `dryRun: true` — ใส่ token เมื่อมี OA จริง ไม่ต้องแก้โค้ด
+- **Webhook**: ตั้ง URL ใน LINE Developers เป็น `https://<app>/api/line/webhook` — ตรวจ `X-Line-Signature` ด้วย `LINE_CHANNEL_SECRET`; user ผูกบัญชีด้วยรหัส 6 ตัวจากหน้า ตั้งค่า → เชื่อม LINE
+- **Cron** (GitHub Actions ใน `.github/workflows/`): `cron-events.yml` ทุก 5 นาที → `POST /api/cron/process-events`, `cron-scan-overdue.yml` 08:00 เวลาไทย → `POST /api/cron/scan-overdue`, `keepalive.yml` commit เปล่าเดือนละครั้ง — ทั้งหมดใช้ secret `CRON_BASE_URL` และ `CRON_SECRET` (ข้ามเองถ้ายังไม่ตั้ง); ทดสอบมือด้วย `curl -X POST -H "Authorization: Bearer $CRON_SECRET" $URL/api/cron/process-events`
+- **PWA**: `src/app/manifest.ts` + icon ใน `public/icons/` (สร้างใหม่ด้วย `node scripts/generate-icons.mjs`) + service worker จาก Serwist (`src/app/sw.ts`) — สร้างเฉพาะตอน `pnpm build` ซึ่งใช้ webpack เพราะ Serwist ยังไม่รองรับ Turbopack; ออฟไลน์อ่านได้ตามที่ cache ไว้ แต่ยังบันทึกไม่ได้ (ไม่มี offline queue ตาม POC Decisions)
+- **Metrics ของ POC** (Scope §14): รัน `supabase/queries/poc-metrics.sql` ใน Supabase Studio

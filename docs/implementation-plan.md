@@ -1,7 +1,7 @@
 # Kemtit — Implementation Plan (POC) — v2
 
 - **วันที่**: 2026-09-05 (v1 = วิเคราะห์ + แผนเสนอ · v2 = ปรับตาม **POC Decisions 2026-09-05** ดูภาคผนวก A)
-- **สถานะ**: หลักการอนุมัติแล้ว — M0 รอยืนยันรายการไฟล์ก่อนสร้าง
+- **สถานะ**: **M0–M7 implement ครบบน branch `feat/poc`** (2026-09-05) — ดูส่วน "สถานะการทำงาน" ท้ายเอกสารและ `tracking-log.md`; เหลืองานฝั่งเจ้าของโปรเจกต์ (บัญชี hosted, LINE จริง, Netlify, field test)
 - **ลำดับความสำคัญของเอกสารเมื่อขัดกัน**: ภาคผนวก A (POC Decisions) > เอกสารนี้ > `docs/kemtit-full-scope.md` (*Scope*) > `docs/kemtit-ui-design-system.md` (*Design*)
 - **ขอบเขต**: POC ตาม Scope §11 หลังรายการตัดใน Decision 3
 
@@ -334,3 +334,33 @@ Widget ที่เหลือ: `GoalProgressWidget` (goal เดือนน�
 **ไม่แตะ**: `docs/*`, `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.gitnexus/`
 
 **ขั้นตอนที่ต้องรอคุณ**: `supabase link` / `db push` และ Netlify deploy ต้องมี project + env จากส่วน 2.2 A — ส่วน scaffold/tooling/migration file ทำได้ก่อนโดยไม่รอ
+
+
+---
+
+## สถานะการทำงาน (อัปเดต 2026-09-05 หลังจบ M7)
+
+| Milestone | สถานะ | หลักฐาน |
+|---|---|---|
+| M0 scaffold + tooling + migration แรก | ✅ | CI เขียว, migration ทดสอบใน Docker |
+| M1 auth OTP + persona + app shell | ✅ | E2E `onboarding.spec` (OTP จริงผ่าน Mailpit) |
+| M2 goals + cascade + progress + goal แรก | ✅ | E2E onboarding/goals, unit periods/progress |
+| M3 tasks + recurring + `task_completions` + undo | ✅ | E2E `tasks.spec` (100% + recurring คงอยู่หลัง reload) |
+| M4 dashboard 2 widget + streak | ✅ | E2E `dashboard.spec` |
+| M5 events + cron + LINE (dry-run) + ตั้งค่า | ✅ (dry-run) | E2E `line.spec` (webhook + cron pipeline) — ยังไม่ทดสอบกับ LINE จริง |
+| M6 ปฏิทิน วัน/สัปดาห์/เดือน | ✅ | E2E `calendar.spec` |
+| M7 PWA + loading/error + stories + metrics SQL | ✅ | build webpack สร้าง `sw.js`, Storybook build ผ่าน · Lighthouse mobile (จำลอง 4G) หน้า /login: performance 89, a11y 96→100 หลังแก้ contrast, best-practices 96; LCP 3.8s (ยังไม่ถึง budget 2.5s), CLS 0, TBT 50ms, JS โอน ~335 KB (เกิน budget 200 KB) — งานต่อใน MVP: ลด client bundle ของหน้า login (zod/RHF), ส่ง messages เฉพาะ namespace |
+
+**สิ่งที่ต่างจากแผน v2 (บันทึกไว้)**
+- ตาราง `domain_events` อยู่ใน migration ของ M2 (แทน M5) เพื่อ emit event ได้ตั้งแต่สร้าง goal
+- `next build` ใช้ webpack (`--webpack`) เพราะ Serwist ยังไม่รองรับ Turbopack (R5) — dev ยังใช้ Turbopack (SW ปิดใน dev)
+- Storybook ใช้ alias mock (`server-only`, `next/cache`, supabase server) ให้ story ของ client component ที่ import server action render ได้ (Q15)
+- task ซ้ำไม่นับเข้า execution progress (routine) — ดู `core/domain/progress.ts`
+- E2E ครอบคลุม 7 spec (มากกว่า 3 flow ในแผน) เพราะใช้เป็นตัวยืนยันแต่ละ milestone
+
+**งานที่เหลือฝั่งเจ้าของโปรเจกต์ก่อน CP2 (field test)**
+1. Supabase `kemtit-dev`/`kemtit-staging` + Resend SMTP + template OTP → `supabase link` + `pnpm db:push` (README "เริ่มพัฒนา")
+2. Netlify: import repo, env ทุกตัว, ตั้ง `NEXT_PUBLIC_APP_URL` เป็น URL จริง
+3. LINE Developers: channel + token/secret + webhook URL + Basic ID → ทดสอบผูกบัญชีจริง 1 ครั้ง (ใน dry-run ทดสอบแล้วว่า flow ถูก)
+4. GitHub secrets `CRON_BASE_URL`, `CRON_SECRET` → workflow cron เริ่มทำงานเอง
+5. CP1 (5-6 คน moderated) แล้ว CP2 (8-10 คน 2 สัปดาห์) ตาม §2.6 — วัดด้วย `supabase/queries/poc-metrics.sql`

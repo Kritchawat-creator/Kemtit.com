@@ -6,6 +6,7 @@ import { listParentCandidates } from "@/core/goals/queries";
 import { nextRouteFor, ROUTES } from "@/core/profile/onboarding";
 import { getMe } from "@/core/profile/queries";
 import { AppShell } from "@/components/layout/AppShell";
+import { OfflineBanner } from "@/components/layout/OfflineBanner";
 import { QuickAddHost } from "@/components/layout/QuickAddHost";
 
 /** ทุกหน้าในแอป: ต้อง login + จบ onboarding แล้ว (proxy.ts กันคนไม่ login ไว้ชั้นแรก) */
@@ -20,6 +21,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <AppShell me={me}>
+      <OfflineBanner />
       {children}
       <Suspense fallback={null}>
         <QuickAddHost parentCandidates={parentCandidates} />

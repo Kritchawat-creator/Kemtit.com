@@ -10,7 +10,7 @@ import { getGoalDetail, listParentCandidates } from "@/core/goals/queries";
 import { getGoalTaskItems } from "@/core/tasks/queries";
 import { goalUnit } from "@/core/goals/schema";
 import { todayBkk } from "@/lib/date";
-import { formatPercent, formatThaiDate, formatValueWithUnit } from "@/lib/format";
+import { formatNumber, formatPercent, formatThaiDate, formatValueWithUnit } from "@/lib/format";
 import { DomainTag } from "@/components/domain/DomainTag";
 import { EmptyState } from "@/components/domain/EmptyState";
 import { GoalCascadeTree } from "@/components/domain/GoalCascadeTree";
@@ -98,8 +98,8 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
                 </>
               ) : (
                 <>
-                  <StatTile label={t("goals.tasks")} value={`${goal.progress.tasksDone ?? 0}/${goal.progress.tasksTotal ?? 0}`} />
-                  <StatTile label={t("goals.children")} value={String(goal.progress.childCount)} />
+                  <StatTile label={t("goals.tasks")} value={`${formatNumber(goal.progress.tasksDone ?? 0)}/${formatNumber(goal.progress.tasksTotal ?? 0)}`} />
+                  <StatTile label={t("goals.children")} value={formatNumber(goal.progress.childCount)} />
                   <StatTile label={t("progress.daysLeft", { days: remainingDays })} value={formatThaiDate(goal.period.end, "medium")} />
                 </>
               )}

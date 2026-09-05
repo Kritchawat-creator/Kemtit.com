@@ -7,6 +7,7 @@ import { ROUTES } from "@/core/profile/onboarding";
 import { getMe } from "@/core/profile/queries";
 import { todayBkk } from "@/lib/date";
 import { formatThaiDate } from "@/lib/format";
+import { InstallHint } from "@/components/layout/InstallHint";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { WidgetSkeleton } from "@/components/widgets/WidgetSkeleton";
 
@@ -38,6 +39,7 @@ export default async function DashboardPage() {
           </div>
         ))}
       </div>
+      <InstallHint />
     </>
   );
 }
