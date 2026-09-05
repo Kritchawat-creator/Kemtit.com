@@ -34,6 +34,183 @@ export type Database = {
   }
   public: {
     Tables: {
+      domain_events: {
+        Row: {
+          attempts: number
+          created_at: string
+          event_type: string
+          id: string
+          last_error: string | null
+          payload: Json
+          processed_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          event_type: string
+          id?: string
+          last_error?: string | null
+          payload?: Json
+          processed_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          event_type?: string
+          id?: string
+          last_error?: string | null
+          payload?: Json
+          processed_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      goals: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_value: number
+          domain: string
+          goal_kind: string
+          id: string
+          parent_id: string | null
+          period_start: string
+          period_type: string
+          persona_data: Json
+          status: string
+          target_value: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number
+          domain?: string
+          goal_kind?: string
+          id?: string
+          parent_id?: string | null
+          period_start: string
+          period_type: string
+          persona_data?: Json
+          status?: string
+          target_value?: number | null
+          title: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number
+          domain?: string
+          goal_kind?: string
+          id?: string
+          parent_id?: string | null
+          period_start?: string
+          period_type?: string
+          persona_data?: Json
+          status?: string
+          target_value?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goals_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_completions: {
+        Row: {
+          completed_on: string
+          created_at: string | null
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_on: string
+          created_at?: string | null
+          id?: string
+          task_id: string
+          user_id?: string
+        }
+        Update: {
+          completed_on?: string
+          created_at?: string | null
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_completions_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          domain: string
+          due_date: string
+          goal_id: string | null
+          id: string
+          persona_data: Json
+          recurrence_rule: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          domain?: string
+          due_date: string
+          goal_id?: string | null
+          id?: string
+          persona_data?: Json
+          recurrence_rule?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          domain?: string
+          due_date?: string
+          goal_id?: string | null
+          id?: string
+          persona_data?: Json
+          recurrence_rule?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           active_persona: string | null

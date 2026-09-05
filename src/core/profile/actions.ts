@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { emitEvent } from "@/core/events/emit";
 import { fail, ok, zodFail, type ActionResult } from "@/core/shared/result";
 import { createServerSupabase } from "@/lib/supabase/server";
 
@@ -74,4 +75,26 @@ export async function updateNotifyOverdue(input: unknown): Promise<ActionResult>
 
   revalidatePath("/settings");
   return ok(null);
+}
+
+/** จบ onboarding (หลังสร้าง goal แรก) — เซ็ต onboarding_completed_at ครั้งเดียว + emit event สำหรับ metric §14 */
+export async function completeOnboarding(): Promise<ActionResult<{ next: AppRoute }>> {
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return fail("unauthorized");
+
+  const { data, error } = await supabase
+    .from("user_profiles")
+    .update({ onboarding_completed_at: new Date().toISOString() })
+    .eq("id", user.id)
+    .is("onboarding_completed_at", null)
+    .select("active_persona, onboarding_completed_at")
+    .maybeSingle();
+  if (error) return fail("generic");
+  if (data) await emitEvent(supabase, user.id, "onboarding.completed", { persona: data.active_persona ?? "unknown" });
+
+  revalidatePath("/", "layout");
+  return ok({ next: nextRouteFor(data ?? { active_persona: "seller", onboarding_completed_at: "done" }) });
 }

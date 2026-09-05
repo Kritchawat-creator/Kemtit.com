@@ -37,3 +37,21 @@ export async function signInWithOtp(page: Page, email: string) {
   await page.getByLabel("รหัสยืนยัน 6 หลัก").fill(code);
   await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
 }
+
+/** ขั้น 2-3: เลือก seller → ตั้งเป้าเดือน (บาท) → ถึงแดชบอร์ด */
+export async function completeOnboarding(page: Page, targetValue = 50000) {
+  await expect(page).toHaveURL(/\/onboarding\/persona/);
+  await page.getByRole("button", { name: "ใช้แบบนี้" }).click();
+  await expect(page).toHaveURL(/\/onboarding\/first-goal/);
+  await page.getByLabel("ยอดขายที่อยากได้").fill(String(targetValue));
+  await page.getByRole("button", { name: "เริ่มเลย" }).click();
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
+}
+
+/** user ใหม่ที่จบ onboarding แล้ว — ใช้เป็นจุดเริ่มของ flow อื่น */
+export async function onboardNewUser(page: Page, prefix = "user") {
+  const email = uniqueEmail(prefix);
+  await signInWithOtp(page, email);
+  await completeOnboarding(page);
+  return email;
+}

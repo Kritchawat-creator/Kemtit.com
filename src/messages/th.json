@@ -59,6 +59,29 @@
       "continue": "ใช้แบบนี้",
       "choose": "เลือก {name}",
       "disabledHint": "เปิดให้ใช้เร็ว ๆ นี้ — ตอนนี้เริ่มจากแบบพ่อค้าแม่ค้าก่อนได้"
+    },
+    "firstGoal": {
+      "title": "ตั้งเป้าแรกของคุณ",
+      "subtitle": "เริ่มจากยอดขายเดือนนี้ เข็มทิศจะแตกเป็นเป้ารายสัปดาห์และงานตัวอย่างให้",
+      "targetLabel": "ยอดขายที่อยากได้",
+      "targetPlaceholder": "50000",
+      "unit": "บาท",
+      "monthLabel": "สำหรับเดือน",
+      "thisMonth": "เดือนนี้ ({month})",
+      "nextMonth": "เดือนหน้า ({month})",
+      "fewDaysLeftHint": "เดือนนี้เหลือไม่กี่วัน เราเลือกเดือนหน้าให้ก่อน เปลี่ยนได้",
+      "submit": "เริ่มเลย",
+      "submitting": "กำลังสร้างเป้าหมาย…",
+      "monthGoalTitle": "ยอดขาย {month}",
+      "weekGoalTitle": "สัปดาห์ที่ {index}/{total}",
+      "sampleTasks": {
+        "1": "ตั้งราคาและโปรโมชั่นของสัปดาห์นี้",
+        "2": "โพสต์ขายของอย่างน้อย 3 ครั้ง",
+        "3": "ติดตามลูกค้าที่ยังไม่ปิดการขาย",
+        "4": "สรุปยอดขายสัปดาห์นี้และปรับแผน",
+        "5": "เตรียมสต็อกสำหรับสัปดาห์หน้า",
+        "6": "ทบทวนสินค้าขายดีและวางแผนเดือนหน้า"
+      }
     }
   },
   "personas": {
@@ -89,9 +112,65 @@
   },
   "goals": {
     "title": "เป้าหมาย",
+    "subtitle": "ปี → เดือน → สัปดาห์ → งานวันนี้",
+    "new": "เพิ่มเป้าหมาย",
+    "edit": "แก้ไขเป้าหมาย",
+    "editShort": "แก้ไข",
+    "addChild": "เพิ่มเป้าย่อย",
+    "children": "เป้าหมายย่อย",
+    "tasks": "งานที่ผูก",
+    "noTasks": "ยังไม่มีงานที่ผูกกับเป้านี้",
+    "addTask": "เพิ่มงาน",
+    "parentLabel": "อยู่ใต้ {title}",
+    "backToList": "เป้าหมายทั้งหมด",
+    "archive": "เก็บเข้ากรุ",
+    "archivedToast": "เก็บ “{title}” แล้ว",
+    "restoredToast": "นำ “{title}” กลับมาแล้ว",
+    "createdToast": "บันทึกเป้าหมายแล้ว",
+    "updatedToast": "แก้ไขเป้าหมายแล้ว",
+    "updateValue": "อัปเดตยอด",
+    "updateValueTitle": "ยอดล่าสุดของ “{title}”",
+    "updateValueDescription": "กรอกยอดรวมตอนนี้ ไม่ใช่ยอดที่เพิ่ม",
+    "currentValueLabel": "ยอดตอนนี้",
+    "valueSavedToast": "บันทึกยอดแล้ว",
+    "completedToast": "ทำได้แล้ว “{title}” ครบ 100%",
+    "notFound": "ไม่พบเป้าหมายนี้",
+    "statusArchived": "เก็บเข้ากรุแล้ว",
+    "statusCompleted": "สำเร็จแล้ว",
+    "groups": {
+      "year": "เป้าทั้งปี",
+      "quarter": "เป้ารายไตรมาส",
+      "month": "เป้ารายเดือน",
+      "week": "เป้ารายสัปดาห์",
+      "day": "เป้ารายวัน"
+    },
+    "form": {
+      "title": "ชื่อเป้าหมาย",
+      "titlePlaceholder": "เช่น ยอดขายเดือนนี้",
+      "kind": "วิธีวัดผล",
+      "target": "เป้าตัวเลข",
+      "targetPlaceholder": "50000",
+      "unit": "หน่วย",
+      "unitPlaceholder": "บาท / ครั้ง / เล่ม",
+      "unitTHB": "บาท",
+      "period": "ช่วงเวลา",
+      "periodStart": "วันเริ่ม",
+      "periodHint": "ระบบจะปรับวันเริ่มให้ตรงต้น{period}เอง",
+      "domain": "ด้านของชีวิต",
+      "parent": "เป้าหมายแม่",
+      "noParent": "ไม่มี (เป้าหมายหลัก)",
+      "noParentCandidates": "ยังไม่มีเป้าชั้นบนที่ทับช่วงนี้",
+      "submitCreate": "บันทึกเป้าหมาย",
+      "submitEdit": "บันทึกการแก้ไข"
+    },
     "empty": {
       "title": "ยังไม่มีเป้าหมาย",
       "description": "เริ่มจากเป้าเดือนนี้ แล้วค่อยขยายเป็นทั้งปี",
+      "cta": "ตั้งเป้าหมาย"
+    },
+    "emptyFiltered": {
+      "title": "ไม่มีเป้าหมายในกลุ่มนี้",
+      "description": "ลองเลือก “ทั้งหมด” หรือตั้งเป้าใหม่",
       "cta": "ตั้งเป้าหมาย"
     }
   },
@@ -122,13 +201,75 @@
     "otpRateLimited": "ขอรหัสบ่อยเกินไป รอสักครู่แล้วลองใหม่",
     "unauthorized": "หมดเวลาการใช้งาน เข้าสู่ระบบอีกครั้ง",
     "personaInvalid": "ไม่รู้จักแบบที่เลือก",
-    "personaDisabled": "แบบนี้ยังไม่เปิดให้ใช้ เลือกแบบอื่นก่อน"
+    "personaDisabled": "แบบนี้ยังไม่เปิดให้ใช้ เลือกแบบอื่นก่อน",
+    "invalidDate": "วันที่ไม่ถูกต้อง",
+    "positive": "ต้องเป็นตัวเลขมากกว่า 0",
+    "invalidNumber": "ต้องเป็นตัวเลข",
+    "notNegative": "ต้องไม่ติดลบ",
+    "notFound": "ไม่พบข้อมูล อาจถูกลบไปแล้ว",
+    "periodOutsideParent": "ช่วงเวลาไม่ทับกับเป้าหมายแม่ เลือกช่วงใหม่หรือเปลี่ยนเป้าแม่",
+    "notMetric": "เป้านี้ไม่ได้วัดเป็นตัวเลข",
+    "invalidParent": "เป้าหมายแม่ไม่ถูกต้อง"
   },
   "a11y": {
     "brandHome": "ไปหน้าแดชบอร์ด",
     "openQuickAdd": "เปิดเมนูเพิ่ม",
     "userMenu": "เมนูผู้ใช้",
     "mainNav": "เมนูหลัก",
-    "currentPersona": "โหมดปัจจุบัน"
+    "currentPersona": "โหมดปัจจุบัน",
+    "progress": "ความคืบหน้า",
+    "openCalendar": "เปิดปฏิทิน",
+    "toggleChildren": "ย่อหรือขยายเป้าย่อยของ {title}",
+    "closeDialog": "ปิดหน้าต่าง",
+    "goalActions": "การกระทำกับเป้าหมาย"
+  },
+  "domains": {
+    "work": "งาน",
+    "health": "สุขภาพ",
+    "family": "ครอบครัว",
+    "finance": "การเงิน",
+    "growth": "พัฒนาตัวเอง",
+    "relationships": "ความสัมพันธ์"
+  },
+  "domainFilter": {
+    "all": "ทั้งหมด",
+    "work": "งาน",
+    "life": "ชีวิตส่วนตัว",
+    "label": "แสดง"
+  },
+  "periods": {
+    "year": "ปี",
+    "quarter": "ไตรมาส",
+    "month": "เดือน",
+    "week": "สัปดาห์",
+    "day": "วัน",
+    "rangeLabel": "{start} – {end}",
+    "typeLabel": "ช่วงเวลา"
+  },
+  "goalKinds": {
+    "metric": "วัดเป็นตัวเลข",
+    "metricHint": "มีเป้าตัวเลข เช่น ยอดขาย 50,000 บาท",
+    "execution": "ทำให้เสร็จ",
+    "executionHint": "วัดจากเป้าย่อยและงานที่ทำเสร็จ"
+  },
+  "pace": {
+    "onTrack": "ตามเป้า",
+    "behind": "ตกเป้า",
+    "notStarted": "ยังไม่เริ่ม",
+    "done": "ทำได้แล้ว"
+  },
+  "progress": {
+    "tasksDone": "งานเสร็จ {done}/{total}",
+    "ofTarget": "{current} จาก {target}",
+    "remaining": "อีก {remaining}",
+    "perDayNeeded": "ต้องเพิ่มวันละ {amount}",
+    "daysLeft": "เหลือ {days} วัน",
+    "noChildren": "ยังไม่มีเป้าย่อยหรืองาน",
+    "children": "{count} เป้าย่อย",
+    "label": "ความคืบหน้า"
+  },
+  "dates": {
+    "pick": "เลือกวันที่",
+    "today": "วันนี้"
   }
 }

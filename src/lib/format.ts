@@ -40,7 +40,7 @@ export function formatPercent(ratio: number): string {
 
 /** ตัวเลขพร้อมหน่วย: unit "THB" → สกุลเงิน, อื่น ๆ ต่อท้ายด้วยช่องว่าง เช่น "12 เล่ม" */
 export function formatValueWithUnit(value: number, unit?: string | null): string {
-  if (unit === "THB") return formatTHB(value);
+  if (unit === "THB" || unit === "บาท") return formatTHB(value);
   return unit ? `${formatNumber(value)} ${unit}` : formatNumber(value);
 }
 
@@ -75,6 +75,14 @@ export function formatThaiDate(date: ISODate, style: DateStyle = "medium"): stri
   // date-only: สร้าง Date ที่ UTC midnight แล้ว format ด้วย timeZone UTC เพื่อไม่ให้วันเลื่อน
   const [y, m, d] = date.split("-").map(Number);
   return dateFormatters[style].format(new Date(Date.UTC(y, m - 1, d)));
+}
+
+const buddhistYearOnly = new Intl.DateTimeFormat(LOCALE_BUDDHIST, { year: "numeric", timeZone: "UTC" });
+
+/** ISO date → "พ.ศ. 2569" */
+export function formatThaiYear(date: ISODate): string {
+  const [y, m, d] = date.split("-").map(Number);
+  return buddhistYearOnly.format(new Date(Date.UTC(y, m - 1, d)));
 }
 
 const weekdayShort = new Intl.DateTimeFormat(LOCALE, { weekday: "short", timeZone: "UTC" });
