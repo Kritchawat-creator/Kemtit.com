@@ -108,7 +108,8 @@
       "title": "ตั้งเป้าหมายแรกของเดือนนี้",
       "description": "เป้าเดียวก็พอ เข็มทิศจะแตกเป็นงานรายสัปดาห์ให้",
       "cta": "ตั้งเป้าหมาย"
-    }
+    },
+    "greeting": "วันนี้ {date}"
   },
   "goals": {
     "title": "เป้าหมาย",
@@ -349,5 +350,36 @@
     "markUndone": "ยกเลิกติ๊ก",
     "deleteTask": "ลบงาน",
     "streakLabel": "ทำต่อเนื่อง {days} วัน"
+  },
+  "widgets": {
+    "goalProgress": {
+      "title": "เป้าหลักเดือนนี้",
+      "othersTitle": "เป้าอื่นของเดือนนี้",
+      "viewGoal": "ดูเป้าหมาย",
+      "updateValue": "อัปเดตยอด",
+      "remaining": "อีก {remaining}",
+      "perDay": "วันละ {amount}",
+      "daysLeft": "เหลือ {days} วัน",
+      "reached": "ครบเป้าแล้ว",
+      "tasks": "งานเสร็จ {done}/{total}",
+      "children": "{count} เป้าย่อย",
+      "empty": {
+        "title": "ยังไม่มีเป้าเดือนนี้",
+        "description": "ตั้งเป้าเดือนนี้สักข้อ แล้วมาดูความคืบหน้าที่นี่ทุกเช้า",
+        "cta": "ตั้งเป้าเดือนนี้"
+      }
+    },
+    "todayTasks": {
+      "title": "งานวันนี้",
+      "summary": "{due} ต้องทำ · {overdue} ค้าง · {done} เสร็จ",
+      "streak": "ทำต่อเนื่อง {days} วัน",
+      "viewCalendar": "ดูปฏิทิน",
+      "add": "เพิ่มงาน",
+      "empty": {
+        "title": "วันนี้ยังไม่มีงาน",
+        "description": "เพิ่มงานเล็ก ๆ ที่พาไปใกล้เป้าเดือนนี้",
+        "cta": "เพิ่มงาน"
+      }
+    }
   }
 }

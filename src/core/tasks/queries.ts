@@ -1,7 +1,8 @@
 import "server-only";
 
 import { buildDayPlan, goalTaskItems, type DayPlan, type DayTaskItem } from "@/core/domain/dayplan";
-import { type ISODate, todayBkk } from "@/lib/date";
+import { currentStreak } from "@/core/domain/streak";
+import { addDaysISO, type ISODate, toBkkDate, todayBkk } from "@/lib/date";
 import { createServerSupabase } from "@/lib/supabase/server";
 
 import type { TaskCompletion, TaskWithGoal } from "./schema";
@@ -53,4 +54,21 @@ export async function getGoalTaskItems(goalId: string): Promise<DayTaskItem<Task
     supabase.from("task_completions").select("*").eq("completed_on", today),
   ]);
   return goalTaskItems((tasks ?? []) as TaskWithGoal[], (completions ?? []) as TaskCompletion[], today);
+}
+
+const STREAK_LOOKBACK_DAYS = 60;
+
+/** streak วันติดต่อกันที่มี task เสร็จ — รวม task_completions และ date(tasks.completed_at) ตาม BKK (metric §14) */
+export async function getStreak(today: ISODate): Promise<number> {
+  const supabase = await createServerSupabase();
+  const since = addDaysISO(today, -STREAK_LOOKBACK_DAYS);
+  const [{ data: completions }, { data: tasks }] = await Promise.all([
+    supabase.from("task_completions").select("completed_on").gte("completed_on", since),
+    supabase.from("tasks").select("completed_at").not("completed_at", "is", null).gte("completed_at", `${since}T00:00:00Z`),
+  ]);
+  const dates = [
+    ...(completions ?? []).map((c) => c.completed_on),
+    ...(tasks ?? []).flatMap((t) => (t.completed_at ? [toBkkDate(t.completed_at)] : [])),
+  ];
+  return currentStreak(dates, today);
 }
