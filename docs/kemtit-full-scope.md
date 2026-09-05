@@ -201,8 +201,8 @@ create table user_profiles (
 1. สมัครด้วย email → รับ OTP → ยืนยัน
 2. เลือก persona (seller/creator/student/office)
 3. ระบบโหลด default dashboard layout + widget ตาม persona ที่เลือก
-4. สร้าง goal แรก (ระบบแนะนำ template ตาม persona เช่น "ตั้งเป้ายอดขายเดือนนี้")
-5. ระบบ cascade goal ปีนั้นอัตโนมัติเป็น task รายวันตัวอย่าง
+4. สร้าง goal แรกจาก template ตาม persona เป็น **metric goal ระดับเดือน** (seller: "ยอดขายเดือนนี้ [____] บาท") — ไม่สร้าง year goal ในขั้นนี้ (user สร้างเองทีหลังจากหน้าเป้าหมายถ้าต้องการ)
+5. ระบบสร้าง goal ลูกระดับ**สัปดาห์** (execution) ให้อัตโนมัติ 4-5 ตัว พร้อม task ตัวอย่าง 1 ตัวต่อสัปดาห์ — ไม่มี AI แตกเป้า (ตาม POC Decisions 2026-09-05 ข้อ 1.4 ใน `docs/implementation-plan.md` ภาคผนวก A)
 
 **Flow B — Daily usage**
 1. เปิดแอป → เห็น dashboard ที่จัดเรียงเองไว้ (widget ยอดขาย, งานวันนี้, ชีวิตประจำวัน)
@@ -211,8 +211,8 @@ create table user_profiles (
 4. ถ้าทำเป้าสำเร็จ (100%) → insert `domain_events` (`goal.completed`)
 
 **Flow C — Event → Notification (ตามที่ออกแบบ architecture ไว้)**
-1. Task/Goal complete → insert แถวใน `domain_events`
-2. GitHub Actions ยิง Route Handler ทุก ~2 นาที
+1. Task/Goal complete → insert แถวใน `domain_events` (รวม `task.overdue` จาก job สแกนรายวัน 1 event ต่อ user)
+2. GitHub Actions ยิง Route Handler ทุก 5 นาที (`*/5 * * * *` — ขั้นต่ำของ GitHub schedule; pg_cron + pg_net เป็น fallback ที่อนุมัติแล้วตาม POC Decisions 2026-09-05 ข้อ 2.3)
 3. ระบบดึง event ที่ยังไม่ processed (batch เล็ก กันชน timeout)
 4. Listener ประมวลผลแบบขนาน: ส่ง LINE congrats + อัปเดต billing usage
 5. Mark `processed_at`
@@ -406,11 +406,11 @@ Storybook (พัฒนา component แยก ดูทุก state) · ESLint 
 
 | Phase | ขอบเขต | ประมาณเวลา* |
 |---|---|---|
-| POC | Core + Seller persona + LINE reminder พื้นฐาน | 3-5 สัปดาห์ |
+| POC | Core + Seller persona (template เป้าเดือน) + LINE push พื้นฐาน (task เลยกำหนด + goal สำเร็จ) + ปฏิทิน วัน/สัปดาห์/เดือน | **เป้า 6-7 สัปดาห์** (ยอมรับตาม POC Decisions 2026-09-05; ประมาณการรายละเอียด 7-9 สัปดาห์ใน `docs/implementation-plan.md` §2.7 — ถึงเป้าได้เมื่อใช้คันโยกตัดเพิ่มที่ระบุไว้) |
 | MVP | + Dashboard drag-drop + Billing + Creator persona | 4-6 สัปดาห์ |
 | Full Product | + Student/Office + Admin UI + AI + native wrapper | ต่อเนื่องตาม traction |
 
-*ประมาณการคร่าวๆ สำหรับ solo dev ที่คุ้นเคย stack นี้แล้ว ไม่รวมเวลาทดสอบกับ user จริงและปรับตาม feedback
+*ประมาณการคร่าวๆ สำหรับ solo dev ที่คุ้นเคย stack นี้แล้ว ไม่รวมเวลาทดสอบกับ user จริงและปรับตาม feedback — ตัวเลข POC เดิม (3-5 สัปดาห์) ไม่ได้รวม Definition of Done, flow เชื่อมบัญชี LINE, การตั้งค่า SMTP/OA และปฏิทิน จึงปรับใหม่เมื่อ 2026-09-05
 
 ---
 
@@ -418,7 +418,7 @@ Storybook (พัฒนา component แยก ดูทุก state) · ESLint 
 
 | สเกล | ต้นทุนรวม/เดือน |
 |---|---|
-| POC/Dev | ~0 บาท (ทุกบริการมีแผนฟรี/sandbox เพียงพอ) |
+| POC/Dev | 0-1,280 บาท (บริการอื่นใช้แผนฟรี/sandbox; LINE OA อาจต้องอัปเกรดแผน Basic 1,280 บาท/เดือน เฉพาะเดือนที่ push เกินโควตาฟรี ~300 ข้อความ — คาดใช้ ~150 ข้อความ/เดือนกับ tester 10 คน ตาม POC Decisions 2026-09-05 ข้อ 2.2) |
 | MVP (~300-500 user) | ~2,800 บาท |
 | Growth (~50,000 MAU) | ~9,850 บาท |
 

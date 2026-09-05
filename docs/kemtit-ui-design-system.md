@@ -381,10 +381,12 @@ FAB (มือถือ) / ปุ่มมุมบนขวา (desktop): "+ �
 
 ### 8.4 Dashboard — กฎการจัดวาง
 
-- Widget แรกบนสุดเสมอคือ **goal หลักเดือนนี้** (ตาม persona) — user เปลี่ยนตำแหน่งได้ แต่ default ต้องเป็นแบบนี้
-- Empty dashboard (user ลบ widget หมด) แสดง EmptyState "เพิ่ม widget แรก" ไม่ใช่หน้าขาวเปล่า
-- Widget ที่ยังไม่มีข้อมูล (เช่น ยังไม่กรอกยอดขาย) แสดง **empty state ภายใน widget** พร้อม CTA ไม่ใช่กราฟเปล่า
-- ปุ่ม "เพิ่ม widget" เปิด WidgetPicker แสดงเฉพาะ widget ของ persona ปัจจุบัน + widget กลาง (ไม่โชว์ของ persona อื่น กันสับสน)
+**POC (ตาม POC Decisions 2026-09-05)**: layout **คงที่** 2 widget — `GoalProgressWidget` (goal หลักเดือนนี้) บนสุด แล้ว `TodayTasksWidget` — ไม่มีการย้าย/เพิ่ม/ลบ widget, ไม่มี `WidgetPicker`, ไม่มีตาราง `dashboard_layouts`; กฎที่ติดป้าย **(MVP)** ด้านล่างเริ่มใช้เมื่อมี drag-drop ใน MVP
+
+- Widget แรกบนสุดเสมอคือ **goal หลักเดือนนี้** (ตาม persona) — (MVP) user เปลี่ยนตำแหน่งได้ แต่ default ต้องเป็นแบบนี้
+- (MVP) Empty dashboard (user ลบ widget หมด) แสดง EmptyState "เพิ่ม widget แรก" ไม่ใช่หน้าขาวเปล่า
+- Widget ที่ยังไม่มีข้อมูล (เช่น ยังไม่กรอกยอดขาย) แสดง **empty state ภายใน widget** พร้อม CTA ไม่ใช่กราฟเปล่า — ใช้ตั้งแต่ POC
+- (MVP) ปุ่ม "เพิ่ม widget" เปิด WidgetPicker แสดงเฉพาะ widget ของ persona ปัจจุบัน + widget กลาง (ไม่โชว์ของ persona อื่น กันสับสน)
 
 ### 8.5 Task Interaction
 
