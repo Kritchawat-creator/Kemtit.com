@@ -18,9 +18,10 @@ const cronSchema = z.object({
 });
 
 const lineSchema = z.object({
-  LINE_CHANNEL_ACCESS_TOKEN: z.string().min(1),
   LINE_CHANNEL_SECRET: z.string().min(1),
-  NEXT_PUBLIC_LINE_OA_BASIC_ID: z.string().min(1),
+  // ว่าง = dry-run: log แทนส่งจริง (dev/E2E) — ใส่ token เมื่อมี LINE OA จริง
+  LINE_CHANNEL_ACCESS_TOKEN: z.string().optional(),
+  NEXT_PUBLIC_LINE_OA_BASIC_ID: z.string().optional(),
 });
 
 /** service_role — ใช้เฉพาะ cron/webhook ผ่าน lib/supabase/admin.ts (Scope §8) */
@@ -37,11 +38,16 @@ export function getCronEnv() {
   });
 }
 
-/** LINE Messaging API (M5) */
+/** LINE Messaging API (M5) — accessToken ว่าง = dry-run */
 export function getLineEnv() {
-  return parseEnv("line", lineSchema, {
-    LINE_CHANNEL_ACCESS_TOKEN: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+  const env = parseEnv("line", lineSchema, {
     LINE_CHANNEL_SECRET: process.env.LINE_CHANNEL_SECRET,
+    LINE_CHANNEL_ACCESS_TOKEN: process.env.LINE_CHANNEL_ACCESS_TOKEN,
     NEXT_PUBLIC_LINE_OA_BASIC_ID: process.env.NEXT_PUBLIC_LINE_OA_BASIC_ID,
   });
+  return {
+    channelSecret: env.LINE_CHANNEL_SECRET,
+    accessToken: env.LINE_CHANNEL_ACCESS_TOKEN || undefined,
+    basicId: env.NEXT_PUBLIC_LINE_OA_BASIC_ID || undefined,
+  };
 }

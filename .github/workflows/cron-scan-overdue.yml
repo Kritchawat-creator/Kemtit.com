@@ -1,0 +1,23 @@
+name: Cron · scan overdue tasks
+
+# Decision 2.2: แจ้งงานเลยกำหนดวันละครั้ง — 01:00 UTC = 08:00 Asia/Bangkok; endpoint idempotent ต่อวัน
+on:
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call /api/cron/scan-overdue
+        env:
+          BASE_URL: ${{ secrets.CRON_BASE_URL }}
+          SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$BASE_URL" ] || [ -z "$SECRET" ]; then
+            echo "::notice::CRON_BASE_URL / CRON_SECRET ยังไม่ตั้ง — ข้าม"
+            exit 0
+          fi
+          curl --fail-with-body -sS -X POST -H "Authorization: Bearer $SECRET" "$BASE_URL/api/cron/scan-overdue"

@@ -1,0 +1,23 @@
+name: Cron · process domain events
+
+# Decision 2.3: GitHub Actions ทุก 5 นาที (ขั้นต่ำของ GitHub; ดีเลย์จริง 5-15 นาที) · fallback pg_cron อนุมัติแล้ว
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call /api/cron/process-events
+        env:
+          BASE_URL: ${{ secrets.CRON_BASE_URL }}
+          SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$BASE_URL" ] || [ -z "$SECRET" ]; then
+            echo "::notice::CRON_BASE_URL / CRON_SECRET ยังไม่ตั้ง — ข้าม"
+            exit 0
+          fi
+          curl --fail-with-body -sS -X POST -H "Authorization: Bearer $SECRET" "$BASE_URL/api/cron/process-events"

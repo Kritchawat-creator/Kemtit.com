@@ -1,0 +1,22 @@
+name: Keepalive
+
+# Scope §8/§15: GitHub ปิด scheduled workflow เองหลัง repo ไม่มี activity 60 วัน — commit เปล่าเดือนละครั้ง
+on:
+  schedule:
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Empty commit
+        run: |
+          git config user.name "kemtit-keepalive[bot]"
+          git config user.email "keepalive@users.noreply.github.com"
+          git commit --allow-empty -m "chore: keepalive scheduled workflows"
+          git push
