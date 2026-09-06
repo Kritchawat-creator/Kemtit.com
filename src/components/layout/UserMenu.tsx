@@ -17,6 +17,7 @@ import {
 
 type Props = { displayName: string | null; email: string | null };
 
+/** avatar พีช 40px ขอบขาว + เงา (Claude Design 2a) → เมนูผู้ใช้ (ออกจากระบบ) */
 export function UserMenu({ displayName, email }: Props) {
   const t = useTranslations();
   const label = displayName?.trim() || email || "";
@@ -29,10 +30,12 @@ export function UserMenu({ displayName, email }: Props) {
           variant="ghost"
           size="icon"
           aria-label={t("a11y.userMenu")}
-          className="rounded-full"
+          className="size-10 rounded-full p-0 hover:bg-transparent"
         >
-          <Avatar>
-            <AvatarFallback className="bg-brand-100 text-brand-800">{initial}</AvatarFallback>
+          <Avatar className="size-10 border-2 border-neutral-0 shadow-sm">
+            <AvatarFallback className="bg-accent-100 text-base font-semibold text-accent-900">
+              {initial}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

@@ -44,6 +44,15 @@ export function formatValueWithUnit(value: number, unit?: string | null): string
   return unit ? `${formatNumber(value)} ${unit}` : formatNumber(value);
 }
 
+/** แยกตัวเลขกับหน่วยสำหรับ hero (Claude Design 2a: "31,000" ใหญ่ + "บาท" เล็ก) — สกุลเงินแสดงเป็นคำว่า บาท */
+export function formatValueParts(
+  value: number,
+  unit?: string | null,
+): { value: string; unit: string | null } {
+  if (unit === "THB" || unit === "บาท") return { value: formatNumber(value), unit: "บาท" };
+  return { value: formatNumber(value), unit: unit || null };
+}
+
 type DateStyle = "short" | "medium" | "long" | "weekday" | "monthYear" | "day";
 
 const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
@@ -97,11 +106,18 @@ export function formatThaiYear(date: ISODate): string {
 }
 
 const weekdayShort = new Intl.DateTimeFormat(LOCALE, { weekday: "short", timeZone: "UTC" });
+const weekdayNarrow = new Intl.DateTimeFormat(LOCALE, { weekday: "narrow", timeZone: "UTC" });
 
-/** "อา." "จ." … สำหรับหัวคอลัมน์ปฏิทิน */
+/** "อาทิตย์" "จันทร์" … (ICU short ของไทย = ชื่อเต็มไม่มีคำว่า "วัน") สำหรับปุ่มเลือกวันในฟอร์ม */
 export function formatWeekdayShort(date: ISODate): string {
   const [y, m, d] = date.split("-").map(Number);
   return weekdayShort.format(new Date(Date.UTC(y, m - 1, d)));
+}
+
+/** "อา" "จ" "อ" "พ" "พฤ" "ศ" "ส" — หัวคอลัมน์ปฏิทิน 7 ช่องบนมือถือ (Claude Design 3m) */
+export function formatWeekdayNarrow(date: ISODate): string {
+  const [y, m, d] = date.split("-").map(Number);
+  return weekdayNarrow.format(new Date(Date.UTC(y, m - 1, d)));
 }
 
 const dateTime = new Intl.DateTimeFormat(LOCALE_BUDDHIST, {

@@ -12,16 +12,19 @@ type Props = {
   domain?: Domain;
   size?: "sm" | "md";
   showValue?: boolean;
+  /** จุดพีชปลายแถบ = จุดหมาย (Claude Design 3o "ProgressBar · จุดเหนือ") */
+  marker?: boolean;
   label?: string;
   className?: string;
 };
 
-/** แถบ % แนวนอน ปลายมน; เปลี่ยนค่า 400ms ease-out (Design §11) */
+/** แถบ % แนวนอน ปลายมน ราง neutral-200; เปลี่ยนค่า 400ms ease-out (Design §11) */
 export function ProgressBar({
   value,
   domain,
   size = "md",
   showValue = false,
+  marker = false,
   label,
   className,
 }: Props) {
@@ -29,24 +32,32 @@ export function ProgressBar({
   const clamped = Math.max(0, Math.min(100, value));
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div
-        role="progressbar"
-        aria-label={label ?? t("progress")}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(clamped)}
-        className={cn(
-          "flex-1 overflow-hidden rounded-full bg-brand-100",
-          size === "sm" ? "h-1.5" : "h-2.5",
-        )}
-      >
+      <div className={cn("relative flex-1", marker && "mr-1")}>
         <div
+          role="progressbar"
+          aria-label={label ?? t("progress")}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(clamped)}
           className={cn(
-            "h-full rounded-full transition-[width] duration-400 ease-out",
-            domain ? DOMAIN_STYLES[domain].dot : "bg-brand-500",
+            "overflow-hidden rounded-full bg-neutral-200",
+            size === "sm" ? "h-1.5" : "h-2",
           )}
-          style={{ width: `${clamped}%` }}
-        />
+        >
+          <div
+            className={cn(
+              "h-full rounded-full transition-[width] duration-400 ease-out",
+              domain ? DOMAIN_STYLES[domain].dot : "bg-brand-500",
+            )}
+            style={{ width: `${clamped}%` }}
+          />
+        </div>
+        {marker ? (
+          <span
+            aria-hidden="true"
+            className="absolute top-1/2 -right-1 size-3.5 -translate-y-1/2 rounded-full bg-accent-500 ring-[2.5px] ring-bg-surface"
+          />
+        ) : null}
       </div>
       {showValue ? (
         <span className="min-w-10 text-right text-small font-medium text-text-primary">

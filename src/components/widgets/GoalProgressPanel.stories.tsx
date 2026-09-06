@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import type { GoalWithProgress } from "@/core/goals/queries";
 
 import { GoalProgressPanel } from "./GoalProgressPanel";
-import { WidgetShell } from "./WidgetShell";
 
 const goal: GoalWithProgress = {
   id: "g1",
@@ -41,7 +40,16 @@ const meta = {
   component: GoalProgressPanel,
   parameters: { layout: "padded" },
   args: { goal, others: [other], today: "2026-09-15" },
-  decorators: [(Story) => <WidgetShell title="เป้าหลักเดือนนี้">{Story()}</WidgetShell>],
+  decorators: [
+    (Story) => (
+      <section
+        aria-label="เป้าหลักเดือนนี้"
+        className="max-w-sm rounded-2xl bg-brand-100 p-5 shadow-lg"
+      >
+        {Story()}
+      </section>
+    ),
+  ],
 } satisfies Meta<typeof GoalProgressPanel>;
 
 export default meta;

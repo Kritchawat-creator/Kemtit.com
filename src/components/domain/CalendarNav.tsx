@@ -1,61 +1,72 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { cn } from "cn";
 
 import { CALENDAR_VIEWS, shiftCalendarDate, type CalendarView } from "@/core/domain/calendar";
 import type { ISODate } from "@/lib/date";
 import { Button } from "@/components/ui/button";
+import { SegmentedNav } from "@/components/ui/segmented-nav";
 
-type Props = { view: CalendarView; date: ISODate; today: ISODate };
+type Props = { view: CalendarView; date: ISODate; today: ISODate; label?: string };
 
 export function calendarHref(view: CalendarView, date: ISODate) {
   return `/calendar?view=${view}&date=${date}`;
 }
 
-/** สลับมุมมอง + เลื่อนช่วง (Design §8.2 ปฏิทิน: PeriodSwitcher → grid) — ใช้ลิงก์เพื่อให้ back/forward และ SSR ทำงาน */
-export function CalendarNav({ view, date, today }: Props) {
+/**
+ * สลับมุมมอง + เลื่อนช่วง (Claude Design 3m): segmented control เต็มความกว้าง → แถวลูกศร ‹ ช่วงที่ดู › พร้อมลิงก์ "วันนี้"
+ * ใช้ลิงก์เพื่อให้ back/forward และ SSR ทำงาน
+ */
+export function CalendarNav({ view, date, today, label }: Props) {
   const t = useTranslations("calendar");
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <nav
-        aria-label={t("views.label")}
-        className="inline-flex rounded-md border border-border bg-bg-surface p-0.5"
-      >
-        {CALENDAR_VIEWS.map((v) => (
-          <Link
-            key={v}
-            href={calendarHref(v, date)}
-            aria-current={view === v ? "page" : undefined}
-            className={cn(
-              "inline-flex min-h-10 items-center rounded-sm px-4 text-small transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none md:min-h-8",
-              view === v
-                ? "bg-brand-50 font-medium text-brand-800"
-                : "text-text-secondary hover:text-text-primary",
-            )}
-          >
-            {t(`views.${v}`)}
-          </Link>
-        ))}
-      </nav>
-      <div className="flex items-center gap-1">
-        <Button variant="outline" size="icon" asChild>
+    <div className="space-y-2">
+      <SegmentedNav
+        label={t("views.label")}
+        items={CALENDAR_VIEWS.map((v) => ({
+          key: v,
+          href: calendarHref(v, date),
+          label: t(`views.${v}`),
+          active: view === v,
+        }))}
+      />
+      <div className="flex items-center justify-between gap-2">
+        <Button variant="ghost" size="icon" className="text-brand-800" asChild>
           <Link
             href={calendarHref(view, shiftCalendarDate(view, date, -1))}
             aria-label={t("nav.prev")}
           >
-            <ChevronLeft aria-hidden="true" />
+            <ChevronLeft className="size-6" strokeWidth={1.5} aria-hidden="true" />
           </Link>
         </Button>
-        <Button variant="outline" asChild>
-          <Link href={calendarHref(view, today)}>{t("nav.today")}</Link>
-        </Button>
-        <Button variant="outline" size="icon" asChild>
+        <div className="flex min-w-0 flex-1 flex-col items-center">
+          {label ? (
+            <span className="max-w-full truncate text-base font-medium text-brand-800">
+              {label}
+            </span>
+          ) : null}
+          {date !== today ? (
+            <Link
+              href={calendarHref(view, today)}
+              className="rounded-full px-2 text-caption font-medium text-brand-600 hover:underline focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none"
+            >
+              {t("nav.today")}
+            </Link>
+          ) : (
+            <Link
+              href={calendarHref(view, today)}
+              className="rounded-full px-2 text-caption text-text-secondary focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none"
+            >
+              {t("nav.today")}
+            </Link>
+          )}
+        </div>
+        <Button variant="ghost" size="icon" className="text-brand-800" asChild>
           <Link
             href={calendarHref(view, shiftCalendarDate(view, date, 1))}
             aria-label={t("nav.next")}
           >
-            <ChevronRight aria-hidden="true" />
+            <ChevronRight className="size-6" strokeWidth={1.5} aria-hidden="true" />
           </Link>
         </Button>
       </div>

@@ -27,10 +27,10 @@ export default async function FirstGoalPage() {
   return (
     <section aria-labelledby="first-goal-title">
       <OnboardingSteps current={3} />
-      <h1 id="first-goal-title" className="text-h1 text-text-primary">
+      <h1 id="first-goal-title" className="text-h1 text-brand-800">
         {t("title")}
       </h1>
-      <p className="mt-1 mb-6 text-body text-text-secondary">{t("subtitle")}</p>
+      <p className="mt-1 mb-5 text-body text-text-secondary">{t("subtitle")}</p>
       <FirstGoalForm
         monthOptions={[
           {

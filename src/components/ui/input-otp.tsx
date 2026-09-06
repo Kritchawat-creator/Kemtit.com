@@ -15,7 +15,10 @@ function InputOTP({
   return (
     <OTPInput
       data-slot="input-otp"
-      containerClassName={cn("flex items-center gap-2 has-disabled:opacity-50", containerClassName)}
+      containerClassName={cn(
+        "flex w-full items-center gap-2 has-disabled:opacity-50",
+        containerClassName,
+      )}
       className={cn("disabled:cursor-not-allowed", className)}
       {...props}
     />
@@ -24,7 +27,11 @@ function InputOTP({
 
 function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot="input-otp-group" className={cn("flex items-center", className)} {...props} />
+    <div
+      data-slot="input-otp-group"
+      className={cn("flex w-full items-center gap-2", className)}
+      {...props}
+    />
   );
 }
 
@@ -42,8 +49,10 @@ function InputOTPSlot({
     <div
       data-slot="input-otp-slot"
       data-active={isActive}
+      data-filled={char ? true : undefined}
       className={cn(
-        "relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-xs transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md aria-invalid:border-destructive data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-[3px] data-[active=true]:ring-ring/50 data-[active=true]:aria-invalid:border-destructive data-[active=true]:aria-invalid:ring-destructive/20 dark:bg-input/30 dark:data-[active=true]:aria-invalid:ring-destructive/40",
+        // ช่องรหัสแยกกล่อง (Claude Design 3b): มุม 10px ขอบ 1.5px · กรอกแล้ว = พื้น brand-50 · ช่องปัจจุบัน = ขอบ brand-500
+        "relative flex h-14 flex-1 items-center justify-center rounded-sm border-[1.5px] border-border bg-bg-surface text-h1 text-text-primary transition-all outline-none aria-invalid:border-danger-500 data-[active=true]:z-10 data-[active=true]:border-brand-500 data-[filled=true]:bg-brand-50",
         className,
       )}
       {...props}
@@ -51,7 +60,7 @@ function InputOTPSlot({
       {char}
       {hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-4 w-px animate-caret-blink bg-foreground duration-1000" />
+          <div className="h-6 w-0.5 animate-caret-blink bg-brand-500 duration-1000" />
         </div>
       )}
     </div>

@@ -48,6 +48,11 @@ export function todayBkk(now: Date = new Date()): ISODate {
   return formatInTimeZone(now, APP_TIME_ZONE, "yyyy-MM-dd");
 }
 
+/** ชั่วโมงตอนนี้ตามเวลาไทย 0-23 (ใช้เลือกคำทักทายบนแดชบอร์ด) */
+export function hourBkk(now: Date = new Date()): number {
+  return Number(formatInTimeZone(now, APP_TIME_ZONE, "H"));
+}
+
 /** แปลง timestamptz เป็นวันตามเวลาไทย (ใช้กับ completed_at → completed_on) */
 export function toBkkDate(timestamp: Date | string): ISODate {
   const d = typeof timestamp === "string" ? new Date(timestamp) : timestamp;

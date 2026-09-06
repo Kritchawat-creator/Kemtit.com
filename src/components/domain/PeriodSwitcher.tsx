@@ -29,15 +29,15 @@ export function PeriodSwitcher({
       value={value}
       onValueChange={(next) => next && onValueChange(next as PeriodType)}
       disabled={disabled}
-      variant="outline"
+      spacing={1}
       aria-label={t("typeLabel")}
-      className="inline-flex rounded-md"
+      className="flex w-full rounded-md bg-neutral-200 p-1"
     >
       {options.map((option) => (
         <ToggleGroupItem
           key={option}
           value={option}
-          className="min-h-11 px-4 text-small data-[state=on]:bg-brand-50 data-[state=on]:text-brand-800 md:min-h-9"
+          className="h-10 flex-1 rounded-sm px-4 text-base font-medium text-text-secondary hover:bg-transparent hover:text-text-primary data-[spacing=1]:rounded-sm data-[state=on]:bg-bg-surface data-[state=on]:text-brand-800 data-[state=on]:shadow-sm md:h-9 md:text-sm"
         >
           {t(option)}
         </ToggleGroupItem>

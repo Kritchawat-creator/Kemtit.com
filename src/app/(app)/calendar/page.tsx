@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-/** ปฏิทิน วัน/สัปดาห์/เดือน (Decision 3) — มุมมองวันใช้ TaskList เดียวกับแดชบอร์ด */
+/** ปฏิทิน วัน/สัปดาห์/เดือน (Decision 3 + Claude Design 3m) — มุมมองวัน/วันที่เลือกในสัปดาห์ใช้ TaskList เดียวกับแดชบอร์ด */
 export default async function CalendarPage({ searchParams }: PageProps<"/calendar">) {
   const params = await searchParams;
   const view = parseCalendarView(params.view);
@@ -29,7 +29,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
   const date = typeof params.date === "string" && isISODate(params.date) ? params.date : today;
   const t = await getTranslations("calendar");
 
-  const description =
+  const label =
     view === "day"
       ? formatThaiDate(date, "long")
       : view === "week"
@@ -38,9 +38,9 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
 
   return (
     <>
-      <PageHeader title={t("title")} description={description} />
-      <div className="mb-4">
-        <CalendarNav view={view} date={date} today={today} />
+      <PageHeader title={t("title")} />
+      <div className="mb-3">
+        <CalendarNav view={view} date={date} today={today} label={label} />
       </div>
       {view === "day" ? (
         <DayView date={date} today={today} />
@@ -103,13 +103,63 @@ async function RangeView({
   const byDay = itemsByDay(tasks, completions, from, to);
   const hasAny = Object.keys(byDay).length > 0;
 
+  if (view === "week") {
+    // มือถือ: แถบ 7 วัน + งานของวันที่เลือก (Claude Design 3m) — โหลด day plan ของวันที่เลือกให้ CalendarWeek วางไว้ใต้แถบ
+    const [plan, goalOptions] = await Promise.all([getDayPlan(date), listParentCandidates()]);
+    const dayItems = [...plan.overdue, ...plan.due, ...plan.done];
+    return (
+      <div className="space-y-4">
+        <CalendarWeek
+          days={eachDayISO(from, to)}
+          byDay={byDay}
+          today={today}
+          selected={date}
+          dayPanel={
+            <TaskList
+              items={dayItems}
+              today={today}
+              goalOptions={goalOptions}
+              groupByStatus={false}
+              showGoal
+              emptyState={
+                <div className="rounded-xl bg-bg-surface px-5 py-5 text-center shadow-md">
+                  <p className="text-body text-text-secondary">
+                    {date === today
+                      ? t("emptyDay.title")
+                      : t("emptyDay.titleOther", { date: formatThaiDate(date, "medium") })}
+                  </p>
+                  <Button variant="outline" size="sm" className="mt-3" asChild>
+                    <Link href={`?view=week&date=${date}&new=task`} scroll={false}>
+                      {t("emptyDay.cta")}
+                    </Link>
+                  </Button>
+                </div>
+              }
+            />
+          }
+        />
+        {!hasAny ? (
+          <EmptyState
+            icon={CalendarDays}
+            title={t("empty.title")}
+            description={t("empty.description")}
+            className="hidden md:flex"
+            action={
+              <Button asChild>
+                <Link href={`?view=week&date=${date}&new=task`} scroll={false}>
+                  {t("empty.cta")}
+                </Link>
+              </Button>
+            }
+          />
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      {view === "week" ? (
-        <CalendarWeek days={eachDayISO(from, to)} byDay={byDay} today={today} />
-      ) : (
-        <CalendarMonth date={date} weeks={monthGrid(date)} byDay={byDay} today={today} />
-      )}
+      <CalendarMonth date={date} weeks={monthGrid(date)} byDay={byDay} today={today} />
       {!hasAny ? (
         <EmptyState
           icon={CalendarDays}
@@ -117,7 +167,7 @@ async function RangeView({
           description={t("empty.description")}
           action={
             <Button asChild>
-              <Link href={`?view=${view}&date=${date}&new=task&date=${today}`} scroll={false}>
+              <Link href={`?view=month&date=${date}&new=task&date=${today}`} scroll={false}>
                 {t("empty.cta")}
               </Link>
             </Button>

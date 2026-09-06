@@ -46,7 +46,7 @@ export function PersonaPicker() {
         value={selected ?? undefined}
         onValueChange={(value) => setSelected(value as PersonaId)}
         aria-label={t("onboarding.persona.title")}
-        className="grid gap-3"
+        className="grid grid-cols-2 gap-3"
       >
         {PERSONA_OPTIONS.map(({ id, icon: Icon, enabled }) => {
           const active = selected === id;
@@ -55,10 +55,9 @@ export function PersonaPicker() {
               key={id}
               htmlFor={`persona-${id}`}
               className={cn(
-                "flex cursor-pointer items-center gap-4 rounded-lg border bg-bg-surface p-4 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
-                active
-                  ? "border-brand-500 bg-brand-50"
-                  : "border-border hover:border-border-strong",
+                // การ์ด persona (Claude Design 3c): 2 คอลัมน์ มุม 20px มีเงา · เลือกแล้ว = พื้น brand-50 ขอบ 2px brand-500
+                "flex min-h-40 cursor-pointer flex-col gap-2.5 rounded-lg border-2 bg-bg-surface p-4 shadow-md transition-colors has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-brand-500/30",
+                active ? "border-brand-500 bg-brand-50" : "border-transparent",
                 !enabled && "cursor-not-allowed opacity-60",
               )}
             >
@@ -68,28 +67,21 @@ export function PersonaPicker() {
                 disabled={!enabled}
                 className="sr-only"
               />
-              <span
-                className={cn(
-                  "flex size-12 shrink-0 items-center justify-center rounded-full",
-                  active ? "bg-brand-500 text-neutral-0" : "bg-brand-50 text-brand-700",
-                )}
-              >
-                <Icon className="size-6" aria-hidden="true" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center gap-2">
-                  <span className={cn("text-h3", active ? "text-brand-800" : "text-text-primary")}>
-                    {t(`personas.${id}.name`)}
-                  </span>
-                  {!enabled ? (
-                    <Badge variant="outline" className="rounded-full">
-                      {t("common.comingSoon")}
-                    </Badge>
-                  ) : null}
+              <Icon className="size-12 text-brand-800" strokeWidth={1.25} aria-hidden="true" />
+              <span className="min-w-0">
+                <span
+                  className={cn("block text-h3", active ? "text-brand-800" : "text-text-primary")}
+                >
+                  {t(`personas.${id}.name`)}
                 </span>
-                <span className="mt-0.5 block text-small text-text-secondary">
+                <span className="mt-0.5 block text-caption text-text-secondary">
                   {t(`personas.${id}.description`)}
                 </span>
+                {!enabled ? (
+                  <Badge variant="secondary" className="mt-2">
+                    {t("common.comingSoon")}
+                  </Badge>
+                ) : null}
               </span>
             </label>
           );

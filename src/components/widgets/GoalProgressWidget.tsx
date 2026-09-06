@@ -1,4 +1,3 @@
-import { Target } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
@@ -8,9 +7,11 @@ import { EmptyState } from "@/components/domain/EmptyState";
 import { Button } from "@/components/ui/button";
 
 import { GoalProgressPanel } from "./GoalProgressPanel";
-import { WidgetShell } from "./WidgetShell";
 
-/** widget บนสุดเสมอ (Design §8.4): goal หลักเดือนนี้ — metric ก่อน execution; เป้าเดือนอื่นแสดงย่อด้านล่าง */
+/**
+ * widget บนสุดเสมอ (Design §8.4 + Claude Design 2a hero): goal หลักเดือนนี้บนการ์ด brand-100 มุม 28px + หน้าปัดเข็มทิศ
+ * metric ก่อน execution; เป้าเดือนอื่นแสดงย่อด้านล่าง · ไม่มีเป้า = การ์ดขาว "ยังไม่ได้ตั้งทิศ"
+ */
 export async function GoalProgressWidget({ today }: { today: ISODate }) {
   const t = await getTranslations("widgets.goalProgress");
   const monthStart = startOfMonthISO(today);
@@ -22,21 +23,16 @@ export async function GoalProgressWidget({ today }: { today: ISODate }) {
   const others = monthGoals.filter((g) => g.id !== main?.id);
 
   return (
-    <WidgetShell
-      title={t("title")}
-      action={
-        main ? (
-          <Button variant="ghost" size="sm" asChild>
-            <Link href={`/goals/${main.id}`}>{t("viewGoal")}</Link>
-          </Button>
-        ) : null
-      }
-    >
+    <section aria-label={t("title")}>
+      <h2 className="sr-only">{t("title")}</h2>
       {main ? (
-        <GoalProgressPanel goal={main} others={others} today={today} />
+        <div className="rounded-2xl bg-brand-100 p-5 shadow-lg">
+          <GoalProgressPanel goal={main} others={others} today={today} />
+        </div>
       ) : (
         <EmptyState
-          icon={Target}
+          illustration="compass"
+          eyebrow={t("empty.eyebrow")}
           title={t("empty.title")}
           description={t("empty.description")}
           action={
@@ -48,6 +44,6 @@ export async function GoalProgressWidget({ today }: { today: ISODate }) {
           }
         />
       )}
-    </WidgetShell>
+    </section>
   );
 }

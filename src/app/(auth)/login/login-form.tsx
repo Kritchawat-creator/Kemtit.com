@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -28,6 +29,7 @@ type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
  */
 export function LoginForm({ next }: { next?: string }) {
   const t = useTranslations("auth");
+  const tc = useTranslations("common");
   const te = useTranslations("errors");
   const router = useRouter();
 
@@ -91,16 +93,27 @@ export function LoginForm({ next }: { next?: string }) {
 
   if (step === "code") {
     return (
-      <section aria-labelledby="otp-title" className="space-y-6">
+      <section aria-labelledby="otp-title" className="space-y-5">
         <div>
-          <h1 id="otp-title" className="text-h1 text-text-primary">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="-ml-3 text-brand-800"
+            aria-label={tc("back")}
+            onClick={() => setStep("email")}
+            disabled={pending}
+          >
+            <ArrowLeft className="size-6" strokeWidth={1.5} aria-hidden="true" />
+          </Button>
+          <h1 id="otp-title" className="mt-1 text-h1 text-brand-800">
             {t("codeTitleShort")}
-            <span className="mt-1 block text-h3 break-all text-text-secondary">{email}</span>
+            <span className="mt-0.5 block text-h3 break-all text-text-secondary">{email}</span>
           </h1>
           <p className="mt-1 text-body text-text-secondary">{t("codeHint")}</p>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4 rounded-xl bg-bg-surface p-5 shadow-md">
           <InputOTP
             ref={otpRef}
             maxLength={OTP_LENGTH}
@@ -116,11 +129,7 @@ export function LoginForm({ next }: { next?: string }) {
           >
             <InputOTPGroup className="gap-2">
               {Array.from({ length: OTP_LENGTH }, (_, i) => (
-                <InputOTPSlot
-                  key={i}
-                  index={i}
-                  className="size-12 rounded-sm border text-h2 first:rounded-l-sm last:rounded-r-sm"
-                />
+                <InputOTPSlot key={i} index={i} className="text-h2" />
               ))}
             </InputOTPGroup>
           </InputOTP>
@@ -134,17 +143,18 @@ export function LoginForm({ next }: { next?: string }) {
               {t("verifying")}
             </p>
           ) : null}
-        </div>
-
-        <div className="flex flex-col items-center gap-2">
           <Button
             type="button"
             variant="ghost"
+            className="w-full disabled:text-text-secondary disabled:opacity-100"
             disabled={cooldown > 0 || pending}
             onClick={() => sendCode({ email })}
           >
             {cooldown > 0 ? t("resendIn", { seconds: cooldown }) : t("resend")}
           </Button>
+        </div>
+
+        <div className="flex justify-center">
           <Button type="button" variant="link" onClick={() => setStep("email")} disabled={pending}>
             {t("changeEmail")}
           </Button>
@@ -154,16 +164,20 @@ export function LoginForm({ next }: { next?: string }) {
   }
 
   return (
-    <section aria-labelledby="login-title" className="space-y-6">
+    <section aria-labelledby="login-title" className="space-y-5">
       <div>
-        <h1 id="login-title" className="text-h1 text-text-primary">
+        <h1 id="login-title" className="text-h1 text-brand-800">
           {t("title")}
         </h1>
         <p className="mt-1 text-body text-text-secondary">{t("subtitle")}</p>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(sendCode)} className="space-y-4" noValidate>
+        <form
+          onSubmit={form.handleSubmit(sendCode)}
+          className="space-y-4 rounded-xl bg-bg-surface p-5 shadow-md"
+          noValidate
+        >
           <FormField
             control={form.control}
             name="email"
@@ -176,7 +190,6 @@ export function LoginForm({ next }: { next?: string }) {
                     inputMode="email"
                     autoComplete="email"
                     placeholder={t("emailPlaceholder")}
-                    className="h-12 text-body"
                     {...field}
                   />
                 </FormControl>
@@ -195,7 +208,7 @@ export function LoginForm({ next }: { next?: string }) {
         </form>
       </Form>
 
-      <p className="text-caption text-text-muted">{t("consent")}</p>
+      <p className="text-center text-caption text-text-muted">{t("consent")}</p>
     </section>
   );
 }

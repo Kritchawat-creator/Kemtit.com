@@ -22,3 +22,12 @@ type Story = StoryObj<typeof meta>;
 export const WithAction: Story = { args: { action: <Button>ตั้งเป้าหมาย</Button> } };
 export const WithoutAction: Story = {};
 export const TextOnly: Story = { args: { icon: undefined, description: undefined } };
+/** ภาพเข็มทิศ "ยังไม่ได้ตั้งทิศ" (Claude Design 3e) */
+export const CompassIllustration: Story = {
+  args: {
+    icon: undefined,
+    illustration: "compass",
+    eyebrow: "ยังไม่ได้ตั้งทิศ",
+    action: <Button>ตั้งเป้าหมาย</Button>,
+  },
+};

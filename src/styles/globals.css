@@ -97,7 +97,8 @@
   --color-domain-relationships-fg: #5c1b69;
 
   /* ---- Semantic layer (Design §3.4) — component ใช้ชั้นนี้ ---- */
-  --color-bg-page: var(--color-neutral-50);
+  /* Design (Claude Design "Kemtit" 2a): พื้นหน้าทั้งจอเป็น brand-50 ให้การ์ดขาว/hero brand-100 เด้ง */
+  --color-bg-page: var(--color-brand-50);
   --color-bg-surface: var(--color-neutral-0);
   --color-bg-subtle: var(--color-neutral-100);
   --color-text-primary: var(--color-neutral-900);
@@ -128,17 +129,36 @@
   --color-input: var(--color-border-strong);
   --color-ring: var(--color-brand-500);
 
-  /* ---- Radius (Design §5.2) — ใหญ่กว่า productivity app ทั่วไปหนึ่งขั้น; rounded-full สำหรับ pill/avatar/FAB ---- */
-  --radius-sm: 10px; /* input, badge เล็ก */
-  --radius-md: 14px; /* button, card เล็ก */
-  --radius-lg: 20px; /* widget card, modal */
-  --radius-xl: 28px; /* hero card, onboarding panel */
+  /* ---- Radius (Design §5.2 + Claude Design 2a) — rounded-full สำหรับ pill/ปุ่ม/avatar/FAB ---- */
+  --radius-sm: 10px; /* input, badge เล็ก, ปุ่มวันที่ */
+  --radius-md: 14px; /* segmented control, toast, icon tile */
+  --radius-lg: 20px; /* goal card, persona card, component card */
+  --radius-xl: 24px; /* white card (งานวันนี้, ตั้งค่า, ฟอร์ม login) */
+  --radius-2xl: 28px; /* hero card, bottom nav, bottom sheet, empty state */
 
-  /* ---- Elevation (Design §5.3) — เงาสี brand แทนเงาเทา ---- */
-  --shadow-xs: 0 1px 3px rgb(122 95 224 / 0.08); /* alias ให้ class shadow-xs ของ shadcn = ระดับ sm */
-  --shadow-sm: 0 1px 3px rgb(122 95 224 / 0.08);
-  --shadow-md: 0 4px 12px rgb(122 95 224 / 0.1);
-  --shadow-lg: 0 12px 32px rgb(122 95 224 / 0.14);
+  /* ---- Elevation (Design §5.3 + Claude Design 2a) — เงาสี brand นุ่ม ๆ แทนเงาเทา ---- */
+  --shadow-xs: 0 1px 3px rgb(122 95 224 / 0.08); /* alias ให้ class shadow-xs ของ shadcn */
+  --shadow-sm: 0 4px 12px rgb(122 95 224 / 0.1); /* persona pill, avatar, segmented active */
+  --shadow-md: 0 8px 24px rgb(122 95 224 / 0.1); /* white card */
+  --shadow-lg: 0 12px 32px rgb(122 95 224 / 0.16); /* hero card */
+  --shadow-nav: 0 -8px 24px rgb(122 95 224 / 0.1); /* bottom nav */
+  --shadow-sheet: 0 -12px 40px rgb(122 95 224 / 0.2); /* bottom sheet */
+  --shadow-toast: 0 10px 28px rgb(122 95 224 / 0.14);
+  --shadow-fab: 0 10px 24px rgb(245 100 140 / 0.35); /* FAB สีพีช — เงาสีเดียวกับปุ่ม */
+  --drop-shadow-dial: 0 8px 16px rgb(122 95 224 / 0.18); /* หน้าปัดเข็มทิศบน hero */
+
+  /* ---- Motion: ปลายเข็ม pulse เมื่อถึงจุดหมาย (100%) — ปิดเองเมื่อ prefers-reduced-motion ด้านล่าง ---- */
+  --animate-km-pulse: km-pulse 1.6s ease-out infinite;
+  @keyframes km-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
 
   /* ---- Type scale (Design §4.2) — ผูกชื่อ Tailwind ที่ shadcn ใช้ (xs/sm/base/lg/xl/2xl/4xl) กับสเกลไทย
           และให้ชื่อ semantic (caption/small/body/h3/h2/h1/display) ค่าเดียวกัน ---- */

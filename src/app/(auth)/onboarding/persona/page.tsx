@@ -16,10 +16,10 @@ export default async function PersonaPage() {
   return (
     <section aria-labelledby="persona-title">
       <OnboardingSteps current={2} />
-      <h1 id="persona-title" className="text-h1 text-text-primary">
+      <h1 id="persona-title" className="text-h1 text-brand-800">
         {t("title")}
       </h1>
-      <p className="mt-1 mb-6 text-body text-text-secondary">{t("subtitle")}</p>
+      <p className="mt-1 mb-5 text-body text-text-secondary">{t("subtitle")}</p>
       <PersonaPicker />
     </section>
   );

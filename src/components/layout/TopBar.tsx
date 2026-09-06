@@ -1,34 +1,29 @@
-import { Compass } from "lucide-react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 
 import type { PersonaId } from "@/core/profile/personas";
-import { Badge } from "@/components/ui/badge";
 
 import { QuickAddMenu } from "./QuickAddMenu";
 import { UserMenu } from "./UserMenu";
 
 type Props = { persona: PersonaId | null; displayName: string | null; email: string | null };
 
-/** Top bar: brand (มือถือ) + persona pill + ปุ่มเพิ่ม (desktop) + เมนูผู้ใช้ (Design §7.2) */
+/**
+ * แถวบน (Claude Design 2a): persona pill สีพีช (accent-50/900) ซ้าย + avatar พีชขวา บนพื้นหน้า ไม่มีเส้นขอบ
+ * desktop: sticky บนพื้นขาว + ปุ่ม "เพิ่ม" (มือถือใช้ FAB แทน)
+ */
 export function TopBar({ persona, displayName, email }: Props) {
   const t = useTranslations();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-bg-surface px-4 lg:px-8">
+    <header className="flex h-14 items-center justify-between gap-3 px-5 pt-2 lg:sticky lg:top-0 lg:z-30 lg:h-16 lg:border-b lg:border-border lg:bg-bg-surface lg:px-8 lg:pt-0">
       <div className="flex min-w-0 items-center gap-3">
-        <Link
-          href="/dashboard"
-          aria-label={t("a11y.brandHome")}
-          className="flex items-center gap-2 rounded-md text-h3 text-brand-800 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none lg:hidden"
-        >
-          <Compass className="size-5 text-brand-500" aria-hidden="true" />
-          {t("app.name")}
-        </Link>
         {persona ? (
-          <Badge variant="secondary" className="rounded-full" aria-label={t("a11y.currentPersona")}>
+          <span
+            aria-label={t("a11y.currentPersona")}
+            className="inline-flex h-9 max-w-full items-center truncate rounded-full bg-accent-50 px-3.5 text-small font-medium text-accent-900 shadow-sm"
+          >
             {t(`personas.${persona}.name`)}
-          </Badge>
+          </span>
         ) : null}
       </div>
       <div className="flex items-center gap-2">

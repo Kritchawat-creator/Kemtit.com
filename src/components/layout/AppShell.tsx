@@ -10,8 +10,8 @@ import { TopBar } from "./TopBar";
 type Props = { me: Me; children: React.ReactNode };
 
 /**
- * โครงหน้าหลักของแอป (Design §7): มือถือ = top bar + เนื้อหา + bottom nav + FAB · desktop = sidebar + top bar
- * เนื้อหาเว้นที่ด้านล่างให้ bottom nav/FAB (pb-28) และ container กว้างสุด 7xl บน desktop
+ * โครงหน้าหลักของแอป (Design §7 + Claude Design 2a): มือถือ = แถว persona/avatar + เนื้อหาบนพื้น brand-50 + bottom nav มน + FAB พีช
+ * desktop = sidebar + top bar · เนื้อหาเว้นที่ด้านล่างให้ bottom nav/FAB (pb-32) และ container กว้างสุด 7xl บน desktop
  */
 export function AppShell({ me, children }: Props) {
   return (
@@ -23,7 +23,7 @@ export function AppShell({ me, children }: Props) {
           displayName={me.profile.display_name}
           email={me.email}
         />
-        <main className="mx-auto w-full max-w-7xl px-4 pt-6 pb-28 lg:px-8 lg:pb-10">
+        <main className="mx-auto w-full max-w-7xl px-5 pt-3 pb-32 lg:px-8 lg:pt-6 lg:pb-10">
           {children}
         </main>
       </div>

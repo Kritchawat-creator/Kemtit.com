@@ -162,7 +162,7 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
     await postAction(page, () => page.getByRole("button", { name: "บันทึก", exact: true }).click());
     await expect(page.getByText(/ทำได้แล้ว/).first()).toBeVisible({ timeout: 15_000 });
     await expect(w.getByText("100%")).toBeVisible({ timeout: 15_000 });
-    await expect(w.getByText("ครบเป้าแล้ว")).toBeVisible();
+    await expect(w.getByText("ถึงจุดหมายแล้ว")).toBeVisible();
   });
 
   await qa.step("dashboard-quick-add-task-today", async () => {
@@ -194,7 +194,7 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
       .first()
       .click();
     await expect(page.getByText("สำเร็จแล้ว")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "เป้าหมายย่อย" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "เส้นทาง" })).toBeVisible();
   });
 
   await qa.step("goal-edit-title", async () => {
@@ -281,9 +281,17 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
   });
 
   await qa.step("calendar-week-month", async () => {
-    await page.goto("/calendar");
+    // มือถือ: มุมมองสัปดาห์แสดงงานของวันที่เลือกเท่านั้น (Claude Design 3m) → เลือกวันจันทร์/พุธถัดไปที่ task ซ้ำตกอยู่
+    const base = new Date(`${today}T00:00:00+07:00`);
+    const target = Array.from({ length: 7 }, (_, i) => new Date(base.getTime() + i * 86_400_000))
+      .find((d) => [1, 3].includes(d.getUTCDay()))!
+      .toISOString()
+      .slice(0, 10);
+    await page.goto(`/calendar?view=week&date=${target}`);
     await expect(page.getByText("โพสต์ขายของ").first()).toBeVisible();
     await page.getByRole("link", { name: "เดือน" }).click();
+    // แถบวันของสัปดาห์ก็มี aria-label ลงท้าย "N งาน" → ต้องรอ URL เปลี่ยนก่อน ไม่งั้นคลิกถัดไปจะตกอยู่ที่มุมมองสัปดาห์
+    await expect(page).toHaveURL(/view=month/);
     await expect(page.getByRole("link", { name: /งาน$/ }).first()).toBeVisible();
     await page.getByRole("link", { name: "ก่อนหน้า" }).click();
     await page.getByRole("link", { name: "วันนี้" }).click();
@@ -400,7 +408,7 @@ test("QA localhost (desktop)", async ({ page, isMobile }) => {
       .getByRole("link", { name: /ยอดขาย/ })
       .first()
       .click();
-    await expect(page.getByRole("heading", { name: "เป้าหมายย่อย" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "เส้นทาง" })).toBeVisible();
     await expect(page.getByRole("button", { name: "อัปเดตยอด" })).toBeVisible();
   });
 

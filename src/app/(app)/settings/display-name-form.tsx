@@ -50,17 +50,13 @@ export function DisplayNameForm({ initial }: { initial: string }) {
             <FormItem className="flex-1">
               <FormLabel>{t("displayName")}</FormLabel>
               <FormControl>
-                <Input
-                  placeholder={t("displayNamePlaceholder")}
-                  className="h-12 text-body"
-                  {...field}
-                />
+                <Input placeholder={t("displayNamePlaceholder")} {...field} />
               </FormControl>
               <FormMessageI18n />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" variant="outline" disabled={pending}>
           {t("save")}
         </Button>
       </form>

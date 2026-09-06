@@ -4,33 +4,36 @@ import { cn } from "cn";
 
 import type { GoalWithProgress } from "@/core/goals/queries";
 import { goalUnit } from "@/core/goals/schema";
-import { formatPercent, formatValueWithUnit } from "@/lib/format";
+import { formatNumber, formatPercent, formatValueWithUnit } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 
-import { DOMAIN_STYLES, DomainTag } from "./DomainTag";
+import { DomainTag } from "./DomainTag";
 import { PaceBadge } from "./PaceBadge";
 import { PeriodLabel } from "./PeriodLabel";
 import { ProgressBar } from "./ProgressBar";
 
 type Props = { goal: GoalWithProgress; compact?: boolean; className?: string };
 
-/** การ์ด goal: ชื่อ + domain + ช่วงเวลา + % เด่น + แถบ progress (Design §6.2) พื้น tint อ่อนตาม domain (§5.4) */
+/**
+ * การ์ด goal (Claude Design 3h): การ์ดขาวมุม 20px มีเงา · แถวบน = ช่วงเวลา + DomainTag · ชื่อ · ตัวเลข "ทำได้ / เป้า" + PaceBadge
+ * แถบ progress มีจุดพีชปลายแถบ = จุดหมาย
+ */
 export function GoalCard({ goal, compact = false, className }: Props) {
   const t = useTranslations();
   const { progress } = goal;
   const unit = goalUnit(goal);
 
-  const detail =
+  const current =
     progress.kind === "metric"
-      ? t("progress.ofTarget", {
-          current: formatValueWithUnit(progress.current ?? 0, unit),
-          target: formatValueWithUnit(progress.target ?? 0, unit),
-        })
+      ? formatNumber(progress.current ?? 0)
       : (progress.tasksTotal ?? 0) > 0
-        ? t("progress.tasksDone", {
-            done: progress.tasksDone ?? 0,
-            total: progress.tasksTotal ?? 0,
-          })
+        ? formatNumber(progress.tasksDone ?? 0)
+        : formatPercent(progress.percent / 100);
+  const target =
+    progress.kind === "metric"
+      ? formatValueWithUnit(progress.target ?? 0, unit)
+      : (progress.tasksTotal ?? 0) > 0
+        ? t("goals.tasksUnit", { count: formatNumber(progress.tasksTotal ?? 0) })
         : progress.childCount > 0
           ? t("progress.children", { count: progress.childCount })
           : t("progress.noChildren");
@@ -39,44 +42,38 @@ export function GoalCard({ goal, compact = false, className }: Props) {
     <Link
       href={`/goals/${goal.id}`}
       className={cn(
-        "block rounded-lg border border-border p-4 transition-colors hover:border-border-strong focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-        goal.status === "archived" ? "bg-bg-subtle opacity-70" : DOMAIN_STYLES[goal.domain].tint,
+        "block rounded-lg bg-bg-surface shadow-md transition-shadow hover:shadow-lg focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none",
+        compact ? "px-4 py-3" : "px-5 py-4",
+        goal.status === "archived" && "opacity-70",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3
-            className={cn(
-              "truncate text-text-primary",
-              compact ? "text-body font-medium" : "text-h3",
-            )}
-          >
-            {goal.title}
-          </h3>
-          <div className="mt-1 flex flex-wrap items-center gap-2">
-            <DomainTag domain={goal.domain} />
-            <PeriodLabel period={goal.period} className="text-caption text-text-secondary" />
-            {goal.status === "archived" ? (
-              <Badge variant="outline" className="rounded-full">
-                {t("goals.statusArchived")}
-              </Badge>
-            ) : (
-              <PaceBadge status={goal.pace} />
-            )}
-          </div>
-        </div>
-        <span className={cn("shrink-0 text-brand-800", compact ? "text-h3" : "text-h2")}>
-          {formatPercent(progress.percent / 100)}
-        </span>
+      <div className="flex items-center justify-between gap-2">
+        <PeriodLabel period={goal.period} className="truncate text-caption text-text-secondary" />
+        {goal.status === "archived" ? (
+          <Badge variant="outline" className="rounded-full">
+            {t("goals.statusArchived")}
+          </Badge>
+        ) : (
+          <DomainTag domain={goal.domain} />
+        )}
       </div>
-      <ProgressBar
-        value={progress.percent}
-        domain={goal.domain}
-        size={compact ? "sm" : "md"}
-        className="mt-3"
-      />
-      {!compact ? <p className="mt-2 text-small text-text-secondary">{detail}</p> : null}
+      <h3
+        className={cn(
+          "mt-2 truncate text-text-primary",
+          compact ? "text-body font-medium" : "text-h3 font-medium",
+        )}
+      >
+        {goal.title}
+      </h3>
+      <div className="mt-2 flex items-end justify-between gap-3">
+        <p className={cn("min-w-0 truncate text-text-primary", compact ? "text-h2" : "text-h1")}>
+          {current}
+          <span className="text-small font-medium text-text-secondary"> / {target}</span>
+        </p>
+        {goal.status === "archived" ? null : <PaceBadge status={goal.pace} />}
+      </div>
+      <ProgressBar value={progress.percent} size={compact ? "sm" : "md"} marker className="mt-3" />
     </Link>
   );
 }

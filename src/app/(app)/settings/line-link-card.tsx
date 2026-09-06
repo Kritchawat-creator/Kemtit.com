@@ -81,7 +81,14 @@ export function LineLinkCard({ initial, addFriendUrl, dryRun }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant={view.linked ? "default" : "outline"} className="rounded-full">
+        <Badge
+          variant={view.linked ? "default" : "outline"}
+          className={
+            view.linked
+              ? "h-6 rounded-sm bg-success-50 px-2.5 text-success-800"
+              : "h-6 rounded-sm px-2.5 text-text-secondary"
+          }
+        >
           {view.linked ? t("linked") : t("notLinked")}
         </Badge>
         {view.linked && view.linkedAt ? (
@@ -92,11 +99,16 @@ export function LineLinkCard({ initial, addFriendUrl, dryRun }: Props) {
       </div>
 
       {view.linked ? (
-        <Button variant="outline" onClick={disconnect} disabled={pending}>
+        <Button
+          variant="ghost"
+          className="w-full text-text-secondary"
+          onClick={disconnect}
+          disabled={pending}
+        >
           {t("disconnect")}
         </Button>
       ) : waitingForCode && !expired ? (
-        <div className="space-y-4 rounded-lg border border-border bg-bg-subtle p-4">
+        <div className="space-y-4 rounded-lg bg-brand-50 p-4">
           <p className="text-caption text-text-secondary">{t("codeTitle")}</p>
           <p data-testid="line-link-code" className="text-display tracking-[0.3em] text-brand-800">
             {view.code}
@@ -124,7 +136,7 @@ export function LineLinkCard({ initial, addFriendUrl, dryRun }: Props) {
         </div>
       ) : (
         <div className="flex flex-wrap items-center gap-3">
-          <Button onClick={requestCode} disabled={pending}>
+          <Button variant="outline" className="w-full" onClick={requestCode} disabled={pending}>
             <MessageCircle aria-hidden="true" />
             {pending ? t("requesting") : expired ? t("newCode") : t("connect")}
           </Button>

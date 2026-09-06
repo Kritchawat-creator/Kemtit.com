@@ -21,11 +21,10 @@ export default function AppError({
   }, [error]);
 
   return (
-    <div
-      role="alert"
-      className="rounded-lg border border-danger-500/30 bg-danger-50 p-6 text-center"
-    >
-      <AlertTriangle className="mx-auto mb-3 size-8 text-danger-800" aria-hidden="true" />
+    <div role="alert" className="rounded-2xl bg-bg-surface p-6 text-center shadow-md">
+      <span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-danger-50 text-danger-800">
+        <AlertTriangle className="size-6" strokeWidth={1.5} aria-hidden="true" />
+      </span>
       <h2 className="text-h2 text-danger-800">{t("errors.pageTitle")}</h2>
       <p className="mt-1 text-body text-text-secondary">{t("errors.pageDescription")}</p>
       <div className="mt-5 flex justify-center gap-2">

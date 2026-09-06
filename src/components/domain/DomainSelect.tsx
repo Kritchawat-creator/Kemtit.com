@@ -25,7 +25,7 @@ export function DomainSelect({ value, onValueChange, disabled, id }: Props) {
       value={value}
       onValueChange={(next) => next && onValueChange(next as Domain)}
       disabled={disabled}
-      variant="outline"
+      spacing={2}
       className="flex flex-wrap justify-start gap-2"
     >
       {DOMAINS.map((domain) => (
@@ -34,12 +34,14 @@ export function DomainSelect({ value, onValueChange, disabled, id }: Props) {
           value={domain}
           aria-label={t(domain)}
           className={cn(
-            "min-h-11 rounded-full border px-4 text-small data-[state=on]:border-transparent md:min-h-9",
+            // pill หมวด (Claude Design 3l): พื้นสี domain อ่อน + จุด · เลือกแล้ว = ขอบ 1.5px สีตัวหนังสือของหมวด
+            "h-9 gap-1.5 rounded-full border-[1.5px] border-transparent px-3 text-small font-medium shadow-none hover:bg-transparent hover:text-current data-[spacing=2]:rounded-full",
+            DOMAIN_STYLES[domain].pill,
             DOMAIN_STYLES[domain].selected,
           )}
         >
           <span
-            className={cn("size-2 rounded-full", DOMAIN_STYLES[domain].dot)}
+            className={cn("size-1.5 rounded-full", DOMAIN_STYLES[domain].dot)}
             aria-hidden="true"
           />
           {t(domain)}

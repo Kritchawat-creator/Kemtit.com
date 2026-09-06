@@ -33,6 +33,8 @@ export type TaskListProps = {
   groupByStatus?: boolean;
   showGoal?: boolean;
   emptyState?: ReactNode;
+  /** card = การ์ดขาวมีเงาของตัวเอง · plain = แถวเปล่า ๆ สำหรับวางใน widget ที่เป็นการ์ดอยู่แล้ว */
+  variant?: "card" | "plain";
 };
 
 const UNDO_MS = 5000;
@@ -48,6 +50,7 @@ export function TaskList({
   groupByStatus = true,
   showGoal = false,
   emptyState,
+  variant = "card",
 }: TaskListProps) {
   const t = useTranslations();
   const router = useRouter();
@@ -165,15 +168,21 @@ export function TaskList({
   const selectedRule = selected ? parseRRule(selected.task.recurrence_rule) : null;
 
   return (
-    <div className="space-y-5">
+    <div className={variant === "card" ? "space-y-4" : "space-y-3"}>
       {sections.map((section) => (
         <section key={section.key} aria-label={section.label || undefined}>
           {section.label ? (
-            <h3 className="mb-1 px-3 text-caption text-text-secondary">
+            <h3 className="mb-1 text-caption font-medium text-text-secondary">
               {section.label} · {section.items.length}
             </h3>
           ) : null}
-          <ul className="divide-y divide-border rounded-lg border border-border bg-bg-surface">
+          <ul
+            className={
+              variant === "card"
+                ? "divide-y divide-border rounded-xl bg-bg-surface px-5 shadow-md"
+                : "divide-y divide-border"
+            }
+          >
             {section.items.map((item) => (
               <TaskRow
                 key={item.key}
@@ -215,7 +224,7 @@ export function TaskList({
         ) : selected ? (
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2 text-small text-text-secondary">
-              <DomainTag domain={selected.task.domain} />
+              <DomainTag domain={selected.task.domain} size="md" />
               <span>
                 {selected.overdue
                   ? t("tasks.meta.overdueSince", { date: formatThaiDate(selected.date, "medium") })
@@ -244,7 +253,9 @@ export function TaskList({
             </Button>
 
             <div>
-              <p className="mb-2 text-caption text-text-secondary">{t("tasks.reschedule.label")}</p>
+              <p className="mb-2 text-caption font-medium text-text-secondary">
+                {t("tasks.reschedule.label")}
+              </p>
               <div className="flex flex-wrap gap-2">
                 <Button
                   variant="outline"

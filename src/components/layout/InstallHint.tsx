@@ -80,9 +80,11 @@ export function InstallHint() {
   return (
     <aside
       aria-label={t("title")}
-      className="mt-6 flex items-start gap-3 rounded-lg border border-brand-100 bg-brand-50 p-4"
+      className="mt-4 flex items-start gap-3 rounded-xl bg-bg-surface p-4 shadow-md"
     >
-      <Download className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden="true" />
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-brand-50 text-brand-600">
+        <Download className="size-[18px]" strokeWidth={1.5} aria-hidden="true" />
+      </span>
       <div className="min-w-0 flex-1">
         <p className="text-body font-medium text-brand-800">{t("title")}</p>
         <p className="text-small text-text-secondary">{isIOS ? t("iosSteps") : t("description")}</p>

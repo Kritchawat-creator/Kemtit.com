@@ -30,3 +30,4 @@ export const WithDescriptionAndAction: Story = {
   },
 };
 export const Loading: Story = { render: () => <WidgetSkeleton /> };
+export const LoadingHero: Story = { render: () => <WidgetSkeleton variant="hero" /> };

@@ -15,7 +15,10 @@ type Props = {
   children: React.ReactNode;
 };
 
-/** Sheet จากด้านล่างบนมือถือ / Dialog บน desktop (Design §8.2, §8.5) */
+/**
+ * Sheet จากด้านล่างบนมือถือ / Dialog บน desktop (Design §8.2, §8.5)
+ * มือถือตาม Claude Design 3l: มุมบน 28px, แถบจับ 40×4, เงาม่วง, ปุ่มปิดมุมขวา
+ */
 export function ResponsiveDialog({ open, onOpenChange, title, description, children }: Props) {
   const isMobile = useIsMobile();
 
@@ -24,12 +27,18 @@ export function ResponsiveDialog({ open, onOpenChange, title, description, child
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="bottom"
-          className="max-h-[92dvh] overflow-y-auto rounded-t-xl px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
+          className="max-h-[92dvh] overflow-y-auto rounded-t-2xl border-0 px-5 pt-2 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-sheet"
         >
-          <SheetHeader className="px-0 text-left">
-            <SheetTitle className="text-h2">{title}</SheetTitle>
+          <span
+            aria-hidden="true"
+            className="mx-auto block h-1 w-10 shrink-0 rounded-full bg-border-strong"
+          />
+          <SheetHeader className="px-0 pt-1 pb-0 text-left">
+            <SheetTitle className="pr-10 text-h2 text-brand-800">{title}</SheetTitle>
             {description ? (
-              <SheetDescription>{description}</SheetDescription>
+              <SheetDescription className="text-small text-text-secondary">
+                {description}
+              </SheetDescription>
             ) : (
               <SheetDescription className="sr-only">{title}</SheetDescription>
             )}
@@ -42,9 +51,9 @@ export function ResponsiveDialog({ open, onOpenChange, title, description, child
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-lg sm:max-w-lg">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-xl sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-h2">{title}</DialogTitle>
+          <DialogTitle className="text-h2 text-brand-800">{title}</DialogTitle>
           {description ? (
             <DialogDescription>{description}</DialogDescription>
           ) : (

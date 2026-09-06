@@ -15,10 +15,10 @@ const TONE: Record<NonNullable<Props["tone"]>, string> = {
   danger: "text-danger-800",
 };
 
-/** ตัวเลขเด่น + label (Design §6.2) — ตัวเลขใช้ tabular-nums จาก body */
+/** ตัวเลขเด่น + label (Design §6.2) — การ์ดขาวมุม 20px มีเงา; ตัวเลขใช้ tabular-nums จาก body */
 export function StatTile({ label, value, hint, tone = "default", className }: Props) {
   return (
-    <div className={cn("rounded-lg border border-border bg-bg-surface p-4", className)}>
+    <div className={cn("rounded-lg bg-bg-surface p-4 shadow-md", className)}>
       <p className="text-caption text-text-secondary">{label}</p>
       <p className={cn("mt-1 text-h1", TONE[tone])}>{value}</p>
       {hint ? <p className="mt-1 text-small text-text-muted">{hint}</p> : null}

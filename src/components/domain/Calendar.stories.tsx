@@ -57,7 +57,7 @@ const meta = {
   title: "Domain/Calendar",
   component: CalendarWeek,
   parameters: { layout: "padded" },
-  args: { days, byDay, today: "2026-09-05" },
+  args: { days, byDay, today: "2026-09-05", selected: "2026-09-05" },
 } satisfies Meta<typeof CalendarWeek>;
 
 export default meta;
@@ -76,5 +76,7 @@ export const Month: Story = {
   ),
 };
 export const Nav: Story = {
-  render: () => <CalendarNav view="week" date="2026-09-05" today="2026-09-05" />,
+  render: () => (
+    <CalendarNav view="week" date="2026-09-05" today="2026-09-05" label="30 ส.ค. – 5 ก.ย. 2569" />
+  ),
 };

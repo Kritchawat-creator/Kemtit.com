@@ -5,7 +5,7 @@ import { cn } from "cn";
 import type { DayTaskItem, PlanTask } from "@/core/domain/dayplan";
 import type { Domain } from "@/core/domain/domains";
 import { type ISODate, startOfMonthISO } from "@/lib/date";
-import { formatThaiDate, formatWeekdayShort } from "@/lib/format";
+import { formatThaiDate, formatWeekdayNarrow } from "@/lib/format";
 
 import { calendarHref } from "./CalendarNav";
 import { DOMAIN_STYLES } from "./DomainTag";
@@ -19,18 +19,18 @@ type Props = {
   today: ISODate;
 };
 
-/** เดือน: grid 7 คอลัมน์เริ่มอาทิตย์ แต่ละวันมีจุดสี domain + จำนวนงาน แตะ → มุมมองวัน (Design §8.2 "วันไหนแน่น วันไหนว่าง") */
+/** เดือน: การ์ดขาว grid 7 คอลัมน์เริ่มอาทิตย์ แต่ละวันมีจุดสี domain + จำนวนงาน แตะ → มุมมองวัน (Design §8.2 "วันไหนแน่น วันไหนว่าง") */
 export function CalendarMonth({ date, weeks, byDay, today }: Props) {
   const t = useTranslations("calendar");
   const monthStart = startOfMonthISO(date);
   const headerDays = weeks[0] ?? [];
 
   return (
-    <div className="rounded-lg border border-border bg-bg-surface p-2">
+    <div className="rounded-xl bg-bg-surface p-3 shadow-md">
       <div className="grid grid-cols-7 gap-1" aria-hidden="true">
         {headerDays.map((day) => (
           <div key={day} className="py-1 text-center text-caption text-text-secondary">
-            {formatWeekdayShort(day)}
+            {formatWeekdayNarrow(day)}
           </div>
         ))}
       </div>
@@ -46,13 +46,13 @@ export function CalendarMonth({ date, weeks, byDay, today }: Props) {
                 href={calendarHref("day", day)}
                 aria-label={`${formatThaiDate(day, "long")} · ${t("tasksCount", { count: items.length })}`}
                 className={cn(
-                  "flex min-h-14 flex-col items-center gap-1 rounded-md p-1 transition-colors hover:bg-bg-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none md:min-h-20 md:items-start md:p-2",
+                  "flex min-h-14 flex-col items-center gap-1 rounded-md p-1 transition-colors hover:bg-bg-subtle focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none md:min-h-20 md:items-start md:p-2",
                   !inMonth && "opacity-40",
                 )}
               >
                 <span
                   className={cn(
-                    "inline-flex size-7 items-center justify-center rounded-full text-small font-medium",
+                    "inline-flex size-8 items-center justify-center rounded-full text-small font-semibold",
                     isToday ? "bg-brand-500 text-neutral-0" : "text-text-primary",
                   )}
                 >

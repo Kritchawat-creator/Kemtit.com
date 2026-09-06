@@ -31,14 +31,14 @@ export function NotifySwitch({ initial }: { initial: boolean }) {
   }
 
   return (
-    <div className="flex items-start justify-between gap-4">
-      <div>
-        <Label htmlFor="notify-overdue" className="text-body">
+    <div className="flex min-h-11 items-center justify-between gap-4">
+      <div className="min-w-0">
+        <Label htmlFor="notify-overdue" className="text-body text-text-primary">
           {t("overdue")}
         </Label>
-        <p className="mt-0.5 text-small text-text-secondary">{t("overdueDescription")}</p>
+        <p className="mt-0.5 text-caption text-text-secondary">{t("overdueDescription")}</p>
       </div>
-      <Switch id="notify-overdue" checked={enabled} onCheckedChange={change} className="mt-1" />
+      <Switch id="notify-overdue" checked={enabled} onCheckedChange={change} />
     </div>
   );
 }

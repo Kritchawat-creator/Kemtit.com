@@ -1,16 +1,17 @@
-import { Compass } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type * as React from "react";
 
-/** โครงหน้าฝั่ง auth/onboarding: การ์ดกลางจอ กว้างสุด md ไม่มี nav (Design §8.3) */
+/** โครงหน้าฝั่ง auth/onboarding (Claude Design 3a): ชิดบน กว้างสุด md · ชื่อ "Kemtit" สี brand-500 + tagline · ไม่มี nav */
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("app");
   return (
     <div className="min-h-dvh bg-bg-page">
-      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-6 py-10">
-        <div className="mb-8 flex items-center gap-2">
-          <Compass className="size-7 text-brand-500" aria-hidden="true" />
-          <span className="text-h2 text-brand-800">{t("name")}</span>
+      <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pt-10 pb-8">
+        <div className="mb-6">
+          <p className="text-h1 tracking-wide text-brand-500">{t("nameLatin")}</p>
+          <p className="text-small text-text-secondary">
+            {t("name")} — {t("tagline")}
+          </p>
         </div>
         {children}
       </main>
