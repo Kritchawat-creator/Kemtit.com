@@ -119,15 +119,18 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
                   <StatTile
                     label={t("progress.daysLeft", { days: remainingDays })}
                     value={
-                      remainingDays > 0 && (remaining ?? 0) > 0
-                        ? formatValueWithUnit(Math.ceil((remaining ?? 0) / remainingDays), unit)
-                        : "—"
+                      (remaining ?? 0) <= 0
+                        ? t("widgets.goalProgress.reached")
+                        : remainingDays > 0
+                          ? formatValueWithUnit(Math.ceil((remaining ?? 0) / remainingDays), unit)
+                          : "—"
                     }
                     hint={
                       remainingDays > 0 && (remaining ?? 0) > 0
                         ? t("progress.perDayNeeded", { amount: "" }).trim()
                         : undefined
                     }
+                    tone={(remaining ?? 0) <= 0 ? "success" : "default"}
                   />
                 </>
               ) : (
@@ -141,8 +144,9 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
                     value={formatNumber(goal.progress.childCount)}
                   />
                   <StatTile
-                    label={t("progress.daysLeft", { days: remainingDays })}
+                    label={t("progress.endsOn")}
                     value={formatThaiDate(goal.period.end, "medium")}
+                    hint={t("progress.daysLeft", { days: remainingDays })}
                   />
                 </>
               )}

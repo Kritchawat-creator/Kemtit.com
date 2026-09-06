@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
-import { childPeriodType, periodOf } from "@/core/domain/periods";
+import { childPeriodType, periodContains, periodOf } from "@/core/domain/periods";
 import type { ParentCandidate } from "@/core/goals/schema";
 import { isISODate, todayBkk } from "@/lib/date";
 import { GoalForm } from "@/components/domain/GoalForm";
@@ -37,17 +37,25 @@ export function QuickAddHost({ parentCandidates }: Props) {
   if (kind === "goal") {
     const parent = parentCandidates.find((c) => c.id === params.get("parent"));
     const childType = parent ? childPeriodType(parent.period_type) : null;
+    // ช่วงเริ่มต้นของเป้าย่อย: ช่วงปัจจุบันถ้าวันนี้อยู่ในช่วงแม่ (ช่วงแรกของเดือนอาจผ่านไปแล้ว) ไม่งั้นช่วงแรกของแม่
+    const today = todayBkk();
+    const childStart =
+      parent && childType
+        ? periodContains(periodOf(parent.period_type, parent.period_start), today)
+          ? periodOf(childType, today).start
+          : periodOf(childType, parent.period_start).start
+        : undefined;
     return (
       <ResponsiveDialog open onOpenChange={(open) => !open && close()} title={t("goals.new")}>
         <GoalForm
           mode="create"
           parentCandidates={parentCandidates}
           initial={
-            parent && childType
+            parent && childType && childStart
               ? {
                   parentId: parent.id,
                   periodType: childType,
-                  periodStart: periodOf(childType, parent.period_start).start,
+                  periodStart: childStart,
                   domain: parent.domain,
                 }
               : undefined

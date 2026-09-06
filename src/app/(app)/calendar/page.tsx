@@ -67,7 +67,11 @@ async function DayView({ date, today }: { date: string; today: string }) {
       emptyState={
         <EmptyState
           icon={CalendarDays}
-          title={t("emptyDay.title")}
+          title={
+            date === today
+              ? t("emptyDay.title")
+              : t("emptyDay.titleOther", { date: formatThaiDate(date, "medium") })
+          }
           description={t("emptyDay.description")}
           action={
             <Button asChild>

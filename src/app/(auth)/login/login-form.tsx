@@ -16,7 +16,8 @@ import { FormMessageI18n } from "@/components/ui/form-i18n";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
-const RESEND_COOLDOWN_SECONDS = 30;
+// เท่ากับ minimum interval ของ Supabase Auth (60 วิ) — ถ้าสั้นกว่านี้ user จะเจอ 429 "ขอรหัสบ่อยเกินไป"
+const RESEND_COOLDOWN_SECONDS = 60;
 const OTP_LENGTH = 6;
 
 type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
@@ -93,7 +94,8 @@ export function LoginForm({ next }: { next?: string }) {
       <section aria-labelledby="otp-title" className="space-y-6">
         <div>
           <h1 id="otp-title" className="text-h1 text-text-primary">
-            {t("codeTitle", { email })}
+            {t("codeTitleShort")}
+            <span className="mt-1 block text-h3 break-all text-text-secondary">{email}</span>
           </h1>
           <p className="mt-1 text-body text-text-secondary">{t("codeHint")}</p>
         </div>

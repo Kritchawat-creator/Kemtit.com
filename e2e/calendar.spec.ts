@@ -27,8 +27,9 @@ test("ปฏิทิน: งานที่เพิ่มวันนี้ป
 
   // เลื่อนไปสัปดาห์ถัดไปแล้วกลับ "วันนี้"
   await page.getByRole("link", { name: "สัปดาห์" }).click();
+  await expect(page).toHaveURL(/view=week/);
   await page.getByRole("link", { name: "ถัดไป" }).click();
   await expect(page.getByText("นัดส่งของหน้าปฏิทิน")).toHaveCount(0);
-  await page.getByRole("link", { name: "วันนี้" }).click();
+  await page.getByRole("link", { name: "วันนี้", exact: true }).click();
   await expect(page.getByText("นัดส่งของหน้าปฏิทิน")).toBeVisible();
 });

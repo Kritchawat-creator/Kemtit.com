@@ -38,7 +38,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <NextIntlClientProvider>
           <TooltipProvider>{children}</TooltipProvider>
-          <Toaster position="top-center" richColors closeButton />
+          <Toaster
+            position="top-center"
+            richColors
+            closeButton
+            offset={{ top: 16 }}
+            mobileOffset={{ top: 64 }}
+          />
         </NextIntlClientProvider>
       </body>
     </html>
