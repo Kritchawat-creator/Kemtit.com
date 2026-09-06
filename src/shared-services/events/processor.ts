@@ -27,6 +27,11 @@ export type ProcessorSummary = { fetched: number; processed: number; failed: num
 
 type HandlerResult = "sent" | "skipped";
 
+/**
+ * KNOWN ISSUE (POC): ลำดับ push → recordSent → markProcessed ไม่ idempotent — ถ้า function ตาย/timeout หลัง push สำเร็จ
+ * event จะถูก retry แล้วส่งซ้ำ (ยอมรับได้กับ tester ~10 คน) — MVP: บันทึก notification.sent (พร้อม sourceEventId) ก่อน push
+ * และตรวจว่ามีแล้วหรือยังก่อนส่ง
+ */
 async function handleGoalCompleted(event: DomainEventRow, deps: ProcessorDeps): Promise<HandlerResult> {
   const payload = event.payload as unknown as EventPayloads["goal.completed"];
   const profile = await deps.getProfile(event.user_id);

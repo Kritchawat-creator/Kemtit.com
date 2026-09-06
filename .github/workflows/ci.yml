@@ -17,7 +17,9 @@ jobs:
     env:
       CI: "true"
       NEXT_TELEMETRY_DISABLED: "1"
-      # ค่า placeholder — src/lib/env.ts ข้าม validation เมื่อ CI=true (POC Decisions M0 ข้อ 3)
+      # src/lib/env.ts ข้าม validation เฉพาะเมื่อตั้งค่านี้ (ไม่ผูกกับ CI=true เพราะ Netlify ตั้ง CI=true ตอน build)
+      SKIP_ENV_VALIDATION: "1"
+      # ค่า placeholder สำหรับ build (POC Decisions M0 ข้อ 3)
       # ไม่ใส่ secret จริงใน CI ของ M0; Playwright ยังไม่รันจนกว่าจะมี flow จริง (ข้อ 7)
       NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder"

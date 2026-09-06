@@ -358,6 +358,13 @@ Widget ที่เหลือ: `GoalProgressWidget` (goal เดือนน�
 - task ซ้ำไม่นับเข้า execution progress (routine) — ดู `core/domain/progress.ts`
 - E2E ครอบคลุม 7 spec (มากกว่า 3 flow ในแผน) เพราะใช้เป็นตัวยืนยันแต่ละ milestone
 
+**Known issues (จากรีวิวของเจ้าของโปรเจกต์ 2026-09-06) — ไม่บล็อก merge**
+1. **ส่ง LINE ซ้ำได้ถ้า function ตาย** — processor ทำ push → recordSent → markProcessed; ถ้า timeout หลัง push สำเร็จ event ถูก retry แล้วส่งซ้ำ ยอมรับได้กับ tester ~10 คน · **MVP**: บันทึก `notification.sent` (พร้อม `sourceEventId`) ก่อน push และตรวจว่ามีแล้วหรือยังก่อนส่ง
+2. **scan-overdue ดู 25 คน/รอบแล้วหยุด** — ถ้า user ที่ผูก LINE เกิน 25 คน คนที่เหลือไม่ได้แจ้งวันนั้น (POC ไม่ถึง) · **MVP**: เปลี่ยน cron `cron-scan-overdue.yml` เป็นรายชั่วโมงในช่วงกลางวัน (เช่น `0 1-12 * * *`) โดยไม่ต้องแก้โค้ด เพราะ `last_overdue_notified_on` กันซ้ำต่อวันอยู่แล้ว
+3. **LCP/JS เกิน budget บนหน้า login** (ดูตาราง M7) — ฟอนต์ย้ายเป็น `next/font/local` แล้ว (2026-09-06) ส่วนที่เหลือคือ client bundle
+
+**แก้แล้วจากรีวิวเดียวกัน**: env validation ข้ามเฉพาะ `SKIP_ENV_VALIDATION=1` (ไม่ผูก `CI=true` ที่ Netlify ตั้งเอง) · ฟอนต์ self-host ด้วย `next/font/local` (build ไม่พึ่ง Google Fonts)
+
 **งานที่เหลือฝั่งเจ้าของโปรเจกต์ก่อน CP2 (field test)**
 1. Supabase `kemtit-dev`/`kemtit-staging` + Resend SMTP + template OTP → `supabase link` + `pnpm db:push` (README "เริ่มพัฒนา")
 2. Netlify: import repo, env ทุกตัว, ตั้ง `NEXT_PUBLIC_APP_URL` เป็น URL จริง

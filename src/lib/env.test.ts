@@ -28,13 +28,13 @@ describe("env", () => {
     expect(() => getClientEnv()).not.toThrow(/anon-key/);
   });
 
-  it("ข้าม validation เมื่อ CI=true (POC Decisions M0 ข้อ 3)", () => {
-    stubEnv({ CI: "true", NEXT_PUBLIC_SUPABASE_URL: "", NEXT_PUBLIC_SUPABASE_ANON_KEY: "" });
-    expect(shouldSkipEnvValidation()).toBe(true);
-    expect(() => getClientEnv()).not.toThrow();
+  it("CI=true อย่างเดียวไม่ข้าม validation (Netlify ตั้ง CI=true และค่าอาจหลุดไป runtime)", () => {
+    stubEnv({ CI: "true", SKIP_ENV_VALIDATION: "", NEXT_PUBLIC_SUPABASE_URL: "", NEXT_PUBLIC_SUPABASE_ANON_KEY: "" });
+    expect(shouldSkipEnvValidation()).toBe(false);
+    expect(() => getClientEnv()).toThrow(/NEXT_PUBLIC_SUPABASE_URL/);
   });
 
-  it("ข้าม validation เมื่อ SKIP_ENV_VALIDATION=1", () => {
+  it("ข้าม validation เฉพาะเมื่อ SKIP_ENV_VALIDATION=1 (POC Decisions M0 ข้อ 3)", () => {
     stubEnv({ CI: "", SKIP_ENV_VALIDATION: "1", NEXT_PUBLIC_SUPABASE_URL: "" });
     expect(() => getClientEnv()).not.toThrow();
   });

@@ -11,3 +11,5 @@ supabase/.temp
 supabase/.branches
 # เอกสารไทยมีตารางยาว — ไม่ให้ Prettier จัดใหม่
 *.md
+public/sw.js
+public/swe-worker-*.js

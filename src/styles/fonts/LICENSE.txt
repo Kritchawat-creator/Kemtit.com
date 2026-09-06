@@ -1,0 +1,3 @@
+IBM Plex Sans Thai — Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
+Licensed under the SIL Open Font License, Version 1.1: https://openfontlicense.org
+Files: woff2 subsets (thai + latin) weights 400/500/600 from google-webfonts-helper (gwfh.mranftl.com), v11

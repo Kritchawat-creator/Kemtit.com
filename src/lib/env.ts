@@ -6,12 +6,13 @@ import { z } from "zod";
  *
  * หลักการ (POC Decisions M0 ข้อ 3):
  * - validate แบบ lazy ตอนเรียกใช้ ไม่ใช่ตอน import → `next build` ไม่ล้มเพราะไม่มี env
- * - ข้าม validation เมื่อ CI=true หรือ SKIP_ENV_VALIDATION=1 (CI มีแค่ค่า placeholder)
+ * - ข้าม validation เฉพาะเมื่อ SKIP_ENV_VALIDATION=1 (ตั้งใน ci.yml เท่านั้น — CI มีแค่ค่า placeholder)
  * - NEXT_PUBLIC_* ต้องอ้างแบบ static `process.env.NEXT_PUBLIC_X` เพื่อให้ Next ฝังลง client bundle
  */
 
 export function shouldSkipEnvValidation(): boolean {
-  return process.env.CI === "true" || process.env.SKIP_ENV_VALIDATION === "1";
+  // ตั้งใจไม่ดู CI=true: Netlify ตั้งค่านี้ตอน build และอาจหลุดไป runtime → secret ที่ขาดจะ crash แบบอ่านไม่ออกแทน error ที่ชัด
+  return process.env.SKIP_ENV_VALIDATION === "1";
 }
 
 /** parse env กลุ่มหนึ่ง — throw พร้อมชื่อตัวแปรที่ผิด (ไม่ log ค่า) */

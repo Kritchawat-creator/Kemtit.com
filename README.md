@@ -97,7 +97,7 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build
 ### GitHub
 
 - Settings → Secrets and variables → Actions: `CRON_SECRET` (ค่าเดียวกับใน Netlify) และ `CRON_BASE_URL` (URL ของแอปบน Netlify) — ใช้โดย workflow cron ตั้งแต่ M5
-- CI (lint · typecheck · test · build) รันทุก push/PR อยู่แล้ว ไม่ต้องใช้ secret
+- CI (lint · typecheck · test · build) รันทุก push/PR อยู่แล้ว ไม่ต้องใช้ secret — CI ตั้ง `SKIP_ENV_VALIDATION=1` เพื่อ build ด้วยค่า placeholder; ที่ runtime จริง env ที่ขาดจะ throw error ที่บอกชื่อตัวแปร
 
 ### กฎที่ lint บังคับ (Scope §4, Design §16)
 
