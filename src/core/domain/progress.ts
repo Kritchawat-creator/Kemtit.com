@@ -42,7 +42,9 @@ export function computeProgress(
     if (!goal.target_value || goal.target_value <= 0) return 0;
     return Math.min(100, (goal.current_value / goal.target_value) * 100);
   }
-  const childProgress = children.map((c) => (resolveChild ? resolveChild(c) : computeProgress(c, [], [])));
+  const childProgress = children.map((c) =>
+    resolveChild ? resolveChild(c) : computeProgress(c, [], []),
+  );
   const countable = tasks.filter((t) => t.recurrence_rule === null);
   const taskProgress = countable.length
     ? (countable.filter((t) => t.completed_at).length / countable.length) * 100
@@ -65,7 +67,10 @@ export type ProgressInfo = {
 };
 
 /** คำนวณ progress ของทุก goal ใน list แบบ bottom-up ครั้งเดียว (ใช้กับหน้า list/tree) */
-export function buildProgressIndex(goals: GoalLike[], tasks: TaskLike[]): Map<string, ProgressInfo> {
+export function buildProgressIndex(
+  goals: GoalLike[],
+  tasks: TaskLike[],
+): Map<string, ProgressInfo> {
   const byParent = new Map<string | null, GoalLike[]>();
   for (const g of goals) {
     const list = byParent.get(g.parent_id) ?? [];
@@ -102,7 +107,10 @@ export function buildProgressIndex(goals: GoalLike[], tasks: TaskLike[]): Map<st
       childCount: children.length,
       ...(goal.goal_kind === "metric"
         ? { current: goal.current_value, target: goal.target_value ?? 0 }
-        : { tasksDone: countable.filter((t) => t.completed_at).length, tasksTotal: countable.length }),
+        : {
+            tasksDone: countable.filter((t) => t.completed_at).length,
+            tasksTotal: countable.length,
+          }),
     };
     visiting.delete(goal.id);
     memo.set(goal.id, info);
@@ -126,6 +134,12 @@ export function paceStatus(percent: number, period: Period, today: ISODate): Pac
 }
 
 /** metric goal สำเร็จเมื่อ current ≥ target */
-export function isMetricComplete(goal: Pick<GoalLike, "goal_kind" | "target_value" | "current_value">): boolean {
-  return goal.goal_kind === "metric" && goal.target_value !== null && goal.current_value >= goal.target_value;
+export function isMetricComplete(
+  goal: Pick<GoalLike, "goal_kind" | "target_value" | "current_value">,
+): boolean {
+  return (
+    goal.goal_kind === "metric" &&
+    goal.target_value !== null &&
+    goal.current_value >= goal.target_value
+  );
 }

@@ -11,7 +11,9 @@ export class LineNotifier implements Notifier {
 
   async push(recipientId: string, text: string): Promise<NotifyResult> {
     const result = await this.client.push(recipientId, text);
-    return result.ok ? { ok: true, dryRun: false } : { ok: false, error: `LINE ${result.status}: ${result.error}` };
+    return result.ok
+      ? { ok: true, dryRun: false }
+      : { ok: false, error: `LINE ${result.status}: ${result.error}` };
   }
 }
 

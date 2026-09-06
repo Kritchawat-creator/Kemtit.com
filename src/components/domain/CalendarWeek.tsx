@@ -23,7 +23,13 @@ export function CalendarWeek({ days, byDay, today }: Props) {
         const items = byDay[day] ?? [];
         const isToday = day === today;
         return (
-          <li key={day} className={cn("rounded-lg border bg-bg-surface p-2", isToday ? "border-brand-500" : "border-border")}>
+          <li
+            key={day}
+            className={cn(
+              "rounded-lg border bg-bg-surface p-2",
+              isToday ? "border-brand-500" : "border-border",
+            )}
+          >
             <Link
               href={calendarHref("day", day)}
               aria-label={t("openDay", { date: formatThaiDate(day, "long") })}
@@ -42,14 +48,31 @@ export function CalendarWeek({ days, byDay, today }: Props) {
             <ul className="mt-2 space-y-1">
               {items.slice(0, MAX_ROWS).map((item) => (
                 <li key={item.key} className="flex items-center gap-1.5 text-caption">
-                  <span className={cn("size-1.5 shrink-0 rounded-full", DOMAIN_STYLES[item.task.domain as Domain].dot)} aria-hidden="true" />
-                  <span className={cn("truncate", item.done ? "text-text-muted line-through" : "text-text-primary")}>{item.task.title}</span>
+                  <span
+                    className={cn(
+                      "size-1.5 shrink-0 rounded-full",
+                      DOMAIN_STYLES[item.task.domain as Domain].dot,
+                    )}
+                    aria-hidden="true"
+                  />
+                  <span
+                    className={cn(
+                      "truncate",
+                      item.done ? "text-text-muted line-through" : "text-text-primary",
+                    )}
+                  >
+                    {item.task.title}
+                  </span>
                 </li>
               ))}
               {items.length > MAX_ROWS ? (
-                <li className="text-caption text-text-secondary">{t("more", { count: items.length - MAX_ROWS })}</li>
+                <li className="text-caption text-text-secondary">
+                  {t("more", { count: items.length - MAX_ROWS })}
+                </li>
               ) : null}
-              {items.length === 0 ? <li className="text-caption text-text-muted">{t("noTasks")}</li> : null}
+              {items.length === 0 ? (
+                <li className="text-caption text-text-muted">{t("noTasks")}</li>
+              ) : null}
             </ul>
           </li>
         );

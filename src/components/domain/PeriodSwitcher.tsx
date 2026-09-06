@@ -14,7 +14,13 @@ type Props = {
 };
 
 /** สลับ ปี/เดือน/สัปดาห์ (POC) — ใช้ทั้งฟอร์มและปฏิทิน */
-export function PeriodSwitcher({ value, onValueChange, options = POC_PERIOD_TYPES, disabled, id }: Props) {
+export function PeriodSwitcher({
+  value,
+  onValueChange,
+  options = POC_PERIOD_TYPES,
+  disabled,
+  id,
+}: Props) {
   const t = useTranslations("periods");
   return (
     <ToggleGroup

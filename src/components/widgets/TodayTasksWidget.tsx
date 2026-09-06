@@ -24,7 +24,15 @@ export async function TodayTasksWidget({ today }: { today: ISODate }) {
   return (
     <WidgetShell
       title={t("title")}
-      description={items.length > 0 ? t("summary", { due: plan.due.length, overdue: plan.overdue.length, done: plan.done.length }) : undefined}
+      description={
+        items.length > 0
+          ? t("summary", {
+              due: plan.due.length,
+              overdue: plan.overdue.length,
+              done: plan.done.length,
+            })
+          : undefined
+      }
       action={
         <div className="flex items-center gap-2">
           {streak > 0 ? (

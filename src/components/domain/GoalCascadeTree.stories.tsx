@@ -4,7 +4,9 @@ import type { GoalTreeNode, GoalWithProgress } from "@/core/goals/queries";
 
 import { GoalCascadeTree } from "./GoalCascadeTree";
 
-const goal = (over: Partial<GoalWithProgress> & { id: string; title: string }): GoalWithProgress => ({
+const goal = (
+  over: Partial<GoalWithProgress> & { id: string; title: string },
+): GoalWithProgress => ({
   user_id: "u1",
   parent_id: null,
   period_type: "month",
@@ -31,7 +33,13 @@ const weeks: GoalTreeNode[] = [1, 2, 3, 4, 5].map((i) => ({
     period_type: "week",
     period_start: "2026-08-30",
     period: { type: "week", start: "2026-08-30", end: "2026-09-05" },
-    progress: { percent: i === 1 ? 100 : 0, kind: "execution", tasksDone: i === 1 ? 1 : 0, tasksTotal: 1, childCount: 0 },
+    progress: {
+      percent: i === 1 ? 100 : 0,
+      kind: "execution",
+      tasksDone: i === 1 ? 1 : 0,
+      tasksTotal: 1,
+      childCount: 0,
+    },
     pace: i === 1 ? "done" : "notStarted",
   }),
   children: [],
@@ -39,7 +47,15 @@ const weeks: GoalTreeNode[] = [1, 2, 3, 4, 5].map((i) => ({
 
 const tree: GoalTreeNode[] = [
   {
-    goal: goal({ id: "m1", title: "ยอดขาย กันยายน 2569", goal_kind: "metric", target_value: 50000, current_value: 21500, persona_data: { unit: "THB" }, progress: { percent: 43, kind: "metric", current: 21500, target: 50000, childCount: 5 } }),
+    goal: goal({
+      id: "m1",
+      title: "ยอดขาย กันยายน 2569",
+      goal_kind: "metric",
+      target_value: 50000,
+      current_value: 21500,
+      persona_data: { unit: "THB" },
+      progress: { percent: 43, kind: "metric", current: 21500, target: 50000, childCount: 5 },
+    }),
     children: weeks,
   },
   { goal: goal({ id: "h1", title: "ออกกำลังกาย 12 ครั้ง", domain: "health" }), children: [] },

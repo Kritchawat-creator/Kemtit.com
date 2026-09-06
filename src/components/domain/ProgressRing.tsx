@@ -18,7 +18,15 @@ type Props = {
 };
 
 /** วงกลม % ปลายมน (stroke-linecap round — Design §5.4) เนื้อหาตรงกลางเป็น slot */
-export function ProgressRing({ value, size = 128, strokeWidth = 10, domain, label, children, className }: Props) {
+export function ProgressRing({
+  value,
+  size = 128,
+  strokeWidth = 10,
+  domain,
+  label,
+  children,
+  className,
+}: Props) {
   const t = useTranslations("a11y");
   const clamped = Math.max(0, Math.min(100, value));
   const radius = (size - strokeWidth) / 2;
@@ -36,8 +44,21 @@ export function ProgressRing({ value, size = 128, strokeWidth = 10, domain, labe
       className={cn("relative inline-flex items-center justify-center", className)}
       style={{ width: size, height: size }}
     >
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" aria-hidden="true">
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" strokeWidth={strokeWidth} className="stroke-brand-100" />
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        className="-rotate-90"
+        aria-hidden="true"
+      >
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          strokeWidth={strokeWidth}
+          className="stroke-brand-100"
+        />
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -47,10 +68,15 @@ export function ProgressRing({ value, size = 128, strokeWidth = 10, domain, labe
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className={cn("stroke-current transition-[stroke-dashoffset] duration-400 ease-out", ringColor)}
+          className={cn(
+            "stroke-current transition-[stroke-dashoffset] duration-400 ease-out",
+            ringColor,
+          )}
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">{children}</div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+        {children}
+      </div>
     </div>
   );
 }

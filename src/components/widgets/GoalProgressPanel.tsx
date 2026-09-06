@@ -36,11 +36,22 @@ export function GoalProgressPanel({ goal, others, today }: Props) {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-5">
-        <ProgressRing value={progress.percent} domain={goal.domain} size={124} strokeWidth={11} className="shrink-0">
-          <span className="text-display text-brand-800">{formatPercent(progress.percent / 100)}</span>
+        <ProgressRing
+          value={progress.percent}
+          domain={goal.domain}
+          size={124}
+          strokeWidth={11}
+          className="shrink-0"
+        >
+          <span className="text-display text-brand-800">
+            {formatPercent(progress.percent / 100)}
+          </span>
         </ProgressRing>
         <div className="min-w-0 flex-1 space-y-2">
-          <Link href={`/goals/${goal.id}`} className="block truncate rounded-md text-h3 text-text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none">
+          <Link
+            href={`/goals/${goal.id}`}
+            className="block truncate rounded-md text-h3 text-text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          >
             {goal.title}
           </Link>
           <div className="flex flex-wrap items-center gap-2">
@@ -52,7 +63,11 @@ export function GoalProgressPanel({ goal, others, today }: Props) {
               ? progress.percent >= 100
                 ? t("reached")
                 : `${t("remaining", { remaining: formatValueWithUnit(remaining, unit) })} · ${
-                    left > 0 ? t("perDay", { amount: formatValueWithUnit(Math.ceil(remaining / left), unit) }) : t("daysLeft", { days: 0 })
+                    left > 0
+                      ? t("perDay", {
+                          amount: formatValueWithUnit(Math.ceil(remaining / left), unit),
+                        })
+                      : t("daysLeft", { days: 0 })
                   }`
               : (progress.tasksTotal ?? 0) > 0
                 ? t("tasks", { done: progress.tasksDone ?? 0, total: progress.tasksTotal ?? 0 })
@@ -77,9 +92,18 @@ export function GoalProgressPanel({ goal, others, today }: Props) {
                   href={`/goals/${g.id}`}
                   className="flex items-center gap-3 rounded-md px-1 py-1 hover:bg-bg-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
-                  <span className="min-w-0 flex-1 truncate text-body text-text-primary">{g.title}</span>
-                  <ProgressBar value={g.progress.percent} domain={g.domain} size="sm" className="w-24 shrink-0" />
-                  <span className="w-10 shrink-0 text-right text-small text-text-secondary">{formatPercent(g.progress.percent / 100)}</span>
+                  <span className="min-w-0 flex-1 truncate text-body text-text-primary">
+                    {g.title}
+                  </span>
+                  <ProgressBar
+                    value={g.progress.percent}
+                    domain={g.domain}
+                    size="sm"
+                    className="w-24 shrink-0"
+                  />
+                  <span className="w-10 shrink-0 text-right text-small text-text-secondary">
+                    {formatPercent(g.progress.percent / 100)}
+                  </span>
                 </Link>
               </li>
             ))}
@@ -88,7 +112,12 @@ export function GoalProgressPanel({ goal, others, today }: Props) {
       ) : null}
 
       <ResponsiveDialog open={open} onOpenChange={setOpen} title={t("updateValue")}>
-        <UpdateValueForm goal={goal} unit={unit} onDone={() => setOpen(false)} onCompleted={() => setFireKey((k) => k + 1)} />
+        <UpdateValueForm
+          goal={goal}
+          unit={unit}
+          onDone={() => setOpen(false)}
+          onCompleted={() => setFireKey((k) => k + 1)}
+        />
       </ResponsiveDialog>
       <Celebration fireKey={fireKey} />
     </div>

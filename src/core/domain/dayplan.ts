@@ -43,16 +43,32 @@ export function itemsForDate<T extends PlanTask>(
   completions: PlanCompletion[],
   date: ISODate,
 ): DayTaskItem<T>[] {
-  const completedOn = new Set(completions.filter((c) => c.completed_on === date).map((c) => c.task_id));
+  const completedOn = new Set(
+    completions.filter((c) => c.completed_on === date).map((c) => c.task_id),
+  );
   const items: DayTaskItem<T>[] = [];
   for (const task of tasks) {
     const rule = parseRRule(task.recurrence_rule);
     if (rule) {
       if (occursOn(rule, task.due_date, date)) {
-        items.push({ key: `${task.id}:${date}`, task, date, done: completedOn.has(task.id), overdue: false, recurring: true });
+        items.push({
+          key: `${task.id}:${date}`,
+          task,
+          date,
+          done: completedOn.has(task.id),
+          overdue: false,
+          recurring: true,
+        });
       }
     } else if (task.due_date === date) {
-      items.push({ key: task.id, task, date, done: task.completed_at !== null, overdue: false, recurring: false });
+      items.push({
+        key: task.id,
+        task,
+        date,
+        done: task.completed_at !== null,
+        overdue: false,
+        recurring: false,
+      });
     }
   }
   return items;
@@ -61,9 +77,19 @@ export function itemsForDate<T extends PlanTask>(
 /** งานเดี่ยวที่เลยกำหนดและยังไม่เสร็จ (ก่อนวัน today) */
 export function overdueItems<T extends PlanTask>(tasks: T[], today: ISODate): DayTaskItem<T>[] {
   return tasks
-    .filter((t) => t.recurrence_rule === null && t.completed_at === null && isBeforeISO(t.due_date, today))
+    .filter(
+      (t) =>
+        t.recurrence_rule === null && t.completed_at === null && isBeforeISO(t.due_date, today),
+    )
     .sort((a, b) => a.due_date.localeCompare(b.due_date))
-    .map((task) => ({ key: task.id, task, date: task.due_date, done: false, overdue: true, recurring: false }));
+    .map((task) => ({
+      key: task.id,
+      task,
+      date: task.due_date,
+      done: false,
+      overdue: true,
+      recurring: false,
+    }));
 }
 
 export function buildDayPlan<T extends PlanTask>(
@@ -82,8 +108,14 @@ export function buildDayPlan<T extends PlanTask>(
 }
 
 /** งานทั้งหมดของ goal หนึ่ง (หน้า detail): task ซ้ำแสดงสถานะของวันนี้ */
-export function goalTaskItems<T extends PlanTask>(tasks: T[], completions: PlanCompletion[], today: ISODate): DayTaskItem<T>[] {
-  const completedToday = new Set(completions.filter((c) => c.completed_on === today).map((c) => c.task_id));
+export function goalTaskItems<T extends PlanTask>(
+  tasks: T[],
+  completions: PlanCompletion[],
+  today: ISODate,
+): DayTaskItem<T>[] {
+  const completedToday = new Set(
+    completions.filter((c) => c.completed_on === today).map((c) => c.task_id),
+  );
   return tasks.map((task) => {
     const recurring = task.recurrence_rule !== null;
     const done = recurring ? completedToday.has(task.id) : task.completed_at !== null;

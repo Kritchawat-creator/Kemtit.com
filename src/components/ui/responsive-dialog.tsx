@@ -22,10 +22,17 @@ export function ResponsiveDialog({ open, onOpenChange, title, description, child
   if (isMobile) {
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="max-h-[92dvh] overflow-y-auto rounded-t-xl px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+        <SheetContent
+          side="bottom"
+          className="max-h-[92dvh] overflow-y-auto rounded-t-xl px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
+        >
           <SheetHeader className="px-0 text-left">
             <SheetTitle className="text-h2">{title}</SheetTitle>
-            {description ? <SheetDescription>{description}</SheetDescription> : <SheetDescription className="sr-only">{title}</SheetDescription>}
+            {description ? (
+              <SheetDescription>{description}</SheetDescription>
+            ) : (
+              <SheetDescription className="sr-only">{title}</SheetDescription>
+            )}
           </SheetHeader>
           {children}
         </SheetContent>
@@ -38,7 +45,11 @@ export function ResponsiveDialog({ open, onOpenChange, title, description, child
       <DialogContent className="max-h-[90dvh] overflow-y-auto rounded-lg sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-h2">{title}</DialogTitle>
-          {description ? <DialogDescription>{description}</DialogDescription> : <DialogDescription className="sr-only">{title}</DialogDescription>}
+          {description ? (
+            <DialogDescription>{description}</DialogDescription>
+          ) : (
+            <DialogDescription className="sr-only">{title}</DialogDescription>
+          )}
         </DialogHeader>
         {children}
       </DialogContent>

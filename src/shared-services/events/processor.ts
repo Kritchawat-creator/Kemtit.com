@@ -15,7 +15,9 @@ export type ProcessorDeps = {
   fetchBatch: (limit: number, maxAttempts: number) => Promise<DomainEventRow[]>;
   markProcessed: (id: string) => Promise<void>;
   markFailed: (id: string, attempts: number, message: string) => Promise<void>;
-  getProfile: (userId: string) => Promise<{ line_user_id: string | null; notify_overdue: boolean } | null>;
+  getProfile: (
+    userId: string,
+  ) => Promise<{ line_user_id: string | null; notify_overdue: boolean } | null>;
   getTaskTitles: (userId: string, ids: string[]) => Promise<string[]>;
   recordSent: (userId: string, kind: string, dryRun: boolean) => Promise<void>;
   notifier: Notifier;
@@ -23,7 +25,13 @@ export type ProcessorDeps = {
   appUrl: string;
 };
 
-export type ProcessorSummary = { fetched: number; processed: number; failed: number; sent: number; skipped: number };
+export type ProcessorSummary = {
+  fetched: number;
+  processed: number;
+  failed: number;
+  sent: number;
+  skipped: number;
+};
 
 type HandlerResult = "sent" | "skipped";
 
@@ -32,36 +40,59 @@ type HandlerResult = "sent" | "skipped";
  * event จะถูก retry แล้วส่งซ้ำ (ยอมรับได้กับ tester ~10 คน) — MVP: บันทึก notification.sent (พร้อม sourceEventId) ก่อน push
  * และตรวจว่ามีแล้วหรือยังก่อนส่ง
  */
-async function handleGoalCompleted(event: DomainEventRow, deps: ProcessorDeps): Promise<HandlerResult> {
+async function handleGoalCompleted(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+): Promise<HandlerResult> {
   const payload = event.payload as unknown as EventPayloads["goal.completed"];
   const profile = await deps.getProfile(event.user_id);
   if (!profile?.line_user_id) return "skipped";
-  const result = await deps.notifier.push(profile.line_user_id, goalCompletedText(deps.t, deps.appUrl, payload.goalId, payload.title));
+  const result = await deps.notifier.push(
+    profile.line_user_id,
+    goalCompletedText(deps.t, deps.appUrl, payload.goalId, payload.title),
+  );
   if (!result.ok) throw new Error(result.error);
   await deps.recordSent(event.user_id, "goal.completed", result.dryRun);
   return "sent";
 }
 
-async function handleTaskOverdue(event: DomainEventRow, deps: ProcessorDeps): Promise<HandlerResult> {
+async function handleTaskOverdue(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+): Promise<HandlerResult> {
   const payload = event.payload as unknown as EventPayloads["task.overdue"];
   const profile = await deps.getProfile(event.user_id);
   if (!profile?.line_user_id || !profile.notify_overdue) return "skipped";
   const titles = await deps.getTaskTitles(event.user_id, payload.taskIds);
   if (titles.length === 0) return "skipped";
-  const result = await deps.notifier.push(profile.line_user_id, overdueText(deps.t, deps.appUrl, titles));
+  const result = await deps.notifier.push(
+    profile.line_user_id,
+    overdueText(deps.t, deps.appUrl, titles),
+  );
   if (!result.ok) throw new Error(result.error);
   await deps.recordSent(event.user_id, "task.overdue", result.dryRun);
   return "sent";
 }
 
-const HANDLERS: Partial<Record<string, (event: DomainEventRow, deps: ProcessorDeps) => Promise<HandlerResult>>> = {
+const HANDLERS: Partial<
+  Record<string, (event: DomainEventRow, deps: ProcessorDeps) => Promise<HandlerResult>>
+> = {
   "goal.completed": handleGoalCompleted,
   "task.overdue": handleTaskOverdue,
 };
 
-export async function processEvents(deps: ProcessorDeps, limit = EVENT_BATCH_SIZE): Promise<ProcessorSummary> {
+export async function processEvents(
+  deps: ProcessorDeps,
+  limit = EVENT_BATCH_SIZE,
+): Promise<ProcessorSummary> {
   const events = await deps.fetchBatch(limit, MAX_ATTEMPTS);
-  const summary: ProcessorSummary = { fetched: events.length, processed: 0, failed: 0, sent: 0, skipped: 0 };
+  const summary: ProcessorSummary = {
+    fetched: events.length,
+    processed: 0,
+    failed: 0,
+    sent: 0,
+    skipped: 0,
+  };
 
   for (const event of events) {
     const handler = HANDLERS[event.event_type];
@@ -77,7 +108,11 @@ export async function processEvents(deps: ProcessorDeps, limit = EVENT_BATCH_SIZ
       summary.processed += 1;
     } catch (error) {
       summary.failed += 1;
-      await deps.markFailed(event.id, event.attempts + 1, error instanceof Error ? error.message : String(error));
+      await deps.markFailed(
+        event.id,
+        event.attempts + 1,
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
   return summary;

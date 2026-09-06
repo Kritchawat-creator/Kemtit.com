@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "kemtit.installHintDismissed";
 
-type BeforeInstallPromptEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
 
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
 const listeners = new Set<() => void>();
@@ -38,12 +41,22 @@ function readDismissed(): boolean {
  */
 export function InstallHint() {
   const t = useTranslations("pwa.install");
-  const isClient = useSyncExternalStore(() => () => {}, () => true, () => false);
-  const canPrompt = useSyncExternalStore(subscribe, () => deferredPrompt !== null, () => false);
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const canPrompt = useSyncExternalStore(
+    subscribe,
+    () => deferredPrompt !== null,
+    () => false,
+  );
   const [dismissed, setDismissed] = useState(readDismissed);
 
   if (!isClient || dismissed) return null;
-  const standalone = window.matchMedia("(display-mode: standalone)").matches || ("standalone" in navigator && Boolean((navigator as { standalone?: boolean }).standalone));
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    ("standalone" in navigator && Boolean((navigator as { standalone?: boolean }).standalone));
   if (standalone) return null;
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   if (!isIOS && !canPrompt) return null;
@@ -65,7 +78,10 @@ export function InstallHint() {
   }
 
   return (
-    <aside aria-label={t("title")} className="mt-6 flex items-start gap-3 rounded-lg border border-brand-100 bg-brand-50 p-4">
+    <aside
+      aria-label={t("title")}
+      className="mt-6 flex items-start gap-3 rounded-lg border border-brand-100 bg-brand-50 p-4"
+    >
       <Download className="mt-0.5 size-5 shrink-0 text-brand-700" aria-hidden="true" />
       <div className="min-w-0 flex-1">
         <p className="text-body font-medium text-brand-800">{t("title")}</p>

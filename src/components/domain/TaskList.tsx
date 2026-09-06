@@ -41,7 +41,14 @@ const UNDO_MS = 5000;
  * รายการ task พร้อม optimistic toggle, รายละเอียดใน Sheet (ติ๊ก/เลื่อนวัน/แก้/ลบ) และ undo toast แทน confirm
  * ข้อมูลจริงมาจาก server; override ในเครื่องถูกล้างเมื่อ props เปลี่ยน (หลัง router.refresh)
  */
-export function TaskList({ items, today, goalOptions, groupByStatus = true, showGoal = false, emptyState }: TaskListProps) {
+export function TaskList({
+  items,
+  today,
+  goalOptions,
+  groupByStatus = true,
+  showGoal = false,
+  emptyState,
+}: TaskListProps) {
   const t = useTranslations();
   const router = useRouter();
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
@@ -58,7 +65,11 @@ export function TaskList({ items, today, goalOptions, groupByStatus = true, show
   const deleteTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
 
   const visible = items
-    .map((item) => ({ ...item, done: overrides[item.key]?.done ?? item.done, hidden: overrides[item.key]?.hidden ?? false }))
+    .map((item) => ({
+      ...item,
+      done: overrides[item.key]?.done ?? item.done,
+      hidden: overrides[item.key]?.hidden ?? false,
+    }))
     .filter((item) => !item.hidden);
   const selected = visible.find((i) => i.key === selectedKey) ?? null;
 
@@ -135,8 +146,16 @@ export function TaskList({ items, today, goalOptions, groupByStatus = true, show
 
   const sections: { key: string; label: string; items: typeof visible }[] = groupByStatus
     ? [
-        { key: "overdue", label: t("tasks.sections.overdue"), items: visible.filter((i) => i.overdue && !i.done) },
-        { key: "due", label: t("tasks.sections.due"), items: visible.filter((i) => !i.overdue && !i.done) },
+        {
+          key: "overdue",
+          label: t("tasks.sections.overdue"),
+          items: visible.filter((i) => i.overdue && !i.done),
+        },
+        {
+          key: "due",
+          label: t("tasks.sections.due"),
+          items: visible.filter((i) => !i.overdue && !i.done),
+        },
         { key: "done", label: t("tasks.sections.done"), items: visible.filter((i) => i.done) },
       ].filter((s) => s.items.length > 0)
     : [{ key: "all", label: "", items: visible }];
@@ -156,7 +175,14 @@ export function TaskList({ items, today, goalOptions, groupByStatus = true, show
           ) : null}
           <ul className="divide-y divide-border rounded-lg border border-border bg-bg-surface">
             {section.items.map((item) => (
-              <TaskRow key={item.key} item={item} today={today} onToggle={toggle} onOpen={(i) => setSelectedKey(i.key)} showGoal={showGoal} />
+              <TaskRow
+                key={item.key}
+                item={item}
+                today={today}
+                onToggle={toggle}
+                onOpen={(i) => setSelectedKey(i.key)}
+                showGoal={showGoal}
+              />
             ))}
           </ul>
         </section>
@@ -175,7 +201,11 @@ export function TaskList({ items, today, goalOptions, groupByStatus = true, show
               title: selected.task.title,
               dueDate: selected.task.due_date,
               domain: selected.task.domain,
-              recurrence: selectedRule ? (selectedRule.freq === "DAILY" ? "daily" : "weekly") : "none",
+              recurrence: selectedRule
+                ? selectedRule.freq === "DAILY"
+                  ? "daily"
+                  : "weekly"
+                : "none",
               weekdays: selectedRule?.freq === "WEEKLY" ? selectedRule.byDay : [],
               goalId: selected.task.goal_id,
             }}
@@ -186,12 +216,29 @@ export function TaskList({ items, today, goalOptions, groupByStatus = true, show
           <div className="space-y-5">
             <div className="flex flex-wrap items-center gap-2 text-small text-text-secondary">
               <DomainTag domain={selected.task.domain} />
-              <span>{selected.overdue ? t("tasks.meta.overdueSince", { date: formatThaiDate(selected.date, "medium") }) : t("tasks.meta.due", { date: formatThaiDate(selected.date, "medium") })}</span>
-              {selectedRule ? <span>{selectedRule.freq === "DAILY" ? t("tasks.recurrence.daily") : t("tasks.recurrence.weekly")}</span> : null}
-              {selected.task.goal ? <span>{t("tasks.meta.goal", { title: selected.task.goal.title })}</span> : null}
+              <span>
+                {selected.overdue
+                  ? t("tasks.meta.overdueSince", { date: formatThaiDate(selected.date, "medium") })
+                  : t("tasks.meta.due", { date: formatThaiDate(selected.date, "medium") })}
+              </span>
+              {selectedRule ? (
+                <span>
+                  {selectedRule.freq === "DAILY"
+                    ? t("tasks.recurrence.daily")
+                    : t("tasks.recurrence.weekly")}
+                </span>
+              ) : null}
+              {selected.task.goal ? (
+                <span>{t("tasks.meta.goal", { title: selected.task.goal.title })}</span>
+              ) : null}
             </div>
 
-            <Button size="lg" className="w-full" variant={selected.done ? "outline" : "default"} onClick={() => toggle(selected, !selected.done)}>
+            <Button
+              size="lg"
+              className="w-full"
+              variant={selected.done ? "outline" : "default"}
+              onClick={() => toggle(selected, !selected.done)}
+            >
               {selected.done ? <Undo2 aria-hidden="true" /> : <Check aria-hidden="true" />}
               {selected.done ? t("tasks.markUndone") : t("tasks.markDone")}
             </Button>
@@ -199,20 +246,33 @@ export function TaskList({ items, today, goalOptions, groupByStatus = true, show
             <div>
               <p className="mb-2 text-caption text-text-secondary">{t("tasks.reschedule.label")}</p>
               <div className="flex flex-wrap gap-2">
-                <Button variant="outline" onClick={() => reschedule(selected, addDaysISO(today, 1))}>
+                <Button
+                  variant="outline"
+                  onClick={() => reschedule(selected, addDaysISO(today, 1))}
+                >
                   <CalendarClock aria-hidden="true" />
                   {t("tasks.reschedule.tomorrow")}
                 </Button>
-                <Button variant="outline" onClick={() => reschedule(selected, addDaysISO(today, 7))}>
+                <Button
+                  variant="outline"
+                  onClick={() => reschedule(selected, addDaysISO(today, 7))}
+                >
                   {t("tasks.reschedule.nextWeek")}
                 </Button>
-                <Button variant="outline" onClick={() => setPicking((v) => !v)} aria-expanded={picking}>
+                <Button
+                  variant="outline"
+                  onClick={() => setPicking((v) => !v)}
+                  aria-expanded={picking}
+                >
                   {t("tasks.reschedule.pickDate")}
                 </Button>
               </div>
               {picking ? (
                 <div className="mt-2">
-                  <DatePicker value={selected.task.due_date} onChange={(next) => next && reschedule(selected, next)} />
+                  <DatePicker
+                    value={selected.task.due_date}
+                    onChange={(next) => next && reschedule(selected, next)}
+                  />
                 </div>
               ) : null}
             </div>
@@ -222,7 +282,11 @@ export function TaskList({ items, today, goalOptions, groupByStatus = true, show
                 <Pencil aria-hidden="true" />
                 {t("common.edit")}
               </Button>
-              <Button variant="ghost" className="flex-1 text-danger-800 hover:bg-danger-50 hover:text-danger-800" onClick={() => remove(selected)}>
+              <Button
+                variant="ghost"
+                className="flex-1 text-danger-800 hover:bg-danger-50 hover:text-danger-800"
+                onClick={() => remove(selected)}
+              >
                 <Trash2 aria-hidden="true" />
                 {t("tasks.deleteTask")}
               </Button>

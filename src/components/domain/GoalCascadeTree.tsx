@@ -38,7 +38,10 @@ function TreeItem({ node, depth }: { node: GoalTreeNode; depth: number }) {
             onClick={() => setOpen((v) => !v)}
             className="mt-2 flex size-11 shrink-0 items-center justify-center rounded-md text-text-secondary hover:bg-bg-subtle focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none md:size-9"
           >
-            <ChevronRight className={cn("size-4 transition-transform", open && "rotate-90")} aria-hidden="true" />
+            <ChevronRight
+              className={cn("size-4 transition-transform", open && "rotate-90")}
+              aria-hidden="true"
+            />
           </button>
         ) : (
           <span className="size-11 shrink-0 md:size-9" aria-hidden="true" />

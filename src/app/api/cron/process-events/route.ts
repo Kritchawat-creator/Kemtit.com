@@ -8,7 +8,8 @@ export const maxDuration = 10; // Netlify function limit (R4)
 
 /** GitHub Actions ทุก 5 นาที (Decision 2.3) → ประมวลผล domain_events batch ≤ 20 */
 export async function POST(request: Request) {
-  if (!isAuthorizedCron(request)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!isAuthorizedCron(request))
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   try {
     const summary = await runProcessor();
     return NextResponse.json(summary);

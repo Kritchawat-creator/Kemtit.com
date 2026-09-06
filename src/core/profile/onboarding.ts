@@ -23,6 +23,7 @@ export function nextRouteFor(profile: ProfileGate | null | undefined): AppRoute 
 
 /** อนุญาต redirect เฉพาะ path ภายในแอป กัน open redirect */
 export function safeInternalPath(path: string | null | undefined): string | null {
-  if (!path || !path.startsWith("/") || path.startsWith("//") || path.startsWith("/api/")) return null;
+  if (!path || !path.startsWith("/") || path.startsWith("//") || path.startsWith("/api/"))
+    return null;
   return path;
 }

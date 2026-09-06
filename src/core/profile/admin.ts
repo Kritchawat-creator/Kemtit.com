@@ -30,7 +30,11 @@ export async function getLineStatus(userId: string): Promise<LineStatus | null> 
   };
 }
 
-export async function setLinkCode(userId: string, code: string, expiresAt: string): Promise<boolean> {
+export async function setLinkCode(
+  userId: string,
+  code: string,
+  expiresAt: string,
+): Promise<boolean> {
   const admin = createAdminSupabase();
   const { error } = await admin
     .from("user_profiles")
@@ -70,7 +74,12 @@ export async function unlinkLineByUserId(userId: string): Promise<boolean> {
   const admin = createAdminSupabase();
   const { error } = await admin
     .from("user_profiles")
-    .update({ line_user_id: null, line_linked_at: null, line_link_code: null, line_link_code_expires_at: null })
+    .update({
+      line_user_id: null,
+      line_linked_at: null,
+      line_link_code: null,
+      line_link_code_expires_at: null,
+    })
     .eq("id", userId);
   return !error;
 }
@@ -89,7 +98,11 @@ export async function unlinkLineByLineUserId(lineUserId: string): Promise<string
 
 export async function getProfileForNotification(userId: string) {
   const admin = createAdminSupabase();
-  const { data } = await admin.from("user_profiles").select("line_user_id, notify_overdue").eq("id", userId).maybeSingle();
+  const { data } = await admin
+    .from("user_profiles")
+    .select("line_user_id, notify_overdue")
+    .eq("id", userId)
+    .maybeSingle();
   return data;
 }
 

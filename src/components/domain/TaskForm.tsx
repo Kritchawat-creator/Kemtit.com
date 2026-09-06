@@ -17,7 +17,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { FormMessageI18n } from "@/components/ui/form-i18n";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import { DatePicker } from "./DatePicker";
@@ -60,11 +66,13 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
   function submit(values: TaskFormValues) {
     setServerError(null);
     startTransition(async () => {
-      const result = mode === "create" ? await createTask(values) : await updateTask({ id: taskId, values });
+      const result =
+        mode === "create" ? await createTask(values) : await updateTask({ id: taskId, values });
       if (!result.ok) {
         if (result.fieldErrors) {
           for (const [field, messages] of Object.entries(result.fieldErrors)) {
-            if (messages?.[0] && field in values) form.setError(field as keyof TaskFormValues, { message: messages[0] });
+            if (messages?.[0] && field in values)
+              form.setError(field as keyof TaskFormValues, { message: messages[0] });
           }
         }
         setServerError(result.error === "validation" && result.fieldErrors ? null : result.error);
@@ -86,7 +94,11 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
             <FormItem>
               <FormLabel>{t("tasks.form.title")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("tasks.form.titlePlaceholder")} className="h-12 text-body" {...field} />
+                <Input
+                  placeholder={t("tasks.form.titlePlaceholder")}
+                  className="h-12 text-body"
+                  {...field}
+                />
               </FormControl>
               <FormMessageI18n />
             </FormItem>
@@ -101,7 +113,10 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
               <FormItem>
                 <FormLabel>{t("tasks.form.dueDate")}</FormLabel>
                 <FormControl>
-                  <DatePicker value={field.value} onChange={(next) => next && field.onChange(next)} />
+                  <DatePicker
+                    value={field.value}
+                    onChange={(next) => next && field.onChange(next)}
+                  />
                 </FormControl>
                 <FormMessageI18n />
               </FormItem>
@@ -113,7 +128,10 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("tasks.form.goal")}</FormLabel>
-                <Select value={field.value ?? NO_GOAL} onValueChange={(v) => field.onChange(v === NO_GOAL ? null : v)}>
+                <Select
+                  value={field.value ?? NO_GOAL}
+                  onValueChange={(v) => field.onChange(v === NO_GOAL ? null : v)}
+                >
                   <FormControl>
                     <SelectTrigger className="h-12 w-full">
                       <SelectValue placeholder={t("tasks.form.noGoal")} />
@@ -154,14 +172,22 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
             <FormItem>
               <FormLabel>{t("tasks.recurrence.label")}</FormLabel>
               <FormControl>
-                <RadioGroup value={field.value} onValueChange={field.onChange} className="flex flex-wrap gap-2">
+                <RadioGroup
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  className="flex flex-wrap gap-2"
+                >
                   {RECURRENCE_OPTIONS.map((option) => (
                     <label
                       key={option}
                       htmlFor={`recurrence-${option}`}
                       className="flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-border px-4 text-small has-[[data-state=checked]]:border-brand-500 has-[[data-state=checked]]:bg-brand-50 has-[[data-state=checked]]:text-brand-800 md:min-h-9"
                     >
-                      <RadioGroupItem id={`recurrence-${option}`} value={option} className="sr-only" />
+                      <RadioGroupItem
+                        id={`recurrence-${option}`}
+                        value={option}
+                        className="sr-only"
+                      />
                       {t(`tasks.recurrence.${option}`)}
                     </label>
                   ))}
@@ -211,7 +237,11 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
         ) : null}
 
         <Button type="submit" size="lg" className="w-full" disabled={pending}>
-          {pending ? t("common.saving") : mode === "create" ? t("tasks.form.submitCreate") : t("tasks.form.submitEdit")}
+          {pending
+            ? t("common.saving")
+            : mode === "create"
+              ? t("tasks.form.submitCreate")
+              : t("tasks.form.submitEdit")}
         </Button>
       </form>
     </Form>

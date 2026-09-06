@@ -8,11 +8,19 @@ import { createServerSupabase } from "@/lib/supabase/server";
 
 import { requestOtpSchema, verifyOtpSchema } from "./schema";
 
-function mapAuthError(error: { code?: string; status?: number; message: string }, phase: "request" | "verify") {
-  if (error.status === 429 || error.code === "over_email_send_rate_limit" || error.code === "over_request_rate_limit") {
+function mapAuthError(
+  error: { code?: string; status?: number; message: string },
+  phase: "request" | "verify",
+) {
+  if (
+    error.status === 429 ||
+    error.code === "over_email_send_rate_limit" ||
+    error.code === "over_request_rate_limit"
+  ) {
     return "otpRateLimited";
   }
-  if (error.code === "email_address_invalid" || error.code === "validation_failed") return "invalidEmail";
+  if (error.code === "email_address_invalid" || error.code === "validation_failed")
+    return "invalidEmail";
   if (phase === "verify") return "otpInvalid";
   console.error("[auth] unexpected auth error", { code: error.code, status: error.status });
   return "generic";

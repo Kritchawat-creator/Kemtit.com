@@ -47,7 +47,11 @@ export function formatValueWithUnit(value: number, unit?: string | null): string
 type DateStyle = "short" | "medium" | "long" | "weekday" | "monthYear" | "day";
 
 const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
-  short: new Intl.DateTimeFormat(LOCALE_BUDDHIST, { day: "numeric", month: "short", timeZone: "UTC" }),
+  short: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  }),
   medium: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
     day: "numeric",
     month: "short",
@@ -66,7 +70,11 @@ const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
     month: "short",
     timeZone: "UTC",
   }),
-  monthYear: new Intl.DateTimeFormat(LOCALE_BUDDHIST, { month: "long", year: "numeric", timeZone: "UTC" }),
+  monthYear: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }),
   day: new Intl.DateTimeFormat(LOCALE_BUDDHIST, { day: "numeric", timeZone: "UTC" }),
 };
 
@@ -77,7 +85,10 @@ export function formatThaiDate(date: ISODate, style: DateStyle = "medium"): stri
   return dateFormatters[style].format(new Date(Date.UTC(y, m - 1, d)));
 }
 
-const buddhistYearOnly = new Intl.DateTimeFormat(LOCALE_BUDDHIST, { year: "numeric", timeZone: "UTC" });
+const buddhistYearOnly = new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
+  year: "numeric",
+  timeZone: "UTC",
+});
 
 /** ISO date → "พ.ศ. 2569" */
 export function formatThaiYear(date: ISODate): string {

@@ -29,7 +29,10 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <PageHeader title={t("title")} description={t("greeting", { date: formatThaiDate(today, "weekday") })} />
+      <PageHeader
+        title={t("title")}
+        description={t("greeting", { date: formatThaiDate(today, "weekday") })}
+      />
       <div className="grid gap-4 lg:grid-cols-2">
         {widgets.map(({ id, component: Widget, span }) => (
           <div key={id} className={span === 2 ? "lg:col-span-2" : undefined}>

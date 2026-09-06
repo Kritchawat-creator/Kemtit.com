@@ -7,7 +7,9 @@ export const LINK_CODE_TTL_MS = 10 * 60 * 1000;
 /** ตัด I, O, 0, 1 ออก กันอ่านสับสนตอนพิมพ์ในแชท */
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-export function generateLinkCode(random: (bytes: Uint8Array) => Uint8Array = (b) => globalThis.crypto.getRandomValues(b)): string {
+export function generateLinkCode(
+  random: (bytes: Uint8Array) => Uint8Array = (b) => globalThis.crypto.getRandomValues(b),
+): string {
   const bytes = random(new Uint8Array(LINK_CODE_LENGTH));
   return Array.from(bytes, (b) => ALPHABET[b % ALPHABET.length]).join("");
 }

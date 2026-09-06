@@ -9,12 +9,16 @@ export function uniqueEmail(prefix = "e2e") {
 
 export async function latestOtpFor(email: string, attempts = 30): Promise<string> {
   for (let i = 0; i < attempts; i++) {
-    const search = await fetch(`${MAILPIT_URL}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}`);
+    const search = await fetch(
+      `${MAILPIT_URL}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}`,
+    );
     if (search.ok) {
       const data = (await search.json()) as { messages?: { ID: string }[] };
       const first = data.messages?.[0];
       if (first) {
-        const detail = (await (await fetch(`${MAILPIT_URL}/api/v1/message/${first.ID}`)).json()) as {
+        const detail = (await (
+          await fetch(`${MAILPIT_URL}/api/v1/message/${first.ID}`)
+        ).json()) as {
           Text?: string;
           HTML?: string;
         };

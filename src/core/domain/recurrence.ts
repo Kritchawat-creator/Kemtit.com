@@ -9,14 +9,17 @@ export type WeekdayCode = (typeof WEEKDAY_CODES)[number];
 
 export type Recurrence = { freq: "DAILY" } | { freq: "WEEKLY"; byDay: number[] };
 
-const RULE_RE = /^FREQ=(DAILY|WEEKLY)(?:;BYDAY=((?:SU|MO|TU|WE|TH|FR|SA)(?:,(?:SU|MO|TU|WE|TH|FR|SA))*))?$/;
+const RULE_RE =
+  /^FREQ=(DAILY|WEEKLY)(?:;BYDAY=((?:SU|MO|TU|WE|TH|FR|SA)(?:,(?:SU|MO|TU|WE|TH|FR|SA))*))?$/;
 
 export function parseRRule(rule: string | null | undefined): Recurrence | null {
   if (!rule) return null;
   const match = RULE_RE.exec(rule);
   if (!match) return null;
   if (match[1] === "DAILY") return { freq: "DAILY" };
-  const byDay = (match[2] ? match[2].split(",") : []).map((code) => WEEKDAY_CODES.indexOf(code as WeekdayCode));
+  const byDay = (match[2] ? match[2].split(",") : []).map((code) =>
+    WEEKDAY_CODES.indexOf(code as WeekdayCode),
+  );
   return { freq: "WEEKLY", byDay: [...new Set(byDay)].sort((a, b) => a - b) };
 }
 
@@ -35,7 +38,12 @@ export function occursOn(recurrence: Recurrence, anchor: ISODate, date: ISODate)
   return days.includes(weekdayOf(date));
 }
 
-export function occurrencesBetween(recurrence: Recurrence, anchor: ISODate, from: ISODate, to: ISODate): ISODate[] {
+export function occurrencesBetween(
+  recurrence: Recurrence,
+  anchor: ISODate,
+  from: ISODate,
+  to: ISODate,
+): ISODate[] {
   const result: ISODate[] = [];
   let cursor = isBeforeISO(from, anchor) ? anchor : from;
   while (!isAfterISO(cursor, to)) {

@@ -17,7 +17,9 @@ describe("sellerFirstGoalSpec", () => {
     expect(spec.unit).toBe("THB");
     expect(spec.targetValue).toBe(50000);
     expect(spec.children).toHaveLength(5);
-    expect(spec.children?.every((c) => c.goalKind === "execution" && c.periodType === "week")).toBe(true);
+    expect(spec.children?.every((c) => c.goalKind === "execution" && c.periodType === "week")).toBe(
+      true,
+    );
     // สัปดาห์แรกเริ่ม 30 ส.ค. แต่ task ตัวอย่างต้องอยู่ในเดือน (1 ก.ย.)
     expect(spec.children?.[0]?.periodStart).toBe("2026-08-30");
     expect(spec.children?.[0]?.tasks?.[0]?.dueDate).toBe("2026-09-01");

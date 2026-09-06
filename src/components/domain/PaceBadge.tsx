@@ -14,7 +14,13 @@ const STYLE: Record<PaceStatus, string> = {
 export function PaceBadge({ status, className }: { status: PaceStatus; className?: string }) {
   const t = useTranslations("pace");
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-caption", STYLE[status], className)}>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2 py-0.5 text-caption",
+        STYLE[status],
+        className,
+      )}
+    >
       {t(status)}
     </span>
   );

@@ -25,7 +25,8 @@ export async function createFirstGoal(input: unknown): Promise<ActionResult<{ ne
   const t = await getTranslations("onboarding.firstGoal");
   const sampleKeys = ["1", "2", "3", "4", "5", "6"] as const;
   const spec = sellerFirstGoalSpec(parsed.data, {
-    monthGoalTitle: (monthStart) => t("monthGoalTitle", { month: formatThaiDate(monthStart, "monthYear") }),
+    monthGoalTitle: (monthStart) =>
+      t("monthGoalTitle", { month: formatThaiDate(monthStart, "monthYear") }),
     weekGoalTitle: (index, total) => t("weekGoalTitle", { index, total }),
     sampleTask: (index) => t(`sampleTasks.${sampleKeys[Math.min(index, sampleKeys.length) - 1]}`),
   });

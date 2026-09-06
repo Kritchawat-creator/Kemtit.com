@@ -29,7 +29,12 @@ describe("env", () => {
   });
 
   it("CI=true อย่างเดียวไม่ข้าม validation (Netlify ตั้ง CI=true และค่าอาจหลุดไป runtime)", () => {
-    stubEnv({ CI: "true", SKIP_ENV_VALIDATION: "", NEXT_PUBLIC_SUPABASE_URL: "", NEXT_PUBLIC_SUPABASE_ANON_KEY: "" });
+    stubEnv({
+      CI: "true",
+      SKIP_ENV_VALIDATION: "",
+      NEXT_PUBLIC_SUPABASE_URL: "",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
+    });
     expect(shouldSkipEnvValidation()).toBe(false);
     expect(() => getClientEnv()).toThrow(/NEXT_PUBLIC_SUPABASE_URL/);
   });

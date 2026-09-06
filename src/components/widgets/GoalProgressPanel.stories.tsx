@@ -48,6 +48,26 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const OnTrack: Story = {};
-export const Behind: Story = { args: { goal: { ...goal, current_value: 4000, progress: { ...goal.progress, percent: 8, current: 4000 }, pace: "behind" }, others: [] } };
-export const Reached: Story = { args: { goal: { ...goal, current_value: 50000, status: "completed", progress: { ...goal.progress, percent: 100, current: 50000 }, pace: "done" } } };
+export const Behind: Story = {
+  args: {
+    goal: {
+      ...goal,
+      current_value: 4000,
+      progress: { ...goal.progress, percent: 8, current: 4000 },
+      pace: "behind",
+    },
+    others: [],
+  },
+};
+export const Reached: Story = {
+  args: {
+    goal: {
+      ...goal,
+      current_value: 50000,
+      status: "completed",
+      progress: { ...goal.progress, percent: 100, current: 50000 },
+      pace: "done",
+    },
+  },
+};
 export const ExecutionMain: Story = { args: { goal: other, others: [] } };

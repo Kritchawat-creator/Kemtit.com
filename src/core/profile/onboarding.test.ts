@@ -7,7 +7,9 @@ describe("nextRouteFor", () => {
     expect(nextRouteFor(null)).toBe("/login");
   });
   it("ยังไม่เลือก persona → หน้าเลือก persona", () => {
-    expect(nextRouteFor({ active_persona: null, onboarding_completed_at: null })).toBe("/onboarding/persona");
+    expect(nextRouteFor({ active_persona: null, onboarding_completed_at: null })).toBe(
+      "/onboarding/persona",
+    );
   });
   it("เลือก persona แล้วแต่ยังไม่มี goal แรก → first-goal", () => {
     expect(nextRouteFor({ active_persona: "seller", onboarding_completed_at: null })).toBe(
@@ -15,9 +17,9 @@ describe("nextRouteFor", () => {
     );
   });
   it("onboarding จบ → dashboard", () => {
-    expect(nextRouteFor({ active_persona: "seller", onboarding_completed_at: "2026-09-05T00:00:00Z" })).toBe(
-      "/dashboard",
-    );
+    expect(
+      nextRouteFor({ active_persona: "seller", onboarding_completed_at: "2026-09-05T00:00:00Z" }),
+    ).toBe("/dashboard");
   });
 });
 

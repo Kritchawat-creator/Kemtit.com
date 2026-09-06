@@ -15,7 +15,9 @@ export async function GoalProgressWidget({ today }: { today: ISODate }) {
   const t = await getTranslations("widgets.goalProgress");
   const monthStart = startOfMonthISO(today);
   const goals = await listGoalsWithProgress();
-  const monthGoals = goals.filter((g) => g.period_type === "month" && g.period_start === monthStart);
+  const monthGoals = goals.filter(
+    (g) => g.period_type === "month" && g.period_start === monthStart,
+  );
   const main = monthGoals.find((g) => g.goal_kind === "metric") ?? monthGoals[0] ?? null;
   const others = monthGoals.filter((g) => g.id !== main?.id);
 

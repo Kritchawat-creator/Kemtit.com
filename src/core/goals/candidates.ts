@@ -1,4 +1,10 @@
-import { overlaps, parentPeriodType, periodOf, type Period, type PeriodType } from "@/core/domain/periods";
+import {
+  overlaps,
+  parentPeriodType,
+  periodOf,
+  type Period,
+  type PeriodType,
+} from "@/core/domain/periods";
 
 import type { ParentCandidate } from "./schema";
 

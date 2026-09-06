@@ -8,7 +8,10 @@ export type LineTextMessage = { type: "text"; text: string };
 export type LineApiResult = { ok: true } | { ok: false; status: number; error: string };
 
 export class LineClient {
-  constructor(private readonly accessToken: string, private readonly fetchImpl: typeof fetch = fetch) {}
+  constructor(
+    private readonly accessToken: string,
+    private readonly fetchImpl: typeof fetch = fetch,
+  ) {}
 
   private async post(path: string, body: unknown): Promise<LineApiResult> {
     const res = await this.fetchImpl(`${LINE_API}/${path}`, {
@@ -26,6 +29,9 @@ export class LineClient {
   }
 
   reply(replyToken: string, text: string): Promise<LineApiResult> {
-    return this.post("reply", { replyToken, messages: [{ type: "text", text } satisfies LineTextMessage] });
+    return this.post("reply", {
+      replyToken,
+      messages: [{ type: "text", text } satisfies LineTextMessage],
+    });
   }
 }

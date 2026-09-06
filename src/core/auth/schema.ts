@@ -2,7 +2,11 @@ import { z } from "zod";
 
 /** ข้อความ error เป็น key ใน th.json (errors.*) */
 export const requestOtpSchema = z.object({
-  email: z.email({ error: "invalidEmail" }).trim().toLowerCase().max(254, { error: "invalidEmail" }),
+  email: z
+    .email({ error: "invalidEmail" })
+    .trim()
+    .toLowerCase()
+    .max(254, { error: "invalidEmail" }),
 });
 export type RequestOtpInput = z.infer<typeof requestOtpSchema>;
 

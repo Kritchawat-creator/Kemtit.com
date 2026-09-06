@@ -93,8 +93,13 @@ export async function completeOnboarding(): Promise<ActionResult<{ next: AppRout
     .select("active_persona, onboarding_completed_at")
     .maybeSingle();
   if (error) return fail("generic");
-  if (data) await emitEvent(supabase, user.id, "onboarding.completed", { persona: data.active_persona ?? "unknown" });
+  if (data)
+    await emitEvent(supabase, user.id, "onboarding.completed", {
+      persona: data.active_persona ?? "unknown",
+    });
 
   revalidatePath("/", "layout");
-  return ok({ next: nextRouteFor(data ?? { active_persona: "seller", onboarding_completed_at: "done" }) });
+  return ok({
+    next: nextRouteFor(data ?? { active_persona: "seller", onboarding_completed_at: "done" }),
+  });
 }

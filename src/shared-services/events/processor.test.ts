@@ -16,9 +16,13 @@ const event = (over: Partial<DomainEventRow>): DomainEventRow => ({
   ...over,
 });
 
-function makeDeps(events: DomainEventRow[], over: Partial<ProcessorDeps> = {}): ProcessorDeps & { pushed: string[] } {
+function makeDeps(
+  events: DomainEventRow[],
+  over: Partial<ProcessorDeps> = {},
+): ProcessorDeps & { pushed: string[] } {
   const pushed: string[] = [];
-  const t = ((key: string, values?: Record<string, unknown>) => `${key}:${JSON.stringify(values ?? {})}`) as unknown as ProcessorDeps["t"];
+  const t = ((key: string, values?: Record<string, unknown>) =>
+    `${key}:${JSON.stringify(values ?? {})}`) as unknown as ProcessorDeps["t"];
   return {
     pushed,
     fetchBatch: vi.fn(async () => events),
@@ -51,7 +55,9 @@ describe("processEvents", () => {
   });
 
   it("user ไม่ได้เชื่อม LINE → skipped แต่ยัง processed", async () => {
-    const deps = makeDeps([event({})], { getProfile: vi.fn(async () => ({ line_user_id: null, notify_overdue: true })) });
+    const deps = makeDeps([event({})], {
+      getProfile: vi.fn(async () => ({ line_user_id: null, notify_overdue: true })),
+    });
     const summary = await processEvents(deps);
     expect(summary.sent).toBe(0);
     expect(summary.skipped).toBe(1);
@@ -59,18 +65,27 @@ describe("processEvents", () => {
   });
 
   it("task.overdue รวมหลายงานในข้อความเดียว และเคารพ notify_overdue", async () => {
-    const overdue = event({ event_type: "task.overdue", payload: { taskIds: ["a", "b", "c", "d", "e", "f", "g"], date: "2026-09-05" } });
+    const overdue = event({
+      event_type: "task.overdue",
+      payload: { taskIds: ["a", "b", "c", "d", "e", "f", "g"], date: "2026-09-05" },
+    });
     const deps = makeDeps([overdue]);
     await processEvents(deps);
     expect(deps.pushed).toHaveLength(1);
     expect(deps.pushed[0]).toContain("overdueMore");
-    const off = makeDeps([overdue], { getProfile: vi.fn(async () => ({ line_user_id: "U1", notify_overdue: false })) });
+    const off = makeDeps([overdue], {
+      getProfile: vi.fn(async () => ({ line_user_id: "U1", notify_overdue: false })),
+    });
     expect((await processEvents(off)).skipped).toBe(1);
   });
 
   it("ส่งไม่สำเร็จ → markFailed attempts+1 ไม่ mark processed", async () => {
     const deps = makeDeps([event({ attempts: 2 })], {
-      notifier: { channel: "line", dryRun: false, push: vi.fn(async () => ({ ok: false as const, error: "LINE 429" })) },
+      notifier: {
+        channel: "line",
+        dryRun: false,
+        push: vi.fn(async () => ({ ok: false as const, error: "LINE 429" })),
+      },
     });
     const summary = await processEvents(deps);
     expect(summary.failed).toBe(1);
@@ -79,7 +94,12 @@ describe("processEvents", () => {
   });
 
   it("event ที่เป็นแค่ log (task.completed) → processed + skipped", async () => {
-    const deps = makeDeps([event({ event_type: "task.completed", payload: { taskId: "t", goalId: null, date: "2026-09-05" } })]);
+    const deps = makeDeps([
+      event({
+        event_type: "task.completed",
+        payload: { taskId: "t", goalId: null, date: "2026-09-05" },
+      }),
+    ]);
     const summary = await processEvents(deps);
     expect(summary).toMatchObject({ processed: 1, skipped: 1, sent: 0 });
   });

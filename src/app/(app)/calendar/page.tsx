@@ -42,13 +42,21 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
       <div className="mb-4">
         <CalendarNav view={view} date={date} today={today} />
       </div>
-      {view === "day" ? <DayView date={date} today={today} /> : <RangeView view={view} date={date} today={today} />}
+      {view === "day" ? (
+        <DayView date={date} today={today} />
+      ) : (
+        <RangeView view={view} date={date} today={today} />
+      )}
     </>
   );
 }
 
 async function DayView({ date, today }: { date: string; today: string }) {
-  const [t, plan, goalOptions] = await Promise.all([getTranslations("calendar"), getDayPlan(date), listParentCandidates()]);
+  const [t, plan, goalOptions] = await Promise.all([
+    getTranslations("calendar"),
+    getDayPlan(date),
+    listParentCandidates(),
+  ]);
   const items = [...plan.overdue, ...plan.due, ...plan.done];
   return (
     <TaskList
@@ -74,9 +82,20 @@ async function DayView({ date, today }: { date: string; today: string }) {
   );
 }
 
-async function RangeView({ view, date, today }: { view: "week" | "month"; date: string; today: string }) {
+async function RangeView({
+  view,
+  date,
+  today,
+}: {
+  view: "week" | "month";
+  date: string;
+  today: string;
+}) {
   const { from, to } = calendarRange(view, date);
-  const [t, { tasks, completions }] = await Promise.all([getTranslations("calendar"), getRangeTasks(from, to)]);
+  const [t, { tasks, completions }] = await Promise.all([
+    getTranslations("calendar"),
+    getRangeTasks(from, to),
+  ]);
   const byDay = itemsByDay(tasks, completions, from, to);
   const hasAny = Object.keys(byDay).length > 0;
 

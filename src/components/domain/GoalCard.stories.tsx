@@ -36,7 +36,16 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const MetricOnTrack: Story = {};
-export const Behind: Story = { args: { goal: { ...base, current_value: 5000, progress: { ...base.progress, percent: 10, current: 5000 }, pace: "behind" } } };
+export const Behind: Story = {
+  args: {
+    goal: {
+      ...base,
+      current_value: 5000,
+      progress: { ...base.progress, percent: 10, current: 5000 },
+      pace: "behind",
+    },
+  },
+};
 export const ExecutionWithTasks: Story = {
   args: {
     goal: {
@@ -53,4 +62,14 @@ export const ExecutionWithTasks: Story = {
 };
 export const Compact: Story = { args: { compact: true } };
 export const Archived: Story = { args: { goal: { ...base, status: "archived" } } };
-export const Done: Story = { args: { goal: { ...base, current_value: 50000, status: "completed", progress: { ...base.progress, percent: 100, current: 50000 }, pace: "done" } } };
+export const Done: Story = {
+  args: {
+    goal: {
+      ...base,
+      current_value: 50000,
+      status: "completed",
+      progress: { ...base.progress, percent: 100, current: 50000 },
+      pace: "done",
+    },
+  },
+};

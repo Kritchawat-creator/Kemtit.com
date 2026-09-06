@@ -8,7 +8,12 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import { DOMAIN_STYLES } from "./DomainTag";
 
-type Props = { value: Domain; onValueChange: (value: Domain) => void; disabled?: boolean; id?: string };
+type Props = {
+  value: Domain;
+  onValueChange: (value: Domain) => void;
+  disabled?: boolean;
+  id?: string;
+};
 
 /** เลือก domain แบบ pill 6 ตัว (POC Decisions 3: domain UI ขั้นต่ำ) */
 export function DomainSelect({ value, onValueChange, disabled, id }: Props) {
@@ -33,7 +38,10 @@ export function DomainSelect({ value, onValueChange, disabled, id }: Props) {
             DOMAIN_STYLES[domain].selected,
           )}
         >
-          <span className={cn("size-2 rounded-full", DOMAIN_STYLES[domain].dot)} aria-hidden="true" />
+          <span
+            className={cn("size-2 rounded-full", DOMAIN_STYLES[domain].dot)}
+            aria-hidden="true"
+          />
           {t(domain)}
         </ToggleGroupItem>
       ))}

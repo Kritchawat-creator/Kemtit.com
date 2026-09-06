@@ -2,7 +2,12 @@ import "server-only";
 
 import { matchesDomainFilter, type DomainFilter } from "@/core/domain/domains";
 import { periodOf, type Period, type PeriodType } from "@/core/domain/periods";
-import { buildProgressIndex, paceStatus, type PaceStatus, type ProgressInfo } from "@/core/domain/progress";
+import {
+  buildProgressIndex,
+  paceStatus,
+  type PaceStatus,
+  type ProgressInfo,
+} from "@/core/domain/progress";
 import type { Task } from "@/core/tasks/schema";
 import { type ISODate, todayBkk } from "@/lib/date";
 import { createServerSupabase } from "@/lib/supabase/server";
@@ -17,7 +22,11 @@ export type GoalTreeNode = { goal: GoalWithProgress; children: GoalTreeNode[] };
 
 const PERIOD_ORDER: Record<PeriodType, number> = { year: 0, quarter: 1, month: 2, week: 3, day: 4 };
 
-function decorate(goals: Goal[], tasks: Pick<Task, "goal_id" | "completed_at" | "recurrence_rule">[], today: ISODate) {
+function decorate(
+  goals: Goal[],
+  tasks: Pick<Task, "goal_id" | "completed_at" | "recurrence_rule">[],
+  today: ISODate,
+) {
   const index = buildProgressIndex(goals, tasks);
   return goals.map<GoalWithProgress>((goal) => {
     const progress = index.get(goal.id) ?? { percent: 0, kind: goal.goal_kind, childCount: 0 };
@@ -32,11 +41,18 @@ export async function listGoalsWithProgress(options?: {
   domainFilter?: DomainFilter;
 }): Promise<GoalWithProgress[]> {
   const supabase = await createServerSupabase();
-  let query = supabase.from("goals").select("*").order("period_start", { ascending: true }).order("created_at");
+  let query = supabase
+    .from("goals")
+    .select("*")
+    .order("period_start", { ascending: true })
+    .order("created_at");
   if (!options?.includeArchived) query = query.neq("status", "archived");
   const [{ data: goals, error }, { data: tasks, error: taskError }] = await Promise.all([
     query,
-    supabase.from("tasks").select("goal_id, completed_at, recurrence_rule").not("goal_id", "is", null),
+    supabase
+      .from("tasks")
+      .select("goal_id, completed_at, recurrence_rule")
+      .not("goal_id", "is", null),
   ]);
   if (error || taskError) {
     console.error("[goals] list failed", { code: error?.code ?? taskError?.code });
@@ -45,7 +61,11 @@ export async function listGoalsWithProgress(options?: {
   const today = todayBkk();
   const decorated = decorate((goals ?? []) as Goal[], tasks ?? [], today)
     .filter((g) => matchesDomainFilter(g.domain, options?.domainFilter ?? "all"))
-    .sort((a, b) => PERIOD_ORDER[a.period_type] - PERIOD_ORDER[b.period_type] || a.period_start.localeCompare(b.period_start));
+    .sort(
+      (a, b) =>
+        PERIOD_ORDER[a.period_type] - PERIOD_ORDER[b.period_type] ||
+        a.period_start.localeCompare(b.period_start),
+    );
   return decorated;
 }
 

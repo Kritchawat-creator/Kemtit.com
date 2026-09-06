@@ -20,7 +20,10 @@ type Props = {
   className?: string;
 };
 
-const buddhistCaption = new Intl.DateTimeFormat("th-TH-u-ca-buddhist", { month: "long", year: "numeric" });
+const buddhistCaption = new Intl.DateTimeFormat("th-TH-u-ca-buddhist", {
+  month: "long",
+  year: "numeric",
+});
 const buddhistYear = new Intl.DateTimeFormat("th-TH-u-ca-buddhist", { year: "numeric" });
 
 /** เลือกวันที่ — ปฏิทินไทย พ.ศ. สัปดาห์เริ่มอาทิตย์ (Design §12, Q16) */

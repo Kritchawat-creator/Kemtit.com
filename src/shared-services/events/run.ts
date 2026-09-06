@@ -2,7 +2,12 @@ import "server-only";
 
 import { getTranslations } from "next-intl/server";
 
-import { fetchUnprocessedEvents, insertEventAsAdmin, markEventFailed, markEventProcessed } from "@/core/events/admin";
+import {
+  fetchUnprocessedEvents,
+  insertEventAsAdmin,
+  markEventFailed,
+  markEventProcessed,
+} from "@/core/events/admin";
 import { getProfileForNotification } from "@/core/profile/admin";
 import { getTaskTitles } from "@/core/tasks/admin";
 import { getClientEnv } from "@/lib/env";
@@ -19,7 +24,8 @@ export async function runProcessor(): Promise<ProcessorSummary> {
     markFailed: markEventFailed,
     getProfile: getProfileForNotification,
     getTaskTitles,
-    recordSent: (userId, kind, dryRun) => insertEventAsAdmin(userId, "notification.sent", { channel: "line", kind, dryRun }),
+    recordSent: (userId, kind, dryRun) =>
+      insertEventAsAdmin(userId, "notification.sent", { channel: "line", kind, dryRun }),
     notifier: getNotifier(),
     t,
     appUrl: getClientEnv().NEXT_PUBLIC_APP_URL,

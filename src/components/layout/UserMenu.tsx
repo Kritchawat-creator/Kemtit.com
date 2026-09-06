@@ -25,14 +25,21 @@ export function UserMenu({ displayName, email }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t("a11y.userMenu")} className="rounded-full">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={t("a11y.userMenu")}
+          className="rounded-full"
+        >
           <Avatar>
             <AvatarFallback className="bg-brand-100 text-brand-800">{initial}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8} className="min-w-56">
-        <DropdownMenuLabel className="truncate text-small font-normal text-text-secondary">{label}</DropdownMenuLabel>
+        <DropdownMenuLabel className="truncate text-small font-normal text-text-secondary">
+          {label}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <form action={signOut}>
           <DropdownMenuItem asChild>

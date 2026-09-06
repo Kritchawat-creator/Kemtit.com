@@ -26,7 +26,9 @@ test("เพิ่มงานให้เป้าสัปดาห์ ติ�
   await expect(page.getByText("100%").first()).toBeVisible({ timeout: 15_000 });
 });
 
-test("task ซ้ำทุกวัน: ติ๊กวันนี้เป็นเสร็จ คงอยู่หลัง reload และยกเลิกได้ (task_completions)", async ({ page }) => {
+test("task ซ้ำทุกวัน: ติ๊กวันนี้เป็นเสร็จ คงอยู่หลัง reload และยกเลิกได้ (task_completions)", async ({
+  page,
+}) => {
   await onboardNewUser(page, "recurring");
 
   // สร้าง task ซ้ำทุกวันผูกกับเป้าเดือน
@@ -39,7 +41,10 @@ test("task ซ้ำทุกวัน: ติ๊กวันนี้เป็�
   await page.getByRole("button", { name: "บันทึกงาน" }).click();
   await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
 
-  await page.getByRole("link", { name: /ยอดขาย/ }).first().click();
+  await page
+    .getByRole("link", { name: /ยอดขาย/ })
+    .first()
+    .click();
   const box = page.getByRole("checkbox", { name: /เช็คสต็อกสินค้า/ });
   await expect(box).toBeVisible();
   // UI ติ๊กแบบ optimistic ทันที — ต้องรอ response ของ server action (POST) ก่อน reload ไม่งั้น reload จะยกเลิก request

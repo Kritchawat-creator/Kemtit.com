@@ -24,7 +24,11 @@ export async function generateMetadata(): Promise<Metadata> {
 function lineConfig() {
   try {
     const env = getLineEnv();
-    return { configured: true, dryRun: !env.accessToken, addFriendUrl: env.basicId ? `https://line.me/R/ti/p/${env.basicId}` : null };
+    return {
+      configured: true,
+      dryRun: !env.accessToken,
+      addFriendUrl: env.basicId ? `https://line.me/R/ti/p/${env.basicId}` : null,
+    };
   } catch {
     return { configured: false, dryRun: true, addFriendUrl: null };
   }
@@ -35,7 +39,10 @@ export default async function SettingsPage() {
   const me = await getMe();
   if (!me) redirect(ROUTES.login);
 
-  const [t, lineStatus] = await Promise.all([getTranslations("settings"), getLineStatus(me.userId)]);
+  const [t, lineStatus] = await Promise.all([
+    getTranslations("settings"),
+    getLineStatus(me.userId),
+  ]);
   const line = lineConfig();
   const codeAlive = lineStatus?.code && !isLinkCodeExpired(lineStatus.codeExpiresAt);
 
@@ -84,11 +91,26 @@ export default async function SettingsPage() {
   );
 }
 
-function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section aria-label={title} className="rounded-lg border border-border bg-bg-surface p-4 md:p-5">
+    <section
+      aria-label={title}
+      className="rounded-lg border border-border bg-bg-surface p-4 md:p-5"
+    >
       <h2 className="text-h2 text-text-primary">{title}</h2>
-      {description ? <p className="mt-0.5 mb-4 text-small text-text-secondary">{description}</p> : <div className="mb-4" />}
+      {description ? (
+        <p className="mt-0.5 mb-4 text-small text-text-secondary">{description}</p>
+      ) : (
+        <div className="mb-4" />
+      )}
       {children}
     </section>
   );

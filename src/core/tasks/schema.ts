@@ -45,7 +45,9 @@ export const toggleTaskSchema = z.object({ id: z.uuid(), date: isoDateSchema, do
 export const rescheduleTaskSchema = z.object({ id: z.uuid(), dueDate: isoDateSchema });
 export const deleteTaskSchema = z.object({ id: z.uuid() });
 
-export function recurrenceRuleFromForm(values: Pick<TaskFormValues, "recurrence" | "weekdays">): string | null {
+export function recurrenceRuleFromForm(
+  values: Pick<TaskFormValues, "recurrence" | "weekdays">,
+): string | null {
   const recurrence: Recurrence | null =
     values.recurrence === "daily"
       ? { freq: "DAILY" }

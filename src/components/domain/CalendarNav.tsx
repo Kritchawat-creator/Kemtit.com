@@ -18,7 +18,10 @@ export function CalendarNav({ view, date, today }: Props) {
   const t = useTranslations("calendar");
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <nav aria-label={t("views.label")} className="inline-flex rounded-md border border-border bg-bg-surface p-0.5">
+      <nav
+        aria-label={t("views.label")}
+        className="inline-flex rounded-md border border-border bg-bg-surface p-0.5"
+      >
         {CALENDAR_VIEWS.map((v) => (
           <Link
             key={v}
@@ -26,7 +29,9 @@ export function CalendarNav({ view, date, today }: Props) {
             aria-current={view === v ? "page" : undefined}
             className={cn(
               "inline-flex min-h-10 items-center rounded-sm px-4 text-small transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none md:min-h-8",
-              view === v ? "bg-brand-50 font-medium text-brand-800" : "text-text-secondary hover:text-text-primary",
+              view === v
+                ? "bg-brand-50 font-medium text-brand-800"
+                : "text-text-secondary hover:text-text-primary",
             )}
           >
             {t(`views.${v}`)}
@@ -35,7 +40,10 @@ export function CalendarNav({ view, date, today }: Props) {
       </nav>
       <div className="flex items-center gap-1">
         <Button variant="outline" size="icon" asChild>
-          <Link href={calendarHref(view, shiftCalendarDate(view, date, -1))} aria-label={t("nav.prev")}>
+          <Link
+            href={calendarHref(view, shiftCalendarDate(view, date, -1))}
+            aria-label={t("nav.prev")}
+          >
             <ChevronLeft aria-hidden="true" />
           </Link>
         </Button>
@@ -43,7 +51,10 @@ export function CalendarNav({ view, date, today }: Props) {
           <Link href={calendarHref(view, today)}>{t("nav.today")}</Link>
         </Button>
         <Button variant="outline" size="icon" asChild>
-          <Link href={calendarHref(view, shiftCalendarDate(view, date, 1))} aria-label={t("nav.next")}>
+          <Link
+            href={calendarHref(view, shiftCalendarDate(view, date, 1))}
+            aria-label={t("nav.next")}
+          >
             <ChevronRight aria-hidden="true" />
           </Link>
         </Button>

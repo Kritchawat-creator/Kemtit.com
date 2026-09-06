@@ -14,7 +14,8 @@ export async function runScanOverdue(): Promise<ScanSummary & { date: string }> 
     {
       listCandidates: listOverdueScanCandidates,
       listOverdueTaskIds: (userId, date) => listOverdueTaskIds(userId, date),
-      insertOverdueEvent: (userId, taskIds, date) => insertEventAsAdmin(userId, "task.overdue", { taskIds, date }),
+      insertOverdueEvent: (userId, taskIds, date) =>
+        insertEventAsAdmin(userId, "task.overdue", { taskIds, date }),
       setNotified: setOverdueNotified,
     },
     today,

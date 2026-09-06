@@ -16,7 +16,9 @@ export const CALENDAR_VIEWS = ["day", "week", "month"] as const;
 export type CalendarView = (typeof CALENDAR_VIEWS)[number];
 
 export function parseCalendarView(value: unknown): CalendarView {
-  return typeof value === "string" && (CALENDAR_VIEWS as readonly string[]).includes(value) ? (value as CalendarView) : "week";
+  return typeof value === "string" && (CALENDAR_VIEWS as readonly string[]).includes(value)
+    ? (value as CalendarView)
+    : "week";
 }
 
 /** ช่วงวันที่ต้องดึงข้อมูล — เดือนใช้ช่วง grid (อาทิตย์แรก → เสาร์สุดท้าย) */

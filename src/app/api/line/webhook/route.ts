@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { insertEventAsAdmin } from "@/core/events/admin";
-import { findProfileByLinkCode, linkLineAccount, unlinkLineByLineUserId } from "@/core/profile/admin";
+import {
+  findProfileByLinkCode,
+  linkLineAccount,
+  unlinkLineByLineUserId,
+} from "@/core/profile/admin";
 import { isLinkCodeExpired, normalizeLinkCode } from "@/core/profile/line";
 import { getLineEnv } from "@/lib/env.server";
 import { replyText } from "@/shared-services/notifications/line/notifier";
@@ -18,7 +22,10 @@ const lineEventSchema = z.object({
   source: z.object({ type: z.string(), userId: z.string().optional() }).optional(),
   message: z.object({ type: z.string(), text: z.string().optional() }).optional(),
 });
-const bodySchema = z.object({ destination: z.string().optional(), events: z.array(lineEventSchema).default([]) });
+const bodySchema = z.object({
+  destination: z.string().optional(),
+  events: z.array(lineEventSchema).default([]),
+});
 type LineEvent = z.infer<typeof lineEventSchema>;
 type LineT = Awaited<ReturnType<typeof getTranslations<"line">>>;
 
@@ -82,7 +89,8 @@ async function handleEvent(event: LineEvent, t: LineT): Promise<boolean> {
     }
     const linked = await linkLineAccount(profile.id, lineUserId);
     if (linked) await insertEventAsAdmin(profile.id, "line.linked", {});
-    if (event.replyToken) await replyText(event.replyToken, linked ? t("linkSuccess") : t("linkInvalid"));
+    if (event.replyToken)
+      await replyText(event.replyToken, linked ? t("linkSuccess") : t("linkInvalid"));
     return true;
   }
 

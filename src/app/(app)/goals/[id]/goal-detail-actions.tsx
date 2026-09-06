@@ -101,7 +101,11 @@ export function GoalDetailActions({ goal, parentCandidates }: Props) {
         </Button>
       )}
 
-      <ResponsiveDialog open={dialog === "edit"} onOpenChange={(o) => !o && setDialog(null)} title={t("goals.edit")}>
+      <ResponsiveDialog
+        open={dialog === "edit"}
+        onOpenChange={(o) => !o && setDialog(null)}
+        title={t("goals.edit")}
+      >
         <GoalForm
           mode="edit"
           goalId={goal.id}

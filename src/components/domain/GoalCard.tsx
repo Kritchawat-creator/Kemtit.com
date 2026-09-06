@@ -27,7 +27,10 @@ export function GoalCard({ goal, compact = false, className }: Props) {
           target: formatValueWithUnit(progress.target ?? 0, unit),
         })
       : (progress.tasksTotal ?? 0) > 0
-        ? t("progress.tasksDone", { done: progress.tasksDone ?? 0, total: progress.tasksTotal ?? 0 })
+        ? t("progress.tasksDone", {
+            done: progress.tasksDone ?? 0,
+            total: progress.tasksTotal ?? 0,
+          })
         : progress.childCount > 0
           ? t("progress.children", { count: progress.childCount })
           : t("progress.noChildren");
@@ -43,7 +46,14 @@ export function GoalCard({ goal, compact = false, className }: Props) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className={cn("truncate text-text-primary", compact ? "text-body font-medium" : "text-h3")}>{goal.title}</h3>
+          <h3
+            className={cn(
+              "truncate text-text-primary",
+              compact ? "text-body font-medium" : "text-h3",
+            )}
+          >
+            {goal.title}
+          </h3>
           <div className="mt-1 flex flex-wrap items-center gap-2">
             <DomainTag domain={goal.domain} />
             <PeriodLabel period={goal.period} className="text-caption text-text-secondary" />
@@ -60,7 +70,12 @@ export function GoalCard({ goal, compact = false, className }: Props) {
           {formatPercent(progress.percent / 100)}
         </span>
       </div>
-      <ProgressBar value={progress.percent} domain={goal.domain} size={compact ? "sm" : "md"} className="mt-3" />
+      <ProgressBar
+        value={progress.percent}
+        domain={goal.domain}
+        size={compact ? "sm" : "md"}
+        className="mt-3"
+      />
       {!compact ? <p className="mt-2 text-small text-text-secondary">{detail}</p> : null}
     </Link>
   );

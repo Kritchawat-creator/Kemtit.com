@@ -33,8 +33,14 @@ export default async function FirstGoalPage() {
       <p className="mt-1 mb-6 text-body text-text-secondary">{t("subtitle")}</p>
       <FirstGoalForm
         monthOptions={[
-          { value: thisMonth.start, label: t("thisMonth", { month: formatThaiDate(thisMonth.start, "monthYear") }) },
-          { value: nextMonth.start, label: t("nextMonth", { month: formatThaiDate(nextMonth.start, "monthYear") }) },
+          {
+            value: thisMonth.start,
+            label: t("thisMonth", { month: formatThaiDate(thisMonth.start, "monthYear") }),
+          },
+          {
+            value: nextMonth.start,
+            label: t("nextMonth", { month: formatThaiDate(nextMonth.start, "monthYear") }),
+          },
         ]}
         defaultMonth={fewDaysLeft ? nextMonth.start : thisMonth.start}
         fewDaysLeft={fewDaysLeft}

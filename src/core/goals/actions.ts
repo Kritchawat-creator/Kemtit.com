@@ -36,7 +36,11 @@ function revalidateGoals() {
 }
 
 /** ตรวจว่า parent เป็นของ user (RLS) และช่วงเวลาลูก "ทับ" กับแม่ (Decision 1.4) */
-async function validateParent(supabase: ServerSupabase, parentId: string, values: Pick<GoalFormValues, "periodType" | "periodStart">) {
+async function validateParent(
+  supabase: ServerSupabase,
+  parentId: string,
+  values: Pick<GoalFormValues, "periodType" | "periodStart">,
+) {
   const { data: parent } = await supabase
     .from("goals")
     .select("id, period_type, period_start")
@@ -76,7 +80,11 @@ export async function createGoal(input: unknown): Promise<ActionResult<{ id: str
     if (problem) return fail(problem);
   }
 
-  const { data, error } = await supabase.from("goals").insert(toInsert(user.id, parsed.data)).select("id").single();
+  const { data, error } = await supabase
+    .from("goals")
+    .insert(toInsert(user.id, parsed.data))
+    .select("id")
+    .single();
   if (error || !data) {
     console.error("[goals] create failed", { code: error?.code });
     return fail("generic");
@@ -108,7 +116,12 @@ export async function updateGoal(input: unknown): Promise<ActionResult<{ id: str
 
   const { user_id: _ignored, ...patch } = toInsert(user.id, values);
   void _ignored;
-  const { data, error } = await supabase.from("goals").update(patch).eq("id", id).select("id").maybeSingle();
+  const { data, error } = await supabase
+    .from("goals")
+    .update(patch)
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
   if (error) {
     console.error("[goals] update failed", { code: error.code });
     return fail("generic");
@@ -154,7 +167,11 @@ export async function updateCurrentValue(
   const user = await requireUser(supabase);
   if (!user) return fail("unauthorized");
 
-  const { data: goal } = await supabase.from("goals").select("*").eq("id", parsed.data.id).maybeSingle();
+  const { data: goal } = await supabase
+    .from("goals")
+    .select("*")
+    .eq("id", parsed.data.id)
+    .maybeSingle();
   if (!goal) return fail("notFound");
   if (goal.goal_kind !== "metric") return fail("notMetric");
 
@@ -223,7 +240,13 @@ export async function createGoalCascade(input: unknown): Promise<ActionResult<{ 
     });
     if (spec.tasks?.length) {
       const { error: taskError } = await supabase.from("tasks").insert(
-        spec.tasks.map((t) => ({ user_id: user.id, goal_id: data.id, title: t.title, due_date: t.dueDate, domain: t.domain })),
+        spec.tasks.map((t) => ({
+          user_id: user.id,
+          goal_id: data.id,
+          title: t.title,
+          due_date: t.dueDate,
+          domain: t.domain,
+        })),
       );
       if (taskError) console.error("[goals] cascade tasks failed", { code: taskError.code });
     }

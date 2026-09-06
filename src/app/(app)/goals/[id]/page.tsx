@@ -46,7 +46,9 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
   const today = todayBkk();
   const remainingDays = daysLeft(goal.period, today);
   const isMetric = goal.progress.kind === "metric";
-  const remaining = isMetric ? Math.max(0, (goal.progress.target ?? 0) - (goal.progress.current ?? 0)) : null;
+  const remaining = isMetric
+    ? Math.max(0, (goal.progress.target ?? 0) - (goal.progress.current ?? 0))
+    : null;
 
   return (
     <>
@@ -61,11 +63,22 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
 
       <section
         aria-labelledby="goal-title"
-        className={cn("rounded-xl border border-border bg-bg-surface p-5 md:p-8", goal.status === "archived" && "opacity-80")}
+        className={cn(
+          "rounded-xl border border-border bg-bg-surface p-5 md:p-8",
+          goal.status === "archived" && "opacity-80",
+        )}
       >
         <div className="flex flex-col gap-6 md:flex-row md:items-center">
-          <ProgressRing value={goal.progress.percent} domain={goal.domain} size={160} strokeWidth={12} className="mx-auto md:mx-0">
-            <span className="text-display text-brand-800">{formatPercent(goal.progress.percent / 100)}</span>
+          <ProgressRing
+            value={goal.progress.percent}
+            domain={goal.domain}
+            size={160}
+            strokeWidth={12}
+            className="mx-auto md:mx-0"
+          >
+            <span className="text-display text-brand-800">
+              {formatPercent(goal.progress.percent / 100)}
+            </span>
             <span className="text-caption text-text-secondary">{t("progress.label")}</span>
           </ProgressRing>
 
@@ -74,7 +87,9 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
               <DomainTag domain={goal.domain} size="md" />
               <PeriodLabel period={goal.period} className="text-small text-text-secondary" />
               {goal.status === "archived" ? (
-                <Badge variant="outline" className="rounded-full">{t("goals.statusArchived")}</Badge>
+                <Badge variant="outline" className="rounded-full">
+                  {t("goals.statusArchived")}
+                </Badge>
               ) : goal.status === "completed" ? (
                 <Badge className="rounded-full">{t("goals.statusCompleted")}</Badge>
               ) : (
@@ -88,19 +103,47 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
             <div className="grid gap-3 sm:grid-cols-3">
               {isMetric ? (
                 <>
-                  <StatTile label={t("goals.currentValueLabel")} value={formatValueWithUnit(goal.progress.current ?? 0, unit)} hint={t("progress.ofTarget", { current: formatValueWithUnit(goal.progress.current ?? 0, unit), target: formatValueWithUnit(goal.progress.target ?? 0, unit) })} />
-                  <StatTile label={t("progress.remaining", { remaining: "" }).trim()} value={formatValueWithUnit(remaining ?? 0, unit)} tone={goal.pace === "behind" ? "warning" : "default"} />
+                  <StatTile
+                    label={t("goals.currentValueLabel")}
+                    value={formatValueWithUnit(goal.progress.current ?? 0, unit)}
+                    hint={t("progress.ofTarget", {
+                      current: formatValueWithUnit(goal.progress.current ?? 0, unit),
+                      target: formatValueWithUnit(goal.progress.target ?? 0, unit),
+                    })}
+                  />
+                  <StatTile
+                    label={t("progress.remaining", { remaining: "" }).trim()}
+                    value={formatValueWithUnit(remaining ?? 0, unit)}
+                    tone={goal.pace === "behind" ? "warning" : "default"}
+                  />
                   <StatTile
                     label={t("progress.daysLeft", { days: remainingDays })}
-                    value={remainingDays > 0 && (remaining ?? 0) > 0 ? formatValueWithUnit(Math.ceil((remaining ?? 0) / remainingDays), unit) : "—"}
-                    hint={remainingDays > 0 && (remaining ?? 0) > 0 ? t("progress.perDayNeeded", { amount: "" }).trim() : undefined}
+                    value={
+                      remainingDays > 0 && (remaining ?? 0) > 0
+                        ? formatValueWithUnit(Math.ceil((remaining ?? 0) / remainingDays), unit)
+                        : "—"
+                    }
+                    hint={
+                      remainingDays > 0 && (remaining ?? 0) > 0
+                        ? t("progress.perDayNeeded", { amount: "" }).trim()
+                        : undefined
+                    }
                   />
                 </>
               ) : (
                 <>
-                  <StatTile label={t("goals.tasks")} value={`${formatNumber(goal.progress.tasksDone ?? 0)}/${formatNumber(goal.progress.tasksTotal ?? 0)}`} />
-                  <StatTile label={t("goals.children")} value={formatNumber(goal.progress.childCount)} />
-                  <StatTile label={t("progress.daysLeft", { days: remainingDays })} value={formatThaiDate(goal.period.end, "medium")} />
+                  <StatTile
+                    label={t("goals.tasks")}
+                    value={`${formatNumber(goal.progress.tasksDone ?? 0)}/${formatNumber(goal.progress.tasksTotal ?? 0)}`}
+                  />
+                  <StatTile
+                    label={t("goals.children")}
+                    value={formatNumber(goal.progress.childCount)}
+                  />
+                  <StatTile
+                    label={t("progress.daysLeft", { days: remainingDays })}
+                    value={formatThaiDate(goal.period.end, "medium")}
+                  />
                 </>
               )}
             </div>

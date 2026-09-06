@@ -56,11 +56,18 @@ export function PersonaPicker() {
               htmlFor={`persona-${id}`}
               className={cn(
                 "flex cursor-pointer items-center gap-4 rounded-lg border bg-bg-surface p-4 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
-                active ? "border-brand-500 bg-brand-50" : "border-border hover:border-border-strong",
+                active
+                  ? "border-brand-500 bg-brand-50"
+                  : "border-border hover:border-border-strong",
                 !enabled && "cursor-not-allowed opacity-60",
               )}
             >
-              <RadioGroupItem id={`persona-${id}`} value={id} disabled={!enabled} className="sr-only" />
+              <RadioGroupItem
+                id={`persona-${id}`}
+                value={id}
+                disabled={!enabled}
+                className="sr-only"
+              />
               <span
                 className={cn(
                   "flex size-12 shrink-0 items-center justify-center rounded-full",

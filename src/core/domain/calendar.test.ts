@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { calendarRange, itemsByDay, monthGrid, parseCalendarView, shiftCalendarDate } from "./calendar";
+import {
+  calendarRange,
+  itemsByDay,
+  monthGrid,
+  parseCalendarView,
+  shiftCalendarDate,
+} from "./calendar";
 
 describe("calendar", () => {
   it("ช่วงของแต่ละมุมมอง (สัปดาห์เริ่มอาทิตย์, เดือน = grid)", () => {
@@ -30,8 +36,24 @@ describe("calendar", () => {
   it("itemsByDay กระจาย task ซ้ำทุกวันลงทุกวันในช่วง", () => {
     const byDay = itemsByDay(
       [
-        { id: "d", title: "d", domain: "work", due_date: "2026-09-01", recurrence_rule: "FREQ=DAILY", completed_at: null, goal_id: null },
-        { id: "o", title: "o", domain: "work", due_date: "2026-09-03", recurrence_rule: null, completed_at: null, goal_id: null },
+        {
+          id: "d",
+          title: "d",
+          domain: "work",
+          due_date: "2026-09-01",
+          recurrence_rule: "FREQ=DAILY",
+          completed_at: null,
+          goal_id: null,
+        },
+        {
+          id: "o",
+          title: "o",
+          domain: "work",
+          due_date: "2026-09-03",
+          recurrence_rule: null,
+          completed_at: null,
+          goal_id: null,
+        },
       ],
       [{ task_id: "d", completed_on: "2026-09-02" }],
       "2026-09-01",

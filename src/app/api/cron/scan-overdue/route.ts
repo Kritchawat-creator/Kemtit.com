@@ -8,7 +8,8 @@ export const maxDuration = 10;
 
 /** GitHub Actions วันละครั้ง 08:00 Asia/Bangkok → emit task.overdue 1 event/user (Decision 2.2) */
 export async function POST(request: Request) {
-  if (!isAuthorizedCron(request)) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!isAuthorizedCron(request))
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   try {
     const summary = await runScanOverdue();
     return NextResponse.json(summary);

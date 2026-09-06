@@ -53,7 +53,8 @@ export function LoginForm({ next }: { next?: string }) {
     if (step === "code") otpRef.current?.focus();
   }, [step]);
 
-  const translateError = (key: string) => (te.has(key as ErrorKey) ? te(key as ErrorKey) : te("generic"));
+  const translateError = (key: string) =>
+    te.has(key as ErrorKey) ? te(key as ErrorKey) : te("generic");
 
   function sendCode(values: RequestOtpInput) {
     setServerError(null);

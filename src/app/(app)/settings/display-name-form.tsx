@@ -38,7 +38,11 @@ export function DisplayNameForm({ initial }: { initial: string }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(submit)} className="flex flex-col gap-3 sm:flex-row sm:items-end" noValidate>
+      <form
+        onSubmit={form.handleSubmit(submit)}
+        className="flex flex-col gap-3 sm:flex-row sm:items-end"
+        noValidate
+      >
         <FormField
           control={form.control}
           name="displayName"
@@ -46,7 +50,11 @@ export function DisplayNameForm({ initial }: { initial: string }) {
             <FormItem className="flex-1">
               <FormLabel>{t("displayName")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("displayNamePlaceholder")} className="h-12 text-body" {...field} />
+                <Input
+                  placeholder={t("displayNamePlaceholder")}
+                  className="h-12 text-body"
+                  {...field}
+                />
               </FormControl>
               <FormMessageI18n />
             </FormItem>

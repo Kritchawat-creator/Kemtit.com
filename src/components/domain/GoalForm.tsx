@@ -13,11 +13,24 @@ import { candidatesFor } from "@/core/goals/candidates";
 import { goalFormSchema, type GoalFormValues, type ParentCandidate } from "@/core/goals/schema";
 import { todayBkk } from "@/lib/date";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { FormMessageI18n } from "@/components/ui/form-i18n";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { DatePicker } from "./DatePicker";
 import { DomainSelect } from "./DomainSelect";
@@ -97,7 +110,8 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
     });
   }
 
-  const translateError = (key: string) => (te.has(key as ErrorKey) ? te(key as ErrorKey) : te("generic"));
+  const translateError = (key: string) =>
+    te.has(key as ErrorKey) ? te(key as ErrorKey) : te("generic");
 
   return (
     <Form {...form}>
@@ -109,7 +123,11 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
             <FormItem>
               <FormLabel>{t("goals.form.title")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("goals.form.titlePlaceholder")} className="h-12 text-body" {...field} />
+                <Input
+                  placeholder={t("goals.form.titlePlaceholder")}
+                  className="h-12 text-body"
+                  {...field}
+                />
               </FormControl>
               <FormMessageI18n />
             </FormItem>
@@ -123,7 +141,11 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
             <FormItem>
               <FormLabel>{t("goals.form.kind")}</FormLabel>
               <FormControl>
-                <RadioGroup value={field.value} onValueChange={field.onChange} className="grid gap-2 sm:grid-cols-2">
+                <RadioGroup
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  className="grid gap-2 sm:grid-cols-2"
+                >
                   {(["metric", "execution"] as const).map((kind) => (
                     <label
                       key={kind}
@@ -132,8 +154,12 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
                     >
                       <RadioGroupItem id={`kind-${kind}`} value={kind} className="mt-1" />
                       <span>
-                        <span className="block text-body font-medium text-text-primary">{t(`goalKinds.${kind}`)}</span>
-                        <span className="block text-caption text-text-secondary">{t(`goalKinds.${kind}Hint`)}</span>
+                        <span className="block text-body font-medium text-text-primary">
+                          {t(`goalKinds.${kind}`)}
+                        </span>
+                        <span className="block text-caption text-text-secondary">
+                          {t(`goalKinds.${kind}Hint`)}
+                        </span>
                       </span>
                     </label>
                   ))}
@@ -160,7 +186,9 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
                       placeholder={t("goals.form.targetPlaceholder")}
                       className="h-12 text-body"
                       value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
+                      onChange={(e) =>
+                        field.onChange(e.target.value === "" ? undefined : Number(e.target.value))
+                      }
                       onBlur={field.onBlur}
                       name={field.name}
                       ref={field.ref}
@@ -177,7 +205,12 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
                 <FormItem>
                   <FormLabel>{t("goals.form.unit")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("goals.form.unitPlaceholder")} className="h-12 text-body" {...field} value={field.value ?? ""} />
+                    <Input
+                      placeholder={t("goals.form.unitPlaceholder")}
+                      className="h-12 text-body"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
                   </FormControl>
                   <FormMessageI18n />
                 </FormItem>
@@ -197,7 +230,10 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
                   value={field.value}
                   onValueChange={(next: PeriodType) => {
                     field.onChange(next);
-                    form.setValue("periodStart", normalizePeriodStart(next, form.getValues("periodStart")));
+                    form.setValue(
+                      "periodStart",
+                      normalizePeriodStart(next, form.getValues("periodStart")),
+                    );
                   }}
                 />
               </FormControl>
@@ -214,11 +250,14 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
               <FormControl>
                 <DatePicker
                   value={field.value}
-                  onChange={(next) => next && field.onChange(normalizePeriodStart(periodType, next))}
+                  onChange={(next) =>
+                    next && field.onChange(normalizePeriodStart(periodType, next))
+                  }
                 />
               </FormControl>
               <FormDescription>
-                {periodLabelText(period, tp)} · {t("goals.form.periodHint", { period: tp(periodType) })}
+                {periodLabelText(period, tp)} ·{" "}
+                {t("goals.form.periodHint", { period: tp(periodType) })}
               </FormDescription>
               <FormMessageI18n />
             </FormItem>
@@ -264,7 +303,9 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
                     ))}
                   </SelectContent>
                 </Select>
-                {candidates.length === 0 ? <FormDescription>{t("goals.form.noParentCandidates")}</FormDescription> : null}
+                {candidates.length === 0 ? (
+                  <FormDescription>{t("goals.form.noParentCandidates")}</FormDescription>
+                ) : null}
                 <FormMessageI18n />
               </FormItem>
             )}
@@ -278,7 +319,11 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
         ) : null}
 
         <Button type="submit" size="lg" className="w-full" disabled={pending}>
-          {pending ? t("common.saving") : mode === "create" ? t("goals.form.submitCreate") : t("goals.form.submitEdit")}
+          {pending
+            ? t("common.saving")
+            : mode === "create"
+              ? t("goals.form.submitCreate")
+              : t("goals.form.submitEdit")}
         </Button>
       </form>
     </Form>

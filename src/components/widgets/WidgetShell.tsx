@@ -18,12 +18,17 @@ export function WidgetShell({ title, description, action, children, className }:
   return (
     <section
       aria-label={title}
-      className={cn("flex flex-col rounded-lg border border-border bg-bg-surface p-4 md:p-5", className)}
+      className={cn(
+        "flex flex-col rounded-lg border border-border bg-bg-surface p-4 md:p-5",
+        className,
+      )}
     >
       <header className="mb-4 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-h2 text-text-primary">{title}</h2>
-          {description ? <p className="mt-0.5 text-small text-text-secondary">{description}</p> : null}
+          {description ? (
+            <p className="mt-0.5 text-small text-text-secondary">{description}</p>
+          ) : null}
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </header>

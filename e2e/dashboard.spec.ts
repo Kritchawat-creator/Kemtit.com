@@ -2,7 +2,9 @@ import { expect, test } from "@playwright/test";
 
 import { onboardNewUser } from "./helpers";
 
-test("แดชบอร์ด: เห็น % เป้าหลักเดือนนี้ + งานวันนี้ ติ๊กจาก widget และอัปเดตยอดได้", async ({ page }) => {
+test("แดชบอร์ด: เห็น % เป้าหลักเดือนนี้ + งานวันนี้ ติ๊กจาก widget และอัปเดตยอดได้", async ({
+  page,
+}) => {
   await onboardNewUser(page, "dashboard");
 
   await expect(page).toHaveURL(/\/dashboard/);

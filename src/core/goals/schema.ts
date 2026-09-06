@@ -17,12 +17,16 @@ export type Goal = Omit<GoalRow, "period_type" | "domain" | "goal_kind" | "statu
   status: GoalStatus;
 };
 
-export type ParentCandidate = Pick<Goal, "id" | "title" | "period_type" | "period_start" | "domain">;
+export type ParentCandidate = Pick<
+  Goal,
+  "id" | "title" | "period_type" | "period_start" | "domain"
+>;
 
 /** หน่วยของ metric goal เก็บใน persona_data.unit ("THB" = บาท, อื่น ๆ เป็นข้อความอิสระ) */
 export function goalUnit(goal: Pick<Goal, "persona_data">): string | null {
   const data = goal.persona_data;
-  if (data && typeof data === "object" && !Array.isArray(data) && typeof data.unit === "string") return data.unit;
+  if (data && typeof data === "object" && !Array.isArray(data) && typeof data.unit === "string")
+    return data.unit;
   return null;
 }
 
@@ -53,7 +57,10 @@ export const updateCurrentValueSchema = z.object({
   id: z.uuid(),
   currentValue: z.number({ error: "invalidNumber" }).min(0, { error: "notNegative" }),
 });
-export const setGoalStatusSchema = z.object({ id: z.uuid(), status: z.enum(["active", "archived"]) });
+export const setGoalStatusSchema = z.object({
+  id: z.uuid(),
+  status: z.enum(["active", "archived"]),
+});
 
 /** spec สำหรับสร้าง cascade ทีเดียว (template ตอน onboarding — Decision 1.4) */
 export type GoalSpec = {

@@ -12,7 +12,12 @@ import { DOMAIN_STYLES } from "./DomainTag";
 
 const MAX_DOTS = 4;
 
-type Props = { date: ISODate; weeks: ISODate[][]; byDay: Record<ISODate, DayTaskItem<PlanTask>[]>; today: ISODate };
+type Props = {
+  date: ISODate;
+  weeks: ISODate[][];
+  byDay: Record<ISODate, DayTaskItem<PlanTask>[]>;
+  today: ISODate;
+};
 
 /** เดือน: grid 7 คอลัมน์เริ่มอาทิตย์ แต่ละวันมีจุดสี domain + จำนวนงาน แตะ → มุมมองวัน (Design §8.2 "วันไหนแน่น วันไหนว่าง") */
 export function CalendarMonth({ date, weeks, byDay, today }: Props) {
@@ -56,9 +61,15 @@ export function CalendarMonth({ date, weeks, byDay, today }: Props) {
                 {items.length > 0 ? (
                   <span className="flex flex-wrap items-center gap-0.5">
                     {domains.slice(0, MAX_DOTS).map((d) => (
-                      <span key={d} className={cn("size-1.5 rounded-full", DOMAIN_STYLES[d].dot)} aria-hidden="true" />
+                      <span
+                        key={d}
+                        className={cn("size-1.5 rounded-full", DOMAIN_STYLES[d].dot)}
+                        aria-hidden="true"
+                      />
                     ))}
-                    <span className="ml-0.5 hidden text-caption text-text-secondary md:inline">{t("tasksCount", { count: items.length })}</span>
+                    <span className="ml-0.5 hidden text-caption text-text-secondary md:inline">
+                      {t("tasksCount", { count: items.length })}
+                    </span>
                   </span>
                 ) : null}
               </Link>

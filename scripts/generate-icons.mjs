@@ -48,7 +48,8 @@ function render(size, { rounded }) {
       const nx = x + 0.5 - cx;
       const ny = y + 0.5 - cy;
       const halfW = size * 0.07 * (1 - Math.abs(ny) / (ringR * 0.85));
-      if (Math.abs(ny) <= ringR * 0.85 && Math.abs(nx) <= Math.max(halfW, 0)) color = ny < 0 ? ACCENT : WHITE;
+      if (Math.abs(ny) <= ringR * 0.85 && Math.abs(nx) <= Math.max(halfW, 0))
+        color = ny < 0 ? ACCENT : WHITE;
       px[i] = color[0];
       px[i + 1] = color[1];
       px[i + 2] = color[2];
@@ -56,7 +57,8 @@ function render(size, { rounded }) {
     }
   }
   const rows = [];
-  for (let y = 0; y < size; y++) rows.push(Buffer.concat([Buffer.from([0]), px.subarray(y * size * 4, (y + 1) * size * 4)]));
+  for (let y = 0; y < size; y++)
+    rows.push(Buffer.concat([Buffer.from([0]), px.subarray(y * size * 4, (y + 1) * size * 4)]));
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(size, 0);
   ihdr.writeUInt32BE(size, 4);
@@ -75,4 +77,6 @@ writeFileSync("public/icons/icon-192.png", render(192, { rounded: true }));
 writeFileSync("public/icons/icon-512.png", render(512, { rounded: true }));
 writeFileSync("public/icons/icon-maskable-512.png", render(512, { rounded: false }));
 writeFileSync("public/icons/apple-touch-icon.png", render(180, { rounded: false }));
-console.log("icons written: public/icons/{icon-192,icon-512,icon-maskable-512,apple-touch-icon}.png");
+console.log(
+  "icons written: public/icons/{icon-192,icon-512,icon-maskable-512,apple-touch-icon}.png",
+);

@@ -69,7 +69,9 @@ export function FirstGoalForm({ monthOptions, defaultMonth, fewDaysLeft }: Props
                     placeholder={t("targetPlaceholder")}
                     className="h-14 flex-1 text-h2"
                     value={(field.value as number | undefined) ?? ""}
-                    onChange={(e) => field.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
+                    onChange={(e) =>
+                      field.onChange(e.target.value === "" ? undefined : Number(e.target.value))
+                    }
                     onBlur={field.onBlur}
                     name={field.name}
                     ref={field.ref}
@@ -89,7 +91,11 @@ export function FirstGoalForm({ monthOptions, defaultMonth, fewDaysLeft }: Props
             <FormItem>
               <FormLabel className="text-body">{t("monthLabel")}</FormLabel>
               <FormControl>
-                <RadioGroup value={field.value} onValueChange={field.onChange} className="grid gap-2">
+                <RadioGroup
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  className="grid gap-2"
+                >
                   {monthOptions.map((option) => (
                     <label
                       key={option.value}
@@ -102,7 +108,9 @@ export function FirstGoalForm({ monthOptions, defaultMonth, fewDaysLeft }: Props
                   ))}
                 </RadioGroup>
               </FormControl>
-              {fewDaysLeft ? <p className="text-caption text-text-muted">{t("fewDaysLeftHint")}</p> : null}
+              {fewDaysLeft ? (
+                <p className="text-caption text-text-muted">{t("fewDaysLeftHint")}</p>
+              ) : null}
               <FormMessageI18n />
             </FormItem>
           )}

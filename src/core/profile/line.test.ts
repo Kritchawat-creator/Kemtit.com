@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { generateLinkCode, isLinkCodeExpired, linkCodeExpiry, maskLineUserId, normalizeLinkCode } from "./line";
+import {
+  generateLinkCode,
+  isLinkCodeExpired,
+  linkCodeExpiry,
+  maskLineUserId,
+  normalizeLinkCode,
+} from "./line";
 
 describe("line link code", () => {
   it("สร้างรหัส 6 ตัวจากชุดตัวอักษรที่ไม่สับสน", () => {

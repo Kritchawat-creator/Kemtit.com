@@ -20,7 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
 const FILTERS: DomainFilter[] = ["all", "work", "life"];
 
 function parseFilter(value: string | string[] | undefined): DomainFilter {
-  return typeof value === "string" && (FILTERS as string[]).includes(value) ? (value as DomainFilter) : "all";
+  return typeof value === "string" && (FILTERS as string[]).includes(value)
+    ? (value as DomainFilter)
+    : "all";
 }
 
 /** หน้าเป้าหมาย (Design §8.2): filter งาน/ชีวิต → GoalCard เรียงตามชั้น ปี → เดือน → สัปดาห์ */
@@ -33,9 +35,10 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
     listGoalsWithProgress({ domainFilter: filter }),
   ]);
 
-  const groups = PERIOD_TYPES.map((type) => ({ type, goals: goals.filter((g) => g.period_type === type) })).filter(
-    (g) => g.goals.length > 0,
-  );
+  const groups = PERIOD_TYPES.map((type) => ({
+    type,
+    goals: goals.filter((g) => g.period_type === type),
+  })).filter((g) => g.goals.length > 0);
 
   return (
     <>
@@ -60,7 +63,9 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
             aria-current={filter === f ? "page" : undefined}
             className={cn(
               "inline-flex min-h-11 items-center rounded-full border px-4 text-small transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none md:min-h-9",
-              filter === f ? "border-transparent bg-brand-500 text-neutral-0" : "border-border bg-bg-surface text-text-secondary hover:border-border-strong",
+              filter === f
+                ? "border-transparent bg-brand-500 text-neutral-0"
+                : "border-border bg-bg-surface text-text-secondary hover:border-border-strong",
             )}
           >
             {tf(f)}
@@ -84,7 +89,12 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
       ) : (
         <div className="space-y-8">
           {groups.map((group) => (
-            <GoalGroup key={group.type} type={group.type} goals={group.goals} label={t(`groups.${group.type}`)} />
+            <GoalGroup
+              key={group.type}
+              type={group.type}
+              goals={group.goals}
+              label={t(`groups.${group.type}`)}
+            />
           ))}
         </div>
       )}
@@ -92,7 +102,15 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
   );
 }
 
-function GoalGroup({ type, goals, label }: { type: PeriodType; goals: GoalWithProgress[]; label: string }) {
+function GoalGroup({
+  type,
+  goals,
+  label,
+}: {
+  type: PeriodType;
+  goals: GoalWithProgress[];
+  label: string;
+}) {
   return (
     <section aria-labelledby={`group-${type}`}>
       <h2 id={`group-${type}`} className="mb-3 text-h2 text-text-primary">

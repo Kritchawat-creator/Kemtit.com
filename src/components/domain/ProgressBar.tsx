@@ -17,7 +17,14 @@ type Props = {
 };
 
 /** แถบ % แนวนอน ปลายมน; เปลี่ยนค่า 400ms ease-out (Design §11) */
-export function ProgressBar({ value, domain, size = "md", showValue = false, label, className }: Props) {
+export function ProgressBar({
+  value,
+  domain,
+  size = "md",
+  showValue = false,
+  label,
+  className,
+}: Props) {
   const t = useTranslations("a11y");
   const clamped = Math.max(0, Math.min(100, value));
   return (
@@ -28,7 +35,10 @@ export function ProgressBar({ value, domain, size = "md", showValue = false, lab
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(clamped)}
-        className={cn("flex-1 overflow-hidden rounded-full bg-brand-100", size === "sm" ? "h-1.5" : "h-2.5")}
+        className={cn(
+          "flex-1 overflow-hidden rounded-full bg-brand-100",
+          size === "sm" ? "h-1.5" : "h-2.5",
+        )}
       >
         <div
           className={cn(

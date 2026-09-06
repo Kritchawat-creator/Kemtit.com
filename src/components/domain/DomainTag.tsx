@@ -4,7 +4,10 @@ import { cn } from "cn";
 import type { Domain } from "@/core/domain/domains";
 
 /** class คงที่ต่อ domain (Tailwind ไม่ทำ class แบบ dynamic) — สีจาก token domain-* ใน globals.css */
-export const DOMAIN_STYLES: Record<Domain, { pill: string; dot: string; tint: string; text: string; selected: string }> = {
+export const DOMAIN_STYLES: Record<
+  Domain,
+  { pill: string; dot: string; tint: string; text: string; selected: string }
+> = {
   work: {
     pill: "bg-domain-work-bg text-domain-work-fg",
     dot: "bg-domain-work-dot",
@@ -45,7 +48,8 @@ export const DOMAIN_STYLES: Record<Domain, { pill: string; dot: string; tint: st
     dot: "bg-domain-relationships-dot",
     tint: "bg-domain-relationships-bg/40",
     text: "text-domain-relationships-fg",
-    selected: "data-[state=on]:bg-domain-relationships-bg data-[state=on]:text-domain-relationships-fg",
+    selected:
+      "data-[state=on]:bg-domain-relationships-bg data-[state=on]:text-domain-relationships-fg",
   },
 };
 

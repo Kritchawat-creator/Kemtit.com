@@ -6,7 +6,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { createLineLinkCode, getLineLinkStatus, unlinkLine, type LineLinkView } from "@/core/profile/line-actions";
+import {
+  createLineLinkCode,
+  getLineLinkStatus,
+  unlinkLine,
+  type LineLinkView,
+} from "@/core/profile/line-actions";
 import { formatDateTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,7 +74,9 @@ export function LineLinkCard({ initial, addFriendUrl, dryRun }: Props) {
     });
   }
 
-  const minutesLeft = view.codeExpiresAt ? Math.max(0, Math.ceil((new Date(view.codeExpiresAt).getTime() - now) / 60_000)) : 0;
+  const minutesLeft = view.codeExpiresAt
+    ? Math.max(0, Math.ceil((new Date(view.codeExpiresAt).getTime() - now) / 60_000))
+    : 0;
 
   return (
     <div className="space-y-4">
@@ -78,7 +85,9 @@ export function LineLinkCard({ initial, addFriendUrl, dryRun }: Props) {
           {view.linked ? t("linked") : t("notLinked")}
         </Badge>
         {view.linked && view.linkedAt ? (
-          <span className="text-small text-text-secondary">{t("linkedSince", { date: formatDateTime(view.linkedAt) })}</span>
+          <span className="text-small text-text-secondary">
+            {t("linkedSince", { date: formatDateTime(view.linkedAt) })}
+          </span>
         ) : null}
       </div>
 

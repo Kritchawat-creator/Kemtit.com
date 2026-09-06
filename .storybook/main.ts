@@ -17,7 +17,10 @@ const config: StorybookConfig = {
     viteConfig.resolve ??= {};
     const existing = Array.isArray(viteConfig.resolve.alias)
       ? viteConfig.resolve.alias
-      : Object.entries(viteConfig.resolve.alias ?? {}).map(([find, replacement]) => ({ find, replacement }));
+      : Object.entries(viteConfig.resolve.alias ?? {}).map(([find, replacement]) => ({
+          find,
+          replacement,
+        }));
     viteConfig.resolve.alias = [
       { find: "server-only", replacement: `${here}mocks/server-only.ts` },
       { find: "@/lib/supabase/server", replacement: `${here}mocks/supabase-server.ts` },

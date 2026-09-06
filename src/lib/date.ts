@@ -29,7 +29,9 @@ export type ISODate = string; // YYYY-MM-DD
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function isISODate(value: unknown): value is ISODate {
-  return typeof value === "string" && ISO_DATE.test(value) && !Number.isNaN(parseISO(value).getTime());
+  return (
+    typeof value === "string" && ISO_DATE.test(value) && !Number.isNaN(parseISO(value).getTime())
+  );
 }
 
 /** date-fns parseISO ตีความ date-only เป็น local midnight → format กลับได้ค่าเดิมทุก timezone */

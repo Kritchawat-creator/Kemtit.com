@@ -7,8 +7,7 @@ import type { z } from "zod";
 export type FieldErrors = Record<string, string[] | undefined>;
 
 export type ActionResult<T = null> =
-  | { ok: true; data: T }
-  | { ok: false; error: string; fieldErrors?: FieldErrors };
+  { ok: true; data: T } | { ok: false; error: string; fieldErrors?: FieldErrors };
 
 export function ok<T>(data: T): ActionResult<T> {
   return { ok: true, data };

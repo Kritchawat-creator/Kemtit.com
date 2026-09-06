@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { formatRRule, occurrencesBetween, occursOn, parseRRule, type Recurrence } from "./recurrence";
+import {
+  formatRRule,
+  occurrencesBetween,
+  occursOn,
+  parseRRule,
+  type Recurrence,
+} from "./recurrence";
 
 describe("recurrence subset", () => {
   it("parse/format DAILY และ WEEKLY;BYDAY", () => {
@@ -28,10 +34,8 @@ describe("recurrence subset", () => {
       "2026-09-28",
       "2026-09-30",
     ]);
-    expect(occurrencesBetween({ freq: "DAILY" }, "2026-09-29", "2026-09-27", "2026-10-01")).toEqual([
-      "2026-09-29",
-      "2026-09-30",
-      "2026-10-01",
-    ]);
+    expect(occurrencesBetween({ freq: "DAILY" }, "2026-09-29", "2026-09-27", "2026-10-01")).toEqual(
+      ["2026-09-29", "2026-09-30", "2026-10-01"],
+    );
   });
 });

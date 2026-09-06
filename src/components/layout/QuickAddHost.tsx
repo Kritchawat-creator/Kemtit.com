@@ -44,7 +44,12 @@ export function QuickAddHost({ parentCandidates }: Props) {
           parentCandidates={parentCandidates}
           initial={
             parent && childType
-              ? { parentId: parent.id, periodType: childType, periodStart: periodOf(childType, parent.period_start).start, domain: parent.domain }
+              ? {
+                  parentId: parent.id,
+                  periodType: childType,
+                  periodStart: periodOf(childType, parent.period_start).start,
+                  domain: parent.domain,
+                }
               : undefined
           }
           onDone={close}

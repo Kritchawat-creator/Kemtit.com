@@ -14,6 +14,7 @@ export function goalCompletedText(t: LineT, appUrl: string, goalId: string, titl
 export function overdueText(t: LineT, appUrl: string, titles: string[]): string {
   const listed = titles.slice(0, MAX_LISTED).map((title) => `• ${title}`);
   const more = titles.length - listed.length;
-  const list = more > 0 ? [...listed, t("overdueMore", { count: more })].join("\n") : listed.join("\n");
+  const list =
+    more > 0 ? [...listed, t("overdueMore", { count: more })].join("\n") : listed.join("\n");
   return t("overdue", { count: titles.length, list, url: lineOpenUrl(appUrl, "/dashboard") });
 }

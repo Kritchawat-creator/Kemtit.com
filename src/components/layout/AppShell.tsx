@@ -18,8 +18,14 @@ export function AppShell({ me, children }: Props) {
     <div className="min-h-dvh bg-bg-page">
       <Sidebar />
       <div className="lg:pl-64">
-        <TopBar persona={me.profile.active_persona} displayName={me.profile.display_name} email={me.email} />
-        <main className="mx-auto w-full max-w-7xl px-4 pt-6 pb-28 lg:px-8 lg:pb-10">{children}</main>
+        <TopBar
+          persona={me.profile.active_persona}
+          displayName={me.profile.display_name}
+          email={me.email}
+        />
+        <main className="mx-auto w-full max-w-7xl px-4 pt-6 pb-28 lg:px-8 lg:pb-10">
+          {children}
+        </main>
       </div>
       <BottomNav />
       <Fab />
