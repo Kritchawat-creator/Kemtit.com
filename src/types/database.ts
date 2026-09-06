@@ -61,9 +61,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      goal_photos: {
+        Row: {
+          created_at: string;
+          goal_id: string;
+          id: string;
+          path: string;
+          sort_order: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          goal_id: string;
+          id?: string;
+          path: string;
+          sort_order?: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          goal_id?: string;
+          id?: string;
+          path?: string;
+          sort_order?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "goal_photos_goal_id_fkey";
+            columns: ["goal_id"];
+            isOneToOne: false;
+            referencedRelation: "goals";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       goals: {
         Row: {
           completed_at: string | null;
+          cover_path: string | null;
           created_at: string;
           current_value: number;
           domain: string;
@@ -81,6 +117,7 @@ export type Database = {
         };
         Insert: {
           completed_at?: string | null;
+          cover_path?: string | null;
           created_at?: string;
           current_value?: number;
           domain?: string;
@@ -98,6 +135,7 @@ export type Database = {
         };
         Update: {
           completed_at?: string | null;
+          cover_path?: string | null;
           created_at?: string;
           current_value?: number;
           domain?: string;
@@ -148,6 +186,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "task_completions_task_id_fkey";
+            columns: ["task_id"];
+            isOneToOne: false;
+            referencedRelation: "tasks";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      task_photos: {
+        Row: {
+          created_at: string;
+          id: string;
+          path: string;
+          task_id: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          path: string;
+          task_id: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          path?: string;
+          task_id?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "task_photos_task_id_fkey";
             columns: ["task_id"];
             isOneToOne: false;
             referencedRelation: "tasks";
@@ -208,6 +278,7 @@ export type Database = {
       user_profiles: {
         Row: {
           active_persona: string | null;
+          avatar_path: string | null;
           created_at: string;
           display_name: string | null;
           id: string;
@@ -223,6 +294,7 @@ export type Database = {
         };
         Insert: {
           active_persona?: string | null;
+          avatar_path?: string | null;
           created_at?: string;
           display_name?: string | null;
           id: string;
@@ -238,6 +310,7 @@ export type Database = {
         };
         Update: {
           active_persona?: string | null;
+          avatar_path?: string | null;
           created_at?: string;
           display_name?: string | null;
           id?: string;

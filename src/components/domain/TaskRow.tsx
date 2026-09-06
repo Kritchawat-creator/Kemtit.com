@@ -12,6 +12,7 @@ import { formatThaiDate } from "@/lib/format";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { DomainTag } from "./DomainTag";
+import { TaskThumbs } from "./TaskPhotos";
 
 export type TaskRowProps = {
   item: DayTaskItem<TaskWithGoal>;
@@ -30,6 +31,7 @@ export function TaskRow({ item, today, onToggle, onOpen, showGoal = false }: Tas
   const { task } = item;
   const rule = parseRRule(task.recurrence_rule);
   const checkboxId = `task-${item.key}`;
+  const photos = task.photos ?? [];
 
   return (
     <li className="flex min-h-14 items-center gap-2 py-1.5">
@@ -76,8 +78,10 @@ export function TaskRow({ item, today, onToggle, onOpen, showGoal = false }: Tas
           {showGoal && task.goal ? (
             <span className="truncate">{t("tasks.meta.goal", { title: task.goal.title })}</span>
           ) : null}
+          {photos.length > 0 ? <span>{t("photos.count", { count: photos.length })}</span> : null}
         </span>
       </button>
+      <TaskThumbs photos={photos} className="hidden sm:flex" />
       <DomainTag domain={task.domain} />
     </li>
   );

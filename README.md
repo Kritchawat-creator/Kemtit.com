@@ -121,6 +121,8 @@ pnpm exec supabase gen types typescript --local > src/types/database.ts
 pnpm e2e --project=mobile-chrome  # Playwright สตาร์ท next dev เอง; OTP อ่านจาก Mailpit http://127.0.0.1:54324
 ```
 
+รูปภาพ (ภาพเป้าหมาย / รูปความคืบหน้า / รูปแนบงาน / รูปโปรไฟล์) เก็บใน Storage bucket `photos` (สร้างโดย migration `20260906120000_photos.sql`) — local ต้องเปิด `[storage] enabled = true` ใน `supabase/config.toml` (เปิดไว้แล้ว) ไม่งั้น migration นี้และ `e2e/photos.spec.ts` จะล้ม · client อัปโหลดตรงเข้า bucket ผ่าน RLS โฟลเดอร์ `<user_id>/` แล้วเรียก `attachPhoto` ผูกกับ goal/task/profile
+
 `.env.local` สำหรับ local: `LINE_CHANNEL_SECRET` ใส่ค่าอะไรก็ได้ (ใช้เซ็น webhook ใน E2E) และเว้น `LINE_CHANNEL_ACCESS_TOKEN` ว่างเพื่อให้ระบบอยู่ในโหมด dry-run
 
 ### LINE, cron และ PWA

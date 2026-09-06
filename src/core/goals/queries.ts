@@ -8,6 +8,8 @@ import {
   type PaceStatus,
   type ProgressInfo,
 } from "@/core/domain/progress";
+import { listGoalPhotos } from "@/core/photos/queries";
+import type { Photo } from "@/core/photos/schema";
 import type { Task } from "@/core/tasks/schema";
 import { type ISODate, todayBkk } from "@/lib/date";
 import { createServerSupabase } from "@/lib/supabase/server";
@@ -80,12 +82,15 @@ export type GoalDetail = {
   parent: GoalWithProgress | null;
   tree: GoalTreeNode[];
   tasks: Task[];
+  /** รูปความคืบหน้า (gallery) — cover อยู่ที่ goal.cover_path */
+  photos: Photo[];
 };
 
 export async function getGoalDetail(id: string): Promise<GoalDetail | null> {
-  const [goals, tasksResult] = await Promise.all([
+  const [goals, tasksResult, photos] = await Promise.all([
     listGoalsWithProgress({ includeArchived: true }),
     (await createServerSupabase()).from("tasks").select("*").eq("goal_id", id).order("due_date"),
+    listGoalPhotos(id),
   ]);
   const goal = goals.find((g) => g.id === id);
   if (!goal) return null;
@@ -94,6 +99,7 @@ export async function getGoalDetail(id: string): Promise<GoalDetail | null> {
     parent: goal.parent_id ? (goals.find((g) => g.id === goal.parent_id) ?? null) : null,
     tree: buildGoalTree(goals, id),
     tasks: (tasksResult.data ?? []) as Task[],
+    photos,
   };
 }
 

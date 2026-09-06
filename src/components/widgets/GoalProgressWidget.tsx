@@ -21,13 +21,15 @@ export async function GoalProgressWidget({ today }: { today: ISODate }) {
   );
   const main = monthGoals.find((g) => g.goal_kind === "metric") ?? monthGoals[0] ?? null;
   const others = monthGoals.filter((g) => g.id !== main?.id);
+  // waypoint (เป้าย่อยของเป้าหลัก) สำหรับ tile บน desktop — Claude Design 4a
+  const waypoints = main ? goals.filter((g) => g.parent_id === main.id) : [];
 
   return (
     <section aria-label={t("title")}>
       <h2 className="sr-only">{t("title")}</h2>
       {main ? (
-        <div className="rounded-2xl bg-brand-100 p-5 shadow-lg">
-          <GoalProgressPanel goal={main} others={others} today={today} />
+        <div className="rounded-2xl bg-brand-100 p-5 shadow-lg lg:p-6">
+          <GoalProgressPanel goal={main} others={others} waypoints={waypoints} today={today} />
         </div>
       ) : (
         <EmptyState

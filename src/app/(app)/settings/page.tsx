@@ -9,6 +9,7 @@ import { isLinkCodeExpired } from "@/core/profile/line";
 import { ROUTES } from "@/core/profile/onboarding";
 import { getMe } from "@/core/profile/queries";
 import { getLineEnv } from "@/lib/env.server";
+import { AvatarSlot } from "@/components/domain/GoalPhotos";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 
@@ -39,8 +40,9 @@ export default async function SettingsPage() {
   const me = await getMe();
   if (!me) redirect(ROUTES.login);
 
-  const [t, lineStatus] = await Promise.all([
+  const [t, tp, lineStatus] = await Promise.all([
     getTranslations("settings"),
+    getTranslations("photos"),
     getLineStatus(me.userId),
   ]);
   const line = lineConfig();
@@ -51,15 +53,14 @@ export default async function SettingsPage() {
   return (
     <>
       <PageHeader title={t("title")} />
-      <div className="space-y-4">
+      <div className="max-w-3xl space-y-4">
         <Section title={t("profile.title")}>
           <div className="mb-4 flex items-center gap-3.5">
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-accent-100 text-h2 text-accent-900">
-              {initial}
-            </span>
+            <AvatarSlot path={me.profile.avatar_path} initial={initial} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-h3 text-text-primary">{displayName || me.email}</p>
               <p className="truncate text-small text-text-secondary">{me.email}</p>
+              <p className="text-caption text-text-muted">{tp("avatarHint")}</p>
             </div>
           </div>
           <DisplayNameForm initial={me.profile.display_name ?? ""} />

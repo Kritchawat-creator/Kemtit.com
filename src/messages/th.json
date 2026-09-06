@@ -31,7 +31,9 @@
     "settings": "ตั้งค่า",
     "quickAdd": "เพิ่ม",
     "addGoal": "เพิ่มเป้าหมาย",
-    "addTask": "เพิ่มงาน"
+    "addTask": "เพิ่มงาน",
+    "collapse": "พับเมนู",
+    "expand": "ขยายเมนู"
   },
   "auth": {
     "title": "เข้าใช้เข็มทิศ",
@@ -200,7 +202,14 @@
     "tasksDoneCount": "{done}/{total} เสร็จ",
     "tasksUnit": "{count} งาน",
     "tasksUnitShort": "งาน",
-    "over": "เกิน {value}"
+    "over": "เกิน {value}",
+    "newDesktop": "ตั้งเป้าใหม่",
+    "aheadOfPlan": "เร็วกว่าแผน {value}",
+    "behindPlan": "ช้ากว่าแผน {value}",
+    "onPlan": "ตามแผนพอดี",
+    "waypointHere": "ตรงนี้",
+    "destinationShort": "จุดหมาย",
+    "routePerWeek": "waypoint {amount} / {period}"
   },
   "calendar": {
     "title": "ปฏิทิน",
@@ -229,7 +238,10 @@
       "titleOther": "ไม่มีงานในวันที่ {date}",
       "description": "แตะปุ่มด้านล่างเพื่อเพิ่มงานให้วันที่เลือก",
       "cta": "เพิ่มงาน"
-    }
+    },
+    "todayLabel": "วันนี้ · {date}",
+    "emptySelected": "ยังไม่มีงานวันนี้",
+    "tasksUnitShort": "งาน"
   },
   "settings": {
     "title": "ตั้งค่า",
@@ -305,7 +317,11 @@
     "pageDescription": "เกิดข้อผิดพลาดที่กู้เองไม่ได้ ลองโหลดใหม่ ถ้ายังไม่หายให้กลับไปแดชบอร์ด",
     "notFoundTitle": "ไม่พบหน้านี้",
     "notFoundDescription": "ลิงก์อาจหมดอายุหรือข้อมูลถูกลบไปแล้ว",
-    "backToDashboard": "กลับแดชบอร์ด"
+    "backToDashboard": "กลับแดชบอร์ด",
+    "photoLimit": "รูปครบจำนวนแล้ว ลบรูปเก่าก่อนเพิ่มใหม่",
+    "photoType": "รองรับเฉพาะ JPG, PNG, WebP",
+    "photoTooLarge": "รูปใหญ่เกิน 10 MB",
+    "uploadFailed": "อัปโหลดไม่สำเร็จ ลองอีกครั้ง"
   },
   "a11y": {
     "brandHome": "ไปหน้าแดชบอร์ด",
@@ -499,5 +515,24 @@
       "iosSteps": "บน iPhone: แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศร) แล้วเลือก “เพิ่มลงหน้าจอโฮม”",
       "dismiss": "ไว้ทีหลัง"
     }
+  },
+  "photos": {
+    "cover": "ภาพเป้าหมาย",
+    "coverPlaceholder": "ลากวางหรือแตะเพื่อเพิ่มภาพเป้าหมาย",
+    "gallery": "รูปความคืบหน้า",
+    "count": "{count} รูป",
+    "add": "เพิ่มรูป",
+    "galleryHint": "แตะรูปเพื่อดูเต็มจอ",
+    "attach": "แนบรูป",
+    "attachCount": "{count}/{max} รูป",
+    "attachPlaceholder": "ลากวาง หรือแตะเพื่อถ่าย",
+    "attachHint": "JPG, PNG · ไม่เกิน 10 MB ต่อรูป",
+    "remove": "ลบรูป",
+    "removed": "ลบรูปแล้ว",
+    "uploaded": "เพิ่มรูปแล้ว",
+    "uploading": "กำลังอัปโหลด…",
+    "view": "ดูรูปเต็มจอ",
+    "avatar": "รูปโปรไฟล์",
+    "avatarHint": "แตะรูปเพื่อเปลี่ยน · ลบเพื่อกลับไปใช้ตัวอักษร"
   }
 }

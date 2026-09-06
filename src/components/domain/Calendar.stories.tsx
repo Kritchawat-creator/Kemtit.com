@@ -4,7 +4,7 @@ import type { DayTaskItem, PlanTask } from "@/core/domain/dayplan";
 import { monthGrid } from "@/core/domain/calendar";
 
 import { CalendarMonth } from "./CalendarMonth";
-import { CalendarNav } from "./CalendarNav";
+import { CalendarRangeNav, CalendarViewNav } from "./CalendarNav";
 import { CalendarWeek } from "./CalendarWeek";
 
 const mk = (
@@ -77,6 +77,21 @@ export const Month: Story = {
 };
 export const Nav: Story = {
   render: () => (
-    <CalendarNav view="week" date="2026-09-05" today="2026-09-05" label="30 ส.ค. – 5 ก.ย. 2569" />
+    <div className="space-y-3">
+      <CalendarViewNav view="week" date="2026-09-05" />
+      <CalendarRangeNav
+        view="week"
+        date="2026-09-05"
+        today="2026-09-05"
+        label="30 ส.ค. – 5 ก.ย. 2569"
+      />
+      <CalendarRangeNav
+        view="month"
+        date="2026-09-05"
+        today="2026-09-05"
+        label="กันยายน 2569"
+        layout="desktop"
+      />
+    </div>
   ),
 };

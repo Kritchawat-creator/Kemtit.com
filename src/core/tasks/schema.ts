@@ -7,7 +7,13 @@ import type { Database } from "@/types/database";
 
 type TaskRow = Database["public"]["Tables"]["tasks"]["Row"];
 export type Task = Omit<TaskRow, "domain"> & { domain: Domain };
-export type TaskWithGoal = Task & { goal: { id: string; title: string } | null };
+/** รูปแนบงาน (task_photos) — เฉพาะ id + path; URL สร้างจาก photoPublicUrl ฝั่ง UI */
+export type TaskPhoto = { id: string; path: string };
+export type TaskWithGoal = Task & {
+  goal: { id: string; title: string } | null;
+  /** ไม่บังคับ (query เก่า/fixture ใน story ไม่มี) — undefined ถือว่าไม่มีรูป */
+  photos?: TaskPhoto[];
+};
 export type TaskCompletion = Database["public"]["Tables"]["task_completions"]["Row"];
 
 export const isoDateSchema = z.string().refine(isISODate, { error: "invalidDate" });

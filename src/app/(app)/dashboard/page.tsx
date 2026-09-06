@@ -1,4 +1,6 @@
+import { CalendarDays, Plus } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -9,9 +11,10 @@ import { hourBkk, todayBkk } from "@/lib/date";
 import { formatThaiDate } from "@/lib/format";
 import { InstallHint } from "@/components/layout/InstallHint";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Button } from "@/components/ui/button";
 import { WidgetSkeleton } from "@/components/widgets/WidgetSkeleton";
 
-import { layoutForPersona } from "./registry";
+import { layoutForPersona, SPAN_CLASS } from "./registry";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("dashboard");
@@ -33,7 +36,7 @@ export default async function DashboardPage() {
   const me = await getMe();
   if (!me) redirect(ROUTES.login);
 
-  const t = await getTranslations("dashboard");
+  const [t, tn] = await Promise.all([getTranslations("dashboard"), getTranslations("nav")]);
   const today = todayBkk();
   const widgets = layoutForPersona(me.profile.active_persona);
   const name = me.profile.display_name?.trim();
@@ -51,10 +54,24 @@ export default async function DashboardPage() {
             {formatThaiDate(today, "weekday")}
           </span>
         }
+        toolbarStart={
+          <span className="hidden h-12 items-center gap-2.5 rounded-full bg-bg-surface pr-5 pl-4 text-base font-medium text-brand-800 shadow-sm lg:inline-flex">
+            <CalendarDays className="size-5 text-brand-500" strokeWidth={1.5} aria-hidden="true" />
+            {formatThaiDate(today, "longWeekday")}
+          </span>
+        }
+        toolbarEnd={
+          <Button className="bg-accent-500 shadow-fab hover:bg-accent-700" asChild>
+            <Link href="?new=task" scroll={false}>
+              <Plus aria-hidden="true" />
+              {tn("addTask")}
+            </Link>
+          </Button>
+        }
       />
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-12 lg:items-start lg:gap-6">
         {widgets.map(({ id, component: Widget, span }, index) => (
-          <div key={id} className={span === 2 ? "lg:col-span-2" : undefined}>
+          <div key={id} className={SPAN_CLASS[span]}>
             <Suspense fallback={<WidgetSkeleton variant={index === 0 ? "hero" : "list"} />}>
               <Widget today={today} />
             </Suspense>

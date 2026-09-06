@@ -151,7 +151,7 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
     if (!/dashboard/.test(page.url())) await page.goto("/dashboard");
     const w = page.getByRole("region", { name: "เป้าหลักเดือนนี้" });
     await expect(w.getByText("0%")).toBeVisible();
-    await expect(w.getByText(/40,000/)).toBeVisible();
+    await expect(w.getByText(/เป้า ฿40,000/)).toBeVisible();
     await expect(page.getByRole("region", { name: "งานวันนี้" })).toBeVisible();
   });
 
@@ -387,16 +387,20 @@ test("QA localhost (desktop)", async ({ page, isMobile }) => {
   });
 
   await qa.step("desktop-shell-sidebar-topbar", async () => {
-    await expect(
-      page.getByRole("navigation", { name: "เมนูหลัก" }).getByRole("link", { name: "เป้าหมาย" }),
-    ).toBeVisible();
-    await expect(page.getByRole("button", { name: "เพิ่ม", exact: true })).toBeVisible();
+    // Claude Design turn 4: sidebar พับได้ + ปุ่มหลักอยู่ที่ toolbar ของหน้า (ไม่มีเมนู "เพิ่ม" กลางอีกแล้ว)
+    const nav = page.getByRole("navigation", { name: "เมนูหลัก" });
+    await expect(nav.getByRole("link", { name: "เป้าหมาย" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "เพิ่มงาน" }).first()).toBeVisible();
     await expect(page.getByText("พ่อค้าแม่ค้าออนไลน์")).toBeVisible();
+    await page.getByRole("button", { name: "พับเมนู" }).click();
+    await expect(page.getByRole("button", { name: "ขยายเมนู" })).toBeVisible();
+    await page.getByRole("button", { name: "ขยายเมนู" }).click();
+    await expect(page.getByRole("button", { name: "พับเมนู" })).toBeVisible();
   });
 
   await qa.step("desktop-goal-form-is-dialog", async () => {
-    await page.getByRole("button", { name: "เพิ่ม", exact: true }).click();
-    await page.getByRole("menuitem", { name: "เพิ่มเป้าหมาย" }).click();
+    await page.goto("/goals");
+    await page.getByRole("link", { name: "ตั้งเป้าใหม่" }).click();
     await expect(page.getByRole("dialog", { name: "เพิ่มเป้าหมาย" })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).toHaveCount(0);
@@ -415,6 +419,16 @@ test("QA localhost (desktop)", async ({ page, isMobile }) => {
   await qa.step("desktop-calendar-week-7-columns", async () => {
     await page.goto("/calendar?view=week");
     await expect(page.locator("ol.grid > li")).toHaveCount(7);
+  });
+
+  await qa.step("desktop-calendar-month-day-panel", async () => {
+    await page.goto("/calendar?view=month");
+    // Claude Design 4d: เลือกวันในเดือน → แผงงานของวันนั้นด้านขวา (คงมุมมองเดือน)
+    await page.getByRole("link", { name: /^1 กันยายน/ }).click();
+    await expect(page).toHaveURL(/view=month&date=\d{4}-\d{2}-01/);
+    // sidebar ก็เป็น <aside> → ระบุแผงด้วยชื่อวัน (aria-label = "อ. 1 ก.ย.")
+    await expect(page.getByRole("complementary", { name: /1 ก\.ย\./ })).toBeVisible();
+    await expect(page.getByRole("complementary", { name: /1 ก\.ย\./ })).toContainText("1 งาน");
   });
 
   await qa.step("desktop-user-menu-signout", async () => {

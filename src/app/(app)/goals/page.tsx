@@ -46,30 +46,31 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
     <>
       <PageHeader
         title={t("title")}
+        meta={formatThaiDate(todayBkk(), "monthYear")}
         actions={
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-7 items-center rounded-full bg-bg-surface px-3 text-caption font-medium text-text-secondary">
-              {formatThaiDate(todayBkk(), "monthYear")}
-            </span>
-            <Button className="hidden lg:inline-flex" asChild>
-              <Link href="?new=goal" scroll={false}>
-                <Plus aria-hidden="true" />
-                {t("new")}
-              </Link>
-            </Button>
-          </div>
+          <span className="inline-flex h-7 items-center rounded-full bg-bg-surface px-3 text-caption font-medium text-text-secondary">
+            {formatThaiDate(todayBkk(), "monthYear")}
+          </span>
         }
-      />
-
-      <SegmentedNav
-        label={tf("label")}
-        className="mb-4 lg:w-fit"
-        items={FILTERS.map((f) => ({
-          key: f,
-          href: f === "all" ? "/goals" : `/goals?domain=${f}`,
-          label: tf(f),
-          active: filter === f,
-        }))}
+        toolbarStart={
+          <SegmentedNav
+            label={tf("label")}
+            items={FILTERS.map((f) => ({
+              key: f,
+              href: f === "all" ? "/goals" : `/goals?domain=${f}`,
+              label: tf(f),
+              active: filter === f,
+            }))}
+          />
+        }
+        toolbarEnd={
+          <Button asChild>
+            <Link href="?new=goal" scroll={false}>
+              <Plus aria-hidden="true" />
+              {t("newDesktop")}
+            </Link>
+          </Button>
+        }
       />
 
       {groups.length === 0 ? (
@@ -87,7 +88,7 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
           }
         />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-6 lg:mt-3">
           {groups.map((group) => (
             <GoalGroup
               key={group.type}
@@ -116,9 +117,9 @@ function GoalGroup({
       <h2 id={`group-${type}`} className="mb-2 text-h2 text-brand-800">
         {label}
       </h2>
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {goals.map((goal) => (
-          <GoalCard key={goal.id} goal={goal} />
+          <GoalCard key={goal.id} goal={goal} className="lg:px-6 lg:py-5" />
         ))}
       </div>
     </section>

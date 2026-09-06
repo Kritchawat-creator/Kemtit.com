@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { signOut } from "@/core/auth/actions";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,10 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type Props = { displayName: string | null; email: string | null };
+type Props = { displayName: string | null; email: string | null; avatarUrl?: string | null };
 
-/** avatar พีช 40px ขอบขาว + เงา (Claude Design 2a) → เมนูผู้ใช้ (ออกจากระบบ) */
-export function UserMenu({ displayName, email }: Props) {
+/** avatar พีช 40px ขอบขาว + เงา (Claude Design 2a) — รูปโปรไฟล์เมื่ออัปโหลด (5d) → เมนูผู้ใช้ (ออกจากระบบ) */
+export function UserMenu({ displayName, email, avatarUrl }: Props) {
   const t = useTranslations();
   const label = displayName?.trim() || email || "";
   const initial = (label[0] ?? "?").toUpperCase();
@@ -33,6 +33,7 @@ export function UserMenu({ displayName, email }: Props) {
           className="size-10 rounded-full p-0 hover:bg-transparent"
         >
           <Avatar className="size-10 border-2 border-neutral-0 shadow-sm">
+            {avatarUrl ? <AvatarImage src={avatarUrl} alt="" className="object-cover" /> : null}
             <AvatarFallback className="bg-accent-100 text-base font-semibold text-accent-900">
               {initial}
             </AvatarFallback>

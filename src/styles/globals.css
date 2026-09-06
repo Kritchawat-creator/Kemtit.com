@@ -142,6 +142,7 @@
   --shadow-md: 0 8px 24px rgb(122 95 224 / 0.1); /* white card */
   --shadow-lg: 0 12px 32px rgb(122 95 224 / 0.16); /* hero card */
   --shadow-nav: 0 -8px 24px rgb(122 95 224 / 0.1); /* bottom nav */
+  --shadow-sidebar: 8px 0 24px rgb(122 95 224 / 0.08); /* sidebar desktop */
   --shadow-sheet: 0 -12px 40px rgb(122 95 224 / 0.2); /* bottom sheet */
   --shadow-toast: 0 10px 28px rgb(122 95 224 / 0.14);
   --shadow-fab: 0 10px 24px rgb(245 100 140 / 0.35); /* FAB สีพีช — เงาสีเดียวกับปุ่ม */

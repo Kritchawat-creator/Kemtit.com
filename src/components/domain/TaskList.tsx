@@ -20,6 +20,7 @@ import { Celebration } from "./Celebration";
 import { DatePicker } from "./DatePicker";
 import { DomainTag } from "./DomainTag";
 import { TaskForm } from "./TaskForm";
+import { TaskPhotoStrip } from "./TaskPhotos";
 import { TaskRow } from "./TaskRow";
 
 type Item = DayTaskItem<TaskWithGoal>;
@@ -219,6 +220,7 @@ export function TaskList({
               goalId: selected.task.goal_id,
             }}
             goalOptions={goalOptions}
+            existingPhotoCount={selected.task.photos?.length ?? 0}
             onDone={closeDetail}
           />
         ) : selected ? (
@@ -287,6 +289,8 @@ export function TaskList({
                 </div>
               ) : null}
             </div>
+
+            <TaskPhotoStrip taskId={selected.task.id} photos={selected.task.photos ?? []} />
 
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => setEditing(true)}>

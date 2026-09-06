@@ -7,7 +7,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 
 import type { TaskCompletion, TaskWithGoal } from "./schema";
 
-const TASK_WITH_GOAL = "*, goal:goals(id, title)";
+const TASK_WITH_GOAL = "*, goal:goals(id, title), photos:task_photos(id, path)";
 
 /** งานของวัน (ค้าง/ต้องทำ/เสร็จ) — ดึง task เดี่ยวของวันนั้น + task ซ้ำทั้งหมด + task เดี่ยวค้าง */
 export async function getDayPlan(date: ISODate): Promise<DayPlan<TaskWithGoal>> {

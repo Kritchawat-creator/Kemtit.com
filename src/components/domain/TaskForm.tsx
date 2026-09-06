@@ -12,6 +12,7 @@ import { createTask, updateTask } from "@/core/tasks/actions";
 import { RECURRENCE_OPTIONS, taskFormSchema, type TaskFormValues } from "@/core/tasks/schema";
 import { addDaysISO, todayBkk } from "@/lib/date";
 import { formatWeekdayShort } from "@/lib/format";
+import { usePhotoUpload } from "@/hooks/use-photo-upload";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { FormMessageI18n } from "@/components/ui/form-i18n";
@@ -28,6 +29,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import { DatePicker } from "./DatePicker";
 import { DomainSelect } from "./DomainSelect";
+import { PendingPhotoPicker } from "./TaskPhotos";
 
 type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
 const NO_GOAL = "__none__";
@@ -38,16 +40,27 @@ type Props = {
   taskId?: string;
   initial?: Partial<TaskFormValues>;
   goalOptions: ParentCandidate[];
+  /** จำนวนรูปที่งานมีอยู่แล้ว (โหมดแก้ไข) — ใช้คุมเพดาน 5 รูป/งาน */
+  existingPhotoCount?: number;
   onDone: () => void;
 };
 
 /** ฟอร์ม task (Design §8.2): ชื่อช่องเดียวก็บันทึกได้ — recurrence รองรับ ทุกวัน/ทุกสัปดาห์ (Q4) */
-export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) {
+export function TaskForm({
+  mode,
+  taskId,
+  initial,
+  goalOptions,
+  existingPhotoCount = 0,
+  onDone,
+}: Props) {
   const t = useTranslations();
   const te = useTranslations("errors");
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [pendingPhotos, setPendingPhotos] = useState<File[]>([]);
+  const { upload: uploadPhoto } = usePhotoUpload();
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -77,6 +90,10 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
         }
         setServerError(result.error === "validation" && result.fieldErrors ? null : result.error);
         return;
+      }
+      // รูปที่เลือกไว้อัปโหลดหลังบันทึกงานสำเร็จ (Claude Design 5b) — ทีละรูป กันแตะเพดาน 5 รูป/งาน
+      for (const file of pendingPhotos) {
+        await uploadPhoto(file, { kind: "taskPhoto", targetId: result.data.id }, { silent: true });
       }
       toast.success(mode === "create" ? t("tasks.toasts.created") : t("tasks.toasts.updated"));
       router.refresh();
@@ -229,6 +246,13 @@ export function TaskForm({ mode, taskId, initial, goalOptions, onDone }: Props) 
             )}
           />
         ) : null}
+
+        <PendingPhotoPicker
+          files={pendingPhotos}
+          onChange={setPendingPhotos}
+          existingCount={existingPhotoCount}
+          disabled={pending}
+        />
 
         {serverError ? (
           <p role="alert" aria-live="polite" className="text-small text-danger-800">

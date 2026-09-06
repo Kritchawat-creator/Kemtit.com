@@ -53,7 +53,7 @@ export function formatValueParts(
   return { value: formatNumber(value), unit: unit || null };
 }
 
-type DateStyle = "short" | "medium" | "long" | "weekday" | "monthYear" | "day";
+type DateStyle = "short" | "medium" | "long" | "weekday" | "longWeekday" | "monthYear" | "day";
 
 const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
   short: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
@@ -77,6 +77,13 @@ const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
     weekday: "short",
     day: "numeric",
     month: "short",
+    timeZone: "UTC",
+  }),
+  longWeekday: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
     timeZone: "UTC",
   }),
   monthYear: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {

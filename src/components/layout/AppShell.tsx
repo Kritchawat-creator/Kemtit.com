@@ -4,31 +4,30 @@ import type { Me } from "@/core/profile/queries";
 
 import { BottomNav } from "./BottomNav";
 import { Fab } from "./Fab";
-import { Sidebar } from "./Sidebar";
+import { ShellFrame } from "./ShellFrame";
 import { TopBar } from "./TopBar";
 
 type Props = { me: Me; children: React.ReactNode };
 
 /**
- * โครงหน้าหลักของแอป (Design §7 + Claude Design 2a): มือถือ = แถว persona/avatar + เนื้อหาบนพื้น brand-50 + bottom nav มน + FAB พีช
- * desktop = sidebar + top bar · เนื้อหาเว้นที่ด้านล่างให้ bottom nav/FAB (pb-32) และ container กว้างสุด 7xl บน desktop
+ * โครงหน้าหลักของแอป (Design §7 + Claude Design 2a/turn 4)
+ * มือถือ = แถว persona/avatar + เนื้อหาบนพื้น brand-50 + bottom nav มน + FAB พีช
+ * desktop = sidebar พับได้ (ShellFrame) + persona/avatar ลอยมุมขวาบน + เนื้อหากว้างสุด 1200px กึ่งกลาง
  */
 export function AppShell({ me, children }: Props) {
   return (
-    <div className="min-h-dvh bg-bg-page">
-      <Sidebar />
-      <div className="lg:pl-64">
-        <TopBar
-          persona={me.profile.active_persona}
-          displayName={me.profile.display_name}
-          email={me.email}
-        />
-        <main className="mx-auto w-full max-w-7xl px-5 pt-3 pb-32 lg:px-8 lg:pt-6 lg:pb-10">
-          {children}
-        </main>
-      </div>
+    <ShellFrame>
+      <TopBar
+        persona={me.profile.active_persona}
+        displayName={me.profile.display_name}
+        email={me.email}
+        avatarPath={me.profile.avatar_path}
+      />
+      <main className="mx-auto w-full max-w-[1200px] px-5 pt-3 pb-32 lg:px-8 lg:pt-0 lg:pb-10">
+        {children}
+      </main>
       <BottomNav />
       <Fab />
-    </div>
+    </ShellFrame>
   );
 }

@@ -6,7 +6,7 @@ import { formatPercent } from "@/lib/format";
 type Props = {
   /** 0-100 */
   value: number;
-  /** ขนาดเป็น px (hero 196 · component sheet 160 · เล็ก 56) */
+  /** ขนาดเป็น px (hero 196 · component sheet 160 · เล็ก 56) — ไม่ส่ง = คุมด้วย className (เช่น size-[196px] lg:size-60) */
   size?: number;
   /** ขนาดเล็ก: เส้นหนาขึ้น ไม่มีตัวเลข/ตัว N (ใช้ในรายการ) */
   small?: boolean;
@@ -30,14 +30,7 @@ function polar(deg: number, r: number): [number, number] {
  * หน้าปัดขาว · วงแหวน border · sweep brand-500 · ขีด 8 ทิศ border-strong · ปลายเข็มเพชร accent-500 (จุด accent เดียวบนหน้าปัด)
  * ถึง 100% เข็มล็อก N และปลายเข็ม pulse (ปิดเองเมื่อ prefers-reduced-motion) · ตัวเลข % เป็น HTML ซ้อนกลางเพื่อให้อ่าน/ทดสอบได้
  */
-export function CompassDial({
-  value,
-  size = 196,
-  small = false,
-  sweep = true,
-  label,
-  className,
-}: Props) {
+export function CompassDial({ value, size, small = false, sweep = true, label, className }: Props) {
   const t = useTranslations("a11y");
   const p = Math.max(0, Math.min(100, value));
   const done = p >= 100;
@@ -56,7 +49,7 @@ export function CompassDial({
       aria-valuemax={100}
       aria-valuenow={Math.round(p)}
       className={cn("relative inline-block shrink-0", className)}
-      style={{ width: size, height: size }}
+      style={size ? { width: size, height: size } : undefined}
     >
       <svg viewBox="0 0 200 200" className="block size-full overflow-visible" aria-hidden="true">
         <circle cx={C} cy={C} r={98} className="fill-bg-surface" />
