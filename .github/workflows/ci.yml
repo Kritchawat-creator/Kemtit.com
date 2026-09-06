@@ -24,6 +24,8 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder"
       NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      # feature flags (src/lib/flags.ts) — build หลักตรงกับ production: uploads ปิด (Design §6A.6)
+      NEXT_PUBLIC_FLAG_UPLOADS: "0"
     steps:
       - uses: actions/checkout@v5
 
@@ -40,3 +42,57 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+
+  # Uploads (Design §6A) ปิด flag ใน POC แต่ flow ต้องถูกทดสอบต่อเนื่อง ไม่ให้โค้ดเน่าเงียบ ๆ จนถึง MVP
+  # → job แยก: Supabase local (Docker) + Playwright รัน e2e/photos.spec.ts ด้วย NEXT_PUBLIC_FLAG_UPLOADS=1
+  #   (spec นี้ throw ถ้าอยู่ใน CI แล้ว flag ไม่ใช่ 1 — กัน skip เงียบ)
+  e2e-uploads:
+    name: e2e · uploads (flag เปิด)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_FLAG_UPLOADS: "1"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54321"
+      MAILPIT_URL: "http://127.0.0.1:54324"
+      # หน้าตั้งค่าเรียก getLineEnv() — ค่า dummy พอ (LINE_CHANNEL_ACCESS_TOKEN ว่าง = dry-run)
+      LINE_CHANNEL_SECRET: "ci-dummy-line-secret"
+      CRON_SECRET: "ci-dummy-cron-secret-32-characters"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Supabase local จาก devDependency `supabase` (เวอร์ชันเดียวกับเครื่อง dev) — apply migrations ทั้งหมดตอน start
+      - name: Start Supabase local
+        run: pnpm exec supabase start
+
+      # key ของ local stack (anon/service_role) — ใส่ลง env ของ step ถัดไป
+      - name: Export Supabase keys
+        run: |
+          pnpm exec supabase status -o env | tr -d '"' > "$RUNNER_TEMP/supabase.env"
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep '^ANON_KEY=' "$RUNNER_TEMP/supabase.env" | cut -d= -f2-)" >> "$GITHUB_ENV"
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(grep '^SERVICE_ROLE_KEY=' "$RUNNER_TEMP/supabase.env" | cut -d= -f2-)" >> "$GITHUB_ENV"
+
+      - run: pnpm exec playwright install --with-deps chromium
+
+      # มือถือก่อน (Design §7.3) — playwright.config.ts เปิด dev server เอง (reuseExistingServer ปิดใน CI)
+      - name: Playwright — photos.spec.ts
+        run: pnpm exec playwright test e2e/photos.spec.ts --project=mobile-chrome
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-uploads
+          path: playwright-report
+          retention-days: 7
+
+      - name: Stop Supabase local
+        if: always()
+        run: pnpm exec supabase stop --no-backup

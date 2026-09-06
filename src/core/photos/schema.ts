@@ -3,28 +3,24 @@ import { z } from "zod";
 import type { PhotoKind } from "@/lib/supabase/storage";
 import type { Database } from "@/types/database";
 
-export type GoalPhotoRow = Database["public"]["Tables"]["goal_photos"]["Row"];
 export type TaskPhotoRow = Database["public"]["Tables"]["task_photos"]["Row"];
 
-/** รูปที่ UI ใช้: id แถว (null สำหรับ cover/avatar ที่เก็บเป็นคอลัมน์) + path ใน bucket */
+/** รูปที่ UI ใช้: id แถว (สำหรับ avatar = user id) + path ใน bucket · URL ลงชื่อฝั่ง server (core/photos/queries) */
 export type Photo = { id: string; path: string };
 
-export const PHOTO_KINDS = [
-  "goalCover",
-  "goalPhoto",
-  "taskPhoto",
-  "avatar",
-] as const satisfies readonly PhotoKind[];
+/** รูปผูกได้กับ task และโปรไฟล์เท่านั้น — goalCover/goalPhoto ถูกถอดถาวรตาม Design §6A.1 */
+export const PHOTO_KINDS = ["taskPhoto", "avatar"] as const satisfies readonly PhotoKind[];
 
-/** ผูกไฟล์ที่อัปโหลดแล้ว (client อัปโหลดตรงเข้า Storage ผ่าน RLS) เข้ากับ goal/task/profile */
+/** ผูกไฟล์ที่อัปโหลดแล้ว (client อัปโหลดตรงเข้า Storage ผ่าน RLS) เข้ากับ task/profile */
 export const attachPhotoSchema = z
   .object({
     kind: z.enum(PHOTO_KINDS),
+    /** taskPhoto = task id · avatar = ไม่ต้องส่ง */
     targetId: z.uuid().optional(),
     path: z.string().min(1).max(300),
   })
   .superRefine((value, ctx) => {
-    if (value.kind !== "avatar" && !value.targetId) {
+    if (value.kind === "taskPhoto" && !value.targetId) {
       ctx.addIssue({ code: "custom", path: ["targetId"], message: "required" });
     }
   });
@@ -32,7 +28,7 @@ export type AttachPhotoInput = z.infer<typeof attachPhotoSchema>;
 
 export const removePhotoSchema = z.object({
   kind: z.enum(PHOTO_KINDS),
-  /** goalPhoto/taskPhoto = id แถวรูป · goalCover = goal id · avatar = ไม่ต้องส่ง */
+  /** taskPhoto = id แถวรูป · avatar = ไม่ต้องส่ง */
   id: z.uuid().optional(),
 });
 export type RemovePhotoInput = z.infer<typeof removePhotoSchema>;

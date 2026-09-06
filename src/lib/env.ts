@@ -38,6 +38,8 @@ const clientSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   NEXT_PUBLIC_APP_URL: z.url(),
+  // feature flag (src/lib/flags.ts อ่านค่าเองแบบ static) — ตรวจที่นี่เพื่อให้ค่าอย่าง "true" ล้มชัด ๆ แทนที่จะปิดเงียบ
+  NEXT_PUBLIC_FLAG_UPLOADS: z.enum(["0", "1"]).optional(),
 });
 
 export type ClientEnv = z.infer<typeof clientSchema>;
@@ -47,5 +49,6 @@ export function getClientEnv(): ClientEnv {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_FLAG_UPLOADS: process.env.NEXT_PUBLIC_FLAG_UPLOADS,
   });
 }

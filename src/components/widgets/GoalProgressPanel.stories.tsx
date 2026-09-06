@@ -18,7 +18,6 @@ const goal: GoalWithProgress = {
   persona_data: { unit: "THB" },
   status: "active",
   completed_at: null,
-  cover_path: null,
   created_at: "2026-09-01T00:00:00Z",
   updated_at: "2026-09-01T00:00:00Z",
   progress: { percent: 43, kind: "metric", current: 21500, target: 50000, childCount: 5 },

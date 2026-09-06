@@ -18,7 +18,6 @@ const goal = (
   persona_data: {},
   status: "active",
   completed_at: null,
-  cover_path: null,
   created_at: "2026-09-01T00:00:00Z",
   updated_at: "2026-09-01T00:00:00Z",
   progress: { percent: 40, kind: "execution", tasksDone: 2, tasksTotal: 5, childCount: 0 },

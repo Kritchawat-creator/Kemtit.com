@@ -2,12 +2,22 @@ import "server-only";
 
 import { buildDayPlan, goalTaskItems, type DayPlan, type DayTaskItem } from "@/core/domain/dayplan";
 import { currentStreak } from "@/core/domain/streak";
+import { withSignedPhotoUrls } from "@/core/photos/queries";
 import { addDaysISO, type ISODate, toBkkDate, todayBkk } from "@/lib/date";
 import { createServerSupabase } from "@/lib/supabase/server";
 
 import type { TaskCompletion, TaskWithGoal } from "./schema";
 
 const TASK_WITH_GOAL = "*, goal:goals(id, title), photos:task_photos(id, path)";
+
+/** แถวจาก select ข้างบน (ยังไม่มี url) → TaskWithGoal โดยลงชื่อ signed URL ให้รูป (batch เดียว) */
+async function toTasksWithGoal(
+  supabase: Awaited<ReturnType<typeof createServerSupabase>>,
+  rows: unknown[] | null,
+): Promise<TaskWithGoal[]> {
+  type Raw = Omit<TaskWithGoal, "photos"> & { photos?: { id: string; path: string }[] };
+  return (await withSignedPhotoUrls(supabase, (rows ?? []) as Raw[])) as TaskWithGoal[];
+}
 
 /** งานของวัน (ค้าง/ต้องทำ/เสร็จ) — ดึง task เดี่ยวของวันนั้น + task ซ้ำทั้งหมด + task เดี่ยวค้าง */
 export async function getDayPlan(date: ISODate): Promise<DayPlan<TaskWithGoal>> {
@@ -31,7 +41,7 @@ export async function getDayPlan(date: ISODate): Promise<DayPlan<TaskWithGoal>> 
     return { date, overdue: [], due: [], done: [] };
   }
   return buildDayPlan(
-    (tasks ?? []) as TaskWithGoal[],
+    await toTasksWithGoal(supabase, tasks),
     (completions ?? []) as TaskCompletion[],
     date,
     today,
@@ -50,7 +60,7 @@ export async function getRangeTasks(from: ISODate, to: ISODate) {
     supabase.from("task_completions").select("*").gte("completed_on", from).lte("completed_on", to),
   ]);
   return {
-    tasks: (tasks ?? []) as TaskWithGoal[],
+    tasks: await toTasksWithGoal(supabase, tasks),
     completions: (completions ?? []) as TaskCompletion[],
   };
 }
@@ -69,7 +79,7 @@ export async function getGoalTaskItems(goalId: string): Promise<DayTaskItem<Task
     supabase.from("task_completions").select("*").eq("completed_on", today),
   ]);
   return goalTaskItems(
-    (tasks ?? []) as TaskWithGoal[],
+    await toTasksWithGoal(supabase, tasks),
     (completions ?? []) as TaskCompletion[],
     today,
   );

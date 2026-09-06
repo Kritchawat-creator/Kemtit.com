@@ -11,6 +11,7 @@ import type { ParentCandidate } from "@/core/goals/schema";
 import { createTask, updateTask } from "@/core/tasks/actions";
 import { RECURRENCE_OPTIONS, taskFormSchema, type TaskFormValues } from "@/core/tasks/schema";
 import { addDaysISO, todayBkk } from "@/lib/date";
+import { UPLOADS_ENABLED } from "@/lib/flags";
 import { formatWeekdayShort } from "@/lib/format";
 import { usePhotoUpload } from "@/hooks/use-photo-upload";
 import { Button } from "@/components/ui/button";
@@ -91,7 +92,7 @@ export function TaskForm({
         setServerError(result.error === "validation" && result.fieldErrors ? null : result.error);
         return;
       }
-      // รูปที่เลือกไว้อัปโหลดหลังบันทึกงานสำเร็จ (Claude Design 5b) — ทีละรูป กันแตะเพดาน 5 รูป/งาน
+      // รูปที่เลือกไว้อัปโหลดหลังบันทึกงานสำเร็จ (Design §6A.3 ข้อ 4: ไม่บล็อกการบันทึก) — ทีละรูป กันแตะเพดาน 5 รูป/งาน
       for (const file of pendingPhotos) {
         await uploadPhoto(file, { kind: "taskPhoto", targetId: result.data.id }, { silent: true });
       }
@@ -247,12 +248,14 @@ export function TaskForm({
           />
         ) : null}
 
-        <PendingPhotoPicker
-          files={pendingPhotos}
-          onChange={setPendingPhotos}
-          existingCount={existingPhotoCount}
-          disabled={pending}
-        />
+        {UPLOADS_ENABLED ? (
+          <PendingPhotoPicker
+            files={pendingPhotos}
+            onChange={setPendingPhotos}
+            existingCount={existingPhotoCount}
+            disabled={pending}
+          />
+        ) : null}
 
         {serverError ? (
           <p role="alert" aria-live="polite" className="text-small text-danger-800">

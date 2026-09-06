@@ -121,7 +121,7 @@ pnpm exec supabase gen types typescript --local > src/types/database.ts
 pnpm e2e --project=mobile-chrome  # Playwright สตาร์ท next dev เอง; OTP อ่านจาก Mailpit http://127.0.0.1:54324
 ```
 
-รูปภาพ (ภาพเป้าหมาย / รูปความคืบหน้า / รูปแนบงาน / รูปโปรไฟล์) เก็บใน Storage bucket `photos` (สร้างโดย migration `20260906120000_photos.sql`) — local ต้องเปิด `[storage] enabled = true` ใน `supabase/config.toml` (เปิดไว้แล้ว) ไม่งั้น migration นี้และ `e2e/photos.spec.ts` จะล้ม · client อัปโหลดตรงเข้า bucket ผ่าน RLS โฟลเดอร์ `<user_id>/` แล้วเรียก `attachPhoto` ผูกกับ goal/task/profile
+รูปภาพ (Design §6A — รูปแนบงานผูกกับ task เท่านั้น + รูปโปรไฟล์) อยู่ใต้ feature flag `NEXT_PUBLIC_FLAG_UPLOADS` (`src/lib/flags.ts`) ซึ่ง**ปิดตลอด POC/CP1** — ปิดแล้วซ่อน UI ทั้งหมดและ server action `attachPhoto`/`removePhoto` ตอบ `featureDisabled` · ไฟล์เก็บใน Storage bucket `photos` แบบ **private** (migration `20260906120000_photos.sql` + `20260906180000_uploads_private.sql`) path `<user_id>/<task_id>/<uuid>.<ext>` (avatar = `<user_id>/avatar/…`) อ่านผ่าน signed URL ที่ลงชื่อด้วย client ของ user เอง (RLS select โฟลเดอร์ตัวเอง) ปัด exp เป็นชั่วโมงเต็ม + cache ต่อ instance (`src/core/photos/queries.ts`) · local ต้องเปิด `[storage] enabled = true` ใน `supabase/config.toml` (เปิดไว้แล้ว) · `e2e/photos.spec.ts` รัน flow เต็มเมื่อ flag = 1 (`PORT=3100 NEXT_PUBLIC_FLAG_UPLOADS=1 pnpm e2e e2e/photos.spec.ts`) และ CI job `e2e-uploads` รันให้ทุก push · งาน MVP ที่ค้าง (ลิมิต Free 1/Pro 5, ลบไฟล์ผ่าน `task.deleted`, WebP/HEIC, action sheet ถ่ายรูป, AttachmentGrid 5 state, lightbox) อยู่ใน `tracking-log.md`
 
 `.env.local` สำหรับ local: `LINE_CHANNEL_SECRET` ใส่ค่าอะไรก็ได้ (ใช้เซ็น webhook ใน E2E) และเว้น `LINE_CHANNEL_ACCESS_TOKEN` ว่างเพื่อให้ระบบอยู่ในโหมด dry-run
 

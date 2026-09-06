@@ -61,45 +61,9 @@ export type Database = {
         };
         Relationships: [];
       };
-      goal_photos: {
-        Row: {
-          created_at: string;
-          goal_id: string;
-          id: string;
-          path: string;
-          sort_order: number;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          goal_id: string;
-          id?: string;
-          path: string;
-          sort_order?: number;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          goal_id?: string;
-          id?: string;
-          path?: string;
-          sort_order?: number;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "goal_photos_goal_id_fkey";
-            columns: ["goal_id"];
-            isOneToOne: false;
-            referencedRelation: "goals";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
       goals: {
         Row: {
           completed_at: string | null;
-          cover_path: string | null;
           created_at: string;
           current_value: number;
           domain: string;
@@ -117,7 +81,6 @@ export type Database = {
         };
         Insert: {
           completed_at?: string | null;
-          cover_path?: string | null;
           created_at?: string;
           current_value?: number;
           domain?: string;
@@ -135,7 +98,6 @@ export type Database = {
         };
         Update: {
           completed_at?: string | null;
-          cover_path?: string | null;
           created_at?: string;
           current_value?: number;
           domain?: string;

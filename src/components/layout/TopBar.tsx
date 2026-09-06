@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 
 import type { PersonaId } from "@/core/profile/personas";
-import { photoPublicUrl } from "@/lib/supabase/storage";
 
 import { UserMenu } from "./UserMenu";
 
@@ -9,14 +8,15 @@ type Props = {
   persona: PersonaId | null;
   displayName: string | null;
   email: string | null;
-  avatarPath?: string | null;
+  /** signed URL จาก getMe() — null เมื่อไม่มีรูปหรือ flag uploads ปิด */
+  avatarUrl?: string | null;
 };
 
 /**
  * แถวบน: persona pill สีพีช (accent-50/900) + avatar พีช บนพื้นหน้า ไม่มีเส้นขอบ (Claude Design 2a)
  * desktop (turn 4): ลอยอยู่มุมขวาบนของ header 72px — ปุ่มหลักของหน้าย้ายไป toolbar ของแต่ละหน้า
  */
-export function TopBar({ persona, displayName, email, avatarPath }: Props) {
+export function TopBar({ persona, displayName, email, avatarUrl }: Props) {
   const t = useTranslations();
 
   return (
@@ -31,11 +31,7 @@ export function TopBar({ persona, displayName, email, avatarPath }: Props) {
       ) : (
         <span />
       )}
-      <UserMenu
-        displayName={displayName}
-        email={email}
-        avatarUrl={avatarPath ? photoPublicUrl(avatarPath) : null}
-      />
+      <UserMenu displayName={displayName} email={email} avatarUrl={avatarUrl ?? null} />
     </header>
   );
 }

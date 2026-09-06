@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  avatarLetter,
   formatDayDistance,
   formatPercent,
   formatTHB,
@@ -42,5 +43,13 @@ describe("format (th-TH, พ.ศ.)", () => {
     expect(formatDayDistance("2026-09-05", "2026-09-05")).toMatch(/วันนี้/);
     expect(formatDayDistance("2026-09-06", "2026-09-05")).toMatch(/พรุ่งนี้/);
     expect(formatDayDistance("2026-09-04", "2026-09-05")).toMatch(/เมื่อวาน/);
+  });
+});
+
+describe("avatarLetter", () => {
+  it("ตัวอักษรแรกของชื่อ (ไทยไม่แปลงตัวพิมพ์) → อีเมล → ?", () => {
+    expect(avatarLetter("ปุ๊ก ขายดี")).toBe("ป");
+    expect(avatarLetter("  ", "somchai@example.com")).toBe("s");
+    expect(avatarLetter(null, null)).toBe("?");
   });
 });

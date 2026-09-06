@@ -12,6 +12,7 @@ import type { ParentCandidate } from "@/core/goals/schema";
 import { deleteTask, rescheduleTask, toggleTask } from "@/core/tasks/actions";
 import type { TaskWithGoal } from "@/core/tasks/schema";
 import { addDaysISO, type ISODate } from "@/lib/date";
+import { UPLOADS_ENABLED } from "@/lib/flags";
 import { formatThaiDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
@@ -21,7 +22,7 @@ import { DatePicker } from "./DatePicker";
 import { DomainTag } from "./DomainTag";
 import { TaskForm } from "./TaskForm";
 import { TaskPhotoStrip } from "./TaskPhotos";
-import { TaskRow } from "./TaskRow";
+import { TaskRow, type TaskAttachmentsMode } from "./TaskRow";
 
 type Item = DayTaskItem<TaskWithGoal>;
 type Override = { done?: boolean; hidden?: boolean };
@@ -36,6 +37,8 @@ export type TaskListProps = {
   emptyState?: ReactNode;
   /** card = การ์ดขาวมีเงาของตัวเอง · plain = แถวเปล่า ๆ สำหรับวางใน widget ที่เป็นการ์ดอยู่แล้ว */
   variant?: "card" | "plain";
+  /** รูปแนบท้ายแถว (Design §6A.3): icon = dashboard/ปฏิทิน (ค่าเริ่มต้น) · stack = goal detail — ซ่อนทั้งหมดเมื่อ flag uploads ปิด */
+  attachments?: Exclude<TaskAttachmentsMode, "none">;
 };
 
 const UNDO_MS = 5000;
@@ -52,8 +55,10 @@ export function TaskList({
   showGoal = false,
   emptyState,
   variant = "card",
+  attachments = "icon",
 }: TaskListProps) {
   const t = useTranslations();
+  const attachmentsMode: TaskAttachmentsMode = UPLOADS_ENABLED ? attachments : "none";
   const router = useRouter();
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [prevItems, setPrevItems] = useState(items);
@@ -192,6 +197,7 @@ export function TaskList({
                 onToggle={toggle}
                 onOpen={(i) => setSelectedKey(i.key)}
                 showGoal={showGoal}
+                attachments={attachmentsMode}
               />
             ))}
           </ul>
@@ -290,7 +296,9 @@ export function TaskList({
               ) : null}
             </div>
 
-            <TaskPhotoStrip taskId={selected.task.id} photos={selected.task.photos ?? []} />
+            {UPLOADS_ENABLED ? (
+              <TaskPhotoStrip taskId={selected.task.id} photos={selected.task.photos ?? []} />
+            ) : null}
 
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => setEditing(true)}>

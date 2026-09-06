@@ -159,3 +159,15 @@ export function formatDayDistance(date: ISODate, today: ISODate): string {
   const diffDays = Math.round((fromISO(date).getTime() - fromISO(today).getTime()) / 86_400_000);
   return relative.format(diffDays, "day");
 }
+
+/**
+ * ตัวอักษรแรกของชื่อที่แสดง (fallback: อีเมล → "?") สำหรับ avatar — Design §6A: ไม่ใช่ initials แบบตะวันตก
+ * ชื่อไทยไม่มี convention นั้นและไม่มี uppercase จึงไม่แปลงตัวพิมพ์ · ไฟล์นี้ไม่มี client boundary ใช้ได้ทั้ง server/client
+ */
+export function avatarLetter(
+  displayName: string | null | undefined,
+  email?: string | null,
+): string {
+  const source = displayName?.trim() || email?.trim() || "";
+  return Array.from(source)[0] ?? "?";
+}

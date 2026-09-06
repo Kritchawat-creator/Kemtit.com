@@ -21,7 +21,7 @@ export function AppShell({ me, children }: Props) {
         persona={me.profile.active_persona}
         displayName={me.profile.display_name}
         email={me.email}
-        avatarPath={me.profile.avatar_path}
+        avatarUrl={me.avatarUrl}
       />
       <main className="mx-auto w-full max-w-[1200px] px-5 pt-3 pb-32 lg:px-8 lg:pt-0 lg:pb-10">
         {children}

@@ -15,7 +15,6 @@ import { CompassDial } from "@/components/domain/CompassDial";
 import { DomainTag } from "@/components/domain/DomainTag";
 import { EmptyState } from "@/components/domain/EmptyState";
 import { GoalCascadeTree } from "@/components/domain/GoalCascadeTree";
-import { GoalCover, GoalGallery } from "@/components/domain/GoalPhotos";
 import { PaceBadge } from "@/components/domain/PaceBadge";
 import { PeriodLabel } from "@/components/domain/PeriodLabel";
 import { TaskList } from "@/components/domain/TaskList";
@@ -47,7 +46,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
   ]);
   if (!detail) notFound();
 
-  const { goal, parent, tree, photos } = detail;
+  const { goal, parent, tree } = detail;
   const unit = goalUnit(goal);
   const today = todayBkk();
   const remainingDays = Math.max(0, daysLeft(goal.period, today));
@@ -107,8 +106,6 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
               goal.status === "archived" && "opacity-80",
             )}
           >
-            <GoalCover goalId={goal.id} path={goal.cover_path} className="h-44 lg:h-40" />
-
             <div className="flex items-baseline justify-between gap-3">
               <PeriodLabel period={goal.period} className="text-h3 text-brand-800 lg:text-h2" />
               {goal.status === "archived" ? (
@@ -183,8 +180,6 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
         </div>
 
         <div className="mt-6 space-y-6 lg:col-span-8 lg:mt-0">
-          <GoalGallery goalId={goal.id} photos={photos} />
-
           <section aria-labelledby="children-title">
             <div className="mb-2 flex items-baseline justify-between gap-3">
               <h2 id="children-title" className="text-h2 text-brand-800">
@@ -240,6 +235,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
               today={today}
               goalOptions={candidates}
               groupByStatus={false}
+              attachments="stack"
               emptyState={
                 <EmptyState
                   icon={CheckSquare}

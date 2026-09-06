@@ -1,9 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Playwright — E2E 3 flow ตาม Design §15 (onboarding, สร้าง goal, ติ๊ก task) เริ่มเขียนใน M7
- * ยังไม่รันใน CI จนกว่าจะมี flow จริง (POC Decisions M0 ข้อ 7)
+ * Playwright — E2E ตาม Design §15 (onboarding, สร้าง goal, ติ๊ก task, ปฏิทิน, รูปแนบงาน)
+ * PORT: ให้รันคู่กับ dev server อื่นได้ (เช่น `PORT=3100 NEXT_PUBLIC_FLAG_UPLOADS=1 pnpm e2e e2e/photos.spec.ts`)
+ * CI: job `e2e-uploads` ใน ci.yml รัน photos.spec.ts บน Supabase local (ดู .github/workflows/ci.yml)
  */
+const port = process.env.PORT ?? "3000";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
+
 export default defineConfig({
   testDir: "./e2e",
   timeout: 30_000,
@@ -12,7 +16,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000",
+    baseURL,
     locale: "th-TH",
     timezoneId: "Asia/Bangkok",
     trace: "on-first-retry",
@@ -23,8 +27,8 @@ export default defineConfig({
     { name: "desktop-chrome", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
-    command: "pnpm dev",
-    url: "http://localhost:3000",
+    command: `pnpm dev -p ${port}`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
   },

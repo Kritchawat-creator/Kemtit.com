@@ -8,8 +8,10 @@ import { getLineStatus } from "@/core/profile/admin";
 import { isLinkCodeExpired } from "@/core/profile/line";
 import { ROUTES } from "@/core/profile/onboarding";
 import { getMe } from "@/core/profile/queries";
+import { UPLOADS_ENABLED } from "@/lib/flags";
 import { getLineEnv } from "@/lib/env.server";
-import { AvatarSlot } from "@/components/domain/GoalPhotos";
+import { avatarLetter } from "@/lib/format";
+import { AvatarSlot } from "@/components/domain/AvatarSlot";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 
@@ -48,7 +50,7 @@ export default async function SettingsPage() {
   const line = lineConfig();
   const codeAlive = lineStatus?.code && !isLinkCodeExpired(lineStatus.codeExpiresAt);
   const displayName = me.profile.display_name?.trim() || "";
-  const initial = (displayName[0] ?? me.email?.[0] ?? "?").toUpperCase();
+  const letter = avatarLetter(displayName, me.email);
 
   return (
     <>
@@ -56,11 +58,13 @@ export default async function SettingsPage() {
       <div className="max-w-3xl space-y-4">
         <Section title={t("profile.title")}>
           <div className="mb-4 flex items-center gap-3.5">
-            <AvatarSlot path={me.profile.avatar_path} initial={initial} />
+            <AvatarSlot src={me.avatarUrl} letter={letter} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-h3 text-text-primary">{displayName || me.email}</p>
               <p className="truncate text-small text-text-secondary">{me.email}</p>
-              <p className="text-caption text-text-muted">{tp("avatarHint")}</p>
+              {UPLOADS_ENABLED ? (
+                <p className="text-caption text-text-muted">{tp("avatarHint")}</p>
+              ) : null}
             </div>
           </div>
           <DisplayNameForm initial={me.profile.display_name ?? ""} />

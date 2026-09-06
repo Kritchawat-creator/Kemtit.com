@@ -7,8 +7,8 @@ import type { Database } from "@/types/database";
 
 type TaskRow = Database["public"]["Tables"]["tasks"]["Row"];
 export type Task = Omit<TaskRow, "domain"> & { domain: Domain };
-/** รูปแนบงาน (task_photos) — เฉพาะ id + path; URL สร้างจาก photoPublicUrl ฝั่ง UI */
-export type TaskPhoto = { id: string; path: string };
+/** รูปแนบงาน (task_photos) — url = signed URL ที่ลงชื่อฝั่ง server (null = โหลดไม่ได้/flag ปิด) */
+export type TaskPhoto = { id: string; path: string; url: string | null };
 export type TaskWithGoal = Task & {
   goal: { id: string; title: string } | null;
   /** ไม่บังคับ (query เก่า/fixture ใน story ไม่มี) — undefined ถือว่าไม่มีรูป */

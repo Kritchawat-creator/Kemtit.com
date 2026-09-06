@@ -7,20 +7,23 @@ import { toast } from "sonner";
 
 import { attachPhoto, removePhoto } from "@/core/photos/actions";
 import type { Photo } from "@/core/photos/schema";
+import { UPLOADS_ENABLED } from "@/lib/flags";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import {
   isAllowedPhotoType,
   PHOTO_BUCKET,
   PHOTO_MAX_BYTES,
   PHOTO_MAX_EDGE,
+  photoPathFor,
   type PhotoKind,
 } from "@/lib/supabase/storage";
 
 type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
 
+/** taskPhoto ต้องมี targetId = task id · avatar ไม่ต้อง */
 export type PhotoTarget = { kind: PhotoKind; targetId?: string };
 
-/** ย่อรูปฝั่ง client (ด้านยาวสุด PHOTO_MAX_EDGE, JPEG 0.85) — ถ้าเบราว์เซอร์อ่านไม่ได้ให้ส่งไฟล์เดิม */
+/** ย่อรูปฝั่ง client (ด้านยาวสุด PHOTO_MAX_EDGE, JPEG 0.85) — ถ้าเบราว์เซอร์อ่านไม่ได้ให้ส่งไฟล์เดิม (MVP: WebP + HEIC) */
 async function downscale(file: File): Promise<Blob> {
   try {
     const bitmap = await createImageBitmap(file);
@@ -51,8 +54,9 @@ function extensionOf(type: string) {
 }
 
 /**
- * อัปโหลดรูป: ตรวจชนิด/ขนาด → ย่อ → ส่งตรงเข้า Storage (RLS โฟลเดอร์ <user_id>/) → attachPhoto ผูกกับ goal/task/profile
- * ลบ: removePhoto (ลบแถว + ไฟล์) · ทุกกรณี toast + router.refresh ให้ server component โหลดใหม่
+ * อัปโหลดรูป: ตรวจชนิด/ขนาด → ย่อ → ส่งตรงเข้า Storage ที่ <user_id>/<task_id|avatar>/<uuid>.<ext> (RLS โฟลเดอร์แรก)
+ * → attachPhoto ผูกกับ task/profile · ลบ: removePhoto (ลบแถว + ไฟล์) · ทุกกรณี toast + router.refresh ให้ server ลงชื่อ URL ใหม่
+ * flag ปิด: UI ไม่ถูก render อยู่แล้ว แต่กันไว้อีกชั้น (server action ก็ปฏิเสธ)
  */
 export function usePhotoUpload() {
   const t = useTranslations("photos");
@@ -71,6 +75,10 @@ export function usePhotoUpload() {
       target: PhotoTarget,
       options?: { silent?: boolean },
     ): Promise<Photo | null> => {
+      if (!UPLOADS_ENABLED) {
+        toast.error(te("featureDisabled"));
+        return null;
+      }
       if (!isAllowedPhotoType(file.type)) {
         toast.error(te("photoType"));
         return null;
@@ -90,7 +98,12 @@ export function usePhotoUpload() {
           return null;
         }
         const blob = await downscale(file);
-        const path = `${user.id}/${target.kind}/${crypto.randomUUID()}.${extensionOf(blob.type)}`;
+        const path = photoPathFor(
+          target.kind,
+          user.id,
+          `${crypto.randomUUID()}.${extensionOf(blob.type)}`,
+          target.targetId,
+        );
         const { error } = await supabase.storage
           .from(PHOTO_BUCKET)
           .upload(path, blob, { contentType: blob.type || "image/jpeg", upsert: false });
@@ -117,6 +130,10 @@ export function usePhotoUpload() {
 
   const remove = useCallback(
     async (target: { kind: PhotoKind; id?: string }): Promise<boolean> => {
+      if (!UPLOADS_ENABLED) {
+        toast.error(te("featureDisabled"));
+        return false;
+      }
       setBusy(true);
       try {
         const result = await removePhoto(target);
@@ -131,7 +148,7 @@ export function usePhotoUpload() {
         setBusy(false);
       }
     },
-    [router, t, translateError],
+    [router, t, te, translateError],
   );
 
   return { upload, remove, busy };

@@ -80,6 +80,7 @@ Kemtit คือเว็บแอปพลิเคชัน (PWA) ที่ร
 | **Multi-view Calendar** | สลับมุมมอง วัน/สัปดาห์/เดือน/ปี | ดูภาพรวมได้ตามบริบทที่ต้องการ ณ ขณะนั้น |
 | **Custom Dashboard** | Widget registry กลาง + drag-drop จัดวาง (desktop), stack แนวตั้ง (mobile), บันทึก layout ต่อ user | แต่ละ user เห็นสิ่งที่สำคัญกับตัวเองก่อนโดยไม่ต้องเหมือนกันทุกคน |
 | **Auth & Onboarding** | สมัคร/ล็อกอิน email+OTP, เลือก persona ตอนแรกเข้า (สลับทีหลังได้), โหลด default dashboard layout ตาม persona | ลดขั้นตอน setup ให้ user เริ่มใช้งานได้ทันทีโดยไม่ต้องตั้งค่าเอง |
+| **Task Attachments** *(MVP, ปิด flag ใน POC)* | แนบรูปที่ task เท่านั้น Free 1 / Pro 5 รูป, ถ่ายรูปหรือเลือกจากคลัง, ย่อเป็น WebP ฝั่ง client, private bucket + signed URL, ลบไฟล์ผ่าน `task.deleted` event | "หลักฐานว่าทำแล้ว" (แม่ค้าถ่ายกล่องที่แพ็ค) และเป็น upgrade trigger ที่จับต้องได้ — ไม่ใช่อัลบั้ม |
 
 ### 5.2 Persona Modules
 
@@ -201,8 +202,8 @@ create table user_profiles (
 1. สมัครด้วย email → รับ OTP → ยืนยัน
 2. เลือก persona (seller/creator/student/office)
 3. ระบบโหลด default dashboard layout + widget ตาม persona ที่เลือก
-4. สร้าง goal แรกจาก template ตาม persona เป็น **metric goal ระดับเดือน** (seller: "ยอดขายเดือนนี้ [____] บาท") — ไม่สร้าง year goal ในขั้นนี้ (user สร้างเองทีหลังจากหน้าเป้าหมายถ้าต้องการ)
-5. ระบบสร้าง goal ลูกระดับ**สัปดาห์** (execution) ให้อัตโนมัติ 4-5 ตัว พร้อม task ตัวอย่าง 1 ตัวต่อสัปดาห์ — ไม่มี AI แตกเป้า (ตาม POC Decisions 2026-09-05 ข้อ 1.4 ใน `docs/implementation-plan.md` ภาคผนวก A)
+4. สร้าง goal แรก (ระบบแนะนำ template ตาม persona เช่น "ตั้งเป้ายอดขายเดือนนี้")
+5. ระบบ cascade goal ปีนั้นอัตโนมัติเป็น task รายวันตัวอย่าง
 
 **Flow B — Daily usage**
 1. เปิดแอป → เห็น dashboard ที่จัดเรียงเองไว้ (widget ยอดขาย, งานวันนี้, ชีวิตประจำวัน)
@@ -211,8 +212,8 @@ create table user_profiles (
 4. ถ้าทำเป้าสำเร็จ (100%) → insert `domain_events` (`goal.completed`)
 
 **Flow C — Event → Notification (ตามที่ออกแบบ architecture ไว้)**
-1. Task/Goal complete → insert แถวใน `domain_events` (รวม `task.overdue` จาก job สแกนรายวัน 1 event ต่อ user)
-2. GitHub Actions ยิง Route Handler ทุก 5 นาที (`*/5 * * * *` — ขั้นต่ำของ GitHub schedule; pg_cron + pg_net เป็น fallback ที่อนุมัติแล้วตาม POC Decisions 2026-09-05 ข้อ 2.3)
+1. Task/Goal complete → insert แถวใน `domain_events`
+2. GitHub Actions ยิง Route Handler ทุก ~2 นาที
 3. ระบบดึง event ที่ยังไม่ processed (batch เล็ก กันชน timeout)
 4. Listener ประมวลผลแบบขนาน: ส่ง LINE congrats + อัปเดต billing usage
 5. Mark `processed_at`
@@ -394,8 +395,8 @@ Storybook (พัฒนา component แยก ดูทุก state) · ESLint 
 
 | Scope | รวมอะไรบ้าง | เป้าหมายของ scope นี้ |
 |---|---|---|
-| **POC** | Core (goal cascade+task) + persona เดียว (Seller) + LINE notification พื้นฐาน + dashboard แบบ fixed layout (ยังไม่ drag-drop) + **ไม่มี billing** | พิสูจน์ว่า concept ใช้งานได้จริงทางเทคนิคและ user เห็นคุณค่า ก่อนลงทุนทำ payment/subscription |
-| **MVP** | POC + drag-drop dashboard + Subscription ผ่าน Omise + Persona ที่ 2 (Creator) | พิสูจน์ว่ามีคนยอมจ่ายเงินจริง — จุดตัดสิน go/no-go ธุรกิจ |
+| **POC** | Core (goal cascade+task) + persona เดียว (Seller) + LINE notification พื้นฐาน + dashboard แบบ fixed layout (ยังไม่ drag-drop) + **ไม่มี billing** + รูปภาพปิดด้วย flag | พิสูจน์ว่า concept ใช้งานได้จริงทางเทคนิคและ user เห็นคุณค่า ก่อนลงทุนทำ payment/subscription |
+| **MVP** | POC + drag-drop dashboard + Subscription (Omise หรือ Stripe) + Admin-lite 1 หน้า + audit_log + เปิด Task Attachments (Free 1 / Pro 5) + Persona ที่ 2 (Creator) | พิสูจน์ว่ามีคนยอมจ่ายเงินจริง — จุดตัดสิน go/no-go ธุรกิจ |
 | **Full Product** | MVP + Persona ที่เหลือ (Student, Office) + Admin UI เต็มรูปแบบ + LINE Login + AI (เปิด port ที่เตรียมไว้) + Native app wrapper (Capacitor) | ขยายตลาดเต็มรูปแบบหลังพิสูจน์ product-market fit แล้ว |
 
 **คำแนะนำ**: เริ่มจาก POC ก่อนเสมอ — ใช้เวลาน้อยที่สุด ต้นทุนต่ำสุด (ไม่มี payment integration ให้ debug) และตอบคำถามสำคัญที่สุดก่อน: "คนจะใช้ goal cascade + persona จริงไหม" ก่อนไปตอบคำถามเรื่องเงิน
@@ -406,11 +407,11 @@ Storybook (พัฒนา component แยก ดูทุก state) · ESLint 
 
 | Phase | ขอบเขต | ประมาณเวลา* |
 |---|---|---|
-| POC | Core + Seller persona (template เป้าเดือน) + LINE push พื้นฐาน (task เลยกำหนด + goal สำเร็จ) + ปฏิทิน วัน/สัปดาห์/เดือน | **เป้า 6-7 สัปดาห์** (ยอมรับตาม POC Decisions 2026-09-05; ประมาณการรายละเอียด 7-9 สัปดาห์ใน `docs/implementation-plan.md` §2.7 — ถึงเป้าได้เมื่อใช้คันโยกตัดเพิ่มที่ระบุไว้) |
+| POC | Core + Seller persona + LINE reminder พื้นฐาน | 3-5 สัปดาห์ |
 | MVP | + Dashboard drag-drop + Billing + Creator persona | 4-6 สัปดาห์ |
 | Full Product | + Student/Office + Admin UI + AI + native wrapper | ต่อเนื่องตาม traction |
 
-*ประมาณการคร่าวๆ สำหรับ solo dev ที่คุ้นเคย stack นี้แล้ว ไม่รวมเวลาทดสอบกับ user จริงและปรับตาม feedback — ตัวเลข POC เดิม (3-5 สัปดาห์) ไม่ได้รวม Definition of Done, flow เชื่อมบัญชี LINE, การตั้งค่า SMTP/OA และปฏิทิน จึงปรับใหม่เมื่อ 2026-09-05
+*ประมาณการคร่าวๆ สำหรับ solo dev ที่คุ้นเคย stack นี้แล้ว ไม่รวมเวลาทดสอบกับ user จริงและปรับตาม feedback
 
 ---
 
@@ -418,7 +419,7 @@ Storybook (พัฒนา component แยก ดูทุก state) · ESLint 
 
 | สเกล | ต้นทุนรวม/เดือน |
 |---|---|
-| POC/Dev | 0-1,280 บาท (บริการอื่นใช้แผนฟรี/sandbox; LINE OA อาจต้องอัปเกรดแผน Basic 1,280 บาท/เดือน เฉพาะเดือนที่ push เกินโควตาฟรี ~300 ข้อความ — คาดใช้ ~150 ข้อความ/เดือนกับ tester 10 คน ตาม POC Decisions 2026-09-05 ข้อ 2.2) |
+| POC/Dev | ~0 บาท (ทุกบริการมีแผนฟรี/sandbox เพียงพอ) |
 | MVP (~300-500 user) | ~2,800 บาท |
 | Growth (~50,000 MAU) | ~9,850 บาท |
 
@@ -458,6 +459,7 @@ Storybook (พัฒนา component แยก ดูทุก state) · ESLint 
 - Custom theme ให้ user เลือกสีเอง
 - Animation ซับซ้อน/micro-interaction เกินที่ระบุใน §10.6
 - Mascot, sticker, gradient decoration, glassmorphism
+- รูปภาพบน goal/dashboard, แก้ไขรูป (crop/filter), อัลบั้มรวมรูป, แชร์รูปสาธารณะ, upload แบบ offline
 
 ---
 

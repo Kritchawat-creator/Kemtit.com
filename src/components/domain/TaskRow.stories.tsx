@@ -48,6 +48,31 @@ export const Overdue: Story = {
     item: { ...item, date: "2026-09-01", overdue: true, task: { ...task, due_date: "2026-09-01" } },
   },
 };
+const photo = (id: string) => ({
+  id,
+  path: `u1/t1/${id}.jpg`,
+  // รูปตัวอย่างใน story: SVG data URL (ไม่มี Storage) — ในแอปจริงเป็น signed URL จาก server
+  url: `data:image/svg+xml;utf8,${encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="%23E9E4FF"/><circle cx="40" cy="40" r="22" fill="%236B4EFF"/></svg>',
+  )}`,
+});
+const withPhotos = { ...task, photos: [photo("p1"), photo("p2"), photo("p3"), photo("p4")] };
+
+/** dashboard/ปฏิทิน (Design §6A.3): Lucide image + จำนวน ท้ายแถว */
+export const AttachmentsIcon: Story = {
+  args: { item: { ...item, task: withPhotos }, attachments: "icon" },
+};
+/** goal detail: thumbnail 40px ซ้อนกันสูงสุด 3 + "+N" */
+export const AttachmentsStack: Story = {
+  args: { item: { ...item, task: withPhotos }, attachments: "stack" },
+};
+/** signed URL ไม่มา (ลบไปแล้ว/ลงชื่อไม่ได้) → tile เทา image-off (§6A.4) */
+export const AttachmentsUnavailable: Story = {
+  args: {
+    item: { ...item, task: { ...task, photos: [{ ...photo("p1"), url: null }] } },
+    attachments: "stack",
+  },
+};
 export const Recurring: Story = {
   args: {
     item: {

@@ -12,7 +12,13 @@ import { formatThaiDate } from "@/lib/format";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { DomainTag } from "./DomainTag";
-import { TaskThumbs } from "./TaskPhotos";
+import { TaskAttachmentCount, TaskThumbs } from "./TaskPhotos";
+
+/**
+ * การแสดงรูปแนบท้ายแถว (Design §6A.3): none = ซ่อน (flag ปิด) · icon = Lucide image + จำนวน (dashboard/ปฏิทิน)
+ * · stack = thumbnail 40px ซ้อนกันสูงสุด 3 (goal detail)
+ */
+export type TaskAttachmentsMode = "none" | "icon" | "stack";
 
 export type TaskRowProps = {
   item: DayTaskItem<TaskWithGoal>;
@@ -20,13 +26,21 @@ export type TaskRowProps = {
   onToggle: (item: DayTaskItem<TaskWithGoal>, done: boolean) => void;
   onOpen?: (item: DayTaskItem<TaskWithGoal>) => void;
   showGoal?: boolean;
+  attachments?: TaskAttachmentsMode;
 };
 
 /**
- * 1 บรรทัด task (Claude Design 3o TaskRow): checkbox วงกลม 24px ในพื้นที่แตะ 44px · ชื่อ + meta · DomainTag ขวา
+ * 1 บรรทัด task (Claude Design 3o TaskRow): checkbox วงกลม 24px ในพื้นที่แตะ 44px · ชื่อ + meta · รูปแนบ (ถ้ามี) · DomainTag ขวา
  * ติ๊กแล้ว = วงกลม success-500 มีถูก ชื่อขีดฆ่า · เลยกำหนด = meta สี danger · แตะแถวเพื่อเปิดรายละเอียด (Design §8.5)
  */
-export function TaskRow({ item, today, onToggle, onOpen, showGoal = false }: TaskRowProps) {
+export function TaskRow({
+  item,
+  today,
+  onToggle,
+  onOpen,
+  showGoal = false,
+  attachments = "none",
+}: TaskRowProps) {
   const t = useTranslations();
   const { task } = item;
   const rule = parseRRule(task.recurrence_rule);
@@ -78,10 +92,13 @@ export function TaskRow({ item, today, onToggle, onOpen, showGoal = false }: Tas
           {showGoal && task.goal ? (
             <span className="truncate">{t("tasks.meta.goal", { title: task.goal.title })}</span>
           ) : null}
-          {photos.length > 0 ? <span>{t("photos.count", { count: photos.length })}</span> : null}
         </span>
       </button>
-      <TaskThumbs photos={photos} className="hidden sm:flex" />
+      {attachments === "icon" ? (
+        <TaskAttachmentCount count={photos.length} />
+      ) : attachments === "stack" ? (
+        <TaskThumbs photos={photos} />
+      ) : null}
       <DomainTag domain={task.domain} />
     </li>
   );

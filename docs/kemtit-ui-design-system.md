@@ -49,6 +49,80 @@
 
 ---
 
+## 2A. Signature System — สิ่งที่ทำให้ Kemtit ไม่เหมือน template
+
+หลักการ: **โครงคุ้น ผิวมีลายเซ็น** — navigation, form, card ใช้ pattern ที่คนไทยคุ้นจากแอป mass (LINE, Shopee) เพื่อไม่ต้องเรียนรู้ใหม่ แต่ทุกสิ่งที่แสดง "ความคืบหน้า" ต้องเป็นภาษาภาพของ Kemtit คนเดียว ผูกกับชื่อ "เข็มทิศ" อย่างมีหน้าที่ ไม่ใช่แค่ตกแต่ง
+
+### 2A.1 Signature #1 — Compass Dial แทน progress ring
+
+ตัวชี้วัดความคืบหน้าหลักของแอปคือ **หน้าปัดเข็มทิศ** ไม่ใช่วงกลม % ทั่วไป
+
+- เป้าหมาย = **ทิศเหนือ** (N) อยู่บนสุดเสมอ
+- เข็มชี้จากจุดเริ่ม (ทิศใต้ 0%) หมุนตามเข็มนาฬิกาไปหาทิศเหนือ (100%) — 50% = ชี้ทิศตะวันตก
+- ตัวเลข % ขนาด display อยู่กลางหน้าปัด ใต้แกนเข็ม
+- ปลายเข็มด้าน "เหนือ" ใช้สี accent (peach `#F5648C`) เป็น**ที่เดียว**ที่ accent ปรากฏบน dashboard — ความหายากคือสิ่งที่ทำให้จำได้
+- ขีดบอกทิศ 8 ขีด (N/NE/E/…) เป็นเส้นบาง neutral-300 — ให้ความรู้สึก "เครื่องมือ" ไม่ใช่ "ของเล่น"
+- ใช้ใน: hero widget ของ dashboard, hero card ของ goal detail, StatTile ขนาดเล็ก (เวอร์ชันย่อไม่มีขีดทิศ)
+
+ProgressBar แนวนอนยังใช้สำหรับ list/row ที่ไม่มีพื้นที่ — แต่ปลายด้านขวาของ bar มี **จุดเหนือ** (วงกลมเล็กสี accent) เป็นเป้าหมาย ให้ภาษาภาพเดียวกัน
+
+### 2A.2 Signature #2 — Goal Cascade เป็น "เส้นทาง" ไม่ใช่ tree
+
+การแสดง ปี→เดือน→สัปดาห์→วัน ไม่ใช้ tree แบบ file explorer แต่เป็น **เส้นทางเดินทางแนวตั้ง**:
+
+- goal แม่อยู่บนสุดเป็น "จุดหมาย" (ไอคอนธง/ทิศเหนือ)
+- goal ลูกเป็น waypoint เรียงลงมา เชื่อมด้วยเส้นประ neutral-300
+- waypoint ที่ผ่านแล้ว: จุดเต็มสี success · กำลังทำ: จุดวงแหวน brand-500 · ยังไม่ถึง: จุดกลวง neutral-300
+- "คุณอยู่ตรงนี้" = สัปดาห์ปัจจุบัน มี marker เข็มเล็กชี้
+
+### 2A.3 Signature #3 — ระบบไอคอนของตัวเอง (เฉพาะจุดสำคัญ)
+
+Lucide ยังเป็น icon ทั่วไป (ปฏิทิน, ตั้งค่า, ลบ) แต่ **4 persona + 6 domain + empty state** ใช้ illustration แบบ monoline ที่วาดเอง:
+- เส้นเดียวหนา 1.5px มุมมน ไม่มี fill ยกเว้นจุดเน้นสี domain
+- persona: แม่ค้า = กล่องพัสดุมีริบบิ้น · creator = กล้อง+ประกายดาว · นักเรียน = หนังสือเปิด+เข็มทิศ · ออฟฟิศ = แล็ปท็อป+เป้า
+- empty state ทุกหน้าใช้ **เข็มทิศเส้นเดียวที่เข็มยังไม่ชี้** (หมุนเบา ๆ ครั้งเดียวตอนเข้าหน้า) — เป็น illustration เดียวกันทั้งแอป จำได้ทันที
+- ห้ามผสม illustration style อื่น (3D, flat สีตัน, isometric)
+
+### 2A.4 Signature #4 — ตัวเลขคือตัวเอก
+
+- ตัวเลข % และยอดเงินใช้ display 36px weight 600 tabular — ใหญ่กว่าหัวข้อทุกตัวในหน้า
+- ตัวเลขเปลี่ยนค่าจะ **นับขึ้น** (count-up 400ms) ไม่กระโดด
+- ตัวเลขยอดเงินไทยจัดรูปแบบ "50,000" + หน่วย "บาท" ตัวเล็ก weight 400 ห้อยท้าย ไม่ใช้ "฿"
+
+### 2A.5 Signature #5 — Motion เดียวที่จำได้
+
+**เข็มแกว่ง** (spring, overshoot เล็กน้อย 1 ครั้ง, 600ms) เมื่อ progress เปลี่ยน — เป็น motion หลักตัวเดียวของแอป ทุกอย่างอื่นเป็น fade/scale ธรรมดา 150-200ms
+ตอน 100%: เข็มล็อกทิศเหนือ + ปลายเข็ม pulse ครั้งเดียว + ข้อความ "ถึงจุดหมายแล้ว" — ไม่มี confetti ทั่วจอ
+
+### 2A.6 Signature #6 — น้ำเสียง
+
+ใช้อุปมาการเดินทาง **เบา ๆ เฉพาะ 4 จุด** ไม่ทั่วแอป:
+- หัวข้อ dashboard: "ทิศทางวันนี้"
+- pace badge: "ตามเส้นทาง" (แทน "ตามแผน") / "ออกนอกเส้นทาง" (แทน "ตกเป้า")
+- ทำเป้าสำเร็จ: "ถึงจุดหมายแล้ว"
+- empty state: "ยังไม่ได้ตั้งทิศ"
+ที่เหลือใช้ภาษาตรง ๆ ("งานวันนี้", "บันทึก") — ถ้าใส่อุปมาทุกที่จะกลายเป็นน่ารำคาญ
+
+### 2A.7 สิ่งที่เปลี่ยนจาก shadcn default โดยตั้งใจ
+
+| ค่า default ของ shadcn | Kemtit |
+|---|---|
+| ปุ่ม primary radius 6-8px | **pill มนเต็ม** สูง 48px |
+| Card radius 8px เท่ากันหมด | 20px card / 28px hero — ลดหลั่นตามขนาด |
+| Progress = แถบ/วงกลม | Compass dial |
+| Inter / Geist | IBM Plex Sans Thai |
+| เงาเทา | เงาม่วงจาง |
+| Checkbox สี่เหลี่ยม | **วงกลม** (เหมือน checkpoint บนเส้นทาง) ติ๊กแล้วเป็นจุดเต็มสี success |
+| Empty state = icon กลาง + text | เข็มทิศ monoline หมุน + ข้อความ |
+
+### 2A.8 กฎกันหลุด
+
+- Signature ต้องมี**หน้าที่** — ถ้า element ไหนเป็นแค่ตกแต่ง ตัดออก
+- ใช้ compass dial กับ**ความคืบหน้าเท่านั้น** ห้ามเอาไปใส่ที่อื่น (โลโก้, loading, ปุ่ม) ไม่งั้นจะเฝือ
+- ถ้าต้องเลือกระหว่าง "unique" กับ "ใช้ง่าย" — ใช้ง่ายชนะเสมอ นี่คือแอปที่แม่ค้าเปิดตอนเช้าก่อนตอบแชท
+
+---
+
 ## 3. Color System
 
 ### 3.1 Palette หลัก
@@ -265,7 +339,7 @@ const plexThai = IBM_Plex_Sans_Thai({
 
 - **Progress ring แบบมนหัวท้าย** (`stroke-linecap: round`) — ให้ความรู้สึกนุ่มนวลกว่าปลายตัด
 - **พื้นหลัง card แบบ tint อ่อน** ตาม domain ของ goal (เช่น goal สุขภาพ พื้น `success-50`) แทนที่จะขาวทั้งหมด
-- **Celebration confetti ตอนทำเป้าสำเร็จ 100%** — ครั้งเดียว 800ms ไม่วนซ้ำ และปิดเมื่อ `prefers-reduced-motion`
+- **เข็มล็อกทิศเหนือ + pulse ตอนทำเป้าสำเร็จ** — ครั้งเดียว 800ms ไม่มี confetti ทั่วจอ ปิดเมื่อ `prefers-reduced-motion`
 
 **ห้ามใช้**: gradient พาดพื้นหลังทั้งหน้า, mascot/ตัวการ์ตูน, glassmorphism/blur, เงาสีนีออน, sticker ประดับมุมจอ — ทั้งหมดนี้ทำให้ดูเหมือนแอปเด็กและกินพื้นที่ที่ควรเป็นของข้อมูล
 
@@ -281,8 +355,9 @@ Button, Input, Textarea, Select, Checkbox, Radio, Switch, Dialog, Sheet (mobile 
 | Component | หน้าที่ | Props สำคัญ |
 |---|---|---|
 | `GoalCard` | แสดง goal + progress + domain tag | goal, showChildren |
-| `GoalCascadeTree` | tree view ปี→เดือน→วัน แบบพับได้ | rootGoalId, depth |
-| `ProgressRing` | วงกลม % สำหรับ dashboard | value, size, domain |
+| `GoalRoute` | เส้นทาง waypoint ปี→เดือน→วัน (signature #2, แทน tree) | rootGoalId, currentPeriod |
+| `CompassDial` | หน้าปัดเข็มทิศ — signature progress (แทน ProgressRing) | value, size, showTicks |
+| `ProgressRing` | เวอร์ชันย่อของ CompassDial สำหรับ StatTile | value, size |
 | `ProgressBar` | แถบ % แนวนอน | value, target, showLabel |
 | `TaskRow` | 1 บรรทัด task + checkbox + due date | task, onToggle |
 | `TaskList` | รวม TaskRow + filter work/personal | tasks, groupBy |
@@ -293,6 +368,9 @@ Button, Input, Textarea, Select, Checkbox, Radio, Switch, Dialog, Sheet (mobile 
 | `WidgetPicker` | modal เลือก widget เพิ่ม | availableWidgets |
 | `EmptyState` | หน้าจอว่าง + CTA | title, description, action |
 | `StatTile` | ตัวเลขเด่น + label + delta | value, label, trend |
+| `AttachmentGrid` | grid 3 คอลัมน์ + tile เพิ่มรูป + state ต่อ tile | attachments, limit, onAdd |
+| `AttachmentStack` | thumbnail ซ้อนสูงสุด 3 ท้าย TaskRow | attachments |
+| `Lightbox` | เต็มจอ ปัดดู ลบ+undo | attachments, index |
 
 ### 6.3 Widget Components (ต่อ persona)
 
@@ -306,6 +384,78 @@ Button, Input, Textarea, Select, Checkbox, Radio, Switch, Dialog, Sheet (mobile 
 | `TodayTasksWidget` | ทุก persona | งานวันนี้ |
 | `GoalProgressWidget` | ทุก persona | progress ของ goal หลัก |
 | `DailyLifeWidget` | ทุก persona | สรุป domain ชีวิตส่วนตัว |
+
+---
+
+## 6A. Attachments (รูปภาพ) — วิเคราะห์และออกแบบ
+
+### 6A.1 รูปมีหน้าที่อะไรในแอปนี้ (ไม่ใช่ทุกที่)
+
+Kemtit ไม่ใช่แอปเก็บรูป — รูปมีหน้าที่เดียวคือ **"หลักฐานว่าทำแล้ว" และ "จำได้ว่างานนี้คืออะไร"** วิเคราะห์ต่อ persona:
+
+| Persona | รูปช่วยอะไรจริง | ตัวอย่าง |
+|---|---|---|
+| แม่ค้าออนไลน์ | หลักฐานส่งของ / จำสินค้าที่ต้องโปสต์ | ถ่ายกล่องที่แพ็คเสร็จ, รูปสินค้าที่จะโพสต์โปรวันศุกร์ |
+| Creator | thumbnail ของคอนเทนต์ใน pipeline | ภาพร่างโพสต์ที่วางแผนไว้ |
+| นักเรียน | ถ่ายโน้ต/โจทย์ที่ต้องทบทวน | รูปกระดานหรือหน้าหนังสือ |
+| ออฟฟิศ | น้อยมาก — เอกสารมักอยู่ในระบบอื่นแล้ว | (ไม่เน้น) |
+
+**ข้อสรุป**: รูปผูกกับ **task เท่านั้น** ไม่ผูกกับ goal — goal คือตัวเลข/ทิศทาง (compass) ไม่ใช่ที่เก็บของ การใส่รูปที่ goal จะแย่งพื้นที่ signature และทำให้ hero card รก
+
+### 6A.2 ขอบเขตและขีดจำกัด
+
+| กติกา | ค่า | เหตุผล |
+|---|---|---|
+| ต่อ task | Free 1 รูป · Pro 5 รูป | รูปคือ "หลักฐาน" ไม่ใช่อัลบั้ม — และเป็น upgrade trigger ที่จับต้องได้ |
+| ขนาดไฟล์ | ≤2MB หลังย่อ | ย่อฝั่ง client เป็น WebP กว้างสุด 1600px ก่อนส่ง |
+| ชนิด | jpeg / png / webp / heic (แปลงเป็น webp) | มือถือ iPhone ถ่ายเป็น HEIC ต้องรองรับไม่งั้น user คิดว่าแอปพัง |
+| Bucket | private + signed URL อายุ 1 ชม. | รูปสินค้า/โน้ตเป็นข้อมูลส่วนตัว ห้าม public |
+| Path | `{user_id}/{task_id}/{uuid}.webp` | RLS ตาม folder แรก |
+| ลบ | ลบ task → event `task.deleted` → listener ลบไฟล์ | ไม่มีไฟล์ค้าง (PDPA) |
+| Alt text | optional ช่องเดียวสั้น ๆ | accessibility + ใช้เป็น caption |
+| Offline | ไม่รองรับ upload offline ใน MVP | คิวรูปซับซ้อนกว่าคิว text มาก |
+| รูปโปรไฟล์ (avatar) | อยู่ใต้ flag เดียวกับ attachments — เปิดพร้อมกันใน MVP · ระหว่างปิดแสดง **ตัวอักษรแรกของ display_name** บนพื้น `brand-100` ตัวอักษร `brand-800` (ไม่ใช่ initials แบบตะวันตก — ชื่อไทยไม่มี convention นั้น) | avatar เป็นข้อมูลส่วนบุคคล (PDPA) ยังไม่รับผิดชอบช่วง tester 10 คน และ CP1 ต้องไม่มีตัวแปรรบกวน |
+
+### 6A.3 UX — รูปต้องไม่แย่งความสนใจจากความคืบหน้า
+
+หลัก: **thumbnail เล็กใน list, ใหญ่เฉพาะเมื่อขอดู** — ไม่มีรูปใหญ่โผล่บน dashboard
+
+| จุด | การแสดง |
+|---|---|
+| Dashboard / TodayTasks | ไม่แสดงรูปเลย — แค่ icon กล้องเล็ก + จำนวน ("📷 2" แต่ใช้ Lucide `image` ไม่ใช่ emoji) ท้าย TaskRow |
+| Goal detail → task list | thumbnail 40×40 radius 10px ซ้อนกันได้สูงสุด 3 (stack) ท้ายแถว |
+| Task sheet (แก้ไข) | grid 3 คอลัมน์ thumbnail 1:1 radius 14px · ช่อง "+ เพิ่มรูป" เป็น dashed tile · ถ้าถึงลิมิต tile เปลี่ยนเป็น "Pro ได้ 5 รูป" (บอกก่อนชน) |
+| Lightbox | เต็มจอพื้นดำ 90% · ปัดซ้าย/ขวา · แตะปิด · แสดง alt/caption ด้านล่าง · ปุ่มลบมุมขวาบน (ลบแล้วมี undo toast 5 วิ) |
+
+**Upload flow บนมือถือ** (ทางหลัก):
+1. แตะ "+ เพิ่มรูป" → เปิด action sheet 2 ตัวเลือก: **ถ่ายรูป** / **เลือกจากคลัง** (ต้องมี "ถ่ายรูป" เพราะแม่ค้าถ่ายกล่องตอนนั้นเลย)
+2. ย่อรูปทันทีบนเครื่อง (แสดง thumbnail จาง + progress ring เล็กทับ — ใช้ ProgressRing ธรรมดา **ไม่ใช่ compass dial** เพราะไม่ใช่ความคืบหน้าของเป้า)
+3. อัปโหลด → สำเร็จ: thumbnail ชัดขึ้น · ล้มเหลว: tile มีขอบ danger + ปุ่ม "ลองใหม่" ไม่หายไปเฉย ๆ
+4. task ยังบันทึกได้ระหว่างรูปกำลังอัปโหลด (ไม่บล็อก)
+
+### 6A.4 State ที่ต้องออกแบบ
+
+- ยังไม่มีรูป (tile "+ เพิ่มรูป" อย่างเดียว)
+- กำลังอัปโหลด (thumbnail จาง + ring)
+- อัปโหลดล้มเหลว (ขอบ danger + ลองใหม่)
+- ถึงลิมิต Free (tile ล็อกพร้อมข้อความ Pro)
+- รูปโหลดไม่ได้/ถูกลบไปแล้ว (tile เทา + icon image-off)
+
+### 6A.5 สิ่งที่ตั้งใจไม่ทำ
+
+- รูปบน goal / dashboard / ปฏิทิน
+- แก้ไขรูป (crop, filter, วาด)
+- แชร์รูป / ลิงก์สาธารณะ
+- อัลบั้มรวมรูปทั้งหมด
+- Upload offline
+
+### 6A.6 Phase
+
+| Phase | สถานะ |
+|---|---|
+| POC / CP1 | **ปิดด้วย feature flag `NEXT_PUBLIC_FLAG_UPLOADS`** (ครอบ user-uploaded content ทุกชนิด: รูปแนบงาน + avatar) — วัด metric หลักโดยไม่มีตัวแปรรบกวน · ปิดที่ server action ด้วย ไม่ใช่แค่ซ่อนปุ่ม · bucket private + RLS + signed URL ทำไว้แล้วแม้ flag ปิด |
+| MVP | เปิด flag: Free 1 / Pro 5, event ลบไฟล์, WebP/HEIC, avatar |
+| Phase 2+ | พิจารณา creator: thumbnail ใน content pipeline board |
 
 ---
 
@@ -381,12 +531,10 @@ FAB (มือถือ) / ปุ่มมุมบนขวา (desktop): "+ �
 
 ### 8.4 Dashboard — กฎการจัดวาง
 
-**POC (ตาม POC Decisions 2026-09-05)**: layout **คงที่** 2 widget — `GoalProgressWidget` (goal หลักเดือนนี้) บนสุด แล้ว `TodayTasksWidget` — ไม่มีการย้าย/เพิ่ม/ลบ widget, ไม่มี `WidgetPicker`, ไม่มีตาราง `dashboard_layouts`; กฎที่ติดป้าย **(MVP)** ด้านล่างเริ่มใช้เมื่อมี drag-drop ใน MVP
-
-- Widget แรกบนสุดเสมอคือ **goal หลักเดือนนี้** (ตาม persona) — (MVP) user เปลี่ยนตำแหน่งได้ แต่ default ต้องเป็นแบบนี้
-- (MVP) Empty dashboard (user ลบ widget หมด) แสดง EmptyState "เพิ่ม widget แรก" ไม่ใช่หน้าขาวเปล่า
-- Widget ที่ยังไม่มีข้อมูล (เช่น ยังไม่กรอกยอดขาย) แสดง **empty state ภายใน widget** พร้อม CTA ไม่ใช่กราฟเปล่า — ใช้ตั้งแต่ POC
-- (MVP) ปุ่ม "เพิ่ม widget" เปิด WidgetPicker แสดงเฉพาะ widget ของ persona ปัจจุบัน + widget กลาง (ไม่โชว์ของ persona อื่น กันสับสน)
+- Widget แรกบนสุดเสมอคือ **goal หลักเดือนนี้** (ตาม persona) — user เปลี่ยนตำแหน่งได้ แต่ default ต้องเป็นแบบนี้
+- Empty dashboard (user ลบ widget หมด) แสดง EmptyState "เพิ่ม widget แรก" ไม่ใช่หน้าขาวเปล่า
+- Widget ที่ยังไม่มีข้อมูล (เช่น ยังไม่กรอกยอดขาย) แสดง **empty state ภายใน widget** พร้อม CTA ไม่ใช่กราฟเปล่า
+- ปุ่ม "เพิ่ม widget" เปิด WidgetPicker แสดงเฉพาะ widget ของ persona ปัจจุบัน + widget กลาง (ไม่โชว์ของ persona อื่น กันสับสน)
 
 ### 8.5 Task Interaction
 
@@ -526,7 +674,8 @@ Top bar: ค้นหา user ทั่วระบบ (Cmd+K) + ชื่อ ad
 | Progress เปลี่ยนค่า | เลขนับขึ้น + bar ขยาย | 400ms ease-out |
 | เปิด modal/sheet | fade + scale เล็กน้อย | 200ms |
 | Drag widget | ตาม cursor ทันที + shadow ขึ้น | ไม่มี delay |
-| ทำเป้าสำเร็จ 100% | one-time celebration (ครั้งเดียว ไม่วนซ้ำ) | 800ms |
+| Progress เปลี่ยนค่า (compass) | เข็มแกว่ง spring overshoot 1 ครั้ง — signature motion ตัวเดียว | 600ms |
+| ทำเป้าสำเร็จ 100% | เข็มล็อกทิศเหนือ + ปลายเข็ม pulse ครั้งเดียว | 800ms |
 
 **ห้ามทำ**: fade-in-up ทุก section ตอนโหลดหน้า, hover animation ทุก card, skeleton ที่ pulse ตลอดเวลา — สามอย่างนี้คือสัญญาณของ UI ที่ generate มาโดยไม่คิด
 

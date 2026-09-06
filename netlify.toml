@@ -8,5 +8,19 @@
   NODE_VERSION = "22"
   NEXT_TELEMETRY_DISABLED = "1"
 
+# Feature flags (src/lib/flags.ts) — ตั้งซ้ำทุก context เพื่อไม่ให้ preview/branch เปิดฟีเจอร์โดยไม่ตั้งใจ
+# NEXT_PUBLIC_FLAG_UPLOADS: รูปแนบงาน + รูปโปรไฟล์ — ปิดตลอด POC/CP1 (Design §6A.6) เปิด "1" เมื่อเข้า MVP
+[context.production.environment]
+  NEXT_PUBLIC_FLAG_UPLOADS = "0"
+
+[context.deploy-preview.environment]
+  NEXT_PUBLIC_FLAG_UPLOADS = "0"
+
+[context.branch-deploy.environment]
+  NEXT_PUBLIC_FLAG_UPLOADS = "0"
+
+[context.dev.environment]
+  NEXT_PUBLIC_FLAG_UPLOADS = "0"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
