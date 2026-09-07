@@ -234,6 +234,111 @@
     "destinationShort": "จุดหมาย",
     "routePerWeek": "waypoint {amount} / {period}"
   },
+  "entries": {
+    "title": "บันทึกยอด",
+    "new": "บันทึกยอด",
+    "delete": "ลบรายการ",
+    "noChannel": "—",
+    "adjustment": "ปรับยอด",
+    "fromDashboard": "บันทึกจากแดชบอร์ด",
+    "status": {
+      "today": "วันนี้",
+      "confirmed": "ยืนยันแล้ว"
+    },
+    "kpi": {
+      "monthTotal": "ยอดขายเดือนนี้",
+      "monthTotalGeneric": "ทำได้เดือนนี้",
+      "vsLastMonth": "เทียบ{month}",
+      "noCompare": "ยังไม่มีข้อมูลเปรียบเทียบ",
+      "todayTotal": "ยอดวันนี้",
+      "todayTotalGeneric": "ทำได้วันนี้",
+      "vsYesterday": "เทียบเมื่อวาน",
+      "weekTasks": "งานเสร็จสัปดาห์นี้",
+      "overdue": "ค้างจากก่อนหน้า",
+      "noOverdue": "ไม่มีงานค้าง",
+      "entryStreak": "บันทึกต่อเนื่อง",
+      "streakHit": "ครบ 7 วัน",
+      "streakToGo": "อีก {days} วันครบ 7 วัน",
+      "streakHint": "บันทึกทุกวันสร้างนิสัย"
+    },
+    "chart": {
+      "title": "ยอดขายสะสม",
+      "titleGeneric": "ยอดสะสม",
+      "total": "สะสม",
+      "avgPerDay": "เฉลี่ย/วัน",
+      "needPerDay": "ต้องทำ/วัน",
+      "legendTotal": "ยอดสะสม",
+      "legendPlan": "แผนเฉลี่ย",
+      "legendToday": "วันนี้",
+      "aria": "ยอดสะสม {total} จาก {target}",
+      "routeTo": "เส้นทางสู่ {target}",
+      "legendHint": "เส้นประ = แผนเฉลี่ยต่อวัน · จุดชมพู = วันนี้"
+    },
+    "compass": {
+      "title": "เข็มทิศเดือนนี้",
+      "daysLeft": "วันที่เหลือ",
+      "remaining": "{unit}ที่เหลือ",
+      "remainingPlain": "ที่เหลือ",
+      "perDay": "{unit}/วัน",
+      "perDayPlain": "ต่อวัน"
+    },
+    "recent": {
+      "title": "บันทึกยอดล่าสุด",
+      "viewAll": "ดูทั้งหมด",
+      "empty": "ยังไม่มีบันทึกยอด — เริ่มจากช่องด้านขวา"
+    },
+    "quick": {
+      "title": "บันทึกยอดวันนี้",
+      "amountLabel": "ยอดวันนี้",
+      "placeholder": "ยอดวันนี้ (บาท)",
+      "placeholderGeneric": "จำนวนวันนี้",
+      "button": "บันทึก",
+      "hint": "เข็มและกราฟอัปเดตทันที"
+    },
+    "history": {
+      "title": "ประวัติการบันทึก",
+      "count": "{count} รายการ · คลิกเพื่อแก้ไข",
+      "edit": "แก้ไขรายการ",
+      "empty": "ยังไม่มีการบันทึก",
+      "all": "ดูทั้งหมด"
+    },
+    "form": {
+      "goal": "เป้าหมาย",
+      "noMetricGoal": "ยังไม่มีเป้าที่วัดเป็นตัวเลข — ตั้งเป้าก่อน",
+      "amount": "จำนวน",
+      "date": "วันที่",
+      "channel": "ช่องทาง",
+      "noChannel": "ไม่ระบุ",
+      "note": "รายการ",
+      "notePlaceholder": "เช่น ไลฟ์ 20:00 / โปรวันศุกร์",
+      "submitCreate": "บันทึกยอด",
+      "submitEdit": "บันทึกการแก้ไข"
+    },
+    "channels": {
+      "shopee": "Shopee",
+      "lazada": "Lazada",
+      "tiktok": "TikTok Shop",
+      "line": "LINE OA",
+      "facebook": "Facebook",
+      "storefront": "หน้าร้าน",
+      "other": "อื่น ๆ"
+    },
+    "table": {
+      "code": "รหัส",
+      "date": "วันที่",
+      "note": "รายการ",
+      "channel": "ช่องทาง",
+      "amount": "จำนวน",
+      "status": "สถานะ",
+      "actions": "จัดการ"
+    },
+    "toasts": {
+      "logged": "บันทึกแล้ว +{amount} · ยอดรวม {total}",
+      "updated": "แก้ไขรายการแล้ว",
+      "deleted": "ลบรายการ {code} แล้ว",
+      "restored": "นำรายการ {code} กลับมาแล้ว"
+    }
+  },
   "calendar": {
     "title": "ปฏิทิน",
     "views": {
@@ -521,7 +626,8 @@
         "cta": "เพิ่มงาน"
       },
       "doneCount": "{done}/{total} เสร็จ",
-      "overdueHint": "มีงานค้าง {overdue} รายการ"
+      "overdueHint": "มีงานค้าง {overdue} รายการ",
+        "quickPlaceholder": "เพิ่มงานวันนี้ แล้วกด Enter"
     }
   },
   "line": {

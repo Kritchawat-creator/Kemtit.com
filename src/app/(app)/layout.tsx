@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import type * as React from "react";
 
+import { listEntryGoalOptions } from "@/core/entries/queries";
 import { listParentCandidates } from "@/core/goals/queries";
 import { nextRouteFor, ROUTES } from "@/core/profile/onboarding";
 import { getMe } from "@/core/profile/queries";
@@ -17,14 +18,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const gate = nextRouteFor(me.profile);
   if (gate !== ROUTES.dashboard) redirect(gate);
 
-  const parentCandidates = await listParentCandidates();
+  const [parentCandidates, entryGoals] = await Promise.all([
+    listParentCandidates(),
+    listEntryGoalOptions(),
+  ]);
 
   return (
     <AppShell me={me}>
       <OfflineBanner />
       {children}
       <Suspense fallback={null}>
-        <QuickAddHost parentCandidates={parentCandidates} />
+        <QuickAddHost parentCandidates={parentCandidates} entryGoals={entryGoals} />
       </Suspense>
     </AppShell>
   );

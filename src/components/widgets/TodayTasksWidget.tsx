@@ -6,13 +6,21 @@ import { listParentCandidates } from "@/core/goals/queries";
 import { getDayPlan, getStreak } from "@/core/tasks/queries";
 import type { ISODate } from "@/lib/date";
 import { EmptyState } from "@/components/domain/EmptyState";
+import { QuickTaskInput } from "@/components/domain/QuickTaskInput";
 import { TaskList } from "@/components/domain/TaskList";
 import { Button } from "@/components/ui/button";
 
 import { WidgetShell } from "./WidgetShell";
 
 /** widget งานวันนี้ (Design §6.3 + Claude Design 2a): การ์ดขาว · pill "เสร็จ x/y" + streak · แถวงานติ๊กได้ในที่ */
-export async function TodayTasksWidget({ today }: { today: ISODate }) {
+export async function TodayTasksWidget({
+  today,
+  quickAdd = false,
+}: {
+  today: ISODate;
+  /** บรรทัดเพิ่มงานท้ายการ์ด (dashboard v3 บน desktop — Claude Design turn 6 ④) */
+  quickAdd?: boolean;
+}) {
   const [t, plan, streak, goalOptions] = await Promise.all([
     getTranslations("widgets.todayTasks"),
     getDayPlan(today),
@@ -70,6 +78,7 @@ export async function TodayTasksWidget({ today }: { today: ISODate }) {
           />
         }
       />
+      {quickAdd ? <QuickTaskInput today={today} /> : null}
     </WidgetShell>
   );
 }

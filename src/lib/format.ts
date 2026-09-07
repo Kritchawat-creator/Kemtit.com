@@ -53,7 +53,15 @@ export function formatValueParts(
   return { value: formatNumber(value), unit: unit || null };
 }
 
-type DateStyle = "short" | "medium" | "long" | "weekday" | "longWeekday" | "monthYear" | "day";
+type DateStyle =
+  | "short"
+  | "medium"
+  | "long"
+  | "weekday"
+  | "longWeekday"
+  | "monthYear"
+  | "monthShort"
+  | "day";
 
 const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
   short: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
@@ -91,6 +99,8 @@ const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
     year: "numeric",
     timeZone: "UTC",
   }),
+  /** "ส.ค." — เดือนย่อไม่มีปี (Claude Design turn 7 KPI "เทียบ ส.ค.") */
+  monthShort: new Intl.DateTimeFormat(LOCALE_BUDDHIST, { month: "short", timeZone: "UTC" }),
   day: new Intl.DateTimeFormat(LOCALE_BUDDHIST, { day: "numeric", timeZone: "UTC" }),
 };
 

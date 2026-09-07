@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Target, CheckSquare } from "lucide-react";
+import { NotebookPen, Plus, Target, CheckSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { cn } from "cn";
@@ -55,6 +55,12 @@ export function QuickAddMenu({ variant = "button", className }: Props) {
           <Link href="?new=goal" scroll={false}>
             <Target aria-hidden="true" />
             {t("nav.addGoal")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="?new=entry" scroll={false}>
+            <NotebookPen aria-hidden="true" />
+            {t("nav.addEntry")}
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -11,9 +11,11 @@ import { hourBkk, todayBkk } from "@/lib/date";
 import { formatThaiDate } from "@/lib/format";
 import { InstallHint } from "@/components/layout/InstallHint";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { ResponsiveSwitch } from "@/components/layout/ResponsiveSwitch";
 import { Button } from "@/components/ui/button";
 import { WidgetSkeleton } from "@/components/widgets/WidgetSkeleton";
 
+import { DesktopDashboard, type ChartRange } from "./desktop-dashboard";
 import { layoutForPersona, SPAN_CLASS } from "./registry";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,14 +30,20 @@ function greetingKey(hour: number): "morning" | "afternoon" | "evening" | "night
   return "night";
 }
 
+function parseChart(value: string | string[] | undefined): ChartRange {
+  return value === "week" ? "week" : "month";
+}
+
 /**
- * แดชบอร์ด (Design §8.2 + Claude Design 2a "ทิศทางวันนี้"): เห็น % เป้าหลักเดือนนี้ใน 3 วินาที
- * บรรทัดทักทายตามช่วงเวลาไทย + ชื่อ · pill วันที่ขวา · layout คงที่ · widget โหลดแยกด้วย Suspense
+ * แดชบอร์ด (Design §8.2 + Claude Design 2a/turn 7)
+ * มือถือ = "ทิศทางวันนี้" + widget grid เดิม · desktop = โครง v3 (KPI 4 ใบ, กราฟ, การ์ดเข็มทิศ, ตารางบันทึกยอด)
+ * สลับด้วย ResponsiveSwitch — เรนเดอร์ต้นไม้เดียวเสมอ ห้ามซ่อนอีกฝั่งด้วย CSS (§1.10 ของแผน turn 6/7)
  */
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: PageProps<"/dashboard">) {
   const me = await getMe();
   if (!me) redirect(ROUTES.login);
 
+  const { chart } = await searchParams;
   const [t, tn] = await Promise.all([getTranslations("dashboard"), getTranslations("nav")]);
   const today = todayBkk();
   const widgets = layoutForPersona(me.profile.active_persona);
@@ -49,6 +57,8 @@ export default async function DashboardPage() {
       <PageHeader
         eyebrow={greeting}
         title={t("heading")}
+        breadcrumb={t("title")}
+        meta={formatThaiDate(today, "longWeekday")}
         actions={
           <span className="inline-flex h-7 items-center rounded-full bg-bg-surface px-3 text-caption font-medium text-text-secondary">
             {formatThaiDate(today, "weekday")}
@@ -69,15 +79,24 @@ export default async function DashboardPage() {
           </Button>
         }
       />
-      <div className="grid gap-4 lg:grid-cols-12 lg:items-start lg:gap-6">
-        {widgets.map(({ id, component: Widget, span }, index) => (
-          <div key={id} className={SPAN_CLASS[span]}>
-            <Suspense fallback={<WidgetSkeleton variant={index === 0 ? "hero" : "list"} />}>
-              <Widget today={today} />
-            </Suspense>
+      <ResponsiveSwitch
+        mobile={
+          <div className="grid gap-4">
+            {widgets.map(({ id, component: Widget, span }, index) => (
+              <div key={id} className={SPAN_CLASS[span]}>
+                <Suspense fallback={<WidgetSkeleton variant={index === 0 ? "hero" : "list"} />}>
+                  <Widget today={today} />
+                </Suspense>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        }
+        desktop={
+          <Suspense fallback={<WidgetSkeleton variant="hero" />}>
+            <DesktopDashboard today={today} chart={parseChart(chart)} />
+          </Suspense>
+        }
+      />
       <InstallHint />
     </>
   );

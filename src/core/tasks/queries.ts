@@ -5,7 +5,14 @@ import { cache } from "react";
 import { buildDayPlan, goalTaskItems, type DayPlan, type DayTaskItem } from "@/core/domain/dayplan";
 import { currentStreak } from "@/core/domain/streak";
 import { withSignedPhotoUrls } from "@/core/photos/queries";
-import { addDaysISO, type ISODate, toBkkDate, todayBkk } from "@/lib/date";
+import {
+  addDaysISO,
+  endOfWeekISO,
+  type ISODate,
+  startOfWeekISO,
+  toBkkDate,
+  todayBkk,
+} from "@/lib/date";
 import { createServerSupabase } from "@/lib/supabase/server";
 
 import type { TaskCompletion, TaskWithGoal } from "./schema";
@@ -107,3 +114,25 @@ export const getStreak = cache(async (today: ISODate): Promise<number> => {
   ];
   return currentStreak(dates, today);
 });
+
+/**
+ * งานสัปดาห์นี้ (Claude Design turn 7 KPI "งานเสร็จสัปดาห์นี้"): task เดี่ยว (ไม่ใช่ตัวซ้ำ) ที่ครบกำหนดใน
+ * สัปดาห์นี้ (อาทิตย์–เสาร์) → { done, total } — task ซ้ำนับสถานะรายวันซับซ้อนกว่านี้ จึงไม่รวมในสถิตินี้ (POC)
+ */
+export async function getWeekTaskStats(today: ISODate): Promise<{ done: number; total: number }> {
+  const supabase = await createServerSupabase();
+  const from = startOfWeekISO(today);
+  const to = endOfWeekISO(today);
+  const { data, error } = await supabase
+    .from("tasks")
+    .select("completed_at")
+    .is("recurrence_rule", null)
+    .gte("due_date", from)
+    .lte("due_date", to);
+  if (error) {
+    console.error("[tasks] getWeekTaskStats failed", { code: error.code });
+    return { done: 0, total: 0 };
+  }
+  const rows = data ?? [];
+  return { done: rows.filter((t) => t.completed_at !== null).length, total: rows.length };
+}

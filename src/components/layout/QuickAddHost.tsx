@@ -5,19 +5,25 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
 import { childPeriodType, periodContains, periodOf } from "@/core/domain/periods";
+import type { EntryGoalOption } from "@/core/entries/schema";
 import type { ParentCandidate } from "@/core/goals/schema";
 import { isISODate, todayBkk } from "@/lib/date";
+import { EntryForm } from "@/components/domain/EntryForm";
 import { GoalForm } from "@/components/domain/GoalForm";
 import { TaskForm } from "@/components/domain/TaskForm";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
 
-type Props = { parentCandidates: ParentCandidate[] };
+type Props = {
+  parentCandidates: ParentCandidate[];
+  /** เป้า metric ที่บันทึกยอดได้ (Claude Design turn 6/7) — ว่างได้ ฟอร์มจะชวนไปตั้งเป้าก่อน */
+  entryGoals: EntryGoalOption[];
+};
 
 /**
  * อ่าน `?new=goal|task` (+ `parent`, `goal`, `date`) แล้ว render ฟอร์มใน Sheet/Dialog จุดเดียวทั้งแอป
  * ปิด = ลบ query ออกจาก URL (ไม่เปลี่ยนหน้า)
  */
-export function QuickAddHost({ parentCandidates }: Props) {
+export function QuickAddHost({ parentCandidates, entryGoals }: Props) {
   const t = useTranslations();
   const params = useSearchParams();
   const pathname = usePathname();
@@ -60,6 +66,21 @@ export function QuickAddHost({ parentCandidates }: Props) {
                 }
               : undefined
           }
+          onDone={close}
+        />
+      </ResponsiveDialog>
+    );
+  }
+
+  if (kind === "entry") {
+    const goalId = params.get("goal");
+    const preselected = entryGoals.find((g) => g.id === goalId)?.id ?? entryGoals[0]?.id;
+    return (
+      <ResponsiveDialog open onOpenChange={(open) => !open && close()} title={t("entries.new")}>
+        <EntryForm
+          mode="create"
+          goalOptions={entryGoals}
+          initial={preselected ? { goalId: preselected } : undefined}
           onDone={close}
         />
       </ResponsiveDialog>
