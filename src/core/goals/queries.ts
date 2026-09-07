@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { matchesDomainFilter, type DomainFilter } from "@/core/domain/domains";
 import { periodOf, type Period, type PeriodType } from "@/core/domain/periods";
 import {
@@ -35,39 +37,45 @@ function decorate(
   });
 }
 
-/** goal ทั้งหมดของ user (RLS) พร้อม progress/pace — เรียงตามชั้นและวันเริ่ม */
-export async function listGoalsWithProgress(options?: {
-  includeArchived?: boolean;
-  domainFilter?: DomainFilter;
-}): Promise<GoalWithProgress[]> {
-  const supabase = await createServerSupabase();
-  let query = supabase
-    .from("goals")
-    .select("*")
-    .order("period_start", { ascending: true })
-    .order("created_at");
-  if (!options?.includeArchived) query = query.neq("status", "archived");
-  const [{ data: goals, error }, { data: tasks, error: taskError }] = await Promise.all([
-    query,
-    supabase
-      .from("tasks")
-      .select("goal_id, completed_at, recurrence_rule")
-      .not("goal_id", "is", null),
-  ]);
-  if (error || taskError) {
-    console.error("[goals] list failed", { code: error?.code ?? taskError?.code });
-    return [];
-  }
-  const today = todayBkk();
-  const decorated = decorate((goals ?? []) as Goal[], tasks ?? [], today)
-    .filter((g) => matchesDomainFilter(g.domain, options?.domainFilter ?? "all"))
-    .sort(
-      (a, b) =>
-        PERIOD_ORDER[a.period_type] - PERIOD_ORDER[b.period_type] ||
-        a.period_start.localeCompare(b.period_start),
-    );
-  return decorated;
-}
+/**
+ * goal ทั้งหมดของ user (RLS) พร้อม progress/pace — เรียงตามชั้นและวันเริ่ม
+ * cache() กันยิงซ้ำในคำขอเดียว (§2.9): React cache คีย์ตาม reference ของ argument — options เป็น object literal ใหม่
+ * ทุกครั้งที่เรียก จึงได้ผลจริงเฉพาะจุดที่เรียกแบบไม่มี argument เลย (เท่านั้นก็พอ ตามแผน)
+ */
+export const listGoalsWithProgress = cache(
+  async (options?: {
+    includeArchived?: boolean;
+    domainFilter?: DomainFilter;
+  }): Promise<GoalWithProgress[]> => {
+    const supabase = await createServerSupabase();
+    let query = supabase
+      .from("goals")
+      .select("*")
+      .order("period_start", { ascending: true })
+      .order("created_at");
+    if (!options?.includeArchived) query = query.neq("status", "archived");
+    const [{ data: goals, error }, { data: tasks, error: taskError }] = await Promise.all([
+      query,
+      supabase
+        .from("tasks")
+        .select("goal_id, completed_at, recurrence_rule")
+        .not("goal_id", "is", null),
+    ]);
+    if (error || taskError) {
+      console.error("[goals] list failed", { code: error?.code ?? taskError?.code });
+      return [];
+    }
+    const today = todayBkk();
+    const decorated = decorate((goals ?? []) as Goal[], tasks ?? [], today)
+      .filter((g) => matchesDomainFilter(g.domain, options?.domainFilter ?? "all"))
+      .sort(
+        (a, b) =>
+          PERIOD_ORDER[a.period_type] - PERIOD_ORDER[b.period_type] ||
+          a.period_start.localeCompare(b.period_start),
+      );
+    return decorated;
+  },
+);
 
 export function buildGoalTree(goals: GoalWithProgress[], rootId: string | null): GoalTreeNode[] {
   return goals
@@ -106,8 +114,8 @@ export async function getMainMonthGoal(monthStart: ISODate): Promise<GoalWithPro
   return monthGoals.find((g) => g.goal_kind === "metric") ?? monthGoals[0] ?? null;
 }
 
-/** ตัวเลือกเป้าหมายแม่: goal ชั้นบนถัดไปที่ยังไม่ archive — filter ช่วงทับกันในฟอร์ม */
-export async function listParentCandidates(): Promise<ParentCandidate[]> {
+/** ตัวเลือกเป้าหมายแม่: goal ชั้นบนถัดไปที่ยังไม่ archive — filter ช่วงทับกันในฟอร์ม — cache() กันยิงซ้ำในคำขอเดียว (§2.9) */
+export const listParentCandidates = cache(async (): Promise<ParentCandidate[]> => {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("goals")
@@ -116,4 +124,4 @@ export async function listParentCandidates(): Promise<ParentCandidate[]> {
     .order("period_start");
   if (error) return [];
   return (data ?? []) as ParentCandidate[];
-}
+});

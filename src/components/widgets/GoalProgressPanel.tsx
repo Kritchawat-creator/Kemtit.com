@@ -6,7 +6,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { cn } from "cn";
 
-import { daysLeft, elapsedRatio, periodContains } from "@/core/domain/periods";
+import { paceDelta } from "@/core/domain/entries";
+import { daysLeft, periodContains } from "@/core/domain/periods";
 import type { GoalWithProgress } from "@/core/goals/queries";
 import { goalUnit } from "@/core/goals/schema";
 import { isAfterISO, type ISODate } from "@/lib/date";
@@ -57,9 +58,10 @@ export function GoalProgressPanel({ goal, others, waypoints = [], today }: Props
         value: `${formatNumber(progress.tasksDone ?? 0)}/${formatNumber(progress.tasksTotal ?? 0)}`,
         unit: null,
       };
-  // เทียบแผน (Claude Design 4a "เร็วกว่าแผน 1,700 บาท"): คาดหวัง = เป้า × สัดส่วนเวลาที่ผ่านไป
-  const expected = isMetric ? (progress.target ?? 0) * elapsedRatio(goal.period, today) : 0;
-  const delta = isMetric ? Math.round((progress.current ?? 0) - expected) : 0;
+  // เทียบแผน (Claude Design 4a "เร็วกว่าแผน 1,700 บาท") — สูตรเดียวกับ core/domain/entries.paceDelta
+  const delta = isMetric
+    ? paceDelta(progress.current ?? 0, progress.target ?? 0, goal.period, today)
+    : 0;
   const tiles = [...waypoints]
     .sort((a, b) => a.period_start.localeCompare(b.period_start))
     .slice(0, MAX_TILES);

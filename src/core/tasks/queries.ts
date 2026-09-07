@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { buildDayPlan, goalTaskItems, type DayPlan, type DayTaskItem } from "@/core/domain/dayplan";
 import { currentStreak } from "@/core/domain/streak";
 import { withSignedPhotoUrls } from "@/core/photos/queries";
@@ -19,8 +21,8 @@ async function toTasksWithGoal(
   return (await withSignedPhotoUrls(supabase, (rows ?? []) as Raw[])) as TaskWithGoal[];
 }
 
-/** งานของวัน (ค้าง/ต้องทำ/เสร็จ) — ดึง task เดี่ยวของวันนั้น + task ซ้ำทั้งหมด + task เดี่ยวค้าง */
-export async function getDayPlan(date: ISODate): Promise<DayPlan<TaskWithGoal>> {
+/** งานของวัน (ค้าง/ต้องทำ/เสร็จ) — ดึง task เดี่ยวของวันนั้น + task ซ้ำทั้งหมด + task เดี่ยวค้าง — cache() กันยิงซ้ำในคำขอเดียว (§2.9) */
+export const getDayPlan = cache(async (date: ISODate): Promise<DayPlan<TaskWithGoal>> => {
   const supabase = await createServerSupabase();
   const today = todayBkk();
   const [{ data: tasks, error }, { data: completions, error: completionError }] = await Promise.all(
@@ -46,7 +48,7 @@ export async function getDayPlan(date: ISODate): Promise<DayPlan<TaskWithGoal>> 
     date,
     today,
   );
-}
+});
 
 /** ช่วงวันที่ (ปฏิทิน): task เดี่ยวในช่วง + task ซ้ำทั้งหมด + completions ในช่วง */
 export async function getRangeTasks(from: ISODate, to: ISODate) {
@@ -87,8 +89,8 @@ export async function getGoalTaskItems(goalId: string): Promise<DayTaskItem<Task
 
 const STREAK_LOOKBACK_DAYS = 60;
 
-/** streak วันติดต่อกันที่มี task เสร็จ — รวม task_completions และ date(tasks.completed_at) ตาม BKK (metric §14) */
-export async function getStreak(today: ISODate): Promise<number> {
+/** streak วันติดต่อกันที่มี task เสร็จ — รวม task_completions และ date(tasks.completed_at) ตาม BKK (metric §14) — cache() §2.9 */
+export const getStreak = cache(async (today: ISODate): Promise<number> => {
   const supabase = await createServerSupabase();
   const since = addDaysISO(today, -STREAK_LOOKBACK_DAYS);
   const [{ data: completions }, { data: tasks }] = await Promise.all([
@@ -104,4 +106,4 @@ export async function getStreak(today: ISODate): Promise<number> {
     ...(tasks ?? []).flatMap((t) => (t.completed_at ? [toBkkDate(t.completed_at)] : [])),
   ];
   return currentStreak(dates, today);
-}
+});

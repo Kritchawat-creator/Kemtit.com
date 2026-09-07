@@ -322,7 +322,10 @@
     "photoType": "รองรับเฉพาะ JPG, PNG, WebP",
     "photoTooLarge": "รูปใหญ่เกิน 10 MB",
     "uploadFailed": "อัปโหลดไม่สำเร็จ ลองอีกครั้ง",
-    "featureDisabled": "ฟีเจอร์นี้ยังไม่เปิดให้ใช้"
+    "featureDisabled": "ฟีเจอร์นี้ยังไม่เปิดให้ใช้",
+    "tooLarge": "ตัวเลขใหญ่เกินไป",
+    "goalArchived": "เป้านี้เก็บเข้ากรุแล้ว",
+    "entryOutsidePeriod": "วันที่อยู่นอกช่วงของเป้าหมายนี้"
   },
   "a11y": {
     "brandHome": "ไปหน้าแดชบอร์ด",

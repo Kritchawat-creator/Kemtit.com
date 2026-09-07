@@ -3,12 +3,14 @@
 import { revalidatePath } from "next/cache";
 
 import { emitEvent } from "@/core/events/emit";
-import { normalizePeriodStart, overlaps, periodOf } from "@/core/domain/periods";
-import { computeProgress, isMetricComplete } from "@/core/domain/progress";
+import { sumAmounts } from "@/core/domain/entries";
+import { normalizePeriodStart, overlaps, periodContains, periodOf } from "@/core/domain/periods";
 import { fail, ok, zodFail, type ActionResult } from "@/core/shared/result";
+import { isBeforeISO, todayBkk } from "@/lib/date";
 import { createServerSupabase, type ServerSupabase } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
 
+import { markMetricCompletedIfReached } from "./completion";
 import {
   createGoalSchema,
   goalSpecSchema,
@@ -156,7 +158,11 @@ export async function setGoalStatus(input: unknown): Promise<ActionResult> {
   return ok(null);
 }
 
-/** metric goal: user กรอกยอดล่าสุด → ถึงเป้าครั้งแรกจะ set completed_at + emit goal.completed ครั้งเดียว */
+/**
+ * metric goal: user กรอกยอดรวมล่าสุด (ฟอร์มเดิม/มือถือ) — ภายในแปลงเป็น adjustment entry (delta = ใหม่ − เดิม)
+ * ใส่ใน goal_entries แทนการเซ็ต current_value ตรง ๆ (M10a: current_value คำนวณจาก trigger ของ goal_entries)
+ * ถึงเป้าครั้งแรกจะ set completed_at + emit goal.completed ครั้งเดียว (ผ่าน markMetricCompletedIfReached ร่วมกับ core/entries)
+ */
 export async function updateCurrentValue(
   input: unknown,
 ): Promise<ActionResult<{ percent: number; completed: boolean }>> {
@@ -175,28 +181,47 @@ export async function updateCurrentValue(
   if (!goal) return fail("notFound");
   if (goal.goal_kind !== "metric") return fail("notMetric");
 
-  const next: Goal = { ...(goal as Goal), current_value: parsed.data.currentValue };
-  const justCompleted = isMetricComplete(next) && !goal.completed_at;
-  const patch: Database["public"]["Tables"]["goals"]["Update"] = {
-    current_value: parsed.data.currentValue,
-    ...(justCompleted ? { completed_at: new Date().toISOString(), status: "completed" } : {}),
-  };
-  const { error } = await supabase.from("goals").update(patch).eq("id", goal.id);
-  if (error) {
-    console.error("[goals] updateCurrentValue failed", { code: error.code });
+  // goals.current_value เป็นค่า clamped (greatest(0, sum)) ที่ trigger เขียน — ถ้ายอดสุทธิเคยติดลบจะไม่เท่าผลรวมจริง
+  // จึงคิด delta จากผลรวมจริงใน goal_entries เพื่อให้ยอดหลังบันทึกตรงกับตัวเลขที่ผู้ใช้พิมพ์เสมอ
+  const { data: rows, error: sumError } = await supabase
+    .from("goal_entries")
+    .select("amount")
+    .eq("goal_id", goal.id);
+  if (sumError) {
+    console.error("[goals] updateCurrentValue read entries failed", { code: sumError.code });
     return fail("generic");
   }
 
-  if (justCompleted) {
-    await emitEvent(supabase, user.id, "goal.completed", {
-      goalId: goal.id,
-      title: goal.title,
-      periodType: goal.period_type,
+  // วันของ adjustment entry ต้องอยู่ในช่วงของเป้า (กราฟสะสมนับเฉพาะ entry ในช่วง) — วันนี้อยู่นอกช่วงก็หนีบเข้าขอบใกล้สุด
+  // ไม่ปฏิเสธ เพราะ path นี้คือฟอร์ม "อัปเดตยอด" เดิมที่เคยบันทึกได้ทุกกรณี
+  const period = periodOf(goal.period_type as Goal["period_type"], goal.period_start);
+  const today = todayBkk();
+  const entryDate = periodContains(period, today)
+    ? today
+    : isBeforeISO(today, period.start)
+      ? period.start
+      : period.end;
+
+  const delta = parsed.data.currentValue - sumAmounts(rows ?? []);
+  if (delta !== 0) {
+    const { error } = await supabase.from("goal_entries").insert({
+      user_id: user.id,
+      goal_id: goal.id,
+      entry_date: entryDate,
+      amount: delta,
+      note: null,
     });
+    if (error) {
+      console.error("[goals] updateCurrentValue insert entry failed", { code: error.code });
+      return fail("generic");
+    }
   }
+
+  const result = await markMetricCompletedIfReached(supabase, user.id, goal.id);
   revalidateGoals();
   revalidatePath(`/goals/${goal.id}`);
-  return ok({ percent: computeProgress(next, [], []), completed: justCompleted });
+  revalidatePath("/entries");
+  return ok({ percent: result?.percent ?? 0, completed: result?.completed ?? false });
 }
 
 /**

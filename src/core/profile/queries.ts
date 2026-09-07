@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { signPhotoUrls } from "@/core/photos/queries";
 import { createServerSupabase } from "@/lib/supabase/server";
 
@@ -13,8 +15,8 @@ export type Me = {
   avatarUrl: string | null;
 };
 
-/** user ปัจจุบัน + โปรไฟล์ (ผ่าน RLS เห็นแค่แถวตัวเอง) — null เมื่อยังไม่ login */
-export async function getMe(): Promise<Me | null> {
+/** user ปัจจุบัน + โปรไฟล์ (ผ่าน RLS เห็นแค่แถวตัวเอง) — null เมื่อยังไม่ login — cache() กันยิงซ้ำในคำขอเดียว (§2.9) */
+export const getMe = cache(async (): Promise<Me | null> => {
   const supabase = await createServerSupabase();
   const {
     data: { user },
@@ -37,4 +39,4 @@ export async function getMe(): Promise<Me | null> {
       null)
     : null;
   return { userId: user.id, email: user.email ?? null, profile: profile as Profile, avatarUrl };
-}
+});

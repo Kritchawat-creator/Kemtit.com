@@ -5,6 +5,7 @@
 export type EventPayloads = {
   "goal.created": { goalId: string; periodType: string; goalKind: string; fromTemplate?: boolean };
   "goal.completed": { goalId: string; title: string; periodType: string };
+  "entry.logged": { goalId: string; entryId: string; amount: number; date: string };
   "task.completed": { taskId: string; goalId: string | null; date: string };
   "task.overdue": { taskIds: string[]; date: string };
   "onboarding.completed": { persona: string };
@@ -19,6 +20,7 @@ export type EventType = keyof EventPayloads;
 export const EVENT_TYPES = [
   "goal.created",
   "goal.completed",
+  "entry.logged",
   "task.completed",
   "task.overdue",
   "onboarding.completed",

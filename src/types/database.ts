@@ -61,6 +61,53 @@ export type Database = {
         };
         Relationships: [];
       };
+      goal_entries: {
+        Row: {
+          amount: number;
+          channel: string | null;
+          created_at: string;
+          entry_date: string;
+          entry_no: number;
+          goal_id: string;
+          id: string;
+          note: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          channel?: string | null;
+          created_at?: string;
+          entry_date: string;
+          entry_no?: number;
+          goal_id: string;
+          id?: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          amount?: number;
+          channel?: string | null;
+          created_at?: string;
+          entry_date?: string;
+          entry_no?: number;
+          goal_id?: string;
+          id?: string;
+          note?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "goal_entries_goal_id_fkey";
+            columns: ["goal_id"];
+            isOneToOne: false;
+            referencedRelation: "goals";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       goals: {
         Row: {
           completed_at: string | null;
