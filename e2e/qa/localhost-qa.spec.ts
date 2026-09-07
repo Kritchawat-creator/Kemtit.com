@@ -391,7 +391,10 @@ test("QA localhost (desktop)", async ({ page, isMobile }) => {
     const nav = page.getByRole("navigation", { name: "เมนูหลัก" });
     await expect(nav.getByRole("link", { name: "เป้าหมาย" })).toBeVisible();
     await expect(page.getByRole("link", { name: "เพิ่มงาน" }).first()).toBeVisible();
-    await expect(page.getByText("พ่อค้าแม่ค้าออนไลน์")).toBeVisible();
+    // turn 7: ชื่อโหมดอยู่ 3 ที่ใน DOM (pill มือถือที่ซ่อนอยู่ · user chip · ท้าย sidebar) → ผูกกับ chip ที่เห็นจริงบน desktop
+    await expect(page.getByRole("button", { name: "เมนูผู้ใช้" })).toContainText(
+      "พ่อค้าแม่ค้าออนไลน์",
+    );
     await page.getByRole("button", { name: "พับเมนู" }).click();
     await expect(page.getByRole("button", { name: "ขยายเมนู" })).toBeVisible();
     await page.getByRole("button", { name: "ขยายเมนู" }).click();

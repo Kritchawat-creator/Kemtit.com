@@ -193,7 +193,8 @@ export function Sidebar({ collapsed, onToggle, shell, profile }: Props) {
                 {nameLabel}
                 {personaLabel ? ` · ${personaLabel}` : ""}
               </p>
-              {profile.email ? (
+              {/* ยังไม่ได้ตั้งชื่อที่แสดง → บรรทัดบนเป็นอีเมลอยู่แล้ว ไม่ต้องซ้ำอีกบรรทัด */}
+              {profile.email && profile.displayName?.trim() ? (
                 <p className="truncate text-[11px] text-text-secondary">{profile.email}</p>
               ) : null}
             </div>
