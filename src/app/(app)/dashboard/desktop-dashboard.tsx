@@ -176,10 +176,13 @@ export async function DesktopDashboard({ today, chart }: Props) {
         badge={
           entryStreak >= STREAK_GOAL_DAYS
             ? { tone: "success", icon: "up", text: t("entries.kpi.streakHit") }
-            : {
-                tone: "neutral",
-                text: t("entries.kpi.streakToGo", { days: STREAK_GOAL_DAYS - entryStreak }),
-              }
+            : entryStreak > 0
+              ? {
+                  tone: "neutral",
+                  text: t("entries.kpi.streakToGo", { days: STREAK_GOAL_DAYS - entryStreak }),
+                }
+              : // ยังไม่เคยบันทึกเลย — "อีก 7 วันครบ 7 วัน" อ่านแล้วงง ใช้ข้อความชวนอย่างเดียว
+                undefined
         }
         hint={t("entries.kpi.streakHint")}
       />

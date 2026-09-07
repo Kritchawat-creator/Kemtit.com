@@ -4,6 +4,7 @@ import { cn } from "cn";
 import { planValueAt } from "@/core/domain/entries";
 import type { Period } from "@/core/domain/periods";
 import {
+  addDaysISO,
   daysBetween,
   endOfWeekISO,
   type ISODate,
@@ -153,10 +154,7 @@ export function SalesChart({ series, target, period, today, range, unit, classNa
           fontWeight={500}
           className="fill-text-secondary"
         >
-          {formatThaiDate(
-            inRange[d - 1]?.date ?? series.find((p) => dayIndex(p.date) === d)?.date ?? rangeStart,
-            "short",
-          )}
+          {formatThaiDate(addDaysISO(rangeStart, d - 1), "short")}
         </text>
       ))}
 
