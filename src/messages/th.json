@@ -33,7 +33,30 @@
     "addGoal": "เพิ่มเป้าหมาย",
     "addTask": "เพิ่มงาน",
     "collapse": "พับเมนู",
-    "expand": "ขยายเมนู"
+    "expand": "ขยายเมนู",
+    "entries": "บันทึกยอด",
+    "tasks": "งาน",
+    "reports": "รายงาน",
+    "sectionPrimary": "หลัก",
+    "sectionMore": "เพิ่มเติม",
+    "proSoon": "มีในแพ็กเกจ Pro (เร็ว ๆ นี้)",
+    "search": "ค้นหา",
+    "searchPlaceholder": "ค้นหางาน เป้าหมาย รายการ…",
+    "notifications": "การแจ้งเตือน",
+    "addEntry": "บันทึกยอด"
+  },
+  "pro": {
+    "tierFree": "แพ็กเกจ Free",
+    "tierPro": "แพ็กเกจ Pro",
+    "pitch": "Pro: เป้าหมายไม่จำกัด · รายงานสัปดาห์",
+    "upgrade": "อัปเกรด Pro",
+    "comingSoon": "แพ็กเกจ Pro เปิดให้สมัครเร็ว ๆ นี้",
+    "badge": "PRO"
+  },
+  "notifications": {
+    "overdue": "งานค้าง {count} รายการ",
+    "lineNotLinked": "ยังไม่ได้เชื่อม LINE — รับสรุปงานทุกเช้า",
+    "empty": "ไม่มีการแจ้งเตือนใหม่"
   },
   "auth": {
     "title": "เข้าใช้เข็มทิศ",

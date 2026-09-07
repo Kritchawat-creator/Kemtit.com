@@ -18,3 +18,20 @@ export function useIsMobile(): boolean {
     () => true,
   );
 }
+
+const DESKTOP_QUERY = "(min-width: 1024px)"; // ตรงกับ Tailwind lg — Claude Design turn 7 shell (§1.10)
+
+function subscribeDesktop(callback: () => void) {
+  const media = window.matchMedia(DESKTOP_QUERY);
+  media.addEventListener("change", callback);
+  return () => media.removeEventListener("change", callback);
+}
+
+/** true บน desktop (≥ 1024px) — SSR ถือว่าไม่ใช่ desktop ก่อน (mobile-first เหมือน useIsMobile, §1.10) */
+export function useIsDesktop(): boolean {
+  return useSyncExternalStore(
+    subscribeDesktop,
+    () => window.matchMedia(DESKTOP_QUERY).matches,
+    () => false,
+  );
+}

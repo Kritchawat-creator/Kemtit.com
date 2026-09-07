@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
 
-import { isActivePath, NAV_ITEMS } from "./nav-items";
+import { isActivePath, MOBILE_NAV_ITEMS } from "./nav-items";
 
 /**
  * Bottom nav 4 แท็บ บนมือถือ (Design §7.2 + Claude Design 2a): พื้นขาวมุมบน 28px เงาม่วงขึ้นบน ไม่มีเส้นขอบ
@@ -22,7 +22,7 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 rounded-t-2xl bg-bg-surface pb-[env(safe-area-inset-bottom)] shadow-nav lg:hidden"
     >
       <ul className="grid grid-cols-4 px-2 py-1">
-        {NAV_ITEMS.map(({ key, href, icon: Icon }) => {
+        {MOBILE_NAV_ITEMS.map(({ key, href, icon: Icon }) => {
           const active = isActivePath(pathname, href);
           return (
             <li key={key}>

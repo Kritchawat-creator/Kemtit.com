@@ -4,6 +4,8 @@ import type * as React from "react";
 import { useCallback, useSyncExternalStore } from "react";
 import { cn } from "cn";
 
+import type { PersonaId } from "@/core/profile/personas";
+
 import { Sidebar } from "./Sidebar";
 
 const STORAGE_KEY = "kemtit.sidebarCollapsed";
@@ -26,11 +28,23 @@ function subscribe(callback: () => void) {
   };
 }
 
+type Props = {
+  children: React.ReactNode;
+  /** ข้อมูล sidebar ที่ AppShell คำนวณไว้แล้ว (§3.2) — ส่งต่อให้ Sidebar เฉยๆ ไม่แตะ */
+  shell: { openTasks: number; tier: string };
+  profile: {
+    displayName: string | null;
+    email: string | null;
+    persona: PersonaId | null;
+    avatarUrl: string | null;
+  };
+};
+
 /**
- * โครง desktop (Claude Design turn 4): sidebar ซ้ายพับได้ (240 → 72px) จำสถานะใน localStorage
+ * โครง desktop (Claude Design turn 4/7): sidebar ซ้ายพับได้ (240 → 72px) จำสถานะใน localStorage
  * เนื้อหาเลื่อนตามความกว้าง sidebar · มือถือไม่มี sidebar (bottom nav แทน)
  */
-export function ShellFrame({ children }: { children: React.ReactNode }) {
+export function ShellFrame({ children, shell, profile }: Props) {
   const collapsed = useSyncExternalStore(subscribe, readCollapsed, () => false);
   const toggle = useCallback(() => {
     try {
@@ -43,7 +57,7 @@ export function ShellFrame({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-bg-page">
-      <Sidebar collapsed={collapsed} onToggle={toggle} />
+      <Sidebar collapsed={collapsed} onToggle={toggle} shell={shell} profile={profile} />
       <div
         className={cn(
           "relative min-h-dvh transition-[padding] duration-200",

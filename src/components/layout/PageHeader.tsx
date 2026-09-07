@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import type * as React from "react";
 import { cn } from "cn";
 
@@ -11,6 +12,11 @@ type Props = {
   description?: string;
   /** ข้อมูลรองที่แสดงเฉพาะ desktop (มือถือใช้ `actions` แทน) เช่น เดือนปัจจุบัน */
   meta?: string;
+  /**
+   * Claude Design turn 7: บรรทัด "Kemtit › {breadcrumb}" ใต้หัวข้อบน desktop เท่านั้น (เมื่อมีค่า จะดึง
+   * `meta` มาต่อท้ายบรรทัดนี้แทนที่จะแสดงแยก) — ไม่ส่ง prop นี้ = แสดงผลเหมือนเดิมทุกจุด (impact HIGH 5 หน้า)
+   */
+  breadcrumb?: string;
   /** มุมขวาของหัวข้อบนมือถือเท่านั้น (desktop มุมขวาเป็น persona/avatar) */
   actions?: React.ReactNode;
   /** toolbar (Claude Design turn 4): ตัวควบคุมซ้าย — มือถือเต็มความกว้างใต้หัวข้อ · desktop 4 คอลัมน์ */
@@ -24,25 +30,31 @@ type Props = {
  * หัวหน้า: มือถือ = H1 brand-800 ชิดล่างกับ actions ขวา · desktop = header 72px (H1 + ข้อมูลรองบน baseline เดียว)
  * ตามด้วย toolbar grid 12 คอลัมน์ (ซ้าย 4 · ขวา 8) เมื่อมี
  */
-export function PageHeader({
+export async function PageHeader({
   title,
   titleId,
   titleAddon,
   eyebrow,
   description,
   meta,
+  breadcrumb,
   actions,
   toolbarStart,
   toolbarEnd,
   className,
 }: Props) {
+  // ใช้เฉพาะบรรทัด breadcrumb ("Kemtit › ...") — เรียกไม่มีเงื่อนไขกันปัญหา narrow ชนิดข้าม branch
+  const t = await getTranslations();
   return (
     <div className={cn("mb-4 lg:mb-3", className)}>
-      <div className="flex items-end justify-between gap-3 lg:min-h-[72px] lg:items-center lg:pr-80">
+      <div className="flex items-end justify-between gap-3 lg:min-h-[72px] lg:items-center lg:pr-[520px] xl:pr-[600px]">
         <div className="min-w-0 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-3">
           {eyebrow ? <p className="text-small text-text-secondary lg:order-2">{eyebrow}</p> : null}
           <div className="flex min-w-0 items-center gap-2 lg:order-1">
-            <h1 id={titleId} className="min-w-0 text-h1 text-brand-800">
+            <h1
+              id={titleId}
+              className={cn("min-w-0 truncate text-h1 text-brand-800", breadcrumb && "lg:text-h2")}
+            >
               {title}
             </h1>
             {titleAddon}
@@ -52,7 +64,19 @@ export function PageHeader({
               {description}
             </p>
           ) : null}
-          {meta ? (
+          {breadcrumb ? (
+            <p className="hidden w-full items-center gap-1.5 text-caption text-text-secondary lg:order-5 lg:flex">
+              <span>{t("app.nameLatin")}</span>
+              <span aria-hidden="true">›</span>
+              <span className="text-brand-800">{breadcrumb}</span>
+              {meta ? (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{meta}</span>
+                </>
+              ) : null}
+            </p>
+          ) : meta ? (
             <p className="hidden text-small text-text-secondary lg:order-4 lg:block">{meta}</p>
           ) : null}
         </div>
