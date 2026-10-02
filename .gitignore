@@ -1,5 +1,6 @@
 # dependencies
 node_modules/
+.pnpm-store/
 .pnp
 .pnp.js
 
@@ -44,6 +45,9 @@ Thumbs.db
 .idea/
 *.swp
 
+# Local duplicate test backup (keep the canonical test tracked)
+/src/components/domain/DatePicker.test 2.tsx
+
 # claude code (local, machine-specific permissions — .claude/launch.json and .claude/skills/ ARE tracked)
 .claude/settings.local.json
 
@@ -62,6 +66,8 @@ supabase/.branches/
 # serwist output (สร้างตอน build)
 public/sw.js
 public/sw.js.map
+public/sw [0-9]*.js
+public/sw [0-9]*.js.map
 public/swe-worker-*.js
 
 # QA screenshots (local only)
