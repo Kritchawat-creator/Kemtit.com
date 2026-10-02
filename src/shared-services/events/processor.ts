@@ -2,7 +2,16 @@ import type { DomainEventRow } from "@/core/events/admin";
 import type { EventPayloads } from "@/core/events/types";
 import type { Notifier } from "@/core/ports/notifier";
 
-import { goalCompletedText, overdueText, type LineT } from "../notifications/line/messages";
+import {
+  dailyBriefText,
+  dailyPlanReadyText,
+  goalCompletedText,
+  habitReminderText,
+  investmentReminderText,
+  overdueText,
+  weeklyReviewReadyText,
+  type LineT,
+} from "../notifications/line/messages";
 
 /**
  * ประมวลผล domain_events เป็น batch (Flow C): handler ต่อ event type → mark processed / attempts+1
@@ -17,9 +26,22 @@ export type ProcessorDeps = {
   markFailed: (id: string, attempts: number, message: string) => Promise<void>;
   getProfile: (
     userId: string,
-  ) => Promise<{ line_user_id: string | null; notify_overdue: boolean } | null>;
+  ) => Promise<{
+    line_user_id: string | null;
+    notify_overdue: boolean;
+    notify_daily_brief: boolean;
+    notify_weekly_review: boolean;
+    notify_habits: boolean;
+    notify_investment: boolean;
+  } | null>;
   getTaskTitles: (userId: string, ids: string[]) => Promise<string[]>;
-  recordSent: (userId: string, kind: string, dryRun: boolean) => Promise<void>;
+  reserveSend: (
+    sourceEventId: string,
+    userId: string,
+    kind: string,
+    dryRun: boolean,
+  ) => Promise<string | null>;
+  releaseSend: (reservationId: string) => Promise<void>;
   notifier: Notifier;
   t: LineT;
   appUrl: string;
@@ -36,10 +58,33 @@ export type ProcessorSummary = {
 type HandlerResult = "sent" | "skipped";
 
 /**
- * KNOWN ISSUE (POC): ลำดับ push → recordSent → markProcessed ไม่ idempotent — ถ้า function ตาย/timeout หลัง push สำเร็จ
- * event จะถูก retry แล้วส่งซ้ำ (ยอมรับได้กับ tester ~10 คน) — MVP: บันทึก notification.sent (พร้อม sourceEventId) ก่อน push
- * และตรวจว่ามีแล้วหรือยังก่อนส่ง
+ * Reserve before calling LINE. The reservation is keyed by source event id in DB,
+ * so a retry after a successful push cannot push the same source event again.
+ * When LINE explicitly fails, release the reservation so the source event can retry.
  */
+async function pushOnce(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+  kind: string,
+  recipientId: string,
+  text: string,
+): Promise<HandlerResult> {
+  const reservationId = await deps.reserveSend(event.id, event.user_id, kind, deps.notifier.dryRun);
+  if (!reservationId) return "skipped";
+
+  const result = await deps.notifier.push(recipientId, text);
+
+  if (!result.ok) {
+    // An explicit LINE HTTP failure means no delivery was accepted, so release
+    // the reservation and allow a retry. If push() itself throws (ambiguous
+    // network outcome), keep the reservation to prefer no duplicate delivery.
+    await deps.releaseSend(reservationId);
+    throw new Error(result.error);
+  }
+
+  return "sent";
+}
+
 async function handleGoalCompleted(
   event: DomainEventRow,
   deps: ProcessorDeps,
@@ -47,13 +92,14 @@ async function handleGoalCompleted(
   const payload = event.payload as unknown as EventPayloads["goal.completed"];
   const profile = await deps.getProfile(event.user_id);
   if (!profile?.line_user_id) return "skipped";
-  const result = await deps.notifier.push(
+
+  return pushOnce(
+    event,
+    deps,
+    "goal.completed",
     profile.line_user_id,
     goalCompletedText(deps.t, deps.appUrl, payload.goalId, payload.title),
   );
-  if (!result.ok) throw new Error(result.error);
-  await deps.recordSent(event.user_id, "goal.completed", result.dryRun);
-  return "sent";
 }
 
 async function handleTaskOverdue(
@@ -63,15 +109,96 @@ async function handleTaskOverdue(
   const payload = event.payload as unknown as EventPayloads["task.overdue"];
   const profile = await deps.getProfile(event.user_id);
   if (!profile?.line_user_id || !profile.notify_overdue) return "skipped";
+
   const titles = await deps.getTaskTitles(event.user_id, payload.taskIds);
   if (titles.length === 0) return "skipped";
-  const result = await deps.notifier.push(
+
+  return pushOnce(
+    event,
+    deps,
+    "task.overdue",
     profile.line_user_id,
     overdueText(deps.t, deps.appUrl, titles),
   );
-  if (!result.ok) throw new Error(result.error);
-  await deps.recordSent(event.user_id, "task.overdue", result.dryRun);
-  return "sent";
+}
+
+async function handleDailyPlanReady(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+): Promise<HandlerResult> {
+  const profile = await deps.getProfile(event.user_id);
+  if (!profile?.line_user_id || !profile.notify_daily_brief) return "skipped";
+  return pushOnce(
+    event,
+    deps,
+    "daily.plan.ready",
+    profile.line_user_id,
+    dailyPlanReadyText(deps.t, deps.appUrl),
+  );
+}
+
+async function handleDailyBrief(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+): Promise<HandlerResult> {
+  const payload = event.payload as unknown as EventPayloads["daily.brief"];
+  const profile = await deps.getProfile(event.user_id);
+  if (!profile?.line_user_id || !profile.notify_daily_brief) return "skipped";
+  return pushOnce(
+    event,
+    deps,
+    "daily.brief",
+    profile.line_user_id,
+    dailyBriefText(deps.t, deps.appUrl, payload),
+  );
+}
+
+async function handleWeeklyReviewReady(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+): Promise<HandlerResult> {
+  const payload = event.payload as unknown as EventPayloads["weekly.review.ready"];
+  const profile = await deps.getProfile(event.user_id);
+  if (!profile?.line_user_id || !profile.notify_weekly_review) return "skipped";
+  return pushOnce(
+    event,
+    deps,
+    "weekly.review.ready",
+    profile.line_user_id,
+    weeklyReviewReadyText(deps.t, deps.appUrl, payload.weekStart),
+  );
+}
+
+async function handleHabitReminder(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+): Promise<HandlerResult> {
+  const payload = event.payload as unknown as EventPayloads["habit.reminder"];
+  const profile = await deps.getProfile(event.user_id);
+  if (!profile?.line_user_id || !profile.notify_habits) return "skipped";
+  return pushOnce(
+    event,
+    deps,
+    "habit.reminder",
+    profile.line_user_id,
+    habitReminderText(deps.t, deps.appUrl, payload.title),
+  );
+}
+
+async function handleInvestmentReminder(
+  event: DomainEventRow,
+  deps: ProcessorDeps,
+): Promise<HandlerResult> {
+  const payload = event.payload as unknown as EventPayloads["investment.reminder"];
+  const profile = await deps.getProfile(event.user_id);
+  if (!profile?.line_user_id || !profile.notify_investment) return "skipped";
+  return pushOnce(
+    event,
+    deps,
+    "investment.reminder",
+    profile.line_user_id,
+    investmentReminderText(deps.t, deps.appUrl, payload.title, payload.monthlyTarget),
+  );
 }
 
 const HANDLERS: Partial<
@@ -79,6 +206,11 @@ const HANDLERS: Partial<
 > = {
   "goal.completed": handleGoalCompleted,
   "task.overdue": handleTaskOverdue,
+  "daily.plan.ready": handleDailyPlanReady,
+  "daily.brief": handleDailyBrief,
+  "weekly.review.ready": handleWeeklyReviewReady,
+  "habit.reminder": handleHabitReminder,
+  "investment.reminder": handleInvestmentReminder,
 };
 
 export async function processEvents(
@@ -115,5 +247,6 @@ export async function processEvents(
       );
     }
   }
+
   return summary;
 }

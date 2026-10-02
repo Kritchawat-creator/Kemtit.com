@@ -5,6 +5,8 @@ import { cache } from "react";
 import { entryStreak, sumAmounts } from "@/core/domain/entries";
 import type { PeriodType } from "@/core/domain/periods";
 import { goalUnit } from "@/core/goals/schema";
+import { COUNTED_DATA_ORIGINS } from "@/core/shared/data-origin";
+import { QueryError } from "@/core/shared/query-error";
 import { addDaysISO, type ISODate } from "@/lib/date";
 import { createServerSupabase } from "@/lib/supabase/server";
 
@@ -19,11 +21,11 @@ export async function listGoalEntries(goalId: string): Promise<GoalEntry[]> {
     .from("goal_entries")
     .select("*")
     .eq("goal_id", goalId)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .order("entry_date", { ascending: true })
     .order("created_at", { ascending: true });
   if (error) {
-    console.error("[entries] listGoalEntries failed", { code: error.code });
-    return [];
+    throw new QueryError("entries.listGoalEntries", error.code);
   }
   return (data ?? []) as unknown as GoalEntry[];
 }
@@ -46,6 +48,7 @@ export async function listEntries(
   let query = supabase
     .from("goal_entries")
     .select(ENTRY_WITH_GOAL, { count: "exact" })
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .order("entry_date", { ascending: false })
     .order("created_at", { ascending: false });
   if (filter.goalId) query = query.eq("goal_id", filter.goalId);
@@ -60,8 +63,7 @@ export async function listEntries(
 
   const { data, error, count } = await query;
   if (error) {
-    console.error("[entries] listEntries failed", { code: error.code });
-    return { rows: [], total: 0 };
+    throw new QueryError("entries.listEntries", error.code);
   }
   return { rows: (data ?? []) as unknown as GoalEntryWithGoal[], total: count ?? 0 };
 }
@@ -72,12 +74,12 @@ export const listEntryGoalOptions = cache(async (): Promise<EntryGoalOption[]> =
   const { data, error } = await supabase
     .from("goals")
     .select("id, title, persona_data, period_type, period_start, target_value")
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .eq("status", "active")
     .eq("goal_kind", "metric")
     .order("period_start");
   if (error) {
-    console.error("[entries] listEntryGoalOptions failed", { code: error.code });
-    return [];
+    throw new QueryError("entries.listEntryGoalOptions", error.code);
   }
   return (data ?? []).map((g) => ({
     id: g.id,
@@ -98,10 +100,10 @@ export async function getEntryStreak(today: ISODate): Promise<number> {
   const { data, error } = await supabase
     .from("goal_entries")
     .select("entry_date")
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .gte("entry_date", since);
   if (error) {
-    console.error("[entries] getEntryStreak failed", { code: error.code });
-    return 0;
+    throw new QueryError("entries.getEntryStreak", error.code);
   }
   return entryStreak(
     (data ?? []).map((e) => e.entry_date),
@@ -119,13 +121,13 @@ export async function sumEntriesBetween(
   let query = supabase
     .from("goal_entries")
     .select("amount")
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .gte("entry_date", from)
     .lte("entry_date", to);
   if (goalId) query = query.eq("goal_id", goalId);
   const { data, error } = await query;
   if (error) {
-    console.error("[entries] sumEntriesBetween failed", { code: error.code });
-    return 0;
+    throw new QueryError("entries.sumEntriesBetween", error.code);
   }
   return sumAmounts(data ?? []);
 }

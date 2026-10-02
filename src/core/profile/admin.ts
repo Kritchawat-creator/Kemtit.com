@@ -100,7 +100,9 @@ export async function getProfileForNotification(userId: string) {
   const admin = createAdminSupabase();
   const { data } = await admin
     .from("user_profiles")
-    .select("line_user_id, notify_overdue")
+    .select(
+      "line_user_id, notify_overdue, notify_daily_brief, notify_weekly_review, notify_habits, notify_investment",
+    )
     .eq("id", userId)
     .maybeSingle();
   return data;

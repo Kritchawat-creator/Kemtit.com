@@ -1,12 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { getClientEnv } from "@/lib/env";
 
 import { nextRouteFor, ROUTES, safeInternalPath } from "@/core/profile/onboarding";
 import { fail, ok, zodFail, type ActionResult } from "@/core/shared/result";
 import { createServerSupabase } from "@/lib/supabase/server";
 
-import { requestOtpSchema, verifyOtpSchema } from "./schema";
+import { googleSignInSchema, requestOtpSchema, verifyOtpSchema } from "./schema";
 
 function mapAuthError(
   error: { code?: string; status?: number; message: string },
@@ -55,7 +56,7 @@ export async function verifyOtp(input: unknown): Promise<ActionResult<{ next: st
 
   const { data: profile } = await supabase
     .from("user_profiles")
-    .select("active_persona, onboarding_completed_at")
+    .select("active_persona, work_mode, role_code, focus_areas, onboarding_completed_at")
     .eq("id", data.user.id)
     .maybeSingle();
 
@@ -63,6 +64,30 @@ export async function verifyOtp(input: unknown): Promise<ActionResult<{ next: st
   const requested = safeInternalPath(parsed.data.next);
   const next = gate === ROUTES.dashboard && requested ? requested : gate;
   return ok({ next });
+}
+
+/** Start Google sign-in only. Calendar access is a separate opt-in integration. */
+export async function startGoogleSignIn(
+  input: unknown,
+): Promise<ActionResult<{ url: string }>> {
+  const parsed = googleSignInSchema.safeParse(input);
+  if (!parsed.success) return zodFail(parsed.error);
+
+  const supabase = await createServerSupabase();
+  const destination = safeInternalPath(parsed.data.next) ?? ROUTES.dashboard;
+  const { NEXT_PUBLIC_APP_URL: appUrl } = getClientEnv();
+  const callback = new URL("/auth/callback", appUrl);
+  callback.searchParams.set("next", destination);
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: callback.toString() },
+  });
+  if (error || !data.url) {
+    console.error("[auth] Google OAuth start failed", { code: error?.code, status: error?.status });
+    return fail("googleAuthFailed");
+  }
+  return ok({ url: data.url });
 }
 
 export async function signOut(): Promise<void> {

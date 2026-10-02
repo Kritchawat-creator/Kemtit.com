@@ -8,11 +8,36 @@ export type EventPayloads = {
   "entry.logged": { goalId: string; entryId: string; amount: number; date: string };
   "task.completed": { taskId: string; goalId: string | null; date: string };
   "task.overdue": { taskIds: string[]; date: string };
-  "onboarding.completed": { persona: string };
+  "daily.plan.ready": { date: string };
+  "daily.brief": {
+    date: string;
+    workMode: "seller" | "professional";
+    importantTaskTitles: string[];
+    revenueRemaining: number | null;
+    requiredDailyPace: number | null;
+    plannedWorkloadMinutes: number | null;
+    remainingCapacityMinutes: number | null;
+  };
+  "weekly.review.ready": { weekStart: string };
+  "habit.reminder": { habitId: string; title: string; date: string };
+  "investment.reminder": {
+    goalId: string;
+    title: string;
+    monthlyTarget: number | null;
+    date: string;
+  };
+  "onboarding.completed":
+    | { persona: string }
+    | { role: string; focusAreas: string[] };
   "line.linked": Record<string, never>;
   "line.unlinked": Record<string, never>;
   "persona.viewed": { persona: string };
-  "notification.sent": { channel: "line"; kind: string; dryRun: boolean };
+  "notification.sent": {
+    channel: "line";
+    kind: string;
+    dryRun: boolean;
+    sourceEventId: string;
+  };
 };
 
 export type EventType = keyof EventPayloads;
@@ -23,6 +48,11 @@ export const EVENT_TYPES = [
   "entry.logged",
   "task.completed",
   "task.overdue",
+  "daily.plan.ready",
+  "daily.brief",
+  "weekly.review.ready",
+  "habit.reminder",
+  "investment.reminder",
   "onboarding.completed",
   "line.linked",
   "line.unlinked",

@@ -61,6 +61,7 @@ export const setGoalStatusSchema = z.object({
   id: z.uuid(),
   status: z.enum(["active", "archived"]),
 });
+export const restoreGoalSchema = z.object({ id: z.uuid() });
 
 /** spec สำหรับสร้าง cascade ทีเดียว (template ตอน onboarding — Decision 1.4) */
 export type GoalSpec = {

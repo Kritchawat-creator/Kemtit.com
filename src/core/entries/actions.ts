@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { emitEvent } from "@/core/events/emit";
 import { periodContains, periodOf, type PeriodType } from "@/core/domain/periods";
 import { markMetricCompletedIfReached } from "@/core/goals/completion";
+import { COUNTED_DATA_ORIGINS } from "@/core/shared/data-origin";
 import { fail, ok, zodFail, type ActionResult } from "@/core/shared/result";
 import type { ISODate } from "@/lib/date";
 import { createServerSupabase, type ServerSupabase } from "@/lib/supabase/server";
@@ -31,6 +32,7 @@ function outsidePeriod(
 
 function revalidateEntries(goalId: string) {
   revalidatePath("/dashboard");
+  revalidatePath("/today");
   revalidatePath("/goals");
   revalidatePath(`/goals/${goalId}`);
   revalidatePath("/entries");
@@ -53,6 +55,7 @@ export async function addEntry(input: unknown): Promise<ActionResult<EntryResult
     .from("goals")
     .select("id, goal_kind, status, period_type, period_start")
     .eq("id", goalId)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .maybeSingle();
   if (!goal) return fail("invalidGoal");
   if (goal.goal_kind !== "metric") return fail("notMetric");
@@ -107,6 +110,7 @@ export async function updateEntry(input: unknown): Promise<ActionResult<EntryRes
     .from("goal_entries")
     .select("id, goal:goals(period_type, period_start)")
     .eq("id", id)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .maybeSingle();
   if (!existing) return fail("notFound");
   if (existing.goal && outsidePeriod(existing.goal, values.entryDate))
@@ -121,6 +125,7 @@ export async function updateEntry(input: unknown): Promise<ActionResult<EntryRes
       channel: values.channel ?? null,
     })
     .eq("id", id)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .select("id, goal_id")
     .maybeSingle();
   if (error) {
@@ -152,6 +157,7 @@ export async function deleteEntry(input: unknown): Promise<ActionResult> {
     .from("goal_entries")
     .delete()
     .eq("id", parsed.data.id)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .select("id, goal_id")
     .maybeSingle();
   if (error) {

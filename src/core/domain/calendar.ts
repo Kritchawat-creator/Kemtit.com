@@ -9,7 +9,13 @@ import {
   startOfWeekISO,
 } from "@/lib/date";
 
-import { itemsForDate, type DayTaskItem, type PlanCompletion, type PlanTask } from "./dayplan";
+import {
+  itemsForDate,
+  type DayTaskItem,
+  type PlanCompletion,
+  type PlanOccurrence,
+  type PlanTask,
+} from "./dayplan";
 
 /** ปฏิทิน POC (Decision 3): วัน / สัปดาห์ / เดือน — ไม่มีมุมมองปี */
 export const CALENDAR_VIEWS = ["day", "week", "month"] as const;
@@ -59,10 +65,11 @@ export function itemsByDay<T extends PlanTask>(
   completions: PlanCompletion[],
   from: ISODate,
   to: ISODate,
+  occurrences: PlanOccurrence[] = [],
 ): Record<ISODate, DayTaskItem<T>[]> {
   const result: Record<ISODate, DayTaskItem<T>[]> = {};
   for (const day of eachDayISO(from, to)) {
-    const items = itemsForDate(tasks, completions, day);
+    const items = itemsForDate(tasks, completions, day, occurrences);
     if (items.length > 0) result[day] = items;
   }
   return result;

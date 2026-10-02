@@ -2,12 +2,13 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { getClientEnv } from "@/lib/env";
+import { authFailureContext, isUnauthenticatedAuthError } from "@/core/auth/session-errors";
 
 /**
  * Next 16 proxy (แทน middleware): refresh session cookie ของ Supabase ทุก request
  * และกันคนที่ยังไม่ login ออกจากหน้าในแอป — การ gate onboarding อยู่ที่ (app)/layout.tsx
  */
-const PUBLIC_PATHS = new Set(["/login"]);
+const PUBLIC_PATHS = new Set(["/login", "/auth/callback"]);
 
 function isPublicPath(pathname: string) {
   return (
@@ -40,11 +41,34 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  // ห้ามมีโค้ดระหว่าง createServerClient กับ getClaims — ตามคำแนะนำของ @supabase/ssr
-  const { data } = await supabase.auth.getClaims();
-  const isAuthenticated = Boolean(data?.claims);
   const { pathname } = request.nextUrl;
 
+  // ห้ามมีโค้ดระหว่าง createServerClient กับ getClaims — ตามคำแนะนำของ @supabase/ssr
+  let isAuthenticated = false;
+  try {
+    const result = await supabase.auth.getClaims();
+    if (result.error) {
+      if (isUnauthenticatedAuthError(result.error)) {
+        isAuthenticated = false;
+      } else {
+        console.error("[auth] proxy claim check failed", authFailureContext(result.error));
+        // A protected page's server-side getMe() still verifies the user with Auth.
+        // Let that authoritative check render the safe recovery UI during outages.
+        return response;
+      }
+    } else {
+      isAuthenticated = Boolean(result.data?.claims);
+    }
+  } catch (error) {
+    if (isUnauthenticatedAuthError(error)) {
+      isAuthenticated = false;
+    } else {
+      console.error("[auth] proxy claim check failed", authFailureContext(error));
+      // Avoid treating a transient Auth/JWKS outage as a sign-out. App routes
+      // remain guarded by getMe() and database RLS.
+      return response;
+    }
+  }
   if (!isAuthenticated && !isPublicPath(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
@@ -54,7 +78,7 @@ export async function proxy(request: NextRequest) {
 
   if (isAuthenticated && pathname === "/login") {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    url.pathname = "/today";
     url.search = "";
     return NextResponse.redirect(url);
   }

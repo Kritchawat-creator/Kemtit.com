@@ -1,59 +1,8 @@
+import type { AppLocale } from "@/i18n/config";
+import { intlLocale } from "@/i18n/config";
 import { APP_TIME_ZONE, fromISO, type ISODate } from "@/lib/date";
 
-/**
- * Formatter กลาง — ตัวเลข/วันที่ทุกตัวใน UI ต้องผ่านที่นี่ (Design §16 DoD)
- * ปี พ.ศ. เป็น default (Q16) · สกุลเงินผ่าน Intl (Design §12) · ไม่ format เอง
- */
-const LOCALE = "th-TH";
-const LOCALE_BUDDHIST = "th-TH-u-ca-buddhist";
-
-const thb = new Intl.NumberFormat(LOCALE, {
-  style: "currency",
-  currency: "THB",
-  maximumFractionDigits: 0,
-});
-
-const thbWithSatang = new Intl.NumberFormat(LOCALE, {
-  style: "currency",
-  currency: "THB",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-const integer = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 });
-const decimal = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 2 });
-const percent = new Intl.NumberFormat(LOCALE, { style: "percent", maximumFractionDigits: 0 });
-
-/** 1234.5 → "฿1,235" (ปัดเป็นบาท) — ยอดขาย/เป้า */
-export function formatTHB(amount: number): string {
-  return Number.isInteger(amount) ? thb.format(amount) : thbWithSatang.format(amount);
-}
-
-export function formatNumber(value: number): string {
-  return Number.isInteger(value) ? integer.format(value) : decimal.format(value);
-}
-
-/** 0.42 → "42%" — รับสัดส่วน 0-1 */
-export function formatPercent(ratio: number): string {
-  return percent.format(Math.max(0, Math.min(1, ratio)));
-}
-
-/** ตัวเลขพร้อมหน่วย: unit "THB" → สกุลเงิน, อื่น ๆ ต่อท้ายด้วยช่องว่าง เช่น "12 เล่ม" */
-export function formatValueWithUnit(value: number, unit?: string | null): string {
-  if (unit === "THB" || unit === "บาท") return formatTHB(value);
-  return unit ? `${formatNumber(value)} ${unit}` : formatNumber(value);
-}
-
-/** แยกตัวเลขกับหน่วยสำหรับ hero (Claude Design 2a: "31,000" ใหญ่ + "บาท" เล็ก) — สกุลเงินแสดงเป็นคำว่า บาท */
-export function formatValueParts(
-  value: number,
-  unit?: string | null,
-): { value: string; unit: string | null } {
-  if (unit === "THB" || unit === "บาท") return { value: formatNumber(value), unit: "บาท" };
-  return { value: formatNumber(value), unit: unit || null };
-}
-
-type DateStyle =
+export type DateStyle =
   | "short"
   | "medium"
   | "long"
@@ -63,98 +12,155 @@ type DateStyle =
   | "monthShort"
   | "day";
 
-const dateFormatters: Record<DateStyle, Intl.DateTimeFormat> = {
-  short: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  }),
-  medium: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }),
-  long: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }),
-  weekday: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  }),
-  longWeekday: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }),
-  monthYear: new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }),
-  /** "ส.ค." — เดือนย่อไม่มีปี (Claude Design turn 7 KPI "เทียบ ส.ค.") */
-  monthShort: new Intl.DateTimeFormat(LOCALE_BUDDHIST, { month: "short", timeZone: "UTC" }),
-  day: new Intl.DateTimeFormat(LOCALE_BUDDHIST, { day: "numeric", timeZone: "UTC" }),
-};
+function numberLocale(locale: AppLocale) {
+  return locale === "th" ? "th-TH" : "en-GB";
+}
 
-/** ISO date (YYYY-MM-DD) → ข้อความไทย พ.ศ. เช่น "5 ก.ย. 2569" */
+function dateOnly(date: ISODate) {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
+export function formatTHB(amount: number, locale: AppLocale = "th"): string {
+  const options: Intl.NumberFormatOptions = {
+    style: "currency",
+    currency: "THB",
+    minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+    maximumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+  };
+  return new Intl.NumberFormat(numberLocale(locale), options).format(amount);
+}
+
+export function formatNumber(value: number, locale: AppLocale = "th"): string {
+  return new Intl.NumberFormat(numberLocale(locale), {
+    maximumFractionDigits: Number.isInteger(value) ? 0 : 2,
+  }).format(value);
+}
+
+export function formatPercent(ratio: number, locale: AppLocale = "th"): string {
+  return new Intl.NumberFormat(numberLocale(locale), {
+    style: "percent",
+    maximumFractionDigits: 0,
+  }).format(Math.max(0, Math.min(1, ratio)));
+}
+
+export function formatValueWithUnit(
+  value: number,
+  unit?: string | null,
+  locale: AppLocale = "th",
+): string {
+  if (unit === "THB" || unit === "บาท") return formatTHB(value, locale);
+  return unit ? `${formatNumber(value, locale)} ${unit}` : formatNumber(value, locale);
+}
+
+export function formatValueParts(
+  value: number,
+  unit?: string | null,
+  locale: AppLocale = "th",
+): { value: string; unit: string | null } {
+  if (unit === "THB" || unit === "บาท") {
+    return {
+      value: formatNumber(value, locale),
+      unit: locale === "th" ? "บาท" : "THB",
+    };
+  }
+  return { value: formatNumber(value, locale), unit: unit || null };
+}
+
+function dateOptions(style: DateStyle): Intl.DateTimeFormatOptions {
+  switch (style) {
+    case "short":
+      return { day: "numeric", month: "short", timeZone: "UTC" };
+    case "medium":
+      return { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" };
+    case "long":
+      return { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" };
+    case "weekday":
+      return { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" };
+    case "longWeekday":
+      return {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      };
+    case "monthYear":
+      return { month: "long", year: "numeric", timeZone: "UTC" };
+    case "monthShort":
+      return { month: "short", timeZone: "UTC" };
+    case "day":
+      return { day: "numeric", timeZone: "UTC" };
+  }
+}
+
+/** Locale-aware display only. Stored date values remain ISO YYYY-MM-DD. */
+export function formatDate(
+  date: ISODate,
+  style: DateStyle = "medium",
+  locale: AppLocale = "th",
+): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), dateOptions(style)).format(dateOnly(date));
+}
+
+/** Backward-compatible Thai formatter for legacy call sites. */
 export function formatThaiDate(date: ISODate, style: DateStyle = "medium"): string {
-  // date-only: สร้าง Date ที่ UTC midnight แล้ว format ด้วย timeZone UTC เพื่อไม่ให้วันเลื่อน
-  const [y, m, d] = date.split("-").map(Number);
-  return dateFormatters[style].format(new Date(Date.UTC(y, m - 1, d)));
+  return formatDate(date, style, "th");
 }
 
-const buddhistYearOnly = new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-  year: "numeric",
-  timeZone: "UTC",
-});
+export function formatYear(date: ISODate, locale: AppLocale = "th"): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(dateOnly(date));
+}
 
-/** ISO date → "พ.ศ. 2569" */
+/** Backward-compatible alias. */
 export function formatThaiYear(date: ISODate): string {
-  const [y, m, d] = date.split("-").map(Number);
-  return buddhistYearOnly.format(new Date(Date.UTC(y, m - 1, d)));
+  return formatYear(date, "th");
 }
 
-const weekdayShort = new Intl.DateTimeFormat(LOCALE, { weekday: "short", timeZone: "UTC" });
-const weekdayNarrow = new Intl.DateTimeFormat(LOCALE, { weekday: "narrow", timeZone: "UTC" });
-
-/** "อาทิตย์" "จันทร์" … (ICU short ของไทย = ชื่อเต็มไม่มีคำว่า "วัน") สำหรับปุ่มเลือกวันในฟอร์ม */
-export function formatWeekdayShort(date: ISODate): string {
-  const [y, m, d] = date.split("-").map(Number);
-  return weekdayShort.format(new Date(Date.UTC(y, m - 1, d)));
+export function formatWeekdayShort(date: ISODate, locale: AppLocale = "th"): string {
+  return new Intl.DateTimeFormat(numberLocale(locale), {
+    weekday: "short",
+    timeZone: "UTC",
+  }).format(dateOnly(date));
 }
 
-/** "อา" "จ" "อ" "พ" "พฤ" "ศ" "ส" — หัวคอลัมน์ปฏิทิน 7 ช่องบนมือถือ (Claude Design 3m) */
-export function formatWeekdayNarrow(date: ISODate): string {
-  const [y, m, d] = date.split("-").map(Number);
-  return weekdayNarrow.format(new Date(Date.UTC(y, m - 1, d)));
+/**
+ * Thai uses narrow weekday labels; English uses short labels (Sun, Mon, ...)
+ * so the calendar remains readable without ambiguous single-letter weekdays.
+ */
+export function formatWeekdayNarrow(date: ISODate, locale: AppLocale = "th"): string {
+  return new Intl.DateTimeFormat(numberLocale(locale), {
+    weekday: locale === "th" ? "narrow" : "short",
+    timeZone: "UTC",
+  }).format(dateOnly(date));
 }
 
-const dateTime = new Intl.DateTimeFormat(LOCALE_BUDDHIST, {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: APP_TIME_ZONE,
-});
-
-/** timestamptz → "5 ก.ย. 2569 14:30" ตามเวลาไทย */
-export function formatDateTime(timestamp: Date | string): string {
-  return dateTime.format(typeof timestamp === "string" ? new Date(timestamp) : timestamp);
+export function formatDateTime(
+  timestamp: Date | string,
+  locale: AppLocale = "th",
+  timeZone = APP_TIME_ZONE,
+): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone,
+  }).format(typeof timestamp === "string" ? new Date(timestamp) : timestamp);
 }
 
-const relative = new Intl.RelativeTimeFormat("th", { numeric: "auto" });
-
-/** "3 ชั่วโมงที่ผ่านมา" / "พรุ่งนี้" — ใช้กับ metadata (Design §9.4) */
-export function formatRelative(target: Date | string, now: Date = new Date()): string {
+export function formatRelative(
+  target: Date | string,
+  now: Date = new Date(),
+  locale: AppLocale = "th",
+): string {
+  const relative = new Intl.RelativeTimeFormat(locale === "th" ? "th" : "en", {
+    numeric: "auto",
+  });
   const t = typeof target === "string" ? new Date(target) : target;
   const diffSec = Math.round((t.getTime() - now.getTime()) / 1000);
   const abs = Math.abs(diffSec);
@@ -164,16 +170,20 @@ export function formatRelative(target: Date | string, now: Date = new Date()): s
   return relative.format(Math.round(diffSec / 86400), "day");
 }
 
-/** ระยะห่างเป็นวันจากวันนี้ → "วันนี้" / "พรุ่งนี้" / "เมื่อวาน" / "อีก 3 วัน" / "3 วันที่แล้ว" ผ่าน Intl */
-export function formatDayDistance(date: ISODate, today: ISODate): string {
-  const diffDays = Math.round((fromISO(date).getTime() - fromISO(today).getTime()) / 86_400_000);
+export function formatDayDistance(
+  date: ISODate,
+  today: ISODate,
+  locale: AppLocale = "th",
+): string {
+  const relative = new Intl.RelativeTimeFormat(locale === "th" ? "th" : "en", {
+    numeric: "auto",
+  });
+  const diffDays = Math.round(
+    (fromISO(date).getTime() - fromISO(today).getTime()) / 86_400_000,
+  );
   return relative.format(diffDays, "day");
 }
 
-/**
- * ตัวอักษรแรกของชื่อที่แสดง (fallback: อีเมล → "?") สำหรับ avatar — Design §6A: ไม่ใช่ initials แบบตะวันตก
- * ชื่อไทยไม่มี convention นั้นและไม่มี uppercase จึงไม่แปลงตัวพิมพ์ · ไฟล์นี้ไม่มี client boundary ใช้ได้ทั้ง server/client
- */
 export function avatarLetter(
   displayName: string | null | undefined,
   email?: string | null,

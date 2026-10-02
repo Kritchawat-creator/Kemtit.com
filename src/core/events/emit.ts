@@ -17,11 +17,14 @@ export async function emitEvent<T extends EventType>(
   userId: string,
   eventType: T,
   payload: EventPayloads[T],
+  options?: { dedupeKey?: string },
 ): Promise<void> {
   const { error } = await client.from("domain_events").insert({
     user_id: userId,
     event_type: eventType,
     payload,
+    dedupe_key: options?.dedupeKey ?? null,
   });
+  if (error?.code === "23505" && options?.dedupeKey) return;
   if (error) console.error("[events] emit failed", { eventType, code: error.code });
 }

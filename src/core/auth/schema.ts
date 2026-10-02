@@ -16,3 +16,5 @@ export const verifyOtpSchema = z.object({
   next: z.string().optional(),
 });
 export type VerifyOtpInput = z.infer<typeof verifyOtpSchema>;
+
+export const googleSignInSchema = z.object({ next: z.string().optional() });

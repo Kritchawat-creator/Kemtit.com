@@ -69,7 +69,10 @@ export async function signPhotoUrls(
     .from(PHOTO_BUCKET)
     .createSignedUrls(missing, expiresIn);
   if (error || !data) {
-    console.error("[photos] createSignedUrls failed", { message: error?.message });
+    console.error("[photos] createSignedUrls failed", {
+      status: error?.status,
+      statusCode: error?.statusCode,
+    });
     for (const path of missing) result.set(path, null);
     return result;
   }

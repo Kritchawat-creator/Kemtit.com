@@ -4,6 +4,8 @@ import { cache } from "react";
 
 import { matchesDomainFilter, type DomainFilter } from "@/core/domain/domains";
 import { periodOf, type Period, type PeriodType } from "@/core/domain/periods";
+import { COUNTED_DATA_ORIGINS } from "@/core/shared/data-origin";
+import { QueryError } from "@/core/shared/query-error";
 import {
   buildProgressIndex,
   paceStatus,
@@ -21,6 +23,26 @@ export { candidatesFor } from "./candidates";
 export type GoalWithProgress = Goal & { progress: ProgressInfo; period: Period; pace: PaceStatus };
 
 export type GoalTreeNode = { goal: GoalWithProgress; children: GoalTreeNode[] };
+
+export async function listArchivedGoals(pageIndex = 0, pageSize = 50) {
+  const offset = Math.max(0, pageIndex) * pageSize;
+  const supabase = await createServerSupabase();
+  const { data, error } = await supabase
+    .from("goals")
+    .select("id, title, status, archived_at, archived_from_status")
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
+    .eq("status", "archived")
+    .order("archived_at", { ascending: false })
+    .order("id", { ascending: true })
+    .range(offset, offset + pageSize);
+
+  if (error) {
+    console.error("[goals] archive list failed", { code: error.code });
+    throw new QueryError("goals.listArchived", error.code);
+  }
+  const rows = data ?? [];
+  return { items: rows.slice(0, pageSize), hasMore: rows.length > pageSize };
+}
 
 const PERIOD_ORDER: Record<PeriodType, number> = { year: 0, quarter: 1, month: 2, week: 3, day: 4 };
 
@@ -51,6 +73,7 @@ export const listGoalsWithProgress = cache(
     let query = supabase
       .from("goals")
       .select("*")
+      .in("data_origin", [...COUNTED_DATA_ORIGINS])
       .order("period_start", { ascending: true })
       .order("created_at");
     if (!options?.includeArchived) query = query.neq("status", "archived");
@@ -59,11 +82,13 @@ export const listGoalsWithProgress = cache(
       supabase
         .from("tasks")
         .select("goal_id, completed_at, recurrence_rule")
+        .in("data_origin", [...COUNTED_DATA_ORIGINS])
+        .is("archived_at", null)
         .not("goal_id", "is", null),
     ]);
     if (error || taskError) {
       console.error("[goals] list failed", { code: error?.code ?? taskError?.code });
-      return [];
+      throw new QueryError("goals.listWithProgress", error?.code ?? taskError?.code);
     }
     const today = todayBkk();
     const decorated = decorate((goals ?? []) as Goal[], tasks ?? [], today)
@@ -77,10 +102,22 @@ export const listGoalsWithProgress = cache(
   },
 );
 
-export function buildGoalTree(goals: GoalWithProgress[], rootId: string | null): GoalTreeNode[] {
+export function buildGoalTree(
+  goals: GoalWithProgress[],
+  rootId: string | null,
+  visited: ReadonlySet<string> = new Set(),
+): GoalTreeNode[] {
   return goals
-    .filter((g) => g.parent_id === rootId)
-    .map((goal) => ({ goal, children: buildGoalTree(goals, goal.id) }));
+    .filter((goal) => goal.parent_id === rootId)
+    .flatMap((goal) => {
+      if (visited.has(goal.id)) {
+        console.warn("[goals] cycle detected while building tree", { goalId: goal.id });
+        return [];
+      }
+      const nextVisited = new Set(visited);
+      nextVisited.add(goal.id);
+      return [{ goal, children: buildGoalTree(goals, goal.id, nextVisited) }];
+    });
 }
 
 export type GoalDetail = {
@@ -93,8 +130,18 @@ export type GoalDetail = {
 export async function getGoalDetail(id: string): Promise<GoalDetail | null> {
   const [goals, tasksResult] = await Promise.all([
     listGoalsWithProgress({ includeArchived: true }),
-    (await createServerSupabase()).from("tasks").select("*").eq("goal_id", id).order("due_date"),
+    (await createServerSupabase())
+      .from("tasks")
+      .select("*")
+      .eq("goal_id", id)
+      .in("data_origin", [...COUNTED_DATA_ORIGINS])
+      .is("archived_at", null)
+      .order("due_date"),
   ]);
+  if (tasksResult.error) {
+    console.error("[goals] detail task list failed", { code: tasksResult.error.code });
+    throw new QueryError("goals.getDetail", tasksResult.error.code);
+  }
   const goal = goals.find((g) => g.id === id);
   if (!goal) return null;
   return {
@@ -120,6 +167,7 @@ export const listParentCandidates = cache(async (): Promise<ParentCandidate[]> =
   const { data, error } = await supabase
     .from("goals")
     .select("id, title, period_type, period_start, domain")
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .neq("status", "archived")
     .order("period_start");
   if (error) return [];

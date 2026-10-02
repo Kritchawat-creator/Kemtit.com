@@ -2,12 +2,16 @@ import { describe, expect, it } from "vitest";
 
 import {
   avatarLetter,
+  formatDate,
+  formatDateTime,
   formatDayDistance,
   formatPercent,
   formatTHB,
   formatThaiDate,
   formatValueWithUnit,
+  formatWeekdayNarrow,
   formatWeekdayShort,
+  formatYear,
 } from "./format";
 
 describe("format (th-TH, พ.ศ.)", () => {
@@ -43,6 +47,31 @@ describe("format (th-TH, พ.ศ.)", () => {
     expect(formatDayDistance("2026-09-05", "2026-09-05")).toMatch(/วันนี้/);
     expect(formatDayDistance("2026-09-06", "2026-09-05")).toMatch(/พรุ่งนี้/);
     expect(formatDayDistance("2026-09-04", "2026-09-05")).toMatch(/เมื่อวาน/);
+  });
+});
+
+describe("locale-aware calendar formatting", () => {
+  it("Thai uses Buddhist Era and Thai calendar labels", () => {
+    const date = "2026-09-26";
+    expect(formatDate(date, "long", "th")).toContain("2569");
+    expect(formatYear(date, "th")).toContain("2569");
+    expect(formatWeekdayNarrow(date, "th")).toMatch(/[ก-๙]/);
+  });
+
+  it("English uses Gregorian year and English calendar labels", () => {
+    const date = "2026-09-26";
+    const formatted = formatDate(date, "long", "en");
+    expect(formatted).toContain("2026");
+    expect(formatted).toMatch(/September/i);
+    expect(formatted).not.toContain("2569");
+    expect(formatYear(date, "en")).toContain("2026");
+    expect(formatWeekdayNarrow(date, "en")).toMatch(/Sat/i);
+  });
+
+  it("both languages render timestamps in Asia/Bangkok UTC+7", () => {
+    const timestamp = "2026-09-26T00:00:00.000Z";
+    expect(formatDateTime(timestamp, "th")).toMatch(/07[:.]00/);
+    expect(formatDateTime(timestamp, "en")).toMatch(/07[:.]00/);
   });
 });
 

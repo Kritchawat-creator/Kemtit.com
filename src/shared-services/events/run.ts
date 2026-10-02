@@ -4,9 +4,10 @@ import { getTranslations } from "next-intl/server";
 
 import {
   fetchUnprocessedEvents,
-  insertEventAsAdmin,
   markEventFailed,
   markEventProcessed,
+  releaseNotificationSend,
+  reserveNotificationSend,
 } from "@/core/events/admin";
 import { getProfileForNotification } from "@/core/profile/admin";
 import { getTaskTitles } from "@/core/tasks/admin";
@@ -24,8 +25,8 @@ export async function runProcessor(): Promise<ProcessorSummary> {
     markFailed: markEventFailed,
     getProfile: getProfileForNotification,
     getTaskTitles,
-    recordSent: (userId, kind, dryRun) =>
-      insertEventAsAdmin(userId, "notification.sent", { channel: "line", kind, dryRun }),
+    reserveSend: reserveNotificationSend,
+    releaseSend: releaseNotificationSend,
     notifier: getNotifier(),
     t,
     appUrl: getClientEnv().NEXT_PUBLIC_APP_URL,

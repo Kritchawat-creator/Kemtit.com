@@ -4,22 +4,23 @@ import { revalidatePath } from "next/cache";
 
 import { emitEvent } from "@/core/events/emit";
 import { sumAmounts } from "@/core/domain/entries";
+import { COUNTED_DATA_ORIGINS } from "@/core/shared/data-origin";
 import { normalizePeriodStart, overlaps, periodContains, periodOf } from "@/core/domain/periods";
 import { fail, ok, zodFail, type ActionResult } from "@/core/shared/result";
 import { isBeforeISO, todayBkk } from "@/lib/date";
 import { createServerSupabase, type ServerSupabase } from "@/lib/supabase/server";
-import type { Database } from "@/types/database";
+import type { Database, Json } from "@/types/database";
 
 import { markMetricCompletedIfReached } from "./completion";
 import {
   createGoalSchema,
   goalSpecSchema,
+  restoreGoalSchema,
   setGoalStatusSchema,
   updateCurrentValueSchema,
   updateGoalSchema,
   type Goal,
   type GoalFormValues,
-  type GoalSpec,
 } from "./schema";
 
 type GoalInsert = Database["public"]["Tables"]["goals"]["Insert"];
@@ -32,8 +33,10 @@ async function requireUser(supabase: ServerSupabase) {
 }
 
 function revalidateGoals() {
+  revalidatePath("/archive");
   revalidatePath("/goals");
   revalidatePath("/dashboard");
+  revalidatePath("/today");
   revalidatePath("/calendar");
 }
 
@@ -47,6 +50,7 @@ async function validateParent(
     .from("goals")
     .select("id, period_type, period_start")
     .eq("id", parentId)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .maybeSingle();
   if (!parent) return "invalidParent";
   const parentPeriod = periodOf(parent.period_type as Goal["period_type"], parent.period_start);
@@ -122,10 +126,12 @@ export async function updateGoal(input: unknown): Promise<ActionResult<{ id: str
     .from("goals")
     .update(patch)
     .eq("id", id)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .select("id")
     .maybeSingle();
   if (error) {
     console.error("[goals] update failed", { code: error.code });
+    if (error.code === "23514") return fail("invalidParent");
     return fail("generic");
   }
   if (!data) return fail("notFound");
@@ -144,13 +150,49 @@ export async function setGoalStatus(input: unknown): Promise<ActionResult> {
   const user = await requireUser(supabase);
   if (!user) return fail("unauthorized");
 
-  const { data, error } = await supabase
-    .from("goals")
-    .update({ status: parsed.data.status })
-    .eq("id", parsed.data.id)
-    .select("id")
-    .maybeSingle();
-  if (error) return fail("generic");
+  if (parsed.data.status === "archived") {
+    const { data, error } = await supabase.rpc("archive_goal_atomic", {
+      p_goal_id: parsed.data.id,
+    });
+    if (error) {
+      if (error.message.includes("goal_not_found")) return fail("notFound");
+      console.error("[goals] archive failed", { code: error.code });
+      return fail("generic");
+    }
+    if (!data) return fail("notFound");
+  } else {
+    const { data, error } = await supabase
+      .from("goals")
+      .update({ status: "active", archived_at: null, archived_from_status: null })
+      .eq("id", parsed.data.id)
+      .in("data_origin", [...COUNTED_DATA_ORIGINS])
+      .select("id")
+      .maybeSingle();
+    if (error) return fail("generic");
+    if (!data) return fail("notFound");
+  }
+
+  revalidateGoals();
+  revalidatePath(`/goals/${parsed.data.id}`);
+  return ok(null);
+}
+
+export async function restoreGoal(input: unknown): Promise<ActionResult> {
+  const parsed = restoreGoalSchema.safeParse(input);
+  if (!parsed.success) return zodFail(parsed.error);
+
+  const supabase = await createServerSupabase();
+  const user = await requireUser(supabase);
+  if (!user) return fail("unauthorized");
+
+  const { data, error } = await supabase.rpc("restore_goal_atomic", {
+    p_goal_id: parsed.data.id,
+  });
+  if (error) {
+    if (error.message.includes("goal_not_found")) return fail("notFound");
+    console.error("[goals] restore failed", { code: error.code });
+    return fail("generic");
+  }
   if (!data) return fail("notFound");
 
   revalidateGoals();
@@ -177,6 +219,7 @@ export async function updateCurrentValue(
     .from("goals")
     .select("*")
     .eq("id", parsed.data.id)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
     .maybeSingle();
   if (!goal) return fail("notFound");
   if (goal.goal_kind !== "metric") return fail("notMetric");
@@ -225,8 +268,8 @@ export async function updateCurrentValue(
 }
 
 /**
- * สร้าง goal + ลูก + task ตัวอย่างจาก spec ทีเดียว (template ตอน onboarding)
- * ไม่มี transaction ใน supabase-js: ถ้าลูกพังกลางทาง แม่ยังอยู่ — ยอมรับใน POC
+ * สร้าง goal + ลูก + task ตัวอย่างจาก spec แบบ atomic ผ่าน PostgreSQL RPC.
+ * ถ้า node/task ใดพัง PostgreSQL จะ rollback ทั้ง statement จึงไม่เหลือ cascade ครึ่งชุด.
  */
 export async function createGoalCascade(input: unknown): Promise<ActionResult<{ rootId: string }>> {
   const parsed = goalSpecSchema.safeParse(input);
@@ -236,51 +279,15 @@ export async function createGoalCascade(input: unknown): Promise<ActionResult<{ 
   const user = await requireUser(supabase);
   if (!user) return fail("unauthorized");
 
-  const insertNode = async (spec: GoalSpec, parentId: string | null): Promise<string | null> => {
-    const { data, error } = await supabase
-      .from("goals")
-      .insert(
-        toInsert(user.id, {
-          title: spec.title,
-          periodType: spec.periodType,
-          periodStart: spec.periodStart,
-          domain: spec.domain,
-          goalKind: spec.goalKind,
-          targetValue: spec.targetValue,
-          unit: spec.unit,
-          parentId,
-        }),
-      )
-      .select("id")
-      .single();
-    if (error || !data) {
-      console.error("[goals] cascade insert failed", { code: error?.code });
-      return null;
-    }
-    await emitEvent(supabase, user.id, "goal.created", {
-      goalId: data.id,
-      periodType: spec.periodType,
-      goalKind: spec.goalKind,
-      fromTemplate: true,
-    });
-    if (spec.tasks?.length) {
-      const { error: taskError } = await supabase.from("tasks").insert(
-        spec.tasks.map((t) => ({
-          user_id: user.id,
-          goal_id: data.id,
-          title: t.title,
-          due_date: t.dueDate,
-          domain: t.domain,
-        })),
-      );
-      if (taskError) console.error("[goals] cascade tasks failed", { code: taskError.code });
-    }
-    for (const child of spec.children ?? []) await insertNode(child, data.id);
-    return data.id;
-  };
+  const { data: rootId, error } = await supabase.rpc("create_goal_cascade", {
+    p_spec: parsed.data as unknown as Json,
+  });
 
-  const rootId = await insertNode(parsed.data, null);
-  if (!rootId) return fail("generic");
+  if (error || !rootId) {
+    console.error("[goals] atomic cascade failed", { code: error?.code });
+    return fail("generic");
+  }
+
   revalidateGoals();
   return ok({ rootId });
 }

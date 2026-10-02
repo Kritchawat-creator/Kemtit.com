@@ -1,5 +1,6 @@
 import "server-only";
 
+import { COUNTED_DATA_ORIGINS } from "@/core/shared/data-origin";
 import type { ISODate } from "@/lib/date";
 import { createAdminSupabase } from "@/lib/supabase/admin";
 
@@ -14,6 +15,8 @@ export async function listOverdueTaskIds(
     .from("tasks")
     .select("id")
     .eq("user_id", userId)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
+    .is("archived_at", null)
     .is("recurrence_rule", null)
     .is("completed_at", null)
     .lt("due_date", today)
@@ -29,6 +32,8 @@ export async function getTaskTitles(userId: string, ids: string[]): Promise<stri
     .from("tasks")
     .select("id, title")
     .eq("user_id", userId)
+    .in("data_origin", [...COUNTED_DATA_ORIGINS])
+    .is("archived_at", null)
     .in("id", ids);
   const byId = new Map((data ?? []).map((t) => [t.id, t.title]));
   return ids.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []));

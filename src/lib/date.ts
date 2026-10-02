@@ -16,13 +16,16 @@ import {
 } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 
+import { APP_TIME_ZONE } from "@/i18n/config";
+
+export { APP_TIME_ZONE } from "@/i18n/config";
+
 /**
  * วันที่ทั้งแอปเป็น ISO date string (YYYY-MM-DD) ไม่มีเวลา ไม่มี timezone — ตรงกับคอลัมน์ `date` ใน Postgres
  * เวลา "ตอนนี้" ตีความเป็น Asia/Bangkok เสมอ (server รันเป็น UTC) — R6 ใน implementation-plan
  * สัปดาห์เริ่มวันอาทิตย์ตามปฏิทินไทย (Design §12)
  */
-export const APP_TIME_ZONE = "Asia/Bangkok";
-export const WEEK_STARTS_ON = 0 as const; // อาทิตย์
+export const WEEK_STARTS_ON = 0 as const; // Sunday for both TH/EN; locale changes era/language, not data semantics.
 
 export type ISODate = string; // YYYY-MM-DD
 
