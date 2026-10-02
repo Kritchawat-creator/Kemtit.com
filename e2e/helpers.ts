@@ -31,7 +31,7 @@ export async function latestOtpFor(email: string, attempts = 30): Promise<string
   throw new Error(`ไม่พบรหัส OTP สำหรับ ${email} ใน Mailpit (${MAILPIT_URL})`);
 }
 
-/** ขั้น 1 ของ onboarding: อีเมล → OTP → ออกจากหน้า login */
+/** อีเมล → OTP → ออกจากหน้า login */
 export async function signInWithOtp(page: Page, email: string) {
   await page.goto("/login");
   await page.getByLabel("อีเมล").fill(email);
@@ -42,14 +42,19 @@ export async function signInWithOtp(page: Page, email: string) {
   await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
 }
 
-/** ขั้น 2-3: เลือก seller → ตั้งเป้าเดือน (บาท) → ถึงแดชบอร์ด */
-export async function completeOnboarding(page: Page, targetValue = 50000) {
+/** Redesigned onboarding: Role → Focus → Starter Workspace → Today. */
+export async function completeOnboarding(page: Page) {
   await expect(page).toHaveURL(/\/onboarding\/persona/);
-  await page.getByRole("button", { name: "ใช้แบบนี้" }).click();
-  await expect(page).toHaveURL(/\/onboarding\/first-goal/);
-  await page.getByLabel("ยอดขายที่อยากได้").fill(String(targetValue));
-  await page.getByRole("button", { name: "เริ่มเลย" }).click();
-  await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
+  await page.getByText("ผู้ขาย / ร้านค้า", { exact: true }).click();
+  await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();
+
+  await expect(page).toHaveURL(/\/onboarding\/focus/, { timeout: 15_000 });
+  await page.getByText("งาน", { exact: true }).first().click();
+  await page.getByRole("button", { name: "เตรียมพื้นที่เริ่มต้น" }).click();
+
+  await expect(page).toHaveURL(/\/onboarding\/starter/, { timeout: 15_000 });
+  await page.getByRole("button", { name: "ไปหน้าวันนี้" }).click();
+  await expect(page).toHaveURL(/\/today/, { timeout: 20_000 });
 }
 
 /** user ใหม่ที่จบ onboarding แล้ว — ใช้เป็นจุดเริ่มของ flow อื่น */
@@ -58,4 +63,41 @@ export async function onboardNewUser(page: Page, prefix = "user") {
   await signInWithOtp(page, email);
   await completeOnboarding(page);
   return email;
+}
+
+/** Create a current-week goal through the GoalForm and open its detail page. */
+export async function createWeeklyGoal(page: Page, title: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const dateParts = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  const today = `${dateParts.year}-${dateParts.month}-${dateParts.day}`;
+  const start = new Date(`${today}T00:00:00Z`);
+  start.setUTCDate(start.getUTCDate() - start.getUTCDay());
+  const weekStart = start.toISOString().slice(0, 10);
+
+  await page.goto(`/goals?new=goal&periodType=week&periodStart=${weekStart}`);
+  await page.getByLabel("ชื่อเป้าหมาย").fill(title);
+  await page.getByRole("button", { name: "บันทึกเป้าหมาย" }).click();
+  await expect(page.getByText("บันทึกเป้าหมายแล้ว")).toBeVisible();
+
+  await page.goto("/goals");
+  const escapedTitle = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  await page.getByRole("link", { name: new RegExp(escapedTitle) }).click();
+  await expect(page).toHaveURL(/\/goals\/[0-9a-f-]+$/);
+  const goalId = page.url().match(/\/goals\/([0-9a-f-]+)$/i)?.[1];
+  if (!goalId) throw new Error(`Could not read the created goal ID from ${page.url()}`);
+  return goalId;
+}
+
+/** Add and save a task on the currently open goal detail page. */
+export async function addTaskToCurrentGoal(page: Page, title: string) {
+  await page.getByRole("link", { name: "เพิ่มงาน" }).first().click();
+  await page.getByLabel("ชื่องาน").fill(title);
+  await page.getByRole("button", { name: "บันทึกงาน" }).click();
+  await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
+  await expect(page.getByRole("checkbox", { name: new RegExp(title) })).toBeVisible();
 }

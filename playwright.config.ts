@@ -22,8 +22,12 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
-    // mobile-first (Design §7.3): รันมือถือก่อน desktop
+    // Phase 0 regression matrix: compact / medium / expanded breakpoints.
     { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
+    {
+      name: "tablet-chrome",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 768, height: 1024 } },
+    },
     { name: "desktop-chrome", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {

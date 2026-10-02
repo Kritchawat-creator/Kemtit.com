@@ -121,52 +121,64 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
     await expect(page).toHaveURL(/\/onboarding\/persona/, { timeout: 15_000 });
   });
 
-  await qa.step("persona-page", async () => {
-    await expect(page.getByText("เร็ว ๆ นี้", { exact: true })).toHaveCount(3);
-    await expect(page.getByRole("radio", { name: /พ่อค้าแม่ค้า/ })).toBeChecked();
-    await page.getByRole("button", { name: "ใช้แบบนี้" }).click();
-    await expect(page).toHaveURL(/first-goal/);
+  await qa.step("role-page", async () => {
+    await expect(page.getByText("พนักงาน", { exact: true })).toBeVisible();
+    await expect(page.getByText("ผู้ขาย / ร้านค้า", { exact: true })).toBeVisible();
+    await expect(page.getByText("นักเรียน / นักศึกษา", { exact: true })).toBeVisible();
+    await expect(page.getByText("ฟรีแลนซ์", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "เลือกบทบาทนี้" })).toBeDisabled();
+
+    await page.getByText("ผู้ขาย / ร้านค้า", { exact: true }).click();
+    await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();
+    await expect(page).toHaveURL(/\/onboarding\/focus/);
   });
 
-  await qa.step("first-goal-validation", async () => {
-    if (!/first-goal/.test(page.url())) {
-      await page.goto("/onboarding/persona");
-      await page
-        .getByRole("button", { name: "ใช้แบบนี้" })
-        .click()
-        .catch(() => {});
-      await page.goto("/onboarding/first-goal");
-    }
-    await page.getByRole("button", { name: "เริ่มเลย" }).click();
-    await expect(page.getByText(/มากกว่า 0/)).toBeVisible();
+  await qa.step("focus-page", async () => {
+    await expect(page.getByRole("button", { name: "เตรียมพื้นที่เริ่มต้น" })).toBeDisabled();
+    await page.getByText("งาน", { exact: true }).first().click();
+    await page.getByRole("button", { name: "เตรียมพื้นที่เริ่มต้น" }).click();
+    await expect(page).toHaveURL(/\/onboarding\/starter/);
   });
 
-  await qa.step("first-goal-create", async () => {
-    await page.getByLabel("ยอดขายที่อยากได้").fill("40000");
-    await page.getByRole("button", { name: "เริ่มเลย" }).click();
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
+  await qa.step("starter-workspace-no-auto-persist", async () => {
+    await expect(page.getByText("ยังไม่มีอะไรถูกเพิ่มเป็นข้อมูลจริง")).toBeVisible();
+    await expect(page.getByText("วางเป้าหมายหลักของร้านเดือนนี้")).toBeVisible();
+    await page.getByRole("button", { name: "ไปหน้าวันนี้" }).click();
+    await expect(page).toHaveURL(/\/today/, { timeout: 20_000 });
   });
 
-  await qa.step("dashboard-initial", async () => {
-    if (!/dashboard/.test(page.url())) await page.goto("/dashboard");
-    const w = page.getByRole("region", { name: "เป้าหลักเดือนนี้" });
-    await expect(w.getByText("0%")).toBeVisible();
-    await expect(w.getByText(/เป้า ฿40,000/)).toBeVisible();
-    await expect(page.getByRole("region", { name: "งานวันนี้" })).toBeVisible();
+  await qa.step("today-initial", async () => {
+    if (!/today/.test(page.url())) await page.goto("/today");
+    await expect(page.getByRole("heading", { name: "วันนี้", exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: "แผนวันนี้", exact: true })).toBeVisible();
+    await expect(page.getByRole("region", { name: "เวลาที่เหลือวันนี้" })).toBeVisible();
   });
 
-  await qa.step("dashboard-update-value-to-100", async () => {
-    const w = page.getByRole("region", { name: "เป้าหลักเดือนนี้" });
-    await w.getByRole("button", { name: "อัปเดตยอด" }).click();
+  await qa.step("create-real-metric-goal", async () => {
+    await page.goto("/goals?new=goal&domain=work&goalKind=metric&unit=THB");
+    await page.getByLabel("ชื่อเป้าหมาย").fill("ยอดขายเดือนนี้");
+    await page.getByRole("spinbutton", { name: "เป้าตัวเลข" }).fill("40000");
+    await page.getByRole("button", { name: "บันทึกเป้าหมาย" }).click();
+    await expect(page.getByText("บันทึกเป้าหมายแล้ว")).toBeVisible();
+  });
+
+  await qa.step("goal-update-value-to-100", async () => {
+    await page.goto("/goals");
+    await page
+      .getByRole("main")
+      .getByRole("link", { name: /ยอดขาย/ })
+      .first()
+      .click();
+    await page.getByRole("button", { name: "อัปเดตยอด" }).click();
     await page.getByLabel("ยอดตอนนี้").fill("40000");
     await postAction(page, () => page.getByRole("button", { name: "บันทึก", exact: true }).click());
     await expect(page.getByText(/ทำได้แล้ว/).first()).toBeVisible({ timeout: 15_000 });
-    await expect(w.getByText("100%")).toBeVisible({ timeout: 15_000 });
-    await expect(w.getByText("ถึงจุดหมายแล้ว")).toBeVisible();
+    await expect(page.getByText("100%").first()).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("ถึงจุดหมายแล้ว")).toBeVisible();
   });
 
   await qa.step("dashboard-quick-add-task-today", async () => {
-    await page.goto(`/dashboard?new=task`);
+    await page.goto(`/today?new=task`);
     await page.getByRole("button", { name: "บันทึกงาน" }).click();
     await expect(page.getByText("ต้องกรอกช่องนี้")).toBeVisible();
     await page.getByLabel("ชื่องาน").fill("งาน QA วันนี้");
@@ -174,7 +186,7 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
     await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
     await expect(
       page
-        .getByRole("region", { name: "งานวันนี้" })
+        .getByRole("region", { name: "แผนวันนี้", exact: true })
         .getByRole("checkbox", { name: /งาน QA วันนี้/ }),
     ).toBeVisible();
   });
@@ -182,7 +194,7 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
   await qa.step("goals-list-and-filters", async () => {
     await page.goto("/goals");
     await expect(page.getByRole("heading", { name: "เป้ารายเดือน" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "เป้ารายสัปดาห์" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "เป้ารายสัปดาห์" })).toHaveCount(0);
     await page.getByRole("link", { name: "ชีวิตส่วนตัว" }).click();
     await expect(page.getByText("ไม่มีเป้าหมายในกลุ่มนี้")).toBeVisible();
     await page.getByRole("link", { name: "ทั้งหมด" }).click();
@@ -190,6 +202,7 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
 
   await qa.step("goal-detail-completed-status", async () => {
     await page
+      .getByRole("main")
       .getByRole("link", { name: /ยอดขาย/ })
       .first()
       .click();
@@ -225,11 +238,11 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
       .click();
     await expect(page).not.toHaveURL(parentUrl);
     await expect(page.getByRole("heading", { name: "โปรโมชั่นสัปดาห์นี้" })).toBeVisible();
-    await page.getByRole("button", { name: "เก็บเข้ากรุ" }).click();
+    await page.getByRole("button", { name: "เก็บในคลัง" }).click();
     await expect(page.getByText(/เก็บ “โปรโมชั่นสัปดาห์นี้” แล้ว/)).toBeVisible();
     await page.getByRole("button", { name: "เลิกทำ" }).click();
     await expect(page.getByText(/นำ “โปรโมชั่นสัปดาห์นี้” กลับมาแล้ว/)).toBeVisible();
-    await expect(page.getByRole("button", { name: "เก็บเข้ากรุ" })).toBeVisible({
+    await expect(page.getByRole("button", { name: "เก็บในคลัง" })).toBeVisible({
       timeout: 15_000,
     });
   });
@@ -242,15 +255,15 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
     await expect(page.getByText("เลือกอย่างน้อย 1 วัน")).toBeVisible();
     await page.getByRole("button", { name: "จันทร์" }).click();
     await page.getByRole("button", { name: "พุธ" }).click();
-    await page.getByRole("combobox").click();
+    await page.getByRole("combobox", { name: "ผูกกับเป้าหมาย" }).click();
     await page.getByRole("option", { name: /แก้แล้ว/ }).click();
     await page.getByRole("button", { name: "บันทึกงาน" }).click();
     await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
   });
 
   await qa.step("task-detail-reschedule-edit-delete-undo", async () => {
-    await page.goto("/dashboard");
-    const w = page.getByRole("region", { name: "งานวันนี้" });
+    await page.goto("/today");
+    const w = page.getByRole("region", { name: "แผนวันนี้", exact: true });
     await w.getByRole("button", { name: /เปิดรายละเอียด งาน QA วันนี้/ }).click();
     await expect(page.getByRole("heading", { name: "งาน QA วันนี้" })).toBeVisible();
     await postAction(page, () => page.getByRole("button", { name: "พรุ่งนี้" }).click());
@@ -294,7 +307,7 @@ test("QA localhost (mobile)", async ({ page, isMobile }) => {
     await expect(page).toHaveURL(/view=month/);
     await expect(page.getByRole("link", { name: /งาน$/ }).first()).toBeVisible();
     await page.getByRole("link", { name: "ก่อนหน้า" }).click();
-    await page.getByRole("link", { name: "วันนี้" }).click();
+    await page.getByRole("main").getByRole("link", { name: "วันนี้" }).click();
     await expect(page).toHaveURL(/view=month/);
   });
 
@@ -380,20 +393,24 @@ test("QA localhost (desktop)", async ({ page, isMobile }) => {
     await page.getByRole("button", { name: "ส่งรหัสยืนยัน" }).click();
     await page.getByLabel("รหัสยืนยัน 6 หลัก").fill(await latestOtpFor(email));
     await expect(page).toHaveURL(/persona/, { timeout: 15_000 });
-    await page.getByRole("button", { name: "ใช้แบบนี้" }).click();
-    await page.getByLabel("ยอดขายที่อยากได้").fill("60000");
-    await page.getByRole("button", { name: "เริ่มเลย" }).click();
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
+    await page.getByText("ผู้ขาย / ร้านค้า", { exact: true }).click();
+    await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();
+    await expect(page).toHaveURL(/\/onboarding\/focus/, { timeout: 15_000 });
+    await page.getByText("งาน", { exact: true }).first().click();
+    await page.getByRole("button", { name: "เตรียมพื้นที่เริ่มต้น" }).click();
+    await expect(page).toHaveURL(/\/onboarding\/starter/, { timeout: 15_000 });
+    await page.getByRole("button", { name: "ไปหน้าวันนี้" }).click();
+    await expect(page).toHaveURL(/\/today/, { timeout: 20_000 });
   });
 
   await qa.step("desktop-shell-sidebar-topbar", async () => {
     // Claude Design turn 4: sidebar พับได้ + ปุ่มหลักอยู่ที่ toolbar ของหน้า (ไม่มีเมนู "เพิ่ม" กลางอีกแล้ว)
     const nav = page.getByRole("navigation", { name: "เมนูหลัก" });
     await expect(nav.getByRole("link", { name: "เป้าหมาย" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "เพิ่มงาน" }).first()).toBeVisible();
+    await expect(page.getByRole("main").getByRole("textbox", { name: "เพิ่มงาน" })).toBeVisible();
     // turn 7: ชื่อโหมดอยู่ 3 ที่ใน DOM (pill มือถือที่ซ่อนอยู่ · user chip · ท้าย sidebar) → ผูกกับ chip ที่เห็นจริงบน desktop
     await expect(page.getByRole("button", { name: "เมนูผู้ใช้" })).toContainText(
-      "พ่อค้าแม่ค้าออนไลน์",
+      "ผู้ขาย / ร้านค้า",
     );
     await page.getByRole("button", { name: "พับเมนู" }).click();
     await expect(page.getByRole("button", { name: "ขยายเมนู" })).toBeVisible();
@@ -412,6 +429,7 @@ test("QA localhost (desktop)", async ({ page, isMobile }) => {
   await qa.step("desktop-goals-grid-and-detail", async () => {
     await page.goto("/goals");
     await page
+      .getByRole("main")
       .getByRole("link", { name: /ยอดขาย/ })
       .first()
       .click();

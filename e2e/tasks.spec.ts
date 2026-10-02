@@ -1,50 +1,44 @@
 import { expect, test } from "@playwright/test";
 
-import { onboardNewUser } from "./helpers";
+import { addTaskToCurrentGoal, createWeeklyGoal, onboardNewUser } from "./helpers";
 
 test("เพิ่มงานให้เป้าสัปดาห์ ติ๊กเสร็จทั้งหมด แล้วเป้าสัปดาห์ครบ 100%", async ({ page }) => {
   await onboardNewUser(page, "tasks");
+  const goalTitle = "Test weekly goal for task progress";
+  const firstTaskTitle = "Prepare weekly campaign";
+  const secondTaskTitle = "Call five previous customers";
+  const goalId = await createWeeklyGoal(page, goalTitle);
+  await addTaskToCurrentGoal(page, firstTaskTitle);
 
-  await page.goto("/goals");
-  await page.getByRole("link", { name: /สัปดาห์ที่ 1\// }).click();
-  await expect(page).toHaveURL(/\/goals\/[0-9a-f-]+/);
-
-  // task ตัวอย่างจาก template (Decision 1.4) 1 ตัว
+  // A new workspace starts empty, so this task is created explicitly for the goal.
   await expect(page.getByRole("checkbox")).toHaveCount(1);
 
-  // เพิ่มงานอีก 1 ผูกกับเป้านี้ผ่านปุ่มในหน้า detail (?new=task&goal=)
-  await page.getByRole("link", { name: "เพิ่มงาน" }).first().click();
-  await page.getByLabel("ชื่องาน").fill("โทรหาลูกค้าเก่า 5 ราย");
-  await page.getByRole("button", { name: "บันทึกงาน" }).click();
-  await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
+  await addTaskToCurrentGoal(page, secondTaskTitle);
+  await page.goto(`/goals/${goalId}`);
   await expect(page.getByRole("checkbox")).toHaveCount(2);
 
   // ติ๊กทั้งสอง → execution goal ถึง 100 → toast ทำได้แล้ว + ring 100%
-  await page.getByRole("checkbox", { name: /โทรหาลูกค้าเก่า/ }).check();
-  await page.getByRole("checkbox", { name: /ตั้งราคาและโปรโมชั่น/ }).check();
+  await page.getByRole("checkbox", { name: new RegExp(firstTaskTitle) }).check();
+  await page.getByRole("checkbox", { name: new RegExp(secondTaskTitle) }).check();
   await expect(page.getByText(/ทำได้แล้ว/).first()).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText("100%").first()).toBeVisible({ timeout: 15_000 });
 });
 
-test("task ซ้ำทุกวัน: ติ๊กวันนี้เป็นเสร็จ คงอยู่หลัง reload และยกเลิกได้ (task_completions)", async ({
+test("task ซ้ำทุกวัน: ติ๊ก occurrence วันนี้เป็นเสร็จ คงอยู่หลัง reload และยกเลิกได้", async ({
   page,
 }) => {
   await onboardNewUser(page, "recurring");
+  const goalId = await createWeeklyGoal(page, "Weekly goal for recurring task");
 
-  // สร้าง task ซ้ำทุกวันผูกกับเป้าเดือน
-  await page.goto("/goals?new=task");
+  // Add the recurring task from its own goal so the test does not depend on template data.
+  await page.getByRole("link", { name: "เพิ่มงาน" }).first().click();
   await page.getByLabel("ชื่องาน").fill("เช็คสต็อกสินค้า");
-  await page.getByRole("combobox").click();
-  await page.getByRole("option", { name: /ยอดขาย/ }).click();
   await page.locator('label[for="recurrence-daily"]').click();
   await expect(page.getByRole("radio", { name: "ทุกวัน" })).toBeChecked();
   await page.getByRole("button", { name: "บันทึกงาน" }).click();
   await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
 
-  await page
-    .getByRole("link", { name: /ยอดขาย/ })
-    .first()
-    .click();
+  await page.goto(`/goals/${goalId}`);
   const box = page.getByRole("checkbox", { name: /เช็คสต็อกสินค้า/ });
   await expect(box).toBeVisible();
   // UI ติ๊กแบบ optimistic ทันที — ต้องรอ response ของ server action (POST) ก่อน reload ไม่งั้น reload จะยกเลิก request
@@ -53,7 +47,7 @@ test("task ซ้ำทุกวัน: ติ๊กวันนี้เป็�
   await expect(box).toBeChecked();
   await checked;
 
-  // ประวัติอยู่ใน task_completions → reload แล้วยังติ๊กอยู่
+  // occurrence state survives reload; legacy task_completions remains a read fallback.
   await page.reload();
   await expect(page.getByRole("checkbox", { name: /เช็คสต็อกสินค้า/ })).toBeChecked();
 
@@ -64,3 +58,74 @@ test("task ซ้ำทุกวัน: ติ๊กวันนี้เป็�
   await page.reload();
   await expect(page.getByRole("checkbox", { name: /เช็คสต็อกสินค้า/ })).not.toBeChecked();
 });
+
+test("task ซ้ำ: เลื่อนหรือข้ามเฉพาะ occurrence โดยวันถัดไปยังอยู่ใน series", async ({ page }) => {
+  await onboardNewUser(page, "occurrence-actions");
+
+  const today = bkkDate();
+  const tomorrow = addDays(today, 1);
+  const rescheduledTitle = "เลื่อนเฉพาะครั้งนี้";
+
+  await page.goto(`/calendar?view=day&date=${today}&new=task`);
+  await page.getByLabel("ชื่องาน").fill(rescheduledTitle);
+  await page.locator('label[for="recurrence-daily"]').click();
+  await page.getByRole("button", { name: "บันทึกงาน" }).click();
+  await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
+
+  await page.goto(`/calendar?view=day&date=${today}`);
+  await page
+    .getByRole("button", { name: `เปิดรายละเอียด ${rescheduledTitle}` })
+    .first()
+    .click();
+  const detail = page.getByRole("dialog");
+  await detail.getByRole("button", { name: "พรุ่งนี้" }).click();
+  await expect(page.getByText(/เลื่อนไป .* แล้ว/)).toBeVisible();
+
+  await page.goto(`/calendar?view=day&date=${today}`);
+  await expect(
+    page.getByRole("button", { name: `เปิดรายละเอียด ${rescheduledTitle}` }),
+  ).toHaveCount(0);
+
+  // DAILY series already has its own occurrence tomorrow. The moved source
+  // occurrence must coexist with it instead of replacing/merging it.
+  await page.goto(`/calendar?view=day&date=${tomorrow}`);
+  await expect(
+    page.getByRole("button", { name: `เปิดรายละเอียด ${rescheduledTitle}` }),
+  ).toHaveCount(2);
+
+  const skippedTitle = "ข้ามเฉพาะครั้งนี้";
+  await page.goto(`/calendar?view=day&date=${today}&new=task`);
+  await page.getByLabel("ชื่องาน").fill(skippedTitle);
+  await page.locator('label[for="recurrence-daily"]').click();
+  await page.getByRole("button", { name: "บันทึกงาน" }).click();
+  await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
+
+  await page.goto(`/calendar?view=day&date=${today}`);
+  await page
+    .getByRole("button", { name: `เปิดรายละเอียด ${skippedTitle}` })
+    .first()
+    .click();
+  await page.getByRole("dialog").getByRole("button", { name: "ข้ามครั้งนี้" }).click();
+  await expect(page.getByText("ข้ามครั้งนี้แล้ว")).toBeVisible();
+  await page.goto(`/calendar?view=day&date=${tomorrow}`);
+  await expect(
+    page.getByRole("button", { name: `เปิดรายละเอียด ${skippedTitle}` }).first(),
+  ).toBeVisible();
+});
+
+function bkkDate(): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function addDays(date: string, days: number): string {
+  const next = new Date(`${date}T00:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + days);
+  return next.toISOString().slice(0, 10);
+}

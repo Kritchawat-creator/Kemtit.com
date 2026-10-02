@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { onboardNewUser } from "./helpers";
+import { addTaskToCurrentGoal, createWeeklyGoal, onboardNewUser } from "./helpers";
 
 /**
  * Uploads (Design §6A): รูปแนบงาน (task เท่านั้น) + รูปโปรไฟล์ ใต้ flag NEXT_PUBLIC_FLAG_UPLOADS
@@ -30,12 +30,16 @@ test.describe("flag เปิด", () => {
     page,
   }) => {
     await onboardNewUser(page, "photos");
+    const goalTitle = "Photo upload weekly goal";
+    const taskTitle = "Task with private photo";
+    const goalId = await createWeeklyGoal(page, goalTitle);
+    await addTaskToCurrentGoal(page, taskTitle);
+    await page.goto("/today");
 
-    // รายละเอียดงานจาก dashboard (งานตัวอย่างของสัปดาห์แรก)
-    const tasksWidget = page.getByRole("region", { name: "งานวันนี้" });
-    const openTask = tasksWidget.getByRole("button", { name: /เปิดรายละเอียด/ }).first();
-    const taskTitle = (await openTask.getAttribute("aria-label"))!.replace("เปิดรายละเอียด ", "");
-    await openTask.click();
+    const tasksWidget = page.getByRole("region", { name: "แผนวันนี้", exact: true });
+    await tasksWidget
+      .getByRole("button", { name: `เปิดรายละเอียด ${taskTitle}`, exact: true })
+      .click();
     const sheet = page.getByRole("dialog");
     await expect(sheet.getByText("0/5 รูป")).toBeVisible();
     await sheet.locator('input[type="file"]').setInputFiles(file("task.png"));
@@ -50,10 +54,8 @@ test.describe("flag เปิด", () => {
     await expect(tasksWidget.getByRole("img", { name: "1 รูป" })).toBeVisible({ timeout: 15_000 });
     await expect(tasksWidget.locator("img")).toHaveCount(0);
 
-    // goal detail ของเป้าสัปดาห์ที่ 1 (เจ้าของงานตัวอย่าง): thumbnail stack 40px
-    await page.goto("/goals");
-    await page.getByRole("link", { name: /สัปดาห์ที่ 1\// }).click();
-    await expect(page).toHaveURL(/\/goals\/[0-9a-f-]+/);
+    // goal detail for the test-created weekly goal: thumbnail stack 40px
+    await page.goto(`/goals/${goalId}`);
     const row = page.getByRole("listitem").filter({ hasText: taskTitle }).first();
     await expect(row.getByRole("img", { name: "1 รูป" })).toBeVisible({ timeout: 15_000 });
     await expect(row.locator("img").first()).toHaveAttribute("src", SIGNED_URL);
@@ -92,11 +94,14 @@ test.describe("flag ปิด (ค่าเริ่มต้น POC/CP1)", () =
 
   test("ไม่มี UI อัปโหลดที่งาน ฟอร์ม และโปรไฟล์ · header เป็นตัวอักษร", async ({ page }) => {
     await onboardNewUser(page, "noupload");
+    const taskTitle = "Task without photo controls";
+    await createWeeklyGoal(page, "No upload weekly goal");
+    await addTaskToCurrentGoal(page, taskTitle);
+    await page.goto("/today");
 
-    const tasksWidget = page.getByRole("region", { name: "งานวันนี้" });
+    const tasksWidget = page.getByRole("region", { name: "แผนวันนี้", exact: true });
     await tasksWidget
-      .getByRole("button", { name: /เปิดรายละเอียด/ })
-      .first()
+      .getByRole("button", { name: `เปิดรายละเอียด ${taskTitle}`, exact: true })
       .click();
     const sheet = page.getByRole("dialog");
     await expect(sheet.getByRole("button", { name: "แก้ไข" })).toBeVisible();

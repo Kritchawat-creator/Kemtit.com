@@ -15,21 +15,23 @@ test("ปฏิทิน: งานที่เพิ่มวันนี้ป
   await expect(page.getByRole("heading", { name: "ปฏิทิน" })).toBeVisible();
   await expect(page.getByText("นัดส่งของหน้าปฏิทิน")).toBeVisible();
 
+  const viewTabs = page.getByLabel("มุมมอง");
+
   // เดือน — วันนี้มีจำนวนงาน ≥ 1 (aria-label ของช่องวัน)
-  await page.getByRole("link", { name: "เดือน" }).click();
+  await viewTabs.getByRole("link", { name: "เดือน", exact: true }).click();
   await expect(page).toHaveURL(/view=month/);
   await expect(page.getByRole("link", { name: /1 งาน|2 งาน|3 งาน/ }).first()).toBeVisible();
 
   // วัน — TaskList ของวันนี้ ติ๊กได้
-  await page.getByRole("link", { name: "วัน", exact: true }).click();
+  await viewTabs.getByRole("link", { name: "วัน", exact: true }).click();
   await expect(page).toHaveURL(/view=day/);
   await expect(page.getByRole("checkbox", { name: /นัดส่งของหน้าปฏิทิน/ })).toBeVisible();
 
   // เลื่อนไปสัปดาห์ถัดไปแล้วกลับ "วันนี้"
-  await page.getByRole("link", { name: "สัปดาห์" }).click();
+  await viewTabs.getByRole("link", { name: "สัปดาห์", exact: true }).click();
   await expect(page).toHaveURL(/view=week/);
   await page.getByRole("link", { name: "ถัดไป" }).click();
   await expect(page.getByText("นัดส่งของหน้าปฏิทิน")).toHaveCount(0);
-  await page.getByRole("link", { name: "วันนี้", exact: true }).click();
+  await page.getByRole("main").getByRole("link", { name: "วันนี้", exact: true }).click();
   await expect(page.getByText("นัดส่งของหน้าปฏิทิน")).toBeVisible();
 });

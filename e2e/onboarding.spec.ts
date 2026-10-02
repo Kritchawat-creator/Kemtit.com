@@ -1,40 +1,80 @@
 import { expect, test } from "@playwright/test";
 
-import { completeOnboarding, signInWithOtp, uniqueEmail } from "./helpers";
+import { signInWithOtp, uniqueEmail } from "./helpers";
 
-/**
- * Flow A (Scope §7): สมัครด้วย OTP → เลือก persona → goal แรกจาก template → แดชบอร์ด
- * ต้องมี Supabase local รันอยู่ (pnpm exec supabase start) และ .env.local ชี้ไปที่นั่น
- */
-test("ผู้ใช้ใหม่สมัครด้วย OTP เลือก persona ตั้งเป้าแรก แล้วเห็น cascade ในหน้าเป้าหมาย", async ({
-  page,
-}) => {
-  const email = uniqueEmail("onboarding");
+test("Starter Workspace ไม่ persist suggestion จนกว่าจะ Add และรองรับ Edit/Skip", async ({ page }) => {
+  const email = uniqueEmail("starter-semantics");
   await signInWithOtp(page, email);
 
   await expect(page).toHaveURL(/\/onboarding\/persona/);
-  await expect(
-    page.getByRole("heading", { name: "คุณจะใช้เข็มทิศเพื่ออะไรเป็นหลัก" }),
-  ).toBeVisible();
-  await expect(page.getByText("เร็ว ๆ นี้").first()).toBeVisible();
+  await expect(page.getByText("พนักงาน", { exact: true })).toBeVisible();
+  await expect(page.getByText("ผู้ขาย / ร้านค้า", { exact: true })).toBeVisible();
+  await expect(page.getByText("นักเรียน / นักศึกษา", { exact: true })).toBeVisible();
+  await expect(page.getByText("ฟรีแลนซ์", { exact: true })).toBeVisible();
 
-  await completeOnboarding(page, 50000);
+  await page.getByText("ผู้ขาย / ร้านค้า", { exact: true }).click();
+  await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();
 
-  // template (Decision 1.4): เป้าเดือน metric + week goal execution
+  await expect(page).toHaveURL(/\/onboarding\/focus/, { timeout: 15_000 });
+  await page.getByText("งาน", { exact: true }).first().click();
+  await page.getByText("การเงิน", { exact: true }).first().click();
+  await page.getByRole("button", { name: "เตรียมพื้นที่เริ่มต้น" }).click();
+
+  await expect(page).toHaveURL(/\/onboarding\/starter/, { timeout: 15_000 });
+  await expect(page.getByText("ยังไม่มีอะไรถูกเพิ่มเป็นข้อมูลจริง")).toBeVisible();
+
+  const workSuggestion = page
+    .locator("article")
+    .filter({ hasText: "เลือกงานสำคัญที่สุดของวันนี้" });
+  await workSuggestion.getByRole("button", { name: "แก้ไข" }).click();
+  const editingWorkSuggestion = page.locator("article").filter({
+    has: page.getByRole("textbox", { name: "เลือกงานสำคัญที่สุดของวันนี้" }),
+  });
+  await editingWorkSuggestion.getByRole("textbox").fill("งานสำคัญที่ฉันเลือกเอง");
+  await editingWorkSuggestion.getByRole("button", { name: "เพิ่ม", exact: true }).click();
+  const acceptedWorkSuggestion = page
+    .locator("article")
+    .filter({ hasText: "งานสำคัญที่ฉันเลือกเอง" });
+  await expect(acceptedWorkSuggestion.getByText("เพิ่มแล้ว")).toBeVisible();
+
+  const financeSuggestion = page.locator("article").filter({ hasText: "กำหนดงบประมาณเดือนนี้" });
+  await financeSuggestion.getByRole("button", { name: "ข้าม" }).click();
+  await expect(financeSuggestion).toHaveCount(0);
+
+  // Role goal is intentionally left untouched. It must not become USER data.
+  await page.getByRole("button", { name: "ไปหน้าวันนี้" }).click();
+  await expect(page).toHaveURL(/\/today/, { timeout: 20_000 });
+
+  await expect(page.getByText("งานสำคัญที่ฉันเลือกเอง", { exact: true }).first()).toBeVisible();
+
   await page.goto("/goals");
-  await expect(page.getByRole("heading", { name: "เป้ารายเดือน" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "เป้ารายสัปดาห์" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /สัปดาห์ที่ 1\// })).toBeVisible();
+  await expect(page.getByText("วางเป้าหมายหลักของร้านเดือนนี้", { exact: true })).toHaveCount(0);
+});
 
-  // อัปเดตยอด metric → % เปลี่ยน
-  await page
-    .getByRole("link", { name: /ยอดขาย/ })
-    .first()
-    .click();
-  await expect(page).toHaveURL(/\/goals\/[0-9a-f-]+/);
-  await page.getByRole("button", { name: "อัปเดตยอด" }).click();
-  await page.getByLabel("ยอดตอนนี้").fill("25000");
-  await page.getByRole("button", { name: "บันทึก", exact: true }).click();
-  await expect(page.getByText("บันทึกยอดแล้ว")).toBeVisible();
-  await expect(page.getByText("50%").first()).toBeVisible();
+test("Accepted Habit จาก Starter Workspace กลายเป็นข้อมูลจริง แต่ suggestion อื่นไม่ถูกสร้าง", async ({
+  page,
+}) => {
+  const email = uniqueEmail("starter-habit");
+  await signInWithOtp(page, email);
+
+  await page.getByText("พนักงาน", { exact: true }).click();
+  await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();
+
+  await expect(page).toHaveURL(/\/onboarding\/focus/, { timeout: 15_000 });
+  await page.getByText("สุขภาพ", { exact: true }).click();
+  await page.getByRole("button", { name: "เตรียมพื้นที่เริ่มต้น" }).click();
+
+  await expect(page).toHaveURL(/\/onboarding\/starter/, { timeout: 15_000 });
+  const habitSuggestion = page.locator("article").filter({ hasText: "ขยับร่างกาย 20 นาที" });
+  await habitSuggestion.getByRole("button", { name: "เพิ่ม", exact: true }).click();
+  await expect(habitSuggestion.getByText("เพิ่มแล้ว")).toBeVisible();
+
+  await page.getByRole("button", { name: "ไปหน้าวันนี้" }).click();
+  await expect(page).toHaveURL(/\/today/, { timeout: 20_000 });
+
+  await page.goto("/life");
+  await expect(page.getByText("ขยับร่างกาย 20 นาที", { exact: true })).toBeVisible();
+
+  await page.goto("/goals");
+  await expect(page.getByText("กำหนดผลลัพธ์สำคัญของเดือนนี้", { exact: true })).toHaveCount(0);
 });

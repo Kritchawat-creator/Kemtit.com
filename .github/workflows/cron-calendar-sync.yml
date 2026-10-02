@@ -1,0 +1,120 @@
+name: Cron · sync external calendars
+
+on:
+  schedule:
+    # Stagger every five minutes in UTC; GitHub schedule delivery is best-effort.
+    - cron: "2-57/5 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: calendar-sync-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync one calendar connection
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Report disabled scheduler
+        if: vars.CALENDAR_SYNC_ENABLED != 'true'
+        run: echo "::notice::Calendar sync is disabled. Set repository variable CALENDAR_SYNC_ENABLED=true after live rollout verification."
+
+      - name: Sync one connection
+        if: vars.CALENDAR_SYNC_ENABLED == 'true'
+        env:
+          BASE_URL: ${{ secrets.CRON_BASE_URL }}
+          SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${BASE_URL:-}" || -z "${SECRET:-}" ]]; then
+            echo "::error::Calendar sync is enabled but CRON_BASE_URL or CRON_SECRET is missing."
+            exit 1
+          fi
+
+          if ! python3 - "$BASE_URL" <<'PY'
+          import sys
+          from urllib.parse import urlsplit
+
+          value = sys.argv[1]
+          try:
+              parsed = urlsplit(value)
+              port = parsed.port
+          except ValueError:
+              raise SystemExit(1)
+
+          hostname = parsed.hostname or ""
+          valid_origin = (
+              value == value.strip()
+              and not any(character.isspace() for character in value)
+              and parsed.scheme == "https"
+              and bool(hostname)
+              and not parsed.netloc.endswith(":")
+              and "?" not in value
+              and "#" not in value
+              and "\\" not in value
+              and parsed.username is None
+              and parsed.password is None
+              and parsed.path in ("", "/")
+              and not parsed.query
+              and not parsed.fragment
+              and (port is None or 1 <= port <= 65535)
+          )
+          raise SystemExit(0 if valid_origin else 1)
+          PY
+          then
+            echo "::error::CRON_BASE_URL must be an HTTPS origin with no credentials, path, query, or fragment."
+            exit 1
+          fi
+
+          BASE_URL="${BASE_URL%/}"
+          RESPONSE_AND_STATUS=""
+          set +e
+          RESPONSE_AND_STATUS="$(curl --silent --show-error \
+            --connect-timeout 10 \
+            --max-time 55 \
+            --request POST \
+            --header "Authorization: Bearer ${SECRET}" \
+            --output - \
+            --write-out $'\n%{http_code}' \
+            "${BASE_URL}/api/cron/sync-google-calendars" 2>/dev/null)"
+          CURL_STATUS=$?
+          set -e
+
+          if [[ "$CURL_STATUS" -ne 0 ]]; then
+            echo "::error::Calendar sync request failed at the transport layer (curl exit ${CURL_STATUS})."
+            exit 1
+          fi
+
+          HTTP_STATUS="${RESPONSE_AND_STATUS##*$'\n'}"
+          RESPONSE_BODY="${RESPONSE_AND_STATUS%$'\n'*}"
+          if [[ ! "$HTTP_STATUS" =~ ^2[0-9][0-9]$ ]]; then
+            echo "::error::Calendar sync endpoint returned HTTP ${HTTP_STATUS:-unknown}."
+            exit 1
+          fi
+
+          if ! jq -e '
+            type == "object" and
+            (.connections | type == "number") and
+            (.succeeded | type == "number") and
+            (.failed | type == "number") and
+            (.changes | type == "number") and
+            ([.connections, .succeeded, .failed, .changes] | all(. >= 0 and floor == .)) and
+            (.connections == (.succeeded + .failed))
+          ' >/dev/null <<<"$RESPONSE_BODY" 2>/dev/null; then
+            echo "::error::Calendar sync endpoint returned an invalid summary."
+            exit 1
+          fi
+
+          FAILED_COUNT="$(jq -r '.failed' <<<"$RESPONSE_BODY")"
+          if [[ "$FAILED_COUNT" -ne 0 ]]; then
+            echo "::error::Calendar sync completed with one or more failed connections. Check the app's sanitized sync status."
+            exit 1
+          fi
+
+          CONNECTION_COUNT="$(jq -r '.connections' <<<"$RESPONSE_BODY")"
+          CHANGE_COUNT="$(jq -r '.changes' <<<"$RESPONSE_BODY")"
+          echo "::notice::Calendar sync completed for ${CONNECTION_COUNT} connection(s); ${CHANGE_COUNT} change(s)."

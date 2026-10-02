@@ -109,6 +109,7 @@ const eslintConfig = defineConfig([
     ".gitnexus/**",
     // service worker ที่ Serwist สร้างตอน build (gitignored แต่มีในเครื่องหลัง build)
     "public/sw.js",
+    "public/sw [0-9]*.js",
     "public/swe-worker-*.js",
   ]),
 ]);

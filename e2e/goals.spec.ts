@@ -13,6 +13,7 @@ test("สร้างเป้าชีวิตส่วนตัวผ่า�
   await expect(page.getByText("บันทึกเป้าหมายแล้ว")).toBeVisible();
 
   await page.goto("/goals?domain=life");
-  await expect(page.getByRole("link", { name: /ออกกำลังกายเดือนนี้/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: /ยอดขาย/ })).toHaveCount(0);
+  const goalsMain = page.getByRole("main");
+  await expect(goalsMain.getByRole("link", { name: /ออกกำลังกายเดือนนี้/ })).toBeVisible();
+  await expect(goalsMain.getByRole("link", { name: /ยอดขาย/ })).toHaveCount(0);
 });

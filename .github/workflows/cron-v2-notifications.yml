@@ -1,0 +1,62 @@
+name: Cron · generate V2 notifications
+
+on:
+  schedule:
+    # 08:10 Asia/Bangkok
+    - cron: "10 1 * * *"
+    # 19:00 Asia/Bangkok
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: Notification phase
+        required: true
+        type: choice
+        default: morning
+        options:
+          - morning
+          - evening
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Generate notification events
+        env:
+          BASE_URL: ${{ secrets.CRON_BASE_URL }}
+          SECRET: ${{ secrets.CRON_SECRET }}
+          MANUAL_PHASE: ${{ inputs.phase }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [ -z "$BASE_URL" ] || [ -z "$SECRET" ]; then
+            echo "::notice::CRON_BASE_URL / CRON_SECRET ยังไม่ตั้ง — ข้าม"
+            exit 0
+          fi
+
+          PHASE="$MANUAL_PHASE"
+          if [ -z "$PHASE" ]; then
+            if [ "$SCHEDULE" = "10 1 * * *" ]; then
+              PHASE="morning"
+            else
+              PHASE="evening"
+            fi
+          fi
+
+          CURSOR=""
+          while true; do
+            URL="$BASE_URL/api/cron/generate-v2-notifications?phase=$PHASE"
+            if [ -n "$CURSOR" ]; then
+              URL="$URL&cursor=$CURSOR"
+            fi
+
+            RESPONSE="$(curl --fail-with-body -sS -X POST \
+              -H "Authorization: Bearer $SECRET" \
+              "$URL")"
+            echo "$RESPONSE"
+
+            CURSOR="$(printf '%s' "$RESPONSE" | jq -r '.nextCursor // empty')"
+            if [ -z "$CURSOR" ]; then
+              break
+            fi
+          done
