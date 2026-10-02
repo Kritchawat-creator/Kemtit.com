@@ -52,3 +52,25 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## AI Model Routing
+
+Which model to use depends on which coding agent system is running, and on the role of the work (planning vs. implementation vs. advisor):
+
+### Claude system
+
+1. Think / analyze / present a plan: **Fable 5.1** or **Opus 5**
+2. Write code (implementation): **Sonnet 5**, effort **extra high**
+3. Advisor for Sonnet 5: **Fable 5.1** or **Opus 5**
+
+### GPT system
+
+1. Think / analyze / present a plan: **GPT-6 (Astra)** or **Sol 5.6**
+2. Write code (implementation): **Luna**, effort **max**
+3. Advisor for Luna: **GPT-6 (Astra)** or **Sol 5.6**
+
+### Antigravity
+
+1. Think / analyze / present a plan: **Opus (latest model)** or **Gemini 3.8 Flash**
+2. Write code (implementation): **Gemini 3.8 Flash**
+3. Advisor for Gemini 3.8 Flash: **Opus (latest model)** or **Gemini 3.8 Flash**
