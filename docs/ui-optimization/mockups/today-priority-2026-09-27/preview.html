@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Today priority mockup · Kemtit</title>
+    <style>
+      @font-face {
+        font-family: PlexThai;
+        src: url("../../../../src/styles/fonts/IBMPlexSansThai-Regular.ttf") format("truetype");
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: PlexThai;
+        src: url("../../../../src/styles/fonts/IBMPlexSansThai-Medium.ttf") format("truetype");
+        font-weight: 500;
+      }
+      @font-face {
+        font-family: PlexThai;
+        src: url("../../../../src/styles/fonts/IBMPlexSansThai-SemiBold.ttf") format("truetype");
+        font-weight: 600;
+      }
+      :root {
+        color-scheme: light;
+        --brand-50: #f3f0ff;
+        --brand-100: #e4dcff;
+        --brand-500: #7a5fe0;
+        --brand-600: #6549c9;
+        --brand-800: #3e2b84;
+        --page: #f7f6fb;
+        --surface: #fff;
+        --subtle: #f5f3fa;
+        --line: #e9e6f2;
+        --ink: #2b2836;
+        --secondary: #5b566e;
+        --muted: #7b7590;
+        --green: #168b72;
+        --green-bg: #e9f7f2;
+        --amber: #8b5b15;
+        --amber-bg: #fff6e8;
+        --shadow: 0 1px 2px rgb(40 32 72 / 4%);
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--page); scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--page);
+        font-family: PlexThai, "Noto Sans Thai", sans-serif;
+        font-size: 14px;
+        line-height: 1.55;
+      }
+      button, input, select, textarea { font: inherit; }
+      button, a, summary, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+      button { color: inherit; }
+      a { color: inherit; text-decoration: none; }
+      a:hover { color: var(--brand-800); }
+      :focus-visible { outline: 3px solid rgb(122 95 224 / 35%); outline-offset: 2px; }
+      .app { display: flex; min-height: 100vh; }
+      .sidebar {
+        display: flex;
+        width: 228px;
+        flex: 0 0 228px;
+        flex-direction: column;
+        gap: 24px;
+        border-right: 1px solid var(--line);
+        background: #fff;
+        padding: 20px 14px 16px;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; padding: 0 6px; color: var(--brand-800); font-size: 17px; font-weight: 600; }
+      .brand-mark { display: inline-grid; width: 34px; height: 34px; place-items: center; border-radius: 10px; background: var(--brand-500); color: #fff; font-size: 20px; }
+      .nav-section { display: grid; gap: 3px; }
+      .nav-caption { margin: 0 9px 3px; color: var(--muted); font-size: 11px; }
+      .nav-item { display: flex; min-height: 42px; align-items: center; gap: 11px; border-radius: 10px; padding: 0 11px; color: #706b7c; }
+      .nav-item:hover { background: var(--subtle); }
+      .nav-item.active { background: var(--brand-50); color: var(--brand-800); font-weight: 600; }
+      .nav-icon { width: 18px; color: var(--muted); text-align: center; font-size: 16px; }
+      .nav-item.active .nav-icon { color: var(--brand-600); }
+      .sidebar-footer { margin-top: auto; border-top: 1px solid var(--line); padding: 14px 8px 0; color: var(--secondary); font-size: 12px; }
+      .shell { display: flex; min-width: 0; flex: 1; flex-direction: column; }
+      .topbar { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); background: rgb(255 255 255 / 94%); padding: 8px 28px; }
+      .topbar-brand { display: none; align-items: center; gap: 8px; color: var(--brand-800); font-weight: 600; }
+      .topbar-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+      .icon-button { display: inline-grid; min-width: 44px; min-height: 44px; place-items: center; border: 0; border-radius: 10px; background: transparent; color: var(--secondary); cursor: pointer; }
+      .icon-button:hover { background: var(--subtle); }
+      .avatar { display: inline-grid; width: 32px; height: 32px; place-items: center; border-radius: 50%; background: var(--brand-100); color: var(--brand-800); font-size: 12px; font-weight: 600; }
+      .page { width: min(100%, 1450px); margin: 0 auto; padding: 22px 28px 48px; }
+      .demo-banner { display: flex; min-height: 36px; align-items: center; gap: 8px; border: 1px solid #e4dcff; border-radius: 9px; background: #f5f1ff; padding: 6px 11px; color: #52427f; font-size: 12px; }
+      .demo-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--brand-500); }
+      .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin: 16px 0 14px; }
+      .eyebrow { margin: 0 0 2px; color: var(--secondary); font-size: 12px; }
+      h1, h2, h3, p { margin-top: 0; }
+      h1 { margin-bottom: 0; font-size: clamp(24px, 2.3vw, 30px); font-weight: 600; letter-spacing: -.025em; line-height: 1.2; }
+      .date-line { margin: 5px 0 0; color: var(--secondary); font-size: 13px; }
+      .head-controls { display: flex; align-items: center; gap: 9px; }
+      .scope-select { min-height: 44px; max-width: 180px; border: 1px solid var(--line); border-radius: 9px; background: #fff; padding: 0 32px 0 11px; color: var(--ink); }
+      .button { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 9px; padding: 0 14px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .15s ease, border-color .15s ease; }
+      .button-primary { background: var(--brand-600); color: #fff; }
+      .button-primary:hover { background: var(--brand-800); color: #fff; }
+      .button-outline { border-color: var(--line); background: #fff; color: var(--ink); }
+      .button-outline:hover { border-color: #c9bdf5; background: var(--brand-50); }
+      .button-quiet { background: transparent; color: var(--brand-600); }
+      .button-quiet:hover { background: var(--brand-50); }
+      .button-small { min-height: 40px; padding: 0 11px; }
+      .demo-switcher { display: flex; min-width: 0; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; }
+      .demo-switcher-label { margin-right: 2px; color: var(--secondary); font-size: 12px; }
+      .state-button { display: inline-flex; min-height: 40px; align-items: center; border: 1px solid var(--line); border-radius: 999px; background: #fff; padding: 0 12px; color: var(--secondary); cursor: pointer; }
+      .state-button[aria-pressed="true"] { border-color: #c8baf5; background: var(--brand-50); color: var(--brand-800); font-weight: 600; }
+      .day-grid {
+        display: grid;
+        min-width: 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas: "focus schedule" "remaining remaining" "support support";
+        align-items: start;
+        gap: 16px;
+      }
+      .card { min-width: 0; align-self: start; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); padding: 17px; box-shadow: var(--shadow); }
+      .focus-card { grid-area: focus; border-color: #dfd7fa; }
+      .schedule-card { grid-area: schedule; }
+      .remaining-card { grid-area: remaining; }
+      .support-stack { display: grid; grid-area: support; min-width: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: start; align-items: start; gap: 12px; }
+      .card-head { display: flex; min-width: 0; align-items: flex-start; justify-content: space-between; gap: 12px; }
+      .title-wrap { display: flex; min-width: 0; align-items: flex-start; gap: 10px; }
+      .section-icon { display: inline-grid; width: 35px; height: 35px; flex: 0 0 35px; place-items: center; border-radius: 10px; background: var(--brand-50); color: var(--brand-600); font-size: 17px; }
+      .card h2 { margin: 1px 0 2px; font-size: 17px; font-weight: 600; letter-spacing: -.01em; line-height: 1.35; }
+      .card-intro { margin: 0; color: var(--secondary); font-size: 12px; }
+      .text-link { display: inline-flex; min-height: 40px; align-items: center; color: var(--brand-600); font-size: 12px; font-weight: 500; white-space: nowrap; }
+      .text-link:hover { color: var(--brand-800); text-decoration: underline; }
+      .focus-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; }
+      .priority-count { flex: 0 0 auto; margin-top: 2px; border-radius: 999px; background: var(--brand-50); padding: 5px 9px; color: var(--brand-800); font-size: 11px; font-weight: 500; }
+      .priority-edit { min-height: 44px; padding: 0 10px; white-space: nowrap; }
+      .priority-list, .task-list, .timeline { display: grid; margin: 13px 0 0; padding: 0; list-style: none; }
+      .priority-row { display: grid; min-width: 0; grid-template-columns: 22px 44px minmax(0, 1fr) 68px; align-items: center; gap: 5px; border-top: 1px solid var(--line); padding: 8px 0; }
+      .priority-number { color: var(--brand-600); font-size: 12px; font-weight: 600; text-align: center; }
+      .check-control { display: inline-grid; width: 44px; height: 44px; place-items: center; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
+      .check-control input { width: 19px; height: 19px; margin: 0; accent-color: var(--brand-600); cursor: pointer; }
+      .task-copy { min-width: 0; }
+      .task-title { display: block; min-width: 0; overflow-wrap: anywhere; color: var(--ink); font-size: 14px; font-weight: 500; line-height: 1.45; }
+      .task-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 3px; color: var(--muted); font-size: 11px; }
+      .task-done .task-title { color: var(--muted); text-decoration: line-through; }
+      .task-done .task-meta { color: #8a8792; }
+      .reorder { display: flex; align-items: center; justify-content: flex-end; gap: 0; }
+      .reorder button { display: inline-grid; width: 34px; height: 44px; place-items: center; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+      .reorder button:hover { background: var(--subtle); color: var(--brand-800); }
+      .empty-focus { display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: start; gap: 10px; margin-top: 14px; border-radius: 10px; background: var(--subtle); padding: 13px; }
+      .empty-mark { display: grid; width: 36px; height: 36px; place-items: center; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--brand-600); font-size: 18px; }
+      .empty-focus strong { display: block; font-size: 13px; font-weight: 600; }
+      .empty-focus p { margin: 2px 0 9px; color: var(--secondary); font-size: 12px; }
+      .picker { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: 11px 12px; }
+      .picker[hidden] { display: none; }
+      .picker legend { padding: 0 4px; color: var(--secondary); font-size: 12px; font-weight: 500; }
+      .picker-hint { margin: 0 0 5px; color: var(--muted); font-size: 11px; }
+      .picker-row { display: flex; min-height: 44px; align-items: center; gap: 10px; border-top: 1px solid var(--line); padding: 4px 0; }
+      .picker-row input { width: 18px; height: 18px; flex: 0 0 18px; accent-color: var(--brand-600); }
+      .picker-row label { min-width: 0; flex: 1; overflow-wrap: anywhere; font-size: 12px; cursor: pointer; }
+      .picker-row small { color: var(--muted); font-size: 10px; white-space: nowrap; }
+      .picker-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+      .picker-count { color: var(--secondary); font-size: 11px; }
+      .no-auto-note { display: flex; align-items: flex-start; gap: 7px; margin: 12px 0 0; color: var(--secondary); font-size: 11px; }
+      .no-auto-note span:first-child { color: var(--brand-600); }
+      .add-task { display: flex; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
+      .add-task input { min-width: 0; min-height: 44px; flex: 1; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 0 11px; }
+      .timeline { position: relative; gap: 0; margin-top: 15px; }
+      .timeline::before { position: absolute; top: 13px; bottom: 13px; left: 77px; width: 1px; background: var(--line); content: ""; }
+      .timeline-item { display: grid; min-width: 0; grid-template-columns: 65px 18px minmax(0,1fr); gap: 9px; padding: 9px 0; }
+      .timeline-time { padding-top: 1px; color: var(--secondary); font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }
+      .timeline-node { z-index: 1; display: inline-grid; width: 18px; height: 18px; place-items: center; border: 1px solid #d8d2e7; border-radius: 50%; background: #fff; color: var(--brand-600); font-size: 8px; }
+      .timeline-title { margin: 0; overflow-wrap: anywhere; font-size: 14px; font-weight: 500; line-height: 1.4; }
+      .timeline-type { margin: 2px 0 0; color: var(--muted); font-size: 10px; }
+      .schedule-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 7px; border-top: 1px solid var(--line); padding-top: 8px; }
+      .schedule-foot-note { color: var(--secondary); font-size: 11px; }
+      details.disclosure { border-top: 1px solid var(--line); margin-top: 11px; padding-top: 9px; }
+      details.disclosure > summary { display: flex; min-height: 44px; align-items: center; justify-content: space-between; gap: 10px; color: var(--brand-600); font-size: 12px; font-weight: 500; cursor: pointer; list-style: none; }
+      details.disclosure > summary::-webkit-details-marker { display: none; }
+      details.disclosure > summary::after { content: "＋"; color: var(--muted); font-size: 16px; }
+      details.disclosure[open] > summary::after { content: "−"; }
+      .form-grid { display: grid; min-width: 0; gap: 10px; padding: 3px 0 5px; }
+      .field { display: grid; min-width: 0; gap: 4px; }
+      .field label { color: var(--secondary); font-size: 11px; font-weight: 500; }
+      .field input, .field select, .field textarea { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 8px 10px; color: var(--ink); }
+      .field textarea { min-height: 74px; resize: vertical; }
+      .datetime-fields { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+      .form-hint { margin: 0; color: var(--muted); font-size: 10px; }
+      .empty-schedule { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 11px; border-radius: 9px; background: var(--subtle); padding: 12px; }
+      .empty-schedule strong { display: block; font-size: 12px; font-weight: 500; }
+      .empty-schedule p { margin: 2px 0 0; color: var(--secondary); font-size: 11px; }
+      .remaining-group { margin-top: 13px; }
+      .group-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 4px; color: var(--secondary); font-size: 11px; font-weight: 600; }
+      .group-heading.overdue { color: var(--amber); }
+      .task-list { margin-top: 0; }
+      .task-row { display: grid; min-width: 0; grid-template-columns: 40px minmax(0,1fr) auto; align-items: center; gap: 8px; border-top: 1px solid var(--line); padding: 6px 0; }
+      .task-row .check-control { width: 40px; }
+      .task-row .task-title { font-size: 14px; }
+      .task-date-chip { max-width: 110px; border-radius: 999px; background: var(--subtle); padding: 4px 7px; color: var(--secondary); font-size: 10px; text-align: center; }
+      .task-date-chip.overdue { background: var(--amber-bg); color: var(--amber); }
+      .support-card { padding: 14px; }
+      .support-heading { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 10px; }
+      .support-heading h2 { margin: 0; font-size: 14px; }
+      .support-icon { display: inline-flex; align-items: center; gap: 8px; }
+      .support-icon .section-icon { width: 30px; height: 30px; flex-basis: 30px; font-size: 14px; }
+      .capacity-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 9px; margin-top: 9px; }
+      .capacity-line strong { color: var(--ink); font-size: 15px; font-weight: 600; }
+      .capacity-line span { color: var(--secondary); font-size: 11px; }
+      .capacity-bar { height: 5px; overflow: hidden; margin-top: 8px; border-radius: 999px; background: var(--brand-50); }
+      .capacity-bar span { display: block; width: 62%; height: 100%; border-radius: inherit; background: #a695e9; }
+      .support-foot { margin: 6px 0 0; color: var(--muted); font-size: 10px; }
+      .support-list { display: grid; gap: 6px; margin: 9px 0 0; padding: 0; list-style: none; }
+      .support-row { display: flex; min-width: 0; align-items: flex-start; gap: 8px; padding: 5px 0; }
+      .support-row input { width: 17px; height: 17px; flex: 0 0 17px; margin: 2px 0 0; accent-color: var(--brand-600); }
+      .support-row span { min-width: 0; overflow-wrap: anywhere; font-size: 11px; }
+      .support-empty { margin: 8px 0 0; color: var(--secondary); font-size: 11px; }
+      .note-preview { margin: 9px 0 0; overflow-wrap: anywhere; color: var(--secondary); font-size: 11px; }
+      .attention-row { display: flex; min-width: 0; align-items: flex-start; gap: 9px; margin-top: 10px; border-radius: 8px; background: var(--amber-bg); padding: 10px; }
+      .attention-mark { display: inline-grid; width: 22px; height: 22px; flex: 0 0 22px; place-items: center; border-radius: 50%; background: #ffecd0; color: var(--amber); font-size: 12px; }
+      .attention-row p { min-width: 0; margin: 0; overflow-wrap: anywhere; color: #694510; font-size: 11px; }
+      .goal-summary { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 10px; }
+      .goal-name { min-width: 0; overflow-wrap: anywhere; font-size: 12px; font-weight: 500; }
+      .goal-progress { flex: 0 0 auto; color: var(--secondary); font-size: 11px; }
+      .goal-bar { height: 4px; overflow: hidden; margin-top: 8px; border-radius: 999px; background: var(--brand-50); }
+      .goal-bar span { display: block; width: 68%; height: 100%; border-radius: inherit; background: var(--brand-500); }
+      .toast { position: fixed; z-index: 50; right: 18px; bottom: 18px; max-width: min(400px, calc(100vw - 36px)); border: 1px solid #ddd7ee; border-radius: 10px; background: #fff; padding: 11px 14px; color: var(--ink); box-shadow: 0 12px 32px rgb(40 32 72 / 14%); opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .16s ease, transform .16s ease; }
+      .toast.visible { opacity: 1; transform: translateY(0); }
+      .bottom-nav { display: none; }
+      .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+      @media (max-width: 1050px) {
+        .sidebar { width: 62px; flex-basis: 62px; align-items: center; padding: 14px 7px; }
+        .brand { padding: 0; }
+        .brand-name, .nav-caption, .nav-label, .sidebar-footer { display: none; }
+        .nav-section { width: 100%; }
+        .nav-item { justify-content: center; padding: 0; }
+        .nav-item .nav-icon { font-size: 17px; }
+        .page { padding-right: 22px; padding-left: 22px; }
+        .support-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 800px) {
+        .sidebar { display: none; }
+        .topbar { min-height: 54px; padding: 5px 12px; }
+        .topbar-brand { display: inline-flex; }
+        .topbar-brand .brand-mark { width: 30px; height: 30px; font-size: 18px; }
+        .topbar-actions { gap: 3px; }
+        .topbar .button { min-height: 40px; padding: 0 10px; }
+        .page { padding: 14px 16px 92px; }
+        .page-head { align-items: flex-start; }
+        .head-controls { align-items: flex-start; }
+        .day-grid { grid-template-columns: minmax(0,1fr); grid-template-areas: "focus" "schedule" "remaining" "support"; gap: 12px; }
+        .support-stack { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+        .card { padding: 15px; }
+        .bottom-nav { position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(5,1fr); min-height: 62px; border-top: 1px solid var(--line); background: rgb(255 255 255 / 97%); padding: 5px 5px env(safe-area-inset-bottom); }
+        .bottom-nav a { display: grid; min-width: 0; min-height: 44px; place-content: center; justify-items: center; gap: 1px; color: var(--muted); font-size: 9px; }
+        .bottom-nav a span:first-child { font-size: 16px; line-height: 1.2; }
+        .bottom-nav a.active { color: var(--brand-700, #4d379b); font-weight: 600; }
+      }
+      @media (max-width: 600px) {
+        .focus-card .card-head { display: grid; grid-template-columns: minmax(0,1fr); gap: 8px; }
+        .focus-card .title-wrap { width: 100%; }
+        .focus-card .focus-actions { min-height: 44px; }
+      }
+      @media (max-width: 520px) {
+        .topbar-brand .brand-name { display: none; }
+        .topbar-actions .profile-label { display: none; }
+        .page { padding: 11px 12px 88px; }
+        .demo-banner { align-items: flex-start; padding: 7px 9px; font-size: 11px; line-height: 1.45; }
+        .demo-dot { margin-top: 4px; }
+        .page-head { display: grid; gap: 10px; margin: 13px 0 11px; }
+        .head-controls { justify-content: space-between; }
+        .scope-select { min-width: 0; flex: 1; }
+        .demo-switcher { gap: 6px; margin-bottom: 11px; }
+        .demo-switcher-label { width: 100%; }
+        .state-button { min-height: 38px; padding: 0 10px; font-size: 11px; }
+        .card { border-radius: 11px; padding: 13px; }
+        .card h2 { font-size: 16px; }
+        .card-intro { font-size: 11px; }
+        .text-link { min-height: 44px; font-size: 11px; }
+        .priority-row { grid-template-columns: 20px 44px minmax(0,1fr) 68px; gap: 4px; padding: 7px 0; }
+        .task-title { font-size: 14px; }
+        .task-meta { font-size: 10px; }
+        .reorder button { width: 34px; }
+        .datetime-fields { grid-template-columns: minmax(0,1fr); }
+        .task-row { grid-template-columns: 38px minmax(0,1fr); }
+        .task-date-chip { grid-column: 2; justify-self: start; margin-top: -3px; }
+        .schedule-foot { align-items: flex-start; }
+        .support-heading { align-items: flex-start; }
+        .support-stack { grid-template-columns: minmax(0,1fr); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="เมนูหลัก">
+        <a class="brand" href="#today" data-demo-link>
+          <span class="brand-mark" aria-hidden="true">✦</span><span class="brand-name">เข็มทิศ</span>
+        </a>
+        <nav class="nav-section" aria-label="หลัก">
+          <p class="nav-caption">หลัก</p>
+          <a class="nav-item active" href="#today" data-demo-link aria-current="page"><span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">วันนี้</span></a>
+          <a class="nav-item" href="#planner" data-demo-link><span class="nav-icon" aria-hidden="true">▦</span><span class="nav-label">แผน</span></a>
+          <a class="nav-item" href="#inbox" data-demo-link><span class="nav-icon" aria-hidden="true">▣</span><span class="nav-label">Inbox</span></a>
+          <a class="nav-item" href="#calendar" data-demo-link><span class="nav-icon" aria-hidden="true">▤</span><span class="nav-label">ปฏิทิน</span></a>
+          <a class="nav-item" href="#tasks" data-demo-link><span class="nav-icon" aria-hidden="true">✓</span><span class="nav-label">งาน</span></a>
+        </nav>
+        <nav class="nav-section" aria-label="พื้นที่งาน">
+          <p class="nav-caption">พื้นที่งาน</p>
+          <a class="nav-item" href="#goals" data-demo-link><span class="nav-icon" aria-hidden="true">◎</span><span class="nav-label">เป้าหมาย</span></a>
+          <a class="nav-item" href="#finance" data-demo-link><span class="nav-icon" aria-hidden="true">฿</span><span class="nav-label">การเงิน</span></a>
+          <a class="nav-item" href="#life" data-demo-link><span class="nav-icon" aria-hidden="true">♡</span><span class="nav-label">ชีวิต</span></a>
+        </nav>
+        <div class="sidebar-footer">พื้นที่ตัวอย่าง<br />ไม่มีการบันทึกข้อมูลจริง</div>
+      </aside>
+
+      <div class="shell">
+        <header class="topbar">
+          <a class="topbar-brand" href="#today" data-demo-link>
+            <span class="brand-mark" aria-hidden="true">✦</span><span class="brand-name">เข็มทิศ</span>
+          </a>
+          <div class="topbar-actions">
+            <button class="button button-quiet button-small" type="button" data-demo-link>✧ <span class="profile-label">Quick Capture</span></button>
+            <button class="icon-button" type="button" aria-label="แจ้งเตือน" data-demo-link>♧</button>
+            <span class="avatar" aria-label="บัญชีตัวอย่าง">ต</span>
+          </div>
+        </header>
+
+        <main id="today" class="page">
+          <div class="demo-banner" role="note">
+            <span class="demo-dot" aria-hidden="true"></span>
+            <span><strong>ตัวอย่างข้อมูลจำลอง</strong> · ปุ่มและเช็กบ็อกซ์ทำงานเฉพาะในหน้านี้ ไม่มีการเชื่อมต่อหรือบันทึกข้อมูลจริง</span>
+          </div>
+
+          <header class="page-head">
+            <div>
+              <p class="eyebrow">โฟกัสที่ทำได้จริง</p>
+              <h1>วันนี้</h1>
+              <p class="date-line">วันอาทิตย์ 27 กันยายน 2569</p>
+            </div>
+            <div class="head-controls">
+              <label class="sr-only" for="scope">ขอบเขตของวันนี้</label>
+              <select class="scope-select" id="scope">
+                <option>ทั้งหมด</option><option>งาน</option><option>ชีวิต</option>
+              </select>
+              <a class="button button-outline" href="#quick-add" data-demo-link>＋ เพิ่มงาน</a>
+            </div>
+          </header>
+
+          <div class="demo-switcher" role="group" aria-label="เลือกสถานะตัวอย่าง">
+            <span class="demo-switcher-label">ดูสถานะตัวอย่าง:</span>
+            <button class="state-button" type="button" data-state="selected" aria-pressed="true">เลือก 3 งานแล้ว</button>
+            <button class="state-button" type="button" data-state="none" aria-pressed="false">ยังไม่เลือก</button>
+            <button class="state-button" type="button" data-state="empty" aria-pressed="false">ไม่มีงานเปิด</button>
+          </div>
+
+          <div class="day-grid">
+            <section class="card focus-card" aria-labelledby="focus-heading">
+              <div class="card-head">
+                <div class="title-wrap">
+                  <span class="section-icon" aria-hidden="true">◎</span>
+                  <div>
+                    <h2 id="focus-heading">3 งานสำคัญวันนี้</h2>
+                    <p class="card-intro">คุณเลือกเองจากงานวันนี้ · สูงสุด 3 งาน</p>
+                  </div>
+                </div>
+                <div class="focus-actions">
+                  <span class="priority-count" id="priority-count">เลือกแล้ว 3/3</span>
+                  <button class="button button-outline priority-edit" id="edit-priorities" type="button" aria-expanded="false" aria-controls="priority-picker">แก้ไขรายการ</button>
+                </div>
+              </div>
+
+              <div id="priority-content"></div>
+
+              <fieldset id="priority-picker" class="picker" hidden>
+                <legend>เลือกงานสำคัญ</legend>
+                <p class="picker-hint">เลือกได้ไม่เกิน 3 งาน รายการที่เสร็จแล้วจะยังอยู่จนกว่าคุณจะนำออก</p>
+                <div id="picker-options"></div>
+                <div class="picker-footer">
+                  <span id="picker-count" class="picker-count">เลือก 3/3 งาน</span>
+                  <button class="button button-primary button-small" id="save-priorities" type="button">ใช้รายการนี้</button>
+                </div>
+              </fieldset>
+
+              <p class="no-auto-note"><span aria-hidden="true">ⓘ</span><span>ระบบไม่จัดอันดับให้อัตโนมัติ คุณเป็นคนเลือกเอง</span></p>
+              <form class="add-task" id="quick-add">
+                <label class="sr-only" for="new-task-title">เพิ่มงานวันนี้</label>
+                <input id="new-task-title" name="title" maxlength="200" placeholder="เพิ่มงานวันนี้…" autocomplete="off" />
+                <button class="button button-outline button-small" type="submit">เพิ่ม</button>
+              </form>
+            </section>
+
+            <section class="card schedule-card" aria-labelledby="schedule-heading">
+              <div class="card-head">
+                <div class="title-wrap">
+                  <span class="section-icon" aria-hidden="true">◷</span>
+                  <div>
+                    <h2 id="schedule-heading">ตารางเวลาของวันนี้</h2>
+                    <p class="card-intro">ช่วงเวลาที่วางไว้และนัดหมาย</p>
+                  </div>
+                </div>
+                <a class="text-link" href="#calendar" data-demo-link>ปฏิทิน ↗</a>
+              </div>
+
+              <div id="schedule-items">
+                <ol class="timeline" aria-label="ตารางตัวอย่าง">
+                  <li class="timeline-item">
+                    <time class="timeline-time">09:30–10:15</time><span class="timeline-node" aria-hidden="true">●</span>
+                    <div><p class="timeline-title">สรุปข้อเสนอส่งทีม</p><p class="timeline-type">ช่วงเวลาที่ผูกกับงาน</p></div>
+                  </li>
+                  <li class="timeline-item">
+                    <time class="timeline-time">13:00–13:30</time><span class="timeline-node" aria-hidden="true">○</span>
+                    <div><p class="timeline-title">นัดทบทวนงาน</p><p class="timeline-type">กิจกรรมในปฏิทิน</p></div>
+                  </li>
+                  <li class="timeline-item">
+                    <time class="timeline-time">16:00–16:20</time><span class="timeline-node" aria-hidden="true">●</span>
+                    <div><p class="timeline-title">พักและเดินยืดเส้น</p><p class="timeline-type">ช่วงเวลาส่วนตัว</p></div>
+                  </li>
+                </ol>
+              </div>
+
+              <details class="disclosure">
+                <summary>เพิ่มช่วงเวลา</summary>
+                <form class="form-grid demo-form" data-message="เพิ่มช่วงเวลาในตัวอย่างแล้ว">
+                  <div class="field"><label for="block-title">ชื่อช่วงเวลา</label><input id="block-title" required value="ช่วงโฟกัส" /></div>
+                  <div class="field"><label for="block-task">ผูกกับงาน (ไม่บังคับ)</label><select id="block-task"><option>ไม่ผูกกับงาน</option><option>สรุปข้อเสนอส่งทีม</option><option>ทำบทเรียนบทที่ 4 ให้จบ</option></select></div>
+                  <div class="datetime-fields">
+                    <div class="field"><label for="block-start">เริ่ม</label><input id="block-start" type="datetime-local" value="2026-09-27T14:00" required /></div>
+                    <div class="field"><label for="block-end">สิ้นสุด</label><input id="block-end" type="datetime-local" value="2026-09-27T14:30" required /></div>
+                  </div>
+                  <p class="form-hint">ช่วงเวลาตัวอย่างใช้เวลาไทยและไม่ส่งไปยังปฏิทินจริง</p>
+                  <button class="button button-primary" type="submit">จัดช่วงเวลา</button>
+                </form>
+              </details>
+            </section>
+
+            <section class="card remaining-card" aria-labelledby="remaining-heading">
+              <div class="card-head">
+                <div class="title-wrap">
+                  <span class="section-icon" aria-hidden="true">☷</span>
+                  <div>
+                    <h2 id="remaining-heading">งานอื่นวันนี้</h2>
+                    <p class="card-intro">งานที่เหลือและงานค้างยังอยู่ครบ</p>
+                  </div>
+                </div>
+                <a class="text-link" href="#tasks" data-demo-link>งานทั้งหมด ↗</a>
+              </div>
+              <div id="remaining-content"></div>
+            </section>
+
+            <aside class="support-stack" aria-label="ข้อมูลประกอบวันนี้">
+              <section class="card support-card" aria-labelledby="capacity-heading">
+                <div class="support-heading">
+                  <div class="support-icon"><span class="section-icon" aria-hidden="true">◴</span><h2 id="capacity-heading">ความจุของวัน</h2></div>
+                  <a class="text-link" href="#rescue" data-demo-link>จัดแผนใหม่ ↗</a>
+                </div>
+                <div class="capacity-line"><strong>210 / 480 นาที</strong><span>ประเมินจากเวลางาน</span></div>
+                <div class="capacity-bar" role="progressbar" aria-label="เวลางานที่ประเมิน" aria-valuemin="0" aria-valuemax="480" aria-valuenow="210"><span></span></div>
+                <p class="support-foot">ตัวอย่าง · ช่วงปฏิทินและเวลางานมีผลต่อเวลาที่เหลือ</p>
+                <details class="disclosure">
+                  <summary>ปรับแผนวันนี้</summary>
+                  <form class="form-grid demo-form" data-message="ปรับแผนในตัวอย่างแล้ว">
+                    <div class="field"><label for="available-minutes">เวลาที่มีวันนี้ (นาที)</label><input id="available-minutes" type="number" min="0" max="1440" step="15" value="480" /></div>
+                    <div class="field"><label for="daily-notes">บันทึกสั้น ๆ</label><textarea id="daily-notes" rows="2" placeholder="สิ่งที่อยากจำสำหรับวันนี้">เริ่มจากงานที่ต้องส่งก่อนเที่ยง</textarea></div>
+                    <button class="button button-outline" type="submit">บันทึกตัวอย่าง</button>
+                  </form>
+                </details>
+              </section>
+
+              <section class="card support-card" aria-labelledby="routine-heading">
+                <div class="support-heading">
+                  <div class="support-icon"><span class="section-icon" aria-hidden="true">♡</span><h2 id="routine-heading">กิจวัตร</h2></div>
+                  <a class="text-link" href="#life" data-demo-link>ดูทั้งหมด ↗</a>
+                </div>
+                <ul class="support-list">
+                  <li class="support-row"><input type="checkbox" id="habit-water" /><label for="habit-water"><span>ดื่มน้ำระหว่างวัน <small>(ตัวอย่าง)</small></span></label></li>
+                  <li class="support-row"><input type="checkbox" id="habit-stretch" checked /><label for="habit-stretch"><span>ยืดเส้นช่วงบ่าย <small>(ตัวอย่าง)</small></span></label></li>
+                </ul>
+              </section>
+
+              <section class="card support-card" aria-labelledby="notes-heading">
+                <div class="support-heading">
+                  <div class="support-icon"><span class="section-icon" aria-hidden="true">▤</span><h2 id="notes-heading">บันทึกวันนี้</h2></div>
+                  <a class="text-link" href="#notes" data-demo-link>ดูบันทึก ↗</a>
+                </div>
+                <p class="note-preview">สรุปหลังประชุมให้ทีมอ่านง่ายขึ้น <span class="support-foot">· ตัวอย่าง</span></p>
+                <details class="disclosure">
+                  <summary>แก้บันทึกของวันนี้</summary>
+                  <form class="form-grid demo-form" data-message="แก้บันทึกในตัวอย่างแล้ว">
+                    <div class="field"><label for="note-text">บันทึก</label><textarea id="note-text" rows="3">สรุปหลังประชุมให้ทีมอ่านง่ายขึ้น</textarea></div>
+                    <button class="button button-outline" type="submit">บันทึกตัวอย่าง</button>
+                  </form>
+                </details>
+              </section>
+
+              <section class="card support-card" aria-labelledby="goal-heading">
+                <div class="support-heading">
+                  <div class="support-icon"><span class="section-icon" aria-hidden="true">◎</span><h2 id="goal-heading">เป้าหมายเดือนนี้</h2></div>
+                  <a class="text-link" href="#goals" data-demo-link>ดูเป้าหมาย ↗</a>
+                </div>
+                <div class="goal-summary" style="margin-top:9px"><span class="goal-name">ส่งงานตามแผน <small class="support-foot">· ตัวอย่าง</small></span><span class="goal-progress">4/6</span></div>
+                <div class="goal-bar" role="progressbar" aria-label="ความคืบหน้าเป้าหมายตัวอย่าง" aria-valuemin="0" aria-valuemax="100" aria-valuenow="67"><span></span></div>
+                <details class="disclosure"><summary>ดูรายละเอียดเป้าหมาย</summary><p class="support-empty">เป้าหมายและความคืบหน้านี้เป็นข้อมูลจำลอง ใช้ดูตำแหน่งของข้อมูลประกอบเท่านั้น</p></details>
+              </section>
+
+              <section class="card support-card" aria-labelledby="finance-heading">
+                <div class="support-heading">
+                  <div class="support-icon"><span class="section-icon" aria-hidden="true">฿</span><h2 id="finance-heading">การเงินที่ต้องดู</h2></div>
+                  <a class="text-link" href="#finance" data-demo-link>การเงิน ↗</a>
+                </div>
+                <div class="attention-row"><span class="attention-mark" aria-hidden="true">!</span><p><strong>ค่าไฟ</strong> · ครบกำหนดวันนี้ <span class="support-foot">· ตัวอย่าง</span></p></div>
+              </section>
+            </aside>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="เมนูหลัก">
+      <a class="active" href="#today" data-demo-link aria-current="page"><span aria-hidden="true">⌂</span><span>วันนี้</span></a>
+      <a href="#planner" data-demo-link><span aria-hidden="true">▦</span><span>แผน</span></a>
+      <a href="#inbox" data-demo-link><span aria-hidden="true">▣</span><span>Inbox</span></a>
+      <a href="#calendar" data-demo-link><span aria-hidden="true">▤</span><span>ปฏิทิน</span></a>
+      <a href="#more" data-demo-link><span aria-hidden="true">⋯</span><span>เพิ่มเติม</span></a>
+    </nav>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      const originalTasks = [
+        { id: "t1", title: "สรุปข้อเสนอส่งทีม", meta: "วันนี้ · ประมาณ 45 นาที", group: "today", done: false, estimate: "45 นาที" },
+        { id: "t2", title: "ทำบทเรียนบทที่ 4 ให้จบ", meta: "วันนี้ · ประมาณ 60 นาที", group: "today", done: true, estimate: "60 นาที" },
+        { id: "t3", title: "ตรวจรายการจ่ายค่าไฟ", meta: "วันนี้ · ประมาณ 20 นาที", group: "today", done: false, estimate: "20 นาที" },
+        { id: "t4", title: "เตรียมสไลด์ประชุมพรุ่งนี้", meta: "กำหนดวันนี้ · ประมาณ 30 นาที", group: "today", done: false, estimate: "30 นาที" },
+        { id: "t5", title: "ตอบอีเมลที่ค้างไว้", meta: "กำหนดวันนี้ · ยังไม่ระบุเวลา", group: "today", done: false, estimate: "ไม่ระบุเวลา" },
+        { id: "t6", title: "จัดเอกสารสัญญา", meta: "กำหนด 26 ก.ย. · ค้างกำหนด", group: "overdue", done: false, estimate: "25 นาที" },
+      ];
+      let tasks = originalTasks.map((task) => ({ ...task }));
+      let selectedIds = ["t1", "t2", "t3"];
+      let demoState = "selected";
+      let pickerOpen = false;
+      let toastTimeout;
+      const priorityContent = document.querySelector("#priority-content");
+      const picker = document.querySelector("#priority-picker");
+      const pickerOptions = document.querySelector("#picker-options");
+      const pickerCount = document.querySelector("#picker-count");
+      const priorityCount = document.querySelector("#priority-count");
+      const priorityEdit = document.querySelector("#edit-priorities");
+      const remainingContent = document.querySelector("#remaining-content");
+      const toast = document.querySelector("#toast");
+
+      function notify(message) {
+        toast.textContent = message;
+        toast.classList.add("visible");
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => toast.classList.remove("visible"), 2200);
+      }
+
+      function activeTasks() {
+        return demoState === "empty" ? [] : tasks;
+      }
+
+      function setDone(taskId, done) {
+        tasks = tasks.map((task) => task.id === taskId ? { ...task, done } : task);
+        render();
+      }
+
+      function togglePriority(taskId) {
+        if (selectedIds.includes(taskId)) {
+          selectedIds = selectedIds.filter((id) => id !== taskId);
+        } else if (selectedIds.length < 3) {
+          selectedIds = [...selectedIds, taskId];
+        } else {
+          notify("เลือกได้ไม่เกิน 3 งาน");
+          return;
+        }
+        demoState = selectedIds.length ? "selected" : "none";
+        render();
+      }
+
+      function priorityRow(task, index) {
+        const row = document.createElement("li");
+        row.className = `priority-row${task.done ? " task-done" : ""}`;
+        row.innerHTML = `
+          <span class="priority-number" aria-hidden="true">0${index + 1}</span>
+          <label class="check-control priority-check">
+            <input type="checkbox" aria-label="ทำเสร็จแล้ว: ${escapeHtml(task.title)}" />
+          </label>
+          <div class="task-copy">
+            <span class="task-title"></span>
+            <span class="task-meta"><span></span><span>งาน</span></span>
+          </div>
+          <span class="reorder">
+            <button type="button" data-move="up" aria-label="เลื่อนขึ้น: ${escapeHtml(task.title)}">↑</button>
+            <button type="button" data-move="down" aria-label="เลื่อนลง: ${escapeHtml(task.title)}">↓</button>
+          </span>`;
+        const checkbox = row.querySelector(".priority-check input");
+        checkbox.checked = task.done;
+        checkbox.addEventListener("change", () => setDone(task.id, checkbox.checked));
+        row.querySelector(".task-title").textContent = task.title;
+        row.querySelector(".task-meta span").textContent = task.estimate || "ยังไม่ระบุเวลา";
+        row.querySelectorAll("[data-move]").forEach((button) => {
+          button.addEventListener("click", () => movePriority(task.id, button.dataset.move));
+        });
+        return row;
+      }
+
+      function movePriority(taskId, direction) {
+        const index = selectedIds.indexOf(taskId);
+        const nextIndex = direction === "up" ? index - 1 : index + 1;
+        if (index < 0 || nextIndex < 0 || nextIndex >= selectedIds.length) return;
+        [selectedIds[index], selectedIds[nextIndex]] = [selectedIds[nextIndex], selectedIds[index]];
+        render();
+      }
+
+      function renderPriorities() {
+        const available = activeTasks();
+        const selected = selectedIds.map((id) => available.find((task) => task.id === id)).filter(Boolean);
+        priorityContent.replaceChildren();
+        priorityCount.textContent = `เลือกแล้ว ${selected.length}/3 · เสร็จ ${selected.filter((task) => task.done).length}`;
+        priorityEdit.hidden = demoState === "empty";
+        priorityEdit.textContent = pickerOpen ? "ปิดการเลือก" : selected.length ? "แก้ไขรายการ" : "เลือกงาน";
+        priorityEdit.setAttribute("aria-expanded", String(pickerOpen));
+        if (selected.length) {
+          const list = document.createElement("ol");
+          list.className = "priority-list";
+          selected.forEach((task, index) => list.append(priorityRow(task, index)));
+          priorityContent.append(list);
+        } else {
+          const empty = document.createElement("div");
+          empty.className = "empty-focus";
+          if (demoState === "empty") {
+            empty.innerHTML = '<span class="empty-mark" aria-hidden="true">＋</span><div><strong>วันนี้ยังไม่มีงานเปิด</strong><p>เพิ่มงานใหม่หรือเปิด Inbox เพื่อเลือกงาน จากนั้นค่อยกำหนดงานสำคัญด้วยตัวเอง</p><a class="button button-outline button-small" href="#quick-add">เพิ่มงานวันนี้</a></div>';
+          } else {
+            empty.innerHTML = '<span class="empty-mark" aria-hidden="true">◎</span><div><strong>ยังไม่ได้เลือกงานสำคัญ</strong><p>เลือกจากงานที่มีอยู่ได้สูงสุด 3 งาน ระบบจะไม่เลือกให้แทนคุณ</p><button class="button button-primary button-small" type="button" data-open-picker>เลือกงานสำคัญ</button></div>';
+          }
+          const choose = empty.querySelector("[data-open-picker]");
+          if (choose) choose.addEventListener("click", () => setPickerOpen(true));
+          priorityContent.append(empty);
+        }
+      }
+
+      function renderPicker() {
+        picker.hidden = !pickerOpen;
+        pickerOptions.replaceChildren();
+        const available = activeTasks();
+        if (!available.length) {
+          const empty = document.createElement("p");
+          empty.className = "picker-hint";
+          empty.textContent = "ยังไม่มีงานให้เลือก ลองเพิ่มงานวันนี้ก่อน";
+          pickerOptions.append(empty);
+        } else {
+          available.forEach((task) => {
+            const row = document.createElement("div");
+            row.className = "picker-row";
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.id = `choose-${task.id}`;
+            input.checked = selectedIds.includes(task.id);
+            input.disabled = !input.checked && selectedIds.length >= 3;
+            input.addEventListener("change", () => {
+              if (input.checked) selectedIds = [...selectedIds, task.id];
+              else selectedIds = selectedIds.filter((id) => id !== task.id);
+              updatePickerCount();
+              renderPicker();
+            });
+            const label = document.createElement("label");
+            label.htmlFor = input.id;
+            label.textContent = task.title;
+            const meta = document.createElement("small");
+            meta.textContent = task.done ? "เสร็จแล้ว" : task.estimate || "ไม่ระบุเวลา";
+            row.append(input, label, meta);
+            pickerOptions.append(row);
+          });
+        }
+        updatePickerCount();
+      }
+
+      function updatePickerCount() {
+        pickerCount.textContent = `เลือก ${selectedIds.length}/3 งาน`;
+      }
+
+      function setPickerOpen(open) {
+        pickerOpen = open;
+        renderPicker();
+        renderPriorities();
+        if (open) picker.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+
+      function taskRow(task) {
+        const row = document.createElement("li");
+        row.className = `task-row${task.done ? " task-done" : ""}`;
+        const checkLabel = document.createElement("label");
+        checkLabel.className = "check-control";
+        checkLabel.setAttribute("aria-label", `ทำเสร็จแล้ว: ${task.title}`);
+        const check = document.createElement("input");
+        check.type = "checkbox";
+        check.checked = task.done;
+        check.setAttribute("aria-label", `ทำเสร็จแล้ว: ${task.title}`);
+        check.addEventListener("change", () => setDone(task.id, check.checked));
+        checkLabel.append(check);
+        const copy = document.createElement("div");
+        copy.className = "task-copy";
+        copy.innerHTML = '<span class="task-title"></span><span class="task-meta"></span>';
+        copy.querySelector(".task-title").textContent = task.title;
+        copy.querySelector(".task-meta").textContent = task.meta;
+        const date = document.createElement("span");
+        date.className = `task-date-chip${task.group === "overdue" ? " overdue" : ""}`;
+        date.textContent = task.group === "overdue" ? "ค้างกำหนด" : "วันนี้";
+        row.append(checkLabel, copy, date);
+        return row;
+      }
+
+      function renderRemaining() {
+        remainingContent.replaceChildren();
+        const available = activeTasks();
+        const remaining = available.filter((task) => !selectedIds.includes(task.id));
+        const overdue = remaining.filter((task) => task.group === "overdue");
+        const due = remaining.filter((task) => task.group !== "overdue" && !task.done);
+        const done = remaining.filter((task) => task.done);
+        if (!remaining.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty-focus";
+          empty.innerHTML = demoState === "empty"
+            ? '<span class="empty-mark" aria-hidden="true">✓</span><div><strong>ไม่มีงานค้างในตัวอย่างนี้</strong><p>งานที่เลือกเป็นงานสำคัญจะแสดงอยู่ด้านบนของหน้า</p></div>'
+            : '<span class="empty-mark" aria-hidden="true">✓</span><div><strong>ไม่มีงานอื่นเหลือ</strong><p>งานสำคัญทั้งหมดอยู่ด้านบนของหน้า</p></div>';
+          remainingContent.append(empty);
+          return;
+        }
+        const groups = [
+          { title: "ค้างกำหนด", items: overdue, overdue: true },
+          { title: "งานที่ต้องทำวันนี้", items: due, overdue: false },
+          { title: "เสร็จแล้ว", items: done, overdue: false },
+        ];
+        groups.forEach((group) => {
+          if (!group.items.length) return;
+          const section = document.createElement("div");
+          section.className = "remaining-group";
+          const heading = document.createElement("p");
+          heading.className = `group-heading${group.overdue ? " overdue" : ""}`;
+          heading.textContent = group.title;
+          const count = document.createElement("span");
+          count.textContent = String(group.items.length);
+          heading.append(count);
+          const list = document.createElement("ul");
+          list.className = "task-list";
+          group.items.forEach((task) => list.append(taskRow(task)));
+          section.append(heading, list);
+          remainingContent.append(section);
+        });
+      }
+
+      function renderStateButtons() {
+        document.querySelectorAll("[data-state]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.state === demoState));
+        });
+      }
+
+      function render() {
+        if (demoState === "empty") selectedIds = [];
+        renderStateButtons();
+        renderPriorities();
+        renderPicker();
+        renderRemaining();
+      }
+
+      function escapeHtml(value) {
+        return value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+      }
+
+      document.querySelectorAll("[data-state]").forEach((button) => {
+        button.addEventListener("click", () => {
+          demoState = button.dataset.state;
+          selectedIds = demoState === "selected" ? ["t1", "t2", "t3"] : [];
+          pickerOpen = false;
+          render();
+        });
+      });
+      document.querySelectorAll("[data-demo-link]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          notify("ลิงก์นี้เป็นตัวอย่าง ไม่มีการนำทางจริง");
+        });
+      });
+      document.querySelector("#save-priorities").addEventListener("click", () => {
+        demoState = selectedIds.length ? "selected" : "none";
+        pickerOpen = false;
+        render();
+        notify("เปลี่ยนรายการตัวอย่างแล้ว · ไม่มีการบันทึกจริง");
+      });
+      priorityEdit.addEventListener("click", () => setPickerOpen(!pickerOpen));
+      document.querySelectorAll(".demo-form").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          notify(`${form.dataset.message} · ไม่ได้บันทึกจริง`);
+        });
+      });
+      document.querySelector("#quick-add").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const input = document.querySelector("#new-task-title");
+        const title = input.value.trim();
+        if (!title) { input.focus(); return; }
+        const id = `demo-${Date.now()}`;
+        tasks = [...tasks, { id, title, meta: "เพิ่มในตัวอย่าง · วันนี้", group: "today", done: false, estimate: "ไม่ระบุเวลา" }];
+        demoState = "none";
+        selectedIds = [];
+        input.value = "";
+        render();
+        notify("เพิ่มงานในตัวอย่างแล้ว · ไม่มีการบันทึกจริง");
+      });
+      document.querySelectorAll(".support-row input").forEach((input) => {
+        input.addEventListener("change", () => notify("สถานะกิจวัตรเปลี่ยนเฉพาะในตัวอย่าง"));
+      });
+      document.querySelectorAll(".scope-select").forEach((input) => {
+        input.addEventListener("change", () => notify("ขอบเขตนี้ใช้แสดงตำแหน่งตัวควบคุมในตัวอย่าง"));
+      });
+
+      render();
+    </script>
+  </body>
+</html>

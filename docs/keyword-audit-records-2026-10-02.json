@@ -1,0 +1,304 @@
+{
+  "reviewedNamespaces": [
+    "capture",
+    "entries",
+    "tasks",
+    "inbox",
+    "projects",
+    "archive",
+    "life",
+    "habits",
+    "finance",
+    "insights"
+  ],
+  "reviewedLeafCountPerLocale": {
+    "th": 467,
+    "en": 467
+  },
+  "reviewedLeafCountByNamespace": {
+    "capture": 47,
+    "entries": 85,
+    "tasks": 94,
+    "inbox": 44,
+    "projects": 28,
+    "archive": 16,
+    "life": 9,
+    "habits": 13,
+    "finance": 71,
+    "insights": 60
+  },
+  "findings": [
+    {
+      "key": "capture.amountOptional; proposed capture.expenseAmountPlaceholder",
+      "thBefore": "ยังไม่ทราบ ปล่อยว่างได้",
+      "thAfter": "คงข้อความเดิมสำหรับบิล; ใช้ placeholder 0.00 สำหรับรายจ่าย",
+      "enBefore": "Unknown for now — leave blank",
+      "enAfter": "Keep the current bill text; use a 0.00 placeholder for expenses",
+      "reason": "The same message is correct for optional bill amounts but is also used by the required expense amount input. Expense submission requires a positive amount, so the current placeholder contradicts the field requirement. Add a separate expense placeholder and keep this bill copy unchanged.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/domain/QuickCapture.tsx:291-298",
+        "src/components/domain/QuickCapture.tsx:539-561",
+        "src/core/capture/confirm-payload.ts:95-112"
+      ]
+    },
+    {
+      "key": "life.description",
+      "thBefore": "เป้าหมายและนิสัยในชีวิตใช้ระบบหลักเดียวกับงาน",
+      "thAfter": "ตั้งเป้าหมายส่วนตัวและติดตามกิจวัตรในแต่ละวัน",
+      "enBefore": "Life goals and habits use the same core system as work",
+      "enAfter": "Set personal goals and track daily habits",
+      "reason": "The current page description explains shared implementation. A short statement of what users can do is clearer on this screen.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/app/(app)/life/page.tsx:18-28",
+        "src/messages/th.json#life.description",
+        "src/messages/en.json#life.description"
+      ]
+    },
+    {
+      "key": "life.habitsHeading; life.habitProgress; habits.title; habits.add; habits.created; habits.completed; habits.uncompleted; habits.empty",
+      "thBefore": {
+        "life.habitsHeading": "นิสัยวันนี้",
+        "life.habitProgress": "ความคืบหน้านิสัย",
+        "habits.title": "ชื่อนิสัย",
+        "habits.add": "เพิ่มนิสัย",
+        "habits.created": "เพิ่มนิสัยแล้ว",
+        "habits.completed": "ทำเครื่องหมายนิสัยแล้ว",
+        "habits.uncompleted": "ยกเลิกการทำเครื่องหมายนิสัยแล้ว",
+        "habits.empty": "ยังไม่มีนิสัย ลองเพิ่มสิ่งเล็ก ๆ ที่อยากทำทุกวัน"
+      },
+      "thAfter": {
+        "life.habitsHeading": "กิจวัตรวันนี้",
+        "life.habitProgress": "ความคืบหน้ากิจวัตร",
+        "habits.title": "ชื่อกิจวัตร",
+        "habits.add": "เพิ่มกิจวัตร",
+        "habits.created": "เพิ่มกิจวัตรแล้ว",
+        "habits.completed": "ทำกิจวัตรแล้ว",
+        "habits.uncompleted": "ยกเลิกการทำกิจวัตรแล้ว",
+        "habits.empty": "ยังไม่มีกิจวัตร ลองเพิ่มสิ่งเล็ก ๆ ที่อยากทำซ้ำทุกวัน"
+      },
+      "enBefore": {
+        "life.habitsHeading": "Today's habits",
+        "life.habitProgress": "Habit progress",
+        "habits.title": "Habit name",
+        "habits.add": "Add habit",
+        "habits.created": "Habit added",
+        "habits.completed": "Habit marked complete",
+        "habits.uncompleted": "Habit marked incomplete",
+        "habits.empty": "No habits yet. Add one small thing you want to repeat."
+      },
+      "enAfter": {
+        "life.habitsHeading": "Today's habits",
+        "life.habitProgress": "Habit progress",
+        "habits.title": "Habit name",
+        "habits.add": "Add habit",
+        "habits.created": "Habit added",
+        "habits.completed": "Habit marked complete",
+        "habits.uncompleted": "Habit marked incomplete",
+        "habits.empty": "No habits yet. Add one small thing you want to repeat."
+      },
+      "reason": "These labels name the Habit entity, but use นิสัย while Quick Capture and Insights use กิจวัตร for the same entity. Use กิจวัตร consistently for the entity labels; natural prose can still use สร้างนิสัย.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/app/(app)/life/page.tsx:54-69",
+        "src/components/habits/HabitCreateForm.tsx:50-57",
+        "src/components/habits/HabitCreateForm.tsx:111-113",
+        "src/components/habits/HabitList.tsx:21-35",
+        "src/messages/th.json#capture.types.habit",
+        "src/messages/th.json#insights.routine.habits"
+      ]
+    },
+    {
+      "key": "inbox.noteComposerHint",
+      "thBefore": "Enter เพื่อบันทึก · Shift+Enter ขึ้นบรรทัดใหม่",
+      "thAfter": "ใช้ปุ่มบันทึก หรือกด Enter · Shift+Enter ขึ้นบรรทัดใหม่",
+      "enBefore": "Enter to save · Shift+Enter for a new line",
+      "enAfter": "Use the Save button, or press Enter. Use Shift+Enter for a new line.",
+      "reason": "The composer has a visible Save button as well as keyboard shortcuts. Leading with keyboard-only instructions is inconvenient on touch devices; shortcut tokens can remain as an optional path.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/inbox/NotesList.tsx:166-211",
+        "src/messages/th.json#inbox.noteComposerHint",
+        "src/messages/en.json#inbox.noteComposerHint"
+      ]
+    },
+    {
+      "key": "inbox.captureHeading; inbox.capturePlaceholder",
+      "thBefore": {
+        "inbox.captureHeading": "จับความคิดทันที",
+        "inbox.capturePlaceholder": "มีอะไรที่ต้องจำหรือทำไหม"
+      },
+      "thAfter": {
+        "inbox.captureHeading": "เพิ่มงานในกล่องเข้า",
+        "inbox.capturePlaceholder": "งานที่อยากทำหรือเรื่องที่ต้องตาม"
+      },
+      "enBefore": {
+        "inbox.captureHeading": "Capture quickly",
+        "inbox.capturePlaceholder": "Anything to remember or do?"
+      },
+      "enAfter": {
+        "inbox.captureHeading": "Add an Inbox task",
+        "inbox.capturePlaceholder": "A task to do or follow up on"
+      },
+      "reason": "This form always creates an Inbox task, while Notes are captured in a separate composer below. The current heading and prompt also invite remember-only content, which can imply it will become a note.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/app/(app)/inbox/page.tsx:43-55",
+        "src/components/inbox/InboxCapture.tsx:15-35",
+        "src/components/inbox/InboxCapture.tsx:38-45",
+        "src/components/inbox/NotesList.tsx:166-190"
+      ]
+    },
+    {
+      "key": "entries.form.note",
+      "thBefore": "รายการ",
+      "thAfter": "หมายเหตุ",
+      "enBefore": "Note",
+      "enAfter": "Note",
+      "reason": "The field stores free-text context for an entry. รายการ describes an item or transaction, while the paired English label correctly says Note; หมายเหตุ identifies the field more precisely.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/domain/EntryForm.tsx:270-285",
+        "src/core/entries/schema.ts"
+      ]
+    },
+    {
+      "key": "entries.quick.hint",
+      "thBefore": "เข็มและกราฟอัปเดตทันที",
+      "thAfter": "ยอดสะสมและกราฟจะอัปเดตหลังบันทึก",
+      "enBefore": "The compass and chart update immediately",
+      "enAfter": "The running total and chart update after saving.",
+      "reason": "The hint appears below the quick-entry save action. It describes the user-visible result more directly and avoids claiming that charts update before the save completes.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/components/domain/QuickEntryForm.tsx:53-83",
+        "src/components/domain/QuickEntryForm.tsx:168-174",
+        "src/app/(app)/dashboard/desktop-dashboard.tsx:172-190"
+      ]
+    },
+    {
+      "key": "entries.kpi.streakToGo",
+      "thBefore": "อีก {days} วันครบ 7 วัน",
+      "thAfter": "อีก {days} วันจะครบ 7 วัน",
+      "enBefore": "{days} days to 7",
+      "enAfter": "{days, plural, one {# day} other {# days}} to a 7-day streak",
+      "reason": "The current English badge phrase is incomplete and produces incorrect singular grammar when days is 1. The proposed ICU plural keeps the days variable and reads correctly for one or multiple days.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/app/(app)/dashboard/desktop-dashboard.tsx:172-189",
+        "src/messages/th.json#entries.kpi.streakToGo",
+        "src/messages/en.json#entries.kpi.streakToGo"
+      ]
+    },
+    {
+      "key": "archive.title; archive.empty; archive.taskBlocksCancelledHint; archive.projectTasksRemainActiveHint; archive.legacyProjectStatusHint; archive.legacyGoalStatusHint; projects.archive; projects.archived; tasks.deleteTask; tasks.toasts.archived",
+      "thBefore": {
+        "archive.title": "รายการที่เก็บเข้ากรุ",
+        "archive.empty": "ยังไม่มีรายการที่เก็บเข้ากรุ",
+        "archive.taskBlocksCancelledHint": "ช่วงเวลาที่ผูกกับงานจะถูกยกเลิกเมื่อเก็บงานเข้ากรุ การกู้คืนงานจะไม่กู้คืนช่วงเวลาเหล่านั้น",
+        "archive.projectTasksRemainActiveHint": "การเก็บโปรเจกต์เข้ากรุจะไม่เก็บงานที่ผูกไว้ งานยังทำต่อได้และต้องกู้คืนโปรเจกต์แยกกัน",
+        "archive.legacyProjectStatusHint": "รายการเก่ากลุ่มนี้ไม่ได้เก็บสถานะก่อนเข้ากรุไว้ การกู้คืนจะตั้งสถานะเป็นกำลังทำ",
+        "archive.legacyGoalStatusHint": "เป้าหมายที่เก็บเข้ากรุรายการนี้ไม่ได้บันทึกสถานะก่อนหน้า การกู้คืนจะตั้งสถานะเป็นกำลังทำ",
+        "projects.archive": "เก็บเข้ากรุ",
+        "projects.archived": "เก็บโปรเจกต์เข้ากรุแล้ว",
+        "tasks.deleteTask": "เก็บงานเข้ากรุ",
+        "tasks.toasts.archived": "เก็บ “{title}” เข้ากรุแล้ว"
+      },
+      "thAfter": {
+        "archive.title": "คลังเก็บ",
+        "archive.empty": "ยังไม่มีรายการในคลัง",
+        "archive.taskBlocksCancelledHint": "ช่วงเวลาที่ผูกกับงานจะถูกยกเลิกเมื่อเก็บงานไว้ในคลัง การกู้คืนงานจะไม่กู้คืนช่วงเวลาเหล่านั้น",
+        "archive.projectTasksRemainActiveHint": "เมื่อเก็บโปรเจกต์ไว้ในคลัง งานที่ผูกไว้จะยังทำต่อได้ และต้องกู้คืนโปรเจกต์แยกจากงาน",
+        "archive.legacyProjectStatusHint": "รายการเก่ากลุ่มนี้ไม่ได้บันทึกสถานะเดิมของโปรเจกต์ไว้ การกู้คืนจะตั้งสถานะเป็นกำลังทำ",
+        "archive.legacyGoalStatusHint": "เป้าหมายที่เก็บไว้ในคลังนี้ไม่ได้บันทึกสถานะก่อนหน้า การกู้คืนจะตั้งสถานะเป็นกำลังทำ",
+        "projects.archive": "เก็บในคลัง",
+        "projects.archived": "เก็บโปรเจกต์ในคลังแล้ว",
+        "tasks.deleteTask": "เก็บงานในคลัง",
+        "tasks.toasts.archived": "เก็บ “{title}” ไว้ในคลังแล้ว"
+      },
+      "enBefore": {
+        "archive.title": "Archive",
+        "archive.empty": "Nothing in this archive yet.",
+        "archive.taskBlocksCancelledHint": "Linked time blocks are cancelled when a task is archived. Restoring a task does not restore those blocks.",
+        "archive.projectTasksRemainActiveHint": "Archiving a project leaves its linked tasks active. Restore the project separately from its tasks.",
+        "archive.legacyProjectStatusHint": "This older archive did not retain the project's previous status. Restoring it will set the status to Active.",
+        "archive.legacyGoalStatusHint": "This archived goal did not retain its previous status. Restoring it will set the status to Active.",
+        "projects.archive": "Archive",
+        "projects.archived": "Project archived",
+        "tasks.deleteTask": "Archive task",
+        "tasks.toasts.archived": "Archived “{title}”"
+      },
+      "enAfter": {
+        "archive.title": "Archive",
+        "archive.empty": "Nothing in this archive yet.",
+        "archive.taskBlocksCancelledHint": "Linked time blocks are cancelled when a task is archived. Restoring a task does not restore those blocks.",
+        "archive.projectTasksRemainActiveHint": "Archiving a project leaves its linked tasks active. Restore the project separately from its tasks.",
+        "archive.legacyProjectStatusHint": "This older archive did not retain the project's previous status. Restoring it will set the status to Active.",
+        "archive.legacyGoalStatusHint": "This archived goal did not retain its previous status. Restoring it will set the status to Active.",
+        "projects.archive": "Archive",
+        "projects.archived": "Project archived",
+        "tasks.deleteTask": "Archive task",
+        "tasks.toasts.archived": "Archived “{title}”"
+      },
+      "reason": "The action is reversible in the Archive page, but เข้ากรุ is colloquial and the wording is not immediately clear as a stored, recoverable state. Use a consistent, plain 'in the archive' phrase for entity actions and keep Restore / กู้คืน explicit.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/components/archive/ArchiveList.tsx:76-113",
+        "src/components/domain/TaskList.tsx:126-156",
+        "src/components/inbox/InboxList.tsx:50-87",
+        "src/components/projects/ProjectArchiveButton.tsx:12-37",
+        "src/app/(app)/archive/page.tsx:44-58"
+      ]
+    },
+    {
+      "key": "archive.notes; archive.description",
+      "thBefore": {
+        "archive.notes": "บันทึก",
+        "archive.description": "งาน โปรเจกต์ เป้าหมาย และบันทึกที่เก็บไว้จะอยู่ที่นี่จนกว่าจะกู้คืน"
+      },
+      "thAfter": {
+        "archive.notes": "โน้ต",
+        "archive.description": "งาน โปรเจกต์ เป้าหมาย และโน้ตที่เก็บไว้จะอยู่ที่นี่จนกว่าจะกู้คืน"
+      },
+      "enBefore": {
+        "archive.notes": "Notes",
+        "archive.description": "Archived tasks, projects, goals, and notes stay here until you restore them."
+      },
+      "enAfter": {
+        "archive.notes": "Notes",
+        "archive.description": "Archived tasks, projects, goals, and notes stay here until you restore them."
+      },
+      "reason": "The archived category is specifically the Note entity, not a general record or sales entry. Use the same distinct Thai label used by Quick Capture and Inbox.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/app/(app)/archive/page.tsx:36-51",
+        "src/components/archive/ArchiveList.tsx:47-68",
+        "src/messages/th.json#capture.types.note",
+        "src/messages/th.json#inbox.notesTitle"
+      ]
+    },
+    {
+      "key": "insights.finance.ofBudget",
+      "thBefore": "จากงบ {amount}",
+      "thAfter": "จากงบ {amount}",
+      "enBefore": "of {amount} budget",
+      "enAfter": "of {amount} total budget",
+      "reason": "This helper is shown below the Budget remaining metric. Adding total makes the English phrase natural and clarifies the comparison denominator.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/app/(app)/insights/page.tsx:214-226",
+        "src/messages/en.json#insights.finance.ofBudget"
+      ]
+    }
+  ],
+  "hardcodedFindings": [],
+  "notes": [
+    "All ten namespaces have 467 matching string leaves in each locale; every path and ICU placeholder name matches between Thai and English.",
+    "No Thai script appears in English strings. Thai strings use Latin text only for brand names, platform names, or keyboard shortcuts such as Enter and Shift+Enter.",
+    "Quick Capture uses distinct labels for Task/งาน, Event/เหตุการณ์, Note/โน้ต, Habit/กิจวัตร, Bill/บิล, and Expense/รายจ่าย. The main cross-screen inconsistency is the later Life/Habits use of นิสัย for the Habit entity.",
+    "Finance labels were checked against the page and query logic: monthly income and expenses sum recorded transactions, net balance is income minus expenses, bills are counted by due/paid status, and expenses require a positive amount. No high-confidence advice-like financial copy was found.",
+    "Finance budget remaining is clamped at zero when expenses exceed the budget; the current UI does not show the over-budget amount. This is a display/calculation behavior note, not a translation finding.",
+    "The targeted production UI scan found no high-confidence hardcoded Thai/English prose in the mapped components/routes. Locale-neutral numeric placeholders, punctuation, icons, and user-entered titles were excluded."
+  ]
+}

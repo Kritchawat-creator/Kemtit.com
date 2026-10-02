@@ -1,5 +1,7 @@
 # Kemtit (เข็มทิศ)
-## Full Proposal & Scope of Work — Proof of Concept
+## Legacy POC Scope — Historical Reference
+
+> **Superseded for V2 product/architecture decisions on 2026-09-19.** This document is kept to preserve the original POC decisions and implementation history. For active V2 architecture, taxonomy, planning model, routes, UX direction and implementation phases, use `docs/kemtit-v2-product-architecture.md`.
 
 *"เข็มทิศ" — เครื่องมือนำทางที่ชี้ให้เห็นว่าวันนี้ต้องก้าวไปทางไหน เพื่อไปถึงเป้าหมายที่วางไว้*
 

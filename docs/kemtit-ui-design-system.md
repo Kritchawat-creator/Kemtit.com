@@ -1,5 +1,7 @@
 # Kemtit — UI Development & Design System Specification
 
+> **V2 note (2026-09-19):** Design tokens and signature components in this document remain the baseline, but V2 information architecture, responsive contract, Today/Inbox planning workflow, Work/Life context, Finance/Investment and Weekly Review are governed by `docs/kemtit-v2-product-architecture.md`. Sections that conflict with V2 (notably persona navigation, custom dashboard and old responsive behavior) are legacy until rewritten.
+
 เอกสารนี้ครอบคลุมทุกอย่างที่ต้องตัดสินใจก่อนเขียน UI จริง: technology stack, design tokens, color system, typography, spacing, component library, accessibility, i18n, performance และ testing
 
 ---

@@ -1,0 +1,191 @@
+{
+  "reviewedNamespaces": [
+    "app",
+    "shell",
+    "common",
+    "nav",
+    "more",
+    "pro",
+    "notifications",
+    "auth",
+    "onboarding",
+    "personas",
+    "roles",
+    "focusAreas",
+    "workModes",
+    "scopes",
+    "settings",
+    "errors",
+    "a11y",
+    "domains",
+    "domainFilter",
+    "dates",
+    "line",
+    "pwa",
+    "photos"
+  ],
+  "reviewedLeafCountPerLocale": {
+    "th": 459,
+    "en": 459
+  },
+  "findings": [
+    {
+      "key": "shell.area",
+      "thBefore": "ขอบเขต",
+      "thAfter": "ขอบเขต",
+      "enBefore": "Area",
+      "enAfter": "Scope",
+      "reason": "This label sits above the All/Work/Life view filter. Scope matches the Thai label and avoids confusion with the separate Life Area concept.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:9",
+        "src/messages/en.json:9",
+        "src/components/layout/MobileNavigationDrawer.tsx:109-119",
+        "src/components/layout/Sidebar.tsx:203-210"
+      ]
+    },
+    {
+      "key": "a11y.brandHome",
+      "thBefore": "ไปหน้าแดชบอร์ด",
+      "thAfter": "ไปหน้าวันนี้",
+      "enBefore": "Go to dashboard",
+      "enAfter": "Go to Today",
+      "reason": "The brand links in the desktop sidebar and tablet rail navigate to /today. The separate /dashboard route makes the current accessible name ambiguous.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:1011",
+        "src/messages/en.json:463",
+        "src/components/layout/Sidebar.tsx:168-170",
+        "src/components/layout/NavigationRail.tsx:44-46"
+      ]
+    },
+    {
+      "key": "a11y.toggleTask",
+      "thBefore": "ติ๊กว่าเสร็จ: {title}",
+      "thAfter": "เปลี่ยนสถานะเสร็จของ {title}",
+      "enBefore": "Mark done: {title}",
+      "enAfter": "Change completion status: {title}",
+      "reason": "The same label is used for checked and unchecked task checkboxes. A checked task can be unchecked, so a state-neutral accessible name describes both actions accurately while the checkbox announces its current state.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/messages/th.json:1021",
+        "src/messages/en.json:473",
+        "src/components/domain/TaskRow.tsx:57-63"
+      ]
+    },
+    {
+      "key": "notifications.lineNotLinked",
+      "thBefore": "ยังไม่ได้เชื่อม LINE — รับสรุปงานทุกเช้า",
+      "thAfter": "เชื่อม LINE แล้วเลือกการแจ้งเตือนที่ต้องการรับ",
+      "enBefore": "LINE is not connected — receive a morning task summary",
+      "enAfter": "Connect LINE and choose which reminders to receive.",
+      "reason": "This item links to Settings. Connecting LINE alone does not enable the daily brief, which defaults off; the proposed copy gives the next action without promising a summary that may remain disabled.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/messages/th.json:258",
+        "src/messages/en.json:922",
+        "src/components/layout/NotificationsMenu.tsx:48-50",
+        "supabase/migrations/20260920104000_v2_notification_producers.sql:11-15"
+      ]
+    },
+    {
+      "key": "settings.notifications.weeklyReviewDescription",
+      "thBefore": "เตือนให้ปิดสัปดาห์และเลือกโฟกัสถัดไป",
+      "thAfter": "ส่งเตือนทาง LINE ให้ทบทวนสัปดาห์และเลือกโฟกัสถัดไป",
+      "enBefore": "Reminder to close the week and choose the next focus",
+      "enAfter": "Get a LINE reminder to review your week and choose your next focus.",
+      "reason": "This preference sends through LINE like the overdue and daily brief preferences, but its description does not identify the channel.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:928",
+        "src/messages/en.json:421",
+        "src/app/(app)/settings/notify-switch.tsx:16-21",
+        "src/shared-services/events/processor.ts:156-169"
+      ]
+    },
+    {
+      "key": "settings.notifications.habitsDescription",
+      "thBefore": "แจ้งกิจวัตรที่ยังค้างของวันนี้เมื่อเปิดการแจ้งเตือนนี้",
+      "thAfter": "ส่งเตือนทาง LINE เกี่ยวกับกิจวัตรที่ยังไม่ได้ทำวันนี้เมื่อเปิดการแจ้งเตือนนี้",
+      "enBefore": "Notify about today's incomplete habits when enabled",
+      "enAfter": "Get a LINE reminder about today's incomplete habits when enabled.",
+      "reason": "This preference sends through LINE like the overdue and daily brief preferences, but its description does not identify the channel.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:930",
+        "src/messages/en.json:423",
+        "src/app/(app)/settings/notify-switch.tsx:16-21",
+        "src/shared-services/events/processor.ts:172-185"
+      ]
+    },
+    {
+      "key": "settings.notifications.investmentDescription",
+      "thBefore": "แจ้งเป้าการลงทุนที่ตั้งเป้ารายเดือนไว้",
+      "thAfter": "ส่งเตือนทาง LINE เกี่ยวกับเป้าหมายลงทุนที่กำหนดเป้ารายเดือนไว้",
+      "enBefore": "Notify about investment goals with a monthly target",
+      "enAfter": "Get a LINE reminder about investment goals with a monthly target.",
+      "reason": "This preference sends through LINE like the overdue and daily brief preferences, but its description does not identify the channel.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:932",
+        "src/messages/en.json:425",
+        "src/app/(app)/settings/notify-switch.tsx:16-21",
+        "src/shared-services/events/processor.ts:188-201"
+      ]
+    },
+    {
+      "key": "pwa.install.iosSteps",
+      "thBefore": "บน iPhone: แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศร) แล้วเลือก “เพิ่มลงหน้าจอโฮม”",
+      "thAfter": "บน iPhone หรือ iPad: แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศร) แล้วเลือก “เพิ่มลงหน้าจอโฮม”",
+      "enBefore": "On iPhone: tap Share, then choose “Add to Home Screen”",
+      "enAfter": "On iPhone or iPad, tap Share, then choose “Add to Home Screen”",
+      "reason": "The install hint shows these steps for iPhone, iPad and iPod user agents, but the current instruction only names iPhone.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:1586",
+        "src/messages/en.json:1103",
+        "src/components/layout/InstallHint.tsx:61",
+        "src/i18n/catalogs.test.ts:72"
+      ]
+    },
+    {
+      "key": "photos.attachPlaceholder",
+      "thBefore": "ลากวาง หรือแตะเพื่อถ่าย",
+      "thAfter": "ลากวาง หรือแตะเพื่อเลือกรูป",
+      "enBefore": "Drop here or tap to take a photo",
+      "enAfter": "Drop here or tap to choose a photo",
+      "reason": "The picker opens a file input with accepted image types and no capture setting. On touch devices it can choose an existing image, so the current wording promises a camera action that is not guaranteed.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:1595",
+        "src/messages/en.json:1112",
+        "src/components/domain/TaskPhotos.tsx:154-161",
+        "src/components/domain/ImageSlot.tsx:173-182"
+      ]
+    },
+    {
+      "key": "photos.attachHint",
+      "thBefore": "JPG, PNG · ไม่เกิน 10 MB ต่อรูป",
+      "thAfter": "JPG, PNG, WebP · ไม่เกิน 10 MB ต่อรูป",
+      "enBefore": "JPG, PNG · up to 10 MB per photo",
+      "enAfter": "JPG, PNG, and WebP · up to 10 MB per photo",
+      "reason": "The picker and upload validation support WebP, but the format hint lists only JPG and PNG.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/messages/th.json:1596",
+        "src/messages/en.json:1113",
+        "src/components/domain/TaskPhotos.tsx:165",
+        "src/lib/supabase/storage.ts:7-9"
+      ]
+    }
+  ],
+  "hardcodedFindings": [],
+  "notes": [
+    "Reviewed all 459 string leaves in each locale across the 23 requested namespaces. The locales have matching key sets and ICU placeholder parity; the targeted audit found zero placeholder mismatches.",
+    "Used GitNexus query/context for the shell, authentication, onboarding, settings, notifications, PWA and photo flows, then verified relevant source call sites. Combined with the parent’s production TSX literal scan, no clear uncataloged user-facing prose was found in the requested surfaces; decorative marks, technical identifiers and comments were excluded.",
+    "The legacy onboarding.firstGoal copy describes automatic weekly goal/task creation, but /onboarding/first-goal redirects through nextRouteFor and createFirstGoal returns the Starter route without persisting a generated cascade. It is not part of the current visible onboarding flow, so no wording proposal is made; consider a separate dead-key cleanup.",
+    "settings.empty and the older onboarding.persona/personas copy were not referenced by the current UI during source search; they were counted and reviewed but are not proposed for rewriting.",
+    "If the iPad install wording is adopted, extend the pwa.install.iosSteps Thai-token allowlist in catalogs.test.ts to include iPad."
+  ],
+  "unreviewedGaps": []
+}

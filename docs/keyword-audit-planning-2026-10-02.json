@@ -1,0 +1,213 @@
+{
+  "reviewedNamespaces": [
+    "planner",
+    "calendar",
+    "calendarEvents",
+    "rescue",
+    "goals",
+    "periods",
+    "goalKinds",
+    "pace",
+    "progress",
+    "widgets",
+    "today",
+    "planning",
+    "reviews",
+    "dashboard",
+    "workflowGuide"
+  ],
+  "reviewedLeafCountPerLocale": {
+    "th": 442,
+    "en": 442
+  },
+  "findings": [
+    {
+      "key": "dashboard.empty.description",
+      "thBefore": "เป้าเดียวก็พอ เข็มทิศจะแตกเป็นงานรายสัปดาห์ให้",
+      "thAfter": "เริ่มจากตั้งเป้าหมายหนึ่งข้อ แล้วเพิ่มเป้าหมายย่อยและงานรายสัปดาห์ในแผนของคุณ",
+      "enBefore": "One goal is enough. Kemtit can break it into weekly work.",
+      "enAfter": "Start with one goal, then add supporting goals and weekly tasks to your plan.",
+      "reason": "This legacy Dashboard empty-state string says Kemtit will automatically break a goal into weekly work. The /dashboard route redirects to Today, and current Dashboard/Sales empty states use widgets.goalProgress.empty.description instead; correcting this stale catalog claim avoids implying an automatic feature if that copy is used again.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/app/(app)/dashboard/page.tsx:4-14",
+        "src/app/(app)/dashboard/desktop-dashboard.tsx:343-352",
+        "src/app/(app)/work/sales/page.tsx:88-96",
+        "src/components/widgets/GoalProgressWidget.tsx:16,39",
+        "src/messages/th.json:488",
+        "src/messages/en.json:1319",
+        "src/core/goals/actions.ts:274-290"
+      ]
+    },
+    {
+      "key": "today.capacityHeading",
+      "thBefore": "ความจุของวัน",
+      "thAfter": "เวลาที่เหลือวันนี้",
+      "enBefore": "Day capacity",
+      "enAfter": "Time left today",
+      "reason": "The technical term 'capacity' is less direct than the value displayed: remaining minutes today. The same heading labels the section whose supporting text separately explains remaining time or over-capacity minutes.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/app/(app)/today/page.tsx:241-244",
+        "src/app/(app)/today/page.tsx:443-455",
+        "src/messages/th.json:1263",
+        "src/messages/en.json:219"
+      ]
+    },
+    {
+      "key": "workflowGuide.priorityRule",
+      "thBefore": "คงงานสำคัญที่ยืนยันไว้ก่อน จากนั้นจัดงานอื่นตามวันครบกำหนด งานค้าง ระดับความสำคัญ และเป้าหมายหรือโครงการที่เชื่อมโยง",
+      "thAfter": "คงงานสำคัญที่ยืนยันไว้ก่อน จากนั้นจัดงานอื่นตามวันครบกำหนด งานค้าง ระดับความสำคัญ และเป้าหมายหรือโปรเจกต์ที่เชื่อมโยง",
+      "enBefore": "Keep confirmed priorities first. Then order other tasks by deadline, overdue status, your priority, and linked goals or projects.",
+      "enAfter": "Keep confirmed priorities first. Then order other tasks by deadline, overdue status, your priority, and linked goals or projects.",
+      "reason": "Use the same Thai term as the app's Projects navigation and task/project controls; 'โครงการ' is used elsewhere for generic programs and makes this linked-project rule less specific.",
+      "severity": "low",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:40",
+        "src/messages/th.json:1130-1131",
+        "src/messages/th.json:1404-1409",
+        "src/messages/th.json:1613",
+        "src/messages/en.json:1613"
+      ]
+    },
+    {
+      "key": "workflowGuide.steps.freelancer.year.2",
+      "thBefore": "แบ่งงานโครงการเป็นช่วงส่งงานและรอบออกใบแจ้งหนี้",
+      "thAfter": "แบ่งโปรเจกต์เป็นหมุดหมายส่งงานและงานเตรียมใบแจ้งหนี้ให้ลูกค้า",
+      "enBefore": "Break projects into delivery milestones and invoice checkpoints.",
+      "enAfter": "Break projects into delivery milestones and tasks for preparing client invoices.",
+      "reason": "Make the suggested invoice work an explicit task the user can plan. Kemtit provides tasks and bills, while the scoped finance model has no invoice-specific record or checkpoint flow; preserve invoicing as valid freelancer work outside the app.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:1703",
+        "src/messages/en.json:1703",
+        "src/core/finance/schema.ts:26-32",
+        "src/core/finance/actions.ts:100-129"
+      ]
+    },
+    {
+      "key": "workflowGuide.steps.freelancer.year.3",
+      "thBefore": "ทบทวนกำหนดส่ง งานที่ส่งแล้ว และใบแจ้งหนี้ทุกเดือน",
+      "thAfter": "ทบทวนกำหนดส่ง งานที่ส่งแล้ว และงานติดตามใบแจ้งหนี้ทุกเดือน",
+      "enBefore": "Review deadlines, delivered work, and invoices each month.",
+      "enAfter": "Review deadlines, delivered work, and invoice follow-up tasks each month.",
+      "reason": "Name invoice follow-up as a task the user can review, rather than implying an invoice list is available in Kemtit.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:1704",
+        "src/messages/en.json:1704",
+        "src/core/finance/actions.ts:100-129,192-215"
+      ]
+    },
+    {
+      "key": "workflowGuide.steps.freelancer.month.3",
+      "thBefore": "ตรวจงานส่งและใบแจ้งหนี้ที่ครบกำหนด",
+      "thAfter": "ตรวจงานส่งและงานเตรียมใบแจ้งหนี้ที่ถึงกำหนด",
+      "enBefore": "Check deliverables and invoices that are due.",
+      "enAfter": "Check deliverables and invoice-preparation tasks that are due.",
+      "reason": "Clarify that invoice preparation can be represented as planned work; Kemtit's finance records cover bills rather than client invoices.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:1709",
+        "src/messages/en.json:1709",
+        "src/core/finance/schema.ts:26-32"
+      ]
+    },
+    {
+      "key": "workflowGuide.steps.freelancer.week.1",
+      "thBefore": "ตรวจวันส่งงาน คำขอแก้ไข และใบแจ้งหนี้ของลูกค้า",
+      "thAfter": "ตรวจวันส่งงาน คำขอแก้ไข และงานติดตามใบแจ้งหนี้ของลูกค้า",
+      "enBefore": "Check client deadlines, requested revisions, and invoices.",
+      "enAfter": "Check client deadlines, requested revisions, and invoice follow-up tasks.",
+      "reason": "Frame invoice follow-up as work to schedule, rather than a native invoice record.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:1712",
+        "src/messages/en.json:1712",
+        "src/core/finance/schema.ts:26-32"
+      ]
+    },
+    {
+      "key": "workflowGuide.steps.freelancer.week.3",
+      "thBefore": "จองเวลาทำงาน ผลิตงาน แก้ไข และจัดการใบแจ้งหนี้",
+      "thAfter": "จองเวลาทำโปรเจกต์ แก้ไขงาน และติดตามใบแจ้งหนี้",
+      "enBefore": "Reserve time for project work, revisions, and invoices.",
+      "enAfter": "Reserve time for project work, revisions, and invoice follow-up tasks.",
+      "reason": "Make the schedulable action clear; invoices are external work and are not a Kemtit finance object.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:1714",
+        "src/messages/en.json:1714",
+        "src/core/finance/schema.ts:26-32"
+      ]
+    },
+    {
+      "key": "workflowGuide.steps.freelancer.day.1",
+      "thBefore": "ตรวจงานลูกค้าที่ต้องส่งวันนี้และใบแจ้งหนี้ค้าง",
+      "thAfter": "ตรวจงานลูกค้าที่ต้องส่งวันนี้ งานติดตาม และงานเตรียมใบแจ้งหนี้ที่เลยกำหนด",
+      "enBefore": "Check today's client deliveries and overdue invoices.",
+      "enAfter": "Check today's client deliveries, follow-ups, and overdue invoice-preparation tasks.",
+      "reason": "Avoid suggesting that Kemtit tracks overdue client invoices; direct the user to review their planned invoice tasks instead.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:1717",
+        "src/messages/en.json:1717",
+        "src/core/finance/schema.ts:26-32"
+      ]
+    },
+    {
+      "key": "workflowGuide.steps.freelancer.day.3",
+      "thBefore": "จองเวลาทำงาน ส่งงาน ตอบกลับ และออกใบแจ้งหนี้เมื่อถึงกำหนด",
+      "thAfter": "จองเวลาทำงาน ส่งงาน ตอบกลับ และเตรียมใบแจ้งหนี้ตามกำหนด",
+      "enBefore": "Reserve focus time, send work, reply, and invoice when due.",
+      "enAfter": "Reserve focus time to send work, reply, and prepare invoices by their due dates.",
+      "reason": "Keep the external invoicing action while describing it as planned work rather than implying Kemtit creates or sends invoices.",
+      "severity": "medium",
+      "sourceReferences": [
+        "src/components/planning/WorkflowGuide.tsx:34-38",
+        "src/messages/th.json:1719",
+        "src/messages/en.json:1719",
+        "src/core/finance/schema.ts:26-32"
+      ]
+    }
+  ],
+  "hardcodedFindings": [
+    {
+      "text": "เป้าหลักเดือนนี้",
+      "locale": "th",
+      "sourceReference": "src/components/widgets/GoalProgressPanel.stories.tsx:49",
+      "scope": "Storybook example",
+      "severity": "informational",
+      "recommendation": "No change proposed; this is a demo-only accessible label."
+    },
+    {
+      "text": "เนื้อหา widget",
+      "locale": "th",
+      "sourceReference": "src/components/widgets/WidgetShell.stories.tsx:14",
+      "scope": "Storybook example",
+      "severity": "informational",
+      "recommendation": "No change proposed; this is demo-only placeholder content."
+    },
+    {
+      "text": "เพิ่มงาน",
+      "locale": "th",
+      "sourceReference": "src/components/widgets/WidgetShell.stories.tsx:27",
+      "scope": "Storybook example",
+      "severity": "informational",
+      "recommendation": "No change proposed; this is a demo-only action label."
+    }
+  ],
+  "notes": [
+    "All 442 string leaves in each locale across the 15 assigned namespaces were reviewed; key sets and interpolation placeholders match.",
+    "The scoped production UI scan found no additional hardcoded human-readable copy requiring a proposal. The three hardcoded findings are Storybook fixtures only.",
+    "The freelancer invoice wording findings remain in this audit as proposals only. Per review decision, no invoice guide copy was changed because those steps can describe external work and task-focused replacements could change the intended meaning or length.",
+    "Applied the proposals for dashboard.empty.description, today.capacityHeading, and workflowGuide.priorityRule. dashboard.empty.description is a stale catalog key: /dashboard redirects, and live Dashboard/Sales empty states use widgets.goalProgress.empty.description, which remains unchanged."
+  ]
+}

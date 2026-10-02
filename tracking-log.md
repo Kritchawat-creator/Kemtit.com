@@ -9,6 +9,13 @@ Each entry:
 - **Reason**
 - **Result**
 
+## 2026-09-23 (UI Optimization Batch C — Inbox + Tasks)
+
+- **Task**: Implement approved Batch C from `docs/Kemtit_UI_Optimization_Implementation_Plan.md` and honor the mobile full-width requirement at 390px and the 360px minimum.
+- **Files changed**: Inbox/Tasks routes and components, task library query, Quick Capture route invalidation and focus behavior, Thai messages, `e2e/inbox-tasks.spec.ts`, `e2e/quick-capture.spec.ts`, `e2e/qa/batch-c.visual.spec.ts`, ESM mockup renderers, Batch C mockup/QA docs, and generated 3-viewport screenshots under `docs/ui-optimization/qa/batch-c/`.
+- **Reason**: Give Inbox capture and task review a readable mobile layout, make `/tasks?view=planned` a real view over canonical task records, and ensure confirmed Quick Capture items invalidate the routes that project them.
+- **Result**: Inbox → Today → Tasks preserved one Task ID with planned date and deadline shown separately. Mobile full-width assertions passed within 2px at 390px and 360px without horizontal overflow; the task detail sheet is asserted at full viewport width within 2px. Quick Capture Task/Bill/Event/Note journeys and Batch B/C visual checks passed 21/21 across Mobile, Tablet, and Desktop. Two V2 Today journeys passed a focused 6/6 rerun after correcting their native disclosure locator. Full TypeScript, Vitest (129 passed / 2 skipped), and production build passed. Targeted ESLint passed; full ESLint retains 4 errors outside this UI batch in two generated service worker files and two notification job modules. The last full-project E2E run was 63 passed / 24 failed / 9 skipped and has not been repeated after the V2 selector fix. Batches D–G remain staged for their mockup review gate.
+
 ---
 
 ## 2026-09-05
@@ -150,6 +157,21 @@ Each entry:
 - เปิด **avatar** พร้อมกัน (flag เดียวกัน) · ทบทวน signed URL cache เมื่อ deploy หลาย instance (cache ต่อ instance — ถ้า egress ยังสูงพิจารณา Next data cache คีย์ (user, ชั่วโมง, path))
 - กฎเดิมยังบังคับ: semantic token เท่านั้น · Zod ก่อนแตะ DB · ห้าม hardcode ข้อความ · ทุก component ผ่าน DoD §16
 
+## 2026-09-06 (รอบ 18 — QA review ทั้งระบบ หาบั๊ก ไม่แก้โค้ด) — branch `feat/poc`
+
+- **Task**: "Review code for QA functionality all site and find some bugs" — รีวิวโค้ดทั้งเว็บเพื่อหาบั๊ก โดยไม่แก้โค้ด (report-only)
+- **Files changed**: `docs/qa-review-2026-09-06.md` (ใหม่ — รายงานฉบับเต็ม), `tracking-log.md` · ไม่แตะโค้ดใน `src/`, `supabase/`, `e2e/` เลย
+- **Reason / วิธีทำ**: แบ่งรีวิวเป็น 6 พื้นที่ (auth/onboarding · goals/cascade/progress · tasks/recurrence/calendar · dashboard/shell/PWA/i18n · events/cron/LINE · photos/storage/schema+RLS) แล้วยืนยันข้อที่สำคัญด้วยของจริงบน localhost + local Supabase แทนการเชื่อการอ่านโค้ดอย่างเดียว
+- **Result**: baseline เขียวทั้งหมด (typecheck ผ่าน · lint 0 error · unit 68 tests ผ่าน · e2e regression 7/7 ผ่าน) — **บั๊กทุกข้อที่พบอยู่นอก coverage ของ suite ที่มี**
+  - **HIGH 5 ข้อ (พิสูจน์แล้วบนของจริง)**: (1) เป้าหมายวนลูปผ่านฟอร์มแก้ไข ทำให้หน้า goal detail พังถาวรจนแก้กลับเองไม่ได้ (2) ผู้ใช้ที่ล็อกอินเขียน `domain_events` ปลอมได้ และ processor เชื่อ payload + prototype key (3) open redirect `?next=/\evil.com` พาออกนอกเว็บหลังกรอก OTP สำเร็จ (4) service worker เก็บ HTML/RSC ของหน้าที่ล็อกอินไว้ 24 ชม. และ sign-out ไม่ล้าง cache (5) flag uploads คุมไม่ถึง storage policy กับ grant `avatar_path` → เขียนไฟล์/ตั้ง avatar ได้แม้ flag ปิด (ขัดเจตนา PDPA §6A.6)
+  - **MEDIUM 15 · LOW 25 · ประเด็นที่ต้องตัดสินใจกับ spec 5** (archive ไม่ cascade, ความหมายของ `due_date` สำหรับ task รายสัปดาห์, budget 10 วิของ Netlify, ไม่มี concurrency guard บน cron, `config.toml` ชี้ seed ไปไฟล์ที่ไม่มี)
+  - ช่องว่างเทสต์ที่ทำให้บั๊กเหล่านี้หลุด: `onboarding.test.ts` ไม่ครอบ backslash · `dayplan.test.ts` ครอบแค่ DAILY anchor อดีต · ไม่มีเทสต์ cycle ของ `candidatesFor`/`buildGoalTree` · `scan-overdue.test.ts` เขียนเคส error ไม่ได้เพราะ dependency กลืน error
+  - i18n สแกนทั้ง repo: missing key 0 · namespace ผิด 0 · ICU error 0
+  - ข้อมูลทดสอบที่สร้างใน local DB ลบออกหมดแล้ว (การทดสอบ `domain_events` ทำใน transaction ที่ rollback)
+- **รอบเสริม**: ปิดช่องว่างของข้อ A4 — build production แล้วรัน `pnpm start` พอร์ต 3100 เปิดด้วย Chrome จริง ยืนยันว่า service worker ติดตั้งและคุมหน้าเว็บได้จริง และ HTML เต็มหน้า 32,229 ตัวอักษรถูกเก็บลง Cache Storage (cache ชื่อ `others`) ทั้งที่ response ติด `Cache-Control: private, no-cache, no-store` · แก้รายละเอียดในรายงาน: navigation ตกที่ cache `others` ไม่ใช่ `pages` แต่เป็น `NetworkFirst` 24 ชม. เหมือนกัน ข้อสรุปไม่เปลี่ยน · เก็บกวาดแล้ว: unregister SW + ลบ cache ใน Chrome, ปิด server พอร์ต 3100
+- **ยังไม่ได้ทดสอบ**: offline จริงบนมือถือ · ติดตั้ง PWA บนเครื่องจริง · LINE OA จริง (ยัง dry-run)
+- **Follow-up**: ยังไม่ได้แก้อะไรเลยตามคำขอ — รอเจ้าของโปรเจกต์เลือกว่าจะแก้ข้อไหนก่อน CP1
+
 ## 2026-09-07 (รอบ 19 — M10a: ชั้นข้อมูล "บันทึกยอด" (goal_entries) ตาม Claude Design turn 6/7) — branch `feat/poc`
 
 - **Task**: นำเข้าดีไซน์รอบใหม่จากโปรเจกต์ Claude Design (`Kemtit.dc.html` turn 6 = D-04 Dashboard v2 / D-07 Goal Detail v2 / D-06 Goals v2 · turn 7 = D-04 Dashboard v3 แนว admin + D-10 ตารางบันทึกยอด) แล้วลงมือ **phase 1 = ชั้นข้อมูลอย่างเดียว** ตามแผน `docs/plans/2026-09-06-design-turn6-7-sales-log.md` (UI อยู่ phase 2/3)
@@ -160,14 +182,6 @@ Each entry:
   - backfill: metric goal เดิม 36 แถวกลายเป็น entry "ยอดเริ่มต้น" และ `current_value` ตรงกับผลรวมทุกแถว (query ตรวจความไม่ตรง = 0) · RLS เปิด · `anon` ไม่มีสิทธิ์ใด ๆ
 - **ยังไม่ทำ (phase 2/3 ตามแผน)**: desktop shell v3 (sidebar 2 หมวด + ค้นหา + กระดิ่ง + avatar chip), dashboard v3 (KPI 4 ใบ + กราฟ + การ์ดเข็มทิศที่บันทึกยอดได้ + ตารางล่าสุด), goals v2 / goal detail v2 (กราฟ + ประวัติแก้ได้), หน้า `/entries` + ส่งออก CSV, `/tasks`, `/search`, E2E ของ entries · จุด Pro ทั้งหมดเป็นป้าย/toast "เร็ว ๆ นี้" ไม่บังคับลิมิตจริง
 
-## 2026-09-07 (รอบ 20 — M10b-1: desktop shell v3 ตาม Claude Design turn 7) — branch `feat/poc`
-
-- **Task**: ทำ **phase 2a** ของแผน `docs/plans/2026-09-06-design-turn6-7-sales-log.md` §3.1–§3.4 (ส่วนย่อยของ phase 2 — เฉพาะ "desktop shell" ไม่รวม dashboard v3 / goals v2 / goal detail v2 / หน้าใหม่): โครง `useIsDesktop`/`ResponsiveSwitch` (§1.10), เมนู sidebar 2 หมวด (`nav-items.ts` v3), `Sidebar` v3 + `ProCard`, `AppShell`/`ShellFrame` คำนวณและส่งต่อ "shell data" (งานค้าง/เชื่อม LINE/แพ็กเกจ), `TopBar` v3 (ช่องค้นหา + `NotificationsMenu` + `UserMenu` variant "chip"), `PageHeader` เพิ่ม prop `breadcrumb` (additive), และ i18n keys ที่ชิ้นส่วนเหล่านี้ต้องใช้
-- **Files changed**: `src/hooks/use-is-mobile.ts` (+`useIsDesktop`), `src/components/layout/ResponsiveSwitch.tsx` (ใหม่ — ยังไม่ผูกกับหน้าไหน), `src/components/layout/nav-items.ts` (`NavItem`/`NAV_SECTIONS`/`MOBILE_NAV_ITEMS`; `NAV_ITEMS` เหลือเป็น alias), `src/components/layout/BottomNav.tsx` (import `MOBILE_NAV_ITEMS` แทน `NAV_ITEMS`), `src/components/layout/Sidebar.tsx` (v3 เต็ม — โลโก้เข็มทิศ + หมวด "หลัก"/"เพิ่มเติม" + badge + แถวโปรไฟล์ท้าย), `src/components/layout/ProCard.tsx` (ใหม่), `src/components/layout/AppShell.tsx` (เป็น async — คำนวณ `openTasks`/`overdue`/`lineLinked`/`tier` จาก `getDayPlan`+`me.profile`), `src/components/layout/ShellFrame.tsx` (รับ `shell`/`profile` ส่งต่อ `Sidebar`), `src/components/layout/TopBar.tsx` (v3 desktop cluster; มือถือ classNames เดิมทุกจุด), `src/components/layout/NotificationsMenu.tsx` (ใหม่), `src/components/layout/UserMenu.tsx` (+prop `variant`/`persona`; variant เดิม byte-identical), `src/components/layout/PageHeader.tsx` (+prop `breadcrumb`, เป็น async server component ด้วย `getTranslations` เพื่อดึงคำว่า "Kemtit"; แก้ `lg:pr-80`→`lg:pr-[520px] xl:pr-[600px]` + เพิ่ม `truncate` บน h1 แบบ global ตามที่แผนสั่ง), `src/messages/th.json` (`nav.{entries,tasks,reports,sectionPrimary,sectionMore,proSoon,search,searchPlaceholder,notifications,addEntry}`, namespace ใหม่ `pro.*`, `notifications.*`)
-- **Reason / การตัดสินใจ**: (1) `useIsDesktop()`/`ResponsiveSwitch` สร้างไว้เป็นโครงเฉย ๆ ยังไม่ผูกกับหน้าไหน (dashboard v3 = phase 2b) — เลี่ยงปัญหา "สอง tree ใน DOM" ที่ repo นี้เจอมาแล้ว 2 ครั้ง (รอบ 13/14) แต่พร้อมใช้ทันทีที่ phase 2b เริ่ม (2) `TopBar` ให้ mobile cluster (persona pill + `UserMenu` avatar) กับ desktop cluster (ค้นหา + กระดิ่ง + `UserMenu` chip) อยู่ใน DOM พร้อมกันเสมอ สลับด้วย CSS `lg:hidden`/`hidden lg:flex` เท่านั้น (ไม่ใช้ `useIsDesktop` แบบ dashboard) — ปรึกษา advisor แล้วยืนยันว่าอันตรายของรอบ 13/14 อยู่ที่ `getByText` ที่ไม่กรอง `display:none` เท่านั้น ส่วน `getByRole` กรอง accessibility tree ให้อยู่แล้ว (พิสูจน์จาก `Sidebar`/`BottomNav` ที่มี `<nav aria-label="เมนูหลัก">` ซ้ำกันแบบนี้อยู่ก่อนแล้วและ `localhost-qa.spec.ts` ที่ query ด้วย `getByRole` แบบไม่ scope ก็ยังผ่าน) — ทำแบบ CSS จึงไม่ต้องเปลี่ยน `TopBar` เป็น client component และไม่กระทบ native `<form action="/search">` (3) `PageHeader` ต้องเป็น `async function` + `getTranslations()` (ไม่ใช่ `useTranslations`) เพื่อดึงคำว่า "Kemtit" ผ่าน th.json ตามกฎ "ทุกข้อความผ่าน next-intl" โดยไม่ต้องเติม `"use client"` ให้ 5 หน้าที่ใช้มันอยู่ (4) `NAV_ITEMS` (`risk: UNKNOWN` จาก gitnexus — 0 caller ที่ graph มองเห็น) ยืนยันด้วย text-search ว่ามีแค่ `Sidebar`/`BottomNav` — ทั้งคู่แก้ไปใช้ `NAV_SECTIONS`/`MOBILE_NAV_ITEMS` แล้ว จึงเหลือ `NAV_ITEMS` เป็น alias ไว้เฉย ๆ กันของอื่นที่มองไม่เห็นพัง (5) `AppShell` เปลี่ยนจาก sync เป็น async เพื่อเรียก `getDayPlan(today)` ที่ห่อ `cache()` ไว้แล้ว (phase 1) — ทุกหน้าที่ login แล้วจะยิง query นี้เพิ่ม (ไม่ใช่แค่ dashboard) แต่ dedupe เหลือ query เดียวต่อ request; หน้าไหนเรียกซ้ำ (เช่น dashboard) ก็ไม่มีต้นทุนเพิ่ม (6) ทดสอบจริงบน dev server พบ `Sidebar` ล้นที่ viewport 1280×720 (ค่า default ของ Playwright Desktop Chrome): `nav.scrollHeight` 455px > `nav.clientHeight` 429px ทำให้ "ตั้งค่า" โผล่ไม่เต็มถ้าไม่เลื่อน — ลดระยะห่างที่ไม่ใช่ตัวเลขล็อกตามแผน (section label `pt-4 pb-1.5`→`pt-3 pb-1`, `ProCard` `p-3.5 gap-2`→`p-3 gap-1.5`, แถวโปรไฟล์ `pt-3.5`→`pt-2.5`) จนเท่ากันพอดี (7) impact ก่อนแก้: `PageHeader` HIGH (5 หน้า — ยืนยันว่า byte-identical ทุกจุดยกเว้น padding-right กับ truncate ที่แผนสั่งให้เป็น global), `useIsMobile` CRITICAL (19 จุดพึ่งพา) — ไม่แตะโค้ดเดิมเลย เพิ่มแค่ `useIsDesktop` ใหม่ต่อท้าย, `getMe`/`getDayPlan` CRITICAL/HIGH — เรียกใช้เฉย ๆ ไม่แก้ signature, `Sidebar`/`TopBar`/`AppShell`/`ShellFrame`/`UserMenu`/`BottomNav` ทั้งหมด LOW
-- **Result**: `pnpm typecheck` ผ่าน · `pnpm lint` 0 error (เหลือ warning `form.watch` เดิม 3 จุด) · `pnpm test` **89/89 ผ่าน** (ไม่เพิ่มเทสต์ใหม่ในรอบนี้) · `pnpm build-storybook` ผ่าน · `pnpm e2e e2e/dashboard.spec.ts e2e/goals.spec.ts e2e/tasks.spec.ts e2e/calendar.spec.ts` **10/10 ผ่านทั้ง 2 projects** (mobile-chrome + desktop-chrome) · `detect_changes({scope:"all"})` ยืนยันว่ามีแค่ไฟล์/symbol ที่ตั้งใจแก้เท่านั้น (`AppShell`/`BottomNav`/`PageHeader`/`ShellFrame`/`Sidebar`/`TopBar`/`UserMenu`/`nav-items.ts`) ไม่แตะ symbol ธุรกิจ CRITICAL ใด ๆ · ตรวจด้วยตาผ่าน dev server จริง (ใช้ session ที่ login ค้างอยู่แล้วในเบราว์เซอร์ ไม่ได้สร้าง auth ใหม่) ที่ 1440×900, 1280×720, 375×812: sidebar 2 หมวด + badge "งาน 2" + `ProCard` "แพ็กเกจ Free" + พับ/ขยายเมนูถูกต้อง (aria-label `nav.collapse`/`nav.expand` เดิม), `TopBar` desktop มีช่องค้นหา + กระดิ่ง (แสดง "งานค้าง 2 รายการ" + "ยังไม่ได้เชื่อม LINE") + user chip ("ui-check-…@kemtit.test · พ่อค้าแม่ค้าออนไลน์"), มือถือ (375px) หน้าตาเดิมทุกจุด (persona pill + avatar + bottom nav 4 แท็บ + FAB) ไม่มี console error
-- **ยังไม่ทำ**: `ResponsiveSwitch` ยังไม่ถูกเรียกใช้จากหน้าไหน (dashboard v3 desktop content = phase 2b ตามแผน) · `/search` `/entries` `/tasks` ยังไม่มีหน้าจริง — ลิงก์ sidebar ชี้ไปแล้วตั้งใจให้ 404 ก่อน (phase 3) · `breadcrumb` prop ของ `PageHeader` ยังไม่มีหน้าไหนส่งมาใช้จริง (รอ dashboard/page.tsx ผูกใน phase 2b) จึงยังไม่เห็นบรรทัด "Kemtit › …" ของจริง · **ความเสี่ยงที่ตั้งใจปล่อยไว้**: `e2e/qa/localhost-qa.spec.ts` บรรทัด `expect(page.getByText("พ่อค้าแม่ค้าออนไลน์")).toBeVisible()` (ขั้น `desktop-shell-sidebar-topbar`, ไม่รันใน CI) จะ resolve เจอ 2 element (persona pill มือถือ + user chip desktop มีข้อความเดียวกัน ซ่อนด้วย CSS ไม่ใช่ conditional render) — ต้อง scope locator นี้ใหม่ (เช่น `.first()` หรือผูกกับปุ่ม chip) เมื่อแตะไฟล์นี้ครั้งหน้า — ไม่อยู่ใน 4 spec ที่โจทย์รอบนี้สั่งให้รัน จึงยังไม่แก้ · ไม่ได้ล็อกอินใหม่ผ่าน OTP/Mailpit — ใช้ session ที่ล็อกอินค้างอยู่แทน
-
 ## 2026-09-07 (รอบ 21 — M10b-2: dashboard v3 + component ชุด "บันทึกยอด" ตาม Claude Design turn 6/7) — branch `feat/poc`
 
 - **Task**: ต่อจาก M10b-1 (shell v3) — ประกอบแดชบอร์ด desktop v3 ตาม turn 7 "7a" และสร้าง component ชุดบันทึกยอดที่หน้า `/entries` (phase 3) จะใช้ซ้ำ
@@ -176,3 +190,167 @@ Each entry:
 - **Result**: typecheck ผ่าน · lint **0 error** (warning `form.watch` เดิม 3 จุดเท่าเดิม) · unit **89** ผ่าน · Storybook build ผ่าน · E2E 4 spec × 2 project (dashboard/goals/tasks/calendar) **ผ่าน 10/10**
   - **หมายเหตุเรื่องการวัดผล**: รอบแรก e2e ล้ม 10/10 และรอบต่อมาล้ม 2/10 โดยใช้เวลา 32 นาที — ตรวจแล้วไม่ใช่โค้ด แต่เป็น **เครื่องหลับกลางรัน** (รันแยก `calendar.spec` ใหม่: เทสต์ใช้เวลาจริง 8.6 วิ + 10.2 วิ แต่ wall clock 16.6 นาที) และ log ของ dev server ยืนยันว่า `GET /dashboard` ตอบ 200 ใน ~700 มิลลิวินาทีตลอด ไม่มีค้าง
 - **ยังไม่ทำ (phase 2c/3 ตามแผน)**: GoalCard v2 + goal detail v2 (กราฟ + ประวัติแก้ได้ + ปุ่มแชร์), หน้า `/entries` + ตัวกรอง + pagination + ส่งออก CSV, หน้า `/tasks`, `/search`, `e2e/entries.spec.ts`, อัปเดต QA spec สำหรับ dashboard v3 · ลิงก์ sidebar ไป `/entries` `/tasks` `/search` ยังชี้ไปหน้าที่ยังไม่มี (ตั้งใจ — สร้างใน phase 3)
+
+## 2026-09-12 (รอบ 22 — วิเคราะห์ฟีเจอร์ทั้งระบบด้วย global planner หาสิ่งที่ยังขาด) — branch `feat/poc`
+
+- **Task**: "analyze all feature here with global planner system, summary the system what is missing feature" — งานวิจัย/วิเคราะห์อย่างเดียว (research job) ไม่แก้โค้ด
+- **Files changed**: `docs/feature-gap-analysis-2026-09-12.md` (ใหม่ — รายงานฉบับเต็ม 638 บรรทัด), `tracking-log.md` · ไม่แตะ `src/`, `supabase/`, `e2e/` เลย
+- **Reason / วิธีทำ**: รันเป็น multi-agent workflow 35 agent (16 survey พื้นที่ฟีเจอร์ + 16 adversarial verify + 3 completeness critic) รวม 1,292 tool call · บังคับจัดหมวด **3 ระดับ** ไม่ใช่ 2: `built` (ต้องมี file:line) / `deferred` (ต้องอ้าง scope §11 tier, §16/§17, tracking-log "ยังไม่ทำ" หรือ phase ในแผนได้ — อ้างไม่ได้ = ไม่ใช่ deferred) / `gap` (สเปกบอกว่าต้องมีใน scope ปัจจุบันแต่ไม่มี/stub/ต่อไม่ถึง/พัง) เพราะ Kemtit เป็น POC โดยเจตนา ถ้าลิสต์ของที่ตั้งใจไม่ทำว่า "ขาด" รายงานจะไร้ค่า · ทุกข้อที่อ้างว่าขาดต้องระบุคำค้น + path ที่กวาด แล้วผ่าน verifier ที่ค้นด้วยคำอื่น (ข้อความไทยใน `th.json`, ชื่อ column, ชื่อไฟล์ route, ชื่อ event type) เพื่อพยายามล้ม — ผลค้นเป็นศูนย์ = ยังไม่เจอ ไม่ใช่ไม่มี
+- **Result**: ตรวจ 627 รายการใน 16 พื้นที่ → **built 220 · deferred 167 · gap 240** (ไม่ซ้ำกันจริงราว 204) · ในนั้น **22 ข้อบล็อก field test**
+  - **ข้อสรุปหลัก**: สิ่งที่ขาดไม่ใช่ฟีเจอร์ — ฟีเจอร์ที่ยังไม่มี (billing, drag-drop, persona 2-4, LINE Login, dark mode, admin UI) เลื่อนไว้ถูกต้องและมี citation ครบทุกข้อ · ของที่ขาดจริงคือ 4 กลุ่ม: (A) provisioning ยังไม่ทำสักข้อ OWN-1..5 (B) ลิงก์ตาย 6 จุดใน shell v3 ที่ ship แล้ว → `/entries` `/tasks` `/search` (C) ข้อมูล tester สูญ/รั่วได้ — SW cache 24 ชม.ไม่ล้างตอน sign-out, ลบ task ซ้ำ = ประวัติหายถาวร, parent cycle ทำหน้าพังกู้ไม่ได้ (D) **ชั้นปฏิบัติการที่ไม่เคยมีในเอกสารฉบับใดเลย** — ไม่มีแผน deploy branch (`main` มี 2 commit ส่วน POC 23 commit อยู่บน `feat/poc` ที่ไม่เคย merge), ไม่มี backup/restore, ไม่มี security header, ไม่มี kill switch/runbook, ไม่มีช่องให้ tester แจ้งปัญหา
+  - **ตรวจซ้ำ QA review 2026-09-06 ทุกข้อกับ HEAD**: A1–A7 / B1–B38 / C1–C5 / D1–D7 **ยังเปิดอยู่ทั้งหมด ไม่มีข้อไหนถูกแก้** (B2 ขอบเขตกว้างขึ้นเพราะ M10b-2 เพิ่ม `?new=entry` ด้วย href relative แบบเดิม)
+  - **ของใหม่ที่ QA review เดิมไม่ได้จับ**: task ซ้ำไม่เคยเข้าการแจ้งเตือน overdue เลย (`tasks/admin.ts:18` `.is("recurrence_rule", null)`) ขัด Decision 2.2 · adjustment ค่าลบแก้ไขไม่ได้เพราะ `updateEntrySchema` บังคับ `.positive()` · เส้นทาง "เป้าเดือนหน้า" ทำให้ core loop ตายทั้งเส้น · บนมือถือไม่มีที่ไหนอ่าน/แก้/ลบรายการบันทึกยอดได้เลย
+  - **พบระหว่างทาง**: `docs/qa-review-2026-09-06.md` ยังไม่ถูก commit เข้า git (`git status` = `??`) · `tracking-log.md` ข้ามรอบ 20 (ไม่มีบันทึกของ M10b-1)
+- **Follow-up**: ยังไม่แก้อะไรตามคำขอ — §9 ของรายงานมี 8 คำถามที่ต้องให้เจ้าของตัดสิน (ข้อแรก = production deploy มาจาก branch ไหน ต้องตอบก่อน provision ทุกอย่าง) และ §10 เสนอลำดับงาน 5 รอบ
+
+## 2026-09-12 (รอบ 23 — Research คู่แข่ง: planner แต่ละ brand เด่นที่อะไร) — branch `feat/poc`
+
+- **Task**: "Research คู่แข่งว่าระบบ planner แต่ละ brand มีจุดเด่นอะไรบ้าง" — research อย่างเดียว ไม่แก้โค้ด
+- **Files changed**: `docs/competitor-research-2026-09-12.md` (ใหม่), `tracking-log.md` · ไม่แตะ `src/`, `supabase/`, `e2e/`
+- **Reason / วิธีทำ**: web research แล้ว**ยืนยันราคากับหน้าเว็บของเจ้าของผลิตภัณฑ์เอง**ก่อนเขียนทุกตัว เพราะ listicle/affiliate site ลอกกันไปมา (ราคา Griply กลับมาเป็นทั้ง $4.99 และ $2.49/เดือน ในการค้นครั้งเดียว) · แยกหมวด first-party vs secondary ไว้ใน §7 ของรายงาน
+- **Result**: **2 ใน 3 ขาของ compound differentiator ใน `scope §15` มีคนยึดไปแล้ว**
+  - **Goal Cascade ไม่ unique** — Griply มี Vision → Life Areas → Goal Plans → Subgoals → Tasks → Habits ครบและขายอยู่ · Full Focus Planner ทำ annual→quarterly→weekly→daily มานาน
+  - **Life domain ไม่ unique และอยู่ใน free tier ของคู่แข่ง** — Griply แถม **9 Life Areas** มาในแผนฟรี (ยืนยันที่ `griply.app/pricing`) ขณะที่ Kemtit มี 6 domain
+  - **ไทย/LINE ยังอยู่และแข็งกว่าที่คิด** — Griply รองรับแค่ EN/NL/DE/ES (App Store) · **LINE notification messages ใช้ได้เฉพาะ OA ใน ญี่ปุ่น/ไทย/ไต้หวัน** (LINE Developers) · LINE = 56M MAU ในไทย = 82.6% ของผู้ใช้เน็ต
+  - **ขาที่ 4 ที่ไม่ได้เขียนใน §15 แต่แข็งสุด**: persona แม่ค้า — ไม่มี planner เจ้าไหนรู้จัก "ยอดขายวันนี้" เป็นตัวเลขชั้นหนึ่ง
+  - **ราคาไม่ใช่ wedge** — คู่แข่งจริงของ Kemtit Pro (300-600 บาท/ปี) คือ **free tier ของ Griply** ไม่ใช่แผนจ่าย ($29.99/ปี)
+  - **ตลาดไทย**: ค้นด้วยคำไทยแล้วเจอแต่ listicle ที่แนะนำแอปต่างชาติ **ไม่มี planner สัญชาติไทยที่ทำ goal cascade เลย** · **Page365 ฟรีตลอดชีพ ผู้ขาย 350,000+ ราย เป็นเจ้าของ workflow ประจำวันของแม่ค้าอยู่แล้ว** — ต้องตัดสินว่าเป็นคู่แข่งหรือพันธมิตร (scope §5.2 วาง CSV import ไว้ Phase 2 อยู่แล้ว)
+  - **สัญญาณเตือนอื่น**: Todoist ปล่อย Todoist Assist (AI แตก subtask/วางแผนวัน) ในทุก paid tier ปี 2026 → "แตกเป้าอัตโนมัติ" กำลังเป็นของแจก ไม่ใช่ของขาย · Griply มีแค่ **194 ratings (4.6★)** ตั้งแต่เปิดปี 2021 → niche นี้เล็กกว่าที่เอกสารชวนคิด · `Cascade` (cascade-flame.vercel.app) ที่ทำโมเดลเดียวกันผ่าน WhatsApp ตรวจแล้ว **404 ไม่มีตัวตนแล้ว**
+  - **LINE Notify ปิดบริการ 31 มี.ค. 2025** ทางเดียวคือ Messaging API — Kemtit เลือกถูกแล้ว แต่แปลว่า tutorial เก่าบนเน็ตใช้ไม่ได้
+- **Follow-up**: §8 ของรายงานมี 6 ข้อที่ต้องตัดสิน — ข้อใหญ่สุดคือ (1) แก้ pitch ใน scope §15 ให้เลิกอ้าง goal cascade เป็นของใหม่ (2) Page365 คู่แข่งหรือพันธมิตร (3) คำถาม CP1 ควรเทียบกับ "ฟรีของ Griply" ไม่ใช่ "จ่ายของ Griply"
+
+## 2026-09-19 (รอบ 24 — Kemtit V2 architecture source of truth + Phase 0 verification)
+
+- **Task**: เริ่มดำเนินการตาม Kemtit V2 Architecture, Functionality & UX/UI Redesign Plan โดยยึดหลัก evolution ไม่ rewrite
+- **Files changed**: `docs/kemtit-v2-product-architecture.md` (ใหม่), `docs/kemtit-full-scope.md` (mark เป็น Legacy POC Scope), `docs/kemtit-ui-design-system.md` (เพิ่ม V2 precedence note), `tracking-log.md`
+- **Reason / context**: taxonomy เดิม persona ผสม occupation/work style/life stage และ V2 ต้องเพิ่ม Planning Core (Projects, Inbox, Habits, Daily Planning, Time Blocks, Capacity, Reviews) โดยยังรักษา Core/Modules/RLS/LINE/Compass เดิม
+- **Result**: สร้าง V2 source of truth ครอบคลุม WorkMode + Life Areas, target data model, routes/navigation, responsive contract, implementation phases, migration/testing/CI rules และ hard scope boundaries; read-only audit ยืนยัน Phase 0 blockers ปัจจุบัน ได้แก่ authenticated PWA runtime cache, profile query error ถูกกลืนเป็น null, multi-level goal cycle ยังไม่ถูกกัน, cascade non-atomic, recurring delete/reschedule กระทบ series/history, LINE processor มี duplicate-send window, dead navigation และ CI ไม่มี core regression E2E
+- **Guardrail / follow-up**: ยังไม่แก้ `src/`, schema หรือ migration เพราะ repo บังคับ GitNexus impact/context ก่อนแก้ symbol และ detect_changes หลังแก้ แต่ Local Project MCP ที่เชื่อมใน session นี้ไม่มี GitNexus commands หรือ shell execution; ห้าม bypass guardrail นี้.
+
+## 2026-09-19 (รอบ 25 — Phase 0 hardening verification)
+
+- **Task**: ตรวจผลจาก Architecture, Functionality และ UX/UI advisors แล้วเดินหน้าตาม guardrail ของ Phase 0 โดยยึด working tree ปัจจุบันเป็นฐานและไม่ทำ big-bang schema expansion
+- **Current implementation observed**: authenticated PWA runtime requests ใช้ `NetworkOnly`, profile query แยก error จาก unauthenticated state, goal cycle/cascade hardening อยู่ใน migration, task archive/recurring-reschedule guard อยู่ใน core, LINE notification reservation ใช้ `sourceEventId`, navigation ตัด dead links และ CI เพิ่ม mobile/desktop/tablet E2E smoke
+- **Verification**: `pnpm test` ผ่าน 19 files / 91 tests; `pnpm typecheck` ผ่าน; `pnpm lint` ผ่าน 0 errors (3 React Hook Form compatibility warnings); `pnpm build` ผ่านด้วย Webpack
+- **GitNexus**: repository `Kemtit.com`, index commit `7ab4449`; pre-edit impact พบ `createGoalCascade` LOW, `processEvents` LOW และ `toggleTask` CRITICAL; `detect_changes(scope=all)` เห็น 74 changed symbols / 25 files / risk `critical` เพราะรวมงานค้างทั้ง working tree จึงยังไม่ commit หรือขยาย scope ต่อ
+- **Remaining gates**: ต้องรัน Supabase migration/RLS validation ใน environment ที่ CLI เขียน telemetry ได้, รัน Playwright core/desktop/tablet กับ local Supabase และเพิ่ม concurrent notification reservation recovery integration test ก่อนเปิด Phase 1/2
+
+## 2026-09-19 (รอบ 26 — V2 planning vertical slice)
+
+- **Task**: ทำต่อให้เสร็จตาม Kemtit V2 source-of-truth โดยรักษา compatibility route และไม่ rewrite core เดิม
+- **Implementation**: เพิ่ม profile `work_mode/default_scope`, Seller/Professional onboarding projection, additive planning migration (projects, task state extensions, occurrences, habits, daily plans, time blocks, weekly reviews), pure capacity engine, server actions/queries, canonical `/today` + `/inbox` + `/reviews` + `/work/projects` + `/life` + `/finance`, internal scheduling form, weekly review, habit completion และ context settings
+- **Compatibility**: `/dashboard → /today`, `/tasks → /inbox?view=planned`, `/entries → /work/sales`; legacy `active_persona`, goal cascade, task completion, photo, LINE และ seller module ยังอยู่
+- **Verification so far**: `pnpm test` 20 files / 93 tests passed; `pnpm typecheck` passed; `pnpm build` passed with Webpack; lint had no errors and retained only the 3 existing React Hook Form warnings after removing the new unused import warning
+- **Remaining gates**: ต้องรัน migration/RLS validation กับ local Supabase จริง, Playwright journeys หลัง apply migration, และ detect_changes final ก่อน commit; Google/Outlook และ AI ยัง deliberately deferred ตาม hard scope boundary เพราะยังไม่มี provider credentials/contracts/history ที่จำเป็น
+
+## 2026-09-19 (รอบ 27 — V2 vertical slice final verification)
+
+- **Task**: ปิดงานตาม V2 plan และยืนยัน core loop หลัง apply migration จริง โดยไม่สร้าง listing/external integration เพิ่ม
+- **Implementation follow-up**: legacy `/dashboard` คง query string แล้วส่งต่อ `/today` เพื่อรักษา `?new=task`, ปรับ onboarding/dashboard/calendar/photos/QA E2E ให้ตรวจ WorkMode/Today และเพิ่ม exact locators ตาม accessible regions ใหม่
+- **Database verification**: apply local migrations `20260919203000` ถึง `20260919210000`; `supabase db lint --local` ผ่านและไม่พบ schema errors; ไม่ได้แตะ remote project
+- **Verification**: `pnpm test` 22 files / 96 tests ผ่าน; `pnpm typecheck` ผ่าน; `pnpm lint` 0 errors + 3 warnings เดิมจาก React Hook Form; `pnpm build` ผ่านด้วย Webpack; core Playwright mobile 5/5 ผ่าน; Today smoke desktop 1/1 ผ่าน; calendar tablet 1/1 ผ่าน
+- **Known non-blocking**: `git diff --check` เหลือ blank line เดิมที่ `AGENTS.md:77`; ไม่แก้ไฟล์กติกาที่มีการเปลี่ยนแปลงเดิมโดยไม่เกี่ยวกับงาน
+- **GitNexus**: `detect_changes(scope=all)` ทำงานครบ (`partial=false`, `truncated=false`) และรายงาน `critical` เพราะรวม working tree ที่มีการเปลี่ยนแปลง 52 files / 139 symbols / 135 affected symbols; ต้อง review เป็นชุดก่อน commit ไม่ใช่ตีความว่า test failure
+- **Release boundary**: core V2 vertical slice พร้อม staged validation; Google/Outlook external calendar, AI planning, collaboration และ Etsy publication ไม่ได้ทำตาม hard scope และยังต้องมี contract/authority แยกต่างหาก
+
+## 2026-09-21 (รอบ 28 — UX redesign implementation Phase 0–11)
+
+- **Task**: ดำเนินการ `Kemtit_UX_Redesign_Implementation_Plan.md` ให้ครบลำดับ Audit → Data Semantics → Starter Workspace → Today → Universal Quick Capture → Shared Identity → Planner → Calendar/Google → Finance → Goals/Routine → Insights → Smart Defaults โดยห้ามสร้าง fake user data หรือ duplicate business record
+- **Files changed**:
+  - semantics/profile/onboarding: `src/core/shared/{data-origin,suggestions}.ts`, `src/core/profile/{roles,starter,starter-queries,schema,onboarding,actions}.ts`, onboarding Role/Focus/Starter routes/components, auth gate, Thai messages
+  - capture/identity: `src/core/capture/{parse,defaults,actions}.ts`, `QuickCapture.tsx`, `QuickAddHost.tsx`, `QuickAddMenu.tsx`, `src/core/items/*`
+  - operational UX: Today, Planner `/plan`, Calendar, Finance, final mobile More/Insights navigation
+  - analytics: `src/core/insights/queries.ts`, `src/app/(app)/insights/page.tsx`
+  - Google Calendar: `src/core/calendar-integrations/{schema,queries,actions,google}.ts`, Settings integration card, OAuth connect/callback routes, scheduled sync job/cron route, server env + encrypted secret helper
+  - migrations: `20260920220000` through `20260920227000` UX redesign migrations
+  - docs/tests: `docs/ux-redesign-{implementation-status,analytics-definitions,calendar-sync-rules,qa-checklist}.md`, onboarding/capture/planner/unit/E2E updates
+- **Reason / context**: UX ใหม่กำหนด Prepare → Suggest → Confirm → Auto-connect; Today เป็น execution center, Insights เป็น analytical center; Starter suggestions ห้ามนับเป็นข้อมูลจริงก่อน Accept; Bill/Event/Task/Goal/Habit ต้องมี canonical identity เดียวแล้ว project ไปหลาย view; Google Calendar ต้องเป็น optional provider ไม่ใช่ core dependency
+- **Result**:
+  - Role = Employee/Seller/Student/Freelancer + Focus Areas; Starter Workspace รองรับ Add/Edit/Skip และ suggestion ที่ไม่ Accept ไม่สร้าง USER record
+  - `data_origin` ทำให้ USER/IMPORT แยกจาก TEMPLATE/SUGGESTED/EXAMPLE; legacy onboarding template backfill จากหลักฐาน `goal.created.fromTemplate=true`; operational/analytics queries หลัก exclude prepared/template data
+  - Today ใช้ข้อมูลจริง: priorities/schedule/events/bills/routine/finance/goal progress/suggestions; ไม่มี fake finance/task/completion data
+  - Universal Quick Capture รองรับ Task/Event/Habit/Bill/Expense/Goal/Note แบบ Proposal → editable confirm + idempotency; Smart Defaults ใช้ Focus/Scope/recent domain/task duration/habit cadence เป็นค่าเริ่มต้นที่แก้ได้
+  - Shared `item_registry/item_links` เพิ่ม identity/link compatibility โดย typed tables ยังเป็น canonical owner; Bill payment เชื่อม Expense แทนการ duplicate Bill
+  - Planner = Year → Month → Week → Today เป็น projection จาก Goals/Tasks/Events/Bills; ไม่สร้าง daily planner business record ซ้ำ
+  - Calendar internal รองรับ Task/occurrence, Time Block, Event, Bill; Google Calendar เพิ่ม OAuth web-server flow, encrypted server-only credentials, IMPORT event identity, incremental syncToken + HTTP 410 recovery, initial/manual/bounded cron sync และ disconnect cleanup เฉพาะ imported projection
+  - Finance operational รองรับ Income/Expense/Budget/Bill + existing finance goals; Insights มี Overview/Productivity/Time/Finance/Goals/Routine/Life Balance พร้อม metric definitions
+  - Mobile IA = Today / Plan / + / Insights / More; secondary routes ยังเข้าถึงได้
+- **Verification boundary**: session นี้ใช้ Local Project MCP ที่ expose read/write/search แต่ไม่มี shell และไม่มี GitNexus actions จึงทำ static caller/schema/search regression sweep และเพิ่ม test coverage แต่ **ไม่ได้อ้างว่า** lint/typecheck/unit/build/Supabase apply/Playwright/GitNexus final ผ่านในรอบนี้; runtime release gates ระบุไว้ใน `docs/ux-redesign-qa-checklist.md` และต้องรันจริงก่อน release
+
+## 2026-09-22 (รอบ 29 — post-implementation UI/UX code review)
+
+- **Task**: review UI/UX จาก code ปัจจุบันหลัง UX redesign Phase 0–11 และลงมือแก้เฉพาะ friction ที่พิสูจน์ได้จาก source/prototype โดยยึด Prepare → Suggest → Confirm → Auto-connect, ลด decision/click ที่ไม่จำเป็น, รักษา data correctness และห้ามแก้ schema/architecture นอก scope
+- **Files changed**:
+  - navigation/responsive: `src/components/layout/Sidebar.tsx`, `src/components/ui/segmented-nav.tsx`, `src/app/(app)/insights/page.tsx`
+  - capture/today/tasks: `src/components/domain/QuickCapture.tsx`, `src/app/(app)/today/page.tsx`, `src/components/domain/TaskRow.tsx`, `src/components/planning/DailyPlanForm.tsx`
+  - onboarding/inbox: `src/app/(auth)/onboarding/focus/focus-picker.tsx`, `src/components/inbox/InboxCapture.tsx`, `src/components/inbox/InboxList.tsx`, `src/messages/th.json`
+  - documentation: `docs/ux-redesign-implementation-status.md`, `tracking-log.md`
+- **Reason / context**:
+  - latest Planner prototype/handoff ระบุ active navigation แบบ label emphasis ไม่มี colored left stripe
+  - Quick Capture ต้อง natural input first / manual override second
+  - Today มี capacity และ plan controls ซ้ำ/ห่างจากบริบทที่ใช้งาน
+  - task title ที่เป็น primary decision text ไม่ควรถูกตัด
+  - Insights มี 7 tabs ซึ่งไม่ควรถูกบีบใน header toolbar 4/12 columns
+  - destructive Task deletion ควรมี undo behavior consistent กัน
+- **Result**:
+  - desktop Sidebar active state ตรง prototype ล่าสุดมากขึ้น; tablet `NavigationRail` ยังเป็น remaining finding
+  - Quick Capture ซ่อน manual type override แบบ progressive disclosure
+  - Today ลด duplicate capacity summary, ย้าย Daily Plan controls เข้า context ของ task/priorities และเพิ่ม accessible capacity progressbar
+  - TaskRow/Top Priorities/Daily Plan แสดงชื่อ task แบบ wrap
+  - Insights tabs เป็น full-width horizontally scrollable row และ Life Balance bars มี progressbar semantics
+  - Focus cards มี keyboard focus ring consistent กับ Role picker
+  - Inbox ลด Priority เป็น advanced option โดยยังคง Domain ให้เห็นเพื่อป้องกัน silent Work/Life misclassification; title wrap; delete มี 5-second Undo ก่อนลบจริง
+- **Verification / guardrail boundary**: หลังอ่าน `AGENTS.md`/`CLAUDE.md` พบว่าต้องรัน GitNexus `impact` ก่อนแก้ symbol และ `detect_changes` ก่อน commit แต่ connector รอบนี้ไม่มี GitNexus/shell ให้เรียก จึงหยุด source edits เพิ่มและบันทึก risk นี้เป็น **unresolved**; static read/search sweep ผ่านเฉพาะจุดที่ตรวจได้ แต่ยัง **ห้ามอ้างว่า** lint/typecheck/unit/build/Playwright/browser QA/GitNexus ผ่าน และไม่ควร commit/release จนกว่าจะรัน gates เหล่านั้น
+
+## 2026-09-23 (รอบ 30 — UI Optimization Batch A)
+
+- **Task**: implement the approved Navigation and common shell batch from `docs/Kemtit_UI_Optimization_Implementation_Plan.md`, preserving the current working tree and business behavior.
+- **Files changed**: shared shell/navigation (`NavigationRail.tsx`, `PageHeader.tsx`, `Sidebar.tsx`, `ShellFrame.tsx`, `TopBar.tsx`, `nav-items.ts`, `segmented-nav.tsx`); responsive E2E (`e2e/v2-responsive.spec.ts`) and visual capture (`e2e/qa/batch-a.visual.spec.ts`); approved mockup/implementation status and 12 screenshots under `docs/ui-optimization/qa/batch-a/`.
+- **Result**: Tablet Rail now contains Today, Plan, Inbox, Calendar, Insights, and More; More remains active on secondary Tablet/Mobile routes; Desktop retains direct contextual routes; active navigation uses a subtle tile without a colored stripe; compact headings no longer reserve a 520–600px action gap or truncate titles; short segmented controls stay compact on Desktop and scrollable tabs remain full-width.
+- **Verification**: local TypeScript check passed; Vitest 129 passed / 2 skipped; webpack production build passed; responsive E2E passed on Mobile/Tablet/Desktop; production screenshot capture passed and produced 390×844, 768×1024, and 1440×900 images. Targeted ESLint and Prettier passed.
+- **Lint baseline**: full ESLint remains at the same 5 errors / 209 warnings observed before editing, in `public/sw 2.js`, `public/sw 3.js`, `QuickCapture.tsx`, `generate-v2-notifications.ts`, and `sync-google-calendars.ts`; these are outside Batch A. `pnpm lint` attempted a dependency install and could not reach the package registry, so the installed local binaries were used.
+- **GitNexus**: pre-edit impact was CRITICAL for `PageHeader` and `SegmentedNav`, LOW for the shell/navigation components. Reindex completed; `detect-changes --scope all` reported 91 files / 382 symbols / 279 affected processes at CRITICAL risk across the existing working tree. The graph also warned about cross-language field links and omitted candidate flows; no commit was made.
+- **Guardrail / status**: Batch A is complete. Batch B mockups are now prepared for review; Batch C–G remain staged for their own mockup approvals. The pre-implementation browser screenshot set was not captured; the approved mockups were used as the visual reference.
+
+## 2026-09-23 (รอบ 31 — UI Optimization Batch B mockups)
+
+- **Task**: เตรียม mockup สำหรับ Today และ Quick Capture input/proposal ตาม approval gate ของ `docs/Kemtit_UI_Optimization_Implementation_Plan.md` ก่อนเริ่ม production Batch B
+- **Files changed**: `docs/ui-optimization/mockups/batch-b/` (preview HTML, render script, README, และ review boards 3 ภาพ)
+- **Result**: ทุกบอร์ดแสดง Desktop 1440×900, Tablet 768×1024, Mobile 390×844; Today ใช้ first-day empty states ที่ไม่สร้าง task/เวลา/จำนวนเงิน/ความคืบหน้าสมมติ; Quick Capture แสดงการแก้ proposal ก่อนยืนยันและระบุปลายทางตามวันที่เลือก; ตาม feedback ผู้ใช้ ช่อง domain/วันที่ใน mobile proposal stack แนวตั้งและกว้างเต็มพื้นที่เนื้อหา
+- **Verification**: Chromium render สำเร็จ; PNG ทั้งสามมีขนาด 2770×1308; ตรวจภาพด้วยตาและ `git diff --check` ไม่พบ whitespace error
+- **Guardrail / status**: mockup Batch B พร้อม review แต่ยังไม่ได้รับการอนุมัติ จึงยังไม่เริ่ม production source changes ของ Batch B
+
+## 2026-09-23 (รอบ 32 — UI Optimization Batch C mockups)
+
+- **Task**: เตรียม mockup Inbox และ Tasks ทั้งสาม viewport ก่อนเริ่ม production Batch C และบันทึก route contract ที่ต้องแก้ให้ชัด
+- **Files changed**: `docs/ui-optimization/mockups/batch-c/` (preview HTML, render script, README, และ review boards 2 ภาพ); กติกา mobile content block 100% ใน implementation plan และ Batch B capture board
+- **Result**: Inbox แสดง Title → Domain → Save, advanced priority, Plan Today, delete/Undo; Tasks แสดง search/filter, overdue/planned/done groups, responsive details ที่แยก planned date/deadline/recurrence
+- **Verification**: Chromium render สำเร็จ; review boards แสดง Desktop 1440×900, Tablet 768×1024, Mobile 390×844; ตรวจด้วยตาและ Prettier ผ่านสำหรับ preview sources
+- **Route finding**: `/tasks` redirects to `/inbox?view=planned`, but current Inbox page ignores `view` and only queries `status=inbox`; resolve this contract without changing canonical Task identity during implementation
+- **Guardrail / status**: Batch C mockups พร้อม review; production Batch C ยังไม่เริ่มจนกว่า mockup จะได้รับอนุมัติ
+
+## 2026-09-23 (รอบ 33 — UI Optimization Batch B production)
+
+- **Task**: implement the approved Today and Quick Capture mockups while preserving existing capture actions and canonical data behavior.
+- **Files changed**: Today route, Thai messages, Batch B responsive visual E2E, Batch B QA screenshots/report, implementation-plan and mockup status, tracking log.
+- **Result**: Today now has a full-width Quick Capture entry that preserves current query state; removed the duplicate priority/week count tiles; moved the task list and quick add above advanced plan settings; the empty task state is a subtle in-card message; schedule rows share a neutral, chronological timeline; long titles wrap. Capacity values/progress are shown only when real task estimates, events, or time blocks support the calculation. The capture proposal remains editable, full-width on mobile, and uses the existing confirm flow.
+- **Verification**: targeted ESLint, TypeScript no-emit, and Prettier passed. Responsive visual Playwright passed on Mobile / Tablet / Desktop (3/3); the Mobile run also checked 360px minimum width, no body overflow, first-screen quick task input, full-width capture block, and equal title/date field widths. Screenshots were reviewed and anonymize the local test account.
+- **Environment**: pnpm exec attempted a package-manager bootstrap and failed because registry access was unavailable; the installed local binaries were used. Existing Next dev logs showed a browser-side caret-color hydration mismatch plus an onboarding RadioGroup warning; only the Next dev portal is hidden in review screenshots. Production build/screenshot verification remains part of final plan QA.
+- **GitNexus**: refresh completed after a sandbox lock failure on the first attempt. QuickCapture/QuickAddHost impact was LOW. TaskList impact was CRITICAL because it has many callers; its shared implementation was not edited, and Today uses the pre-existing plain variant locally. TodayPage impact returned UNKNOWN; text search confirmed the page is only defined at the route entry, so the UNKNOWN result was not treated as an all-clear.
+- **Guardrail / status**: Batch B is implemented and visually verified. Batch C mockups are approved and queued next; Batches D–G remain staged for their own mockup approval.
+
+## 2026-09-26 — Full functionality review and Chrome QA
+
+- **Task**: Review/fix demonstrated bugs, exercise saved data through Google Chrome, and perform scoped refactoring while preserving the existing dirty checkout.
+- **Changes**: repaired truncated QuickCapture/TaskForm; typed capture payload dispatch; configured capacity correction; date-keyed TimeBlockForm; Calendar event/bill/block context; Sales/GoalCard mobile width; Notes/dialog focus; starter empty state; collapsed sidebar names; precise Rescue recurring reason; extracted job queries into server-only core helpers. No broad architecture rewrite.
+- **Evidence**: docs/qa/full-functionality-2026-09-26/README.md and coverage.md; 61 Chrome checkpoints, 125 screenshots, 40 baseline plus 24 final responsive measurements. Separate local QA account with QA26 records retained for review.
+- **Verification**: 200 unit tests passed / 2 integration scenarios skipped by default; the 2 integration scenarios passed explicitly against local Supabase. Production webpack build, fresh TypeScript check, git diff --check passed. Full ESLint: 0 errors / 10 warnings. Existing additive Daily Notes migration applied locally only.
+- **GitNexus**: pre-edit impacts reviewed; final index 7,875 nodes / 17,700 edges / 573 flows; detect_changes across the entire dirty checkout reported 563 symbols / 364 processes / 141 files, CRITICAL. No commit.
+- **Boundary**: permanent-delete test awaiting user confirmation; real Google Calendar/LINE integrations unavailable and upload flag disabled. Capacity and starter fixes have regression tests but no exact isolated post-fix Chrome replay. Every-control/production-wide coverage not certified. No remote migration or deployment; review server on 127.0.0.1:3101.
+
+## 2026-09-27 — Chrome QA continuation and atomic task scheduling
+
+- **Changes**: separate planned/deadline labels; atomic task/occurrence/inbox/Form/Review date and linked-block moves; safe overlap/locked/anchor/recurrence errors; Finance/goals QueryError propagation; contextual date-picker names; Quick Capture focus restoration. Preserved unrelated dirty-checkout changes.
+- **Verification**:245 unit tests passed /3 default integration skips; all3 local integration suites explicitly passed. Production webpack build, fresh route types/tsc, git diff --check passed. Full lint0errors/10existing warnings. Local DB lint only existing unused v_entry warning. Additive migration20260927100000 applied locally only.
+- **Chrome**:95 checkpoints/159 screenshots total; atomic rollback/moves/date preservation and mobile dialog/date-picker/focus regressions verified. Capacity baseline360−255=105 stayed consistent as linked blocks were added. Finance/Insights agree at net749.50, budget249.50. New6 responsive state checks passed.
+- **Risk/boundary**: GitNexus full dirty scope571symbols/365processes/141files CRITICAL; global process extraction lower-bound. No commit/deploy. Fresh-account onboarding and permanent deletion await pending browser-policy confirmations; real Google Calendar/LINE and uploads unavailable. Full all-control completion not certified. Review server remains127.0.0.1:3101.

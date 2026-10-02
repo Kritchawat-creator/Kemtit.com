@@ -1,0 +1,394 @@
+{
+  "baseline": "Catalog snapshot after touch-first QuickTaskInput correction and before whole-system keyword changes",
+  "locales": {
+    "th": {
+      "beforeLeafCount": 1368,
+      "afterLeafCount": 1369,
+      "updatedCount": 51,
+      "addedCount": 1,
+      "removedKeys": [],
+      "changes": [
+        {
+          "key": "insights.goals.activeHint",
+          "before": "ไม่นับเป้าที่เก็บเข้ากรุหรือข้อมูลแม่แบบ",
+          "after": "ไม่นับเป้าที่เก็บไว้ในคลังหรือข้อมูลแม่แบบ"
+        },
+        {
+          "key": "insights.routine.habitsHint",
+          "before": "ไม่นับกิจวัตรที่เก็บเข้ากรุหรือข้อมูลแม่แบบ",
+          "after": "ไม่นับกิจวัตรที่เก็บไว้ในคลังหรือข้อมูลแม่แบบ"
+        },
+        {
+          "key": "capture.expenseAmountPlaceholder",
+          "before": null,
+          "after": "0.00"
+        },
+        {
+          "key": "notifications.lineNotLinked",
+          "before": "ยังไม่ได้เชื่อม LINE — รับสรุปงานทุกเช้า",
+          "after": "เชื่อม LINE แล้วเลือกการแจ้งเตือนที่ต้องการรับ"
+        },
+        {
+          "key": "workModes.professional",
+          "before": "มืออาชีพ / งานโครงการ",
+          "after": "มืออาชีพ / งานโปรเจกต์"
+        },
+        {
+          "key": "workModes.professionalDescription",
+          "before": "จัดลำดับงานส่งมอบ โครงการ และความคืบหน้า",
+          "after": "จัดลำดับงานส่งมอบ โปรเจกต์ และความคืบหน้า"
+        },
+        {
+          "key": "dashboard.empty.description",
+          "before": "เป้าเดียวก็พอ เข็มทิศจะแตกเป็นงานรายสัปดาห์ให้",
+          "after": "เริ่มจากตั้งเป้าหมายหนึ่งข้อ แล้วเพิ่มเป้าหมายย่อยและงานรายสัปดาห์ในแผนของคุณ"
+        },
+        {
+          "key": "goals.archive",
+          "before": "เก็บเข้ากรุ",
+          "after": "เก็บในคลัง"
+        },
+        {
+          "key": "goals.statusArchived",
+          "before": "เก็บเข้ากรุแล้ว",
+          "after": "เก็บในคลังแล้ว"
+        },
+        {
+          "key": "entries.kpi.streakToGo",
+          "before": "อีก {days} วันครบ 7 วัน",
+          "after": "อีก {days} วันจะครบ 7 วัน"
+        },
+        {
+          "key": "entries.quick.hint",
+          "before": "เข็มและกราฟอัปเดตทันที",
+          "after": "ยอดสะสมและกราฟจะอัปเดตหลังบันทึก"
+        },
+        {
+          "key": "entries.form.note",
+          "before": "รายการ",
+          "after": "หมายเหตุ"
+        },
+        {
+          "key": "settings.notifications.weeklyReviewDescription",
+          "before": "เตือนให้ปิดสัปดาห์และเลือกโฟกัสถัดไป",
+          "after": "ส่งเตือนทาง LINE ให้ทบทวนสัปดาห์และเลือกโฟกัสถัดไป"
+        },
+        {
+          "key": "settings.notifications.habitsDescription",
+          "before": "แจ้งกิจวัตรที่ยังค้างของวันนี้เมื่อเปิดการแจ้งเตือนนี้",
+          "after": "ส่งเตือนทาง LINE เกี่ยวกับกิจวัตรที่ยังไม่ได้ทำวันนี้เมื่อเปิดการแจ้งเตือนนี้"
+        },
+        {
+          "key": "settings.notifications.investmentDescription",
+          "before": "แจ้งเป้าการลงทุนที่ตั้งเป้ารายเดือนไว้",
+          "after": "ส่งเตือนทาง LINE เกี่ยวกับเป้าหมายลงทุนที่กำหนดเป้ารายเดือนไว้"
+        },
+        {
+          "key": "errors.goalArchived",
+          "before": "เป้านี้เก็บเข้ากรุแล้ว",
+          "after": "เป้านี้เก็บไว้ในคลังแล้ว"
+        },
+        {
+          "key": "a11y.brandHome",
+          "before": "ไปหน้าแดชบอร์ด",
+          "after": "ไปหน้าวันนี้"
+        },
+        {
+          "key": "a11y.toggleTask",
+          "before": "ติ๊กว่าเสร็จ: {title}",
+          "after": "สถานะเสร็จของงาน: {title}"
+        },
+        {
+          "key": "tasks.toasts.deleted",
+          "before": "เก็บ “{title}” เข้ากรุแล้ว",
+          "after": "เก็บ “{title}” ไว้ในคลังแล้ว"
+        },
+        {
+          "key": "tasks.toasts.archived",
+          "before": "เก็บ “{title}” เข้ากรุแล้ว",
+          "after": "เก็บ “{title}” ไว้ในคลังแล้ว"
+        },
+        {
+          "key": "tasks.deleteTask",
+          "before": "เก็บงานเข้ากรุ",
+          "after": "เก็บงานในคลัง"
+        },
+        {
+          "key": "today.capacityHeading",
+          "before": "ความจุของวัน",
+          "after": "เวลาที่เหลือวันนี้"
+        },
+        {
+          "key": "today.capacityNeedsData",
+          "before": "เพิ่มเวลาประมาณของงานหรือช่วงเวลาปฏิทิน เพื่อดูความจุจากข้อมูลจริง",
+          "after": "ระบุเวลาที่คาดว่าจะใช้กับงาน หรือจัดเวลาในปฏิทิน เพื่อประเมินเวลาที่เหลือ"
+        },
+        {
+          "key": "inbox.captureHeading",
+          "before": "จับความคิดทันที",
+          "after": "เพิ่มงานในกล่องเข้า"
+        },
+        {
+          "key": "inbox.capturePlaceholder",
+          "before": "มีอะไรที่ต้องจำหรือทำไหม",
+          "after": "งานที่อยากทำหรือเรื่องที่ต้องตาม"
+        },
+        {
+          "key": "inbox.noteComposerHint",
+          "before": "Enter เพื่อบันทึก · Shift+Enter ขึ้นบรรทัดใหม่",
+          "after": "ใช้ปุ่มบันทึก หรือกด Enter · Shift+Enter ขึ้นบรรทัดใหม่"
+        },
+        {
+          "key": "projects.archived",
+          "before": "เก็บโปรเจกต์เข้ากรุแล้ว",
+          "after": "เก็บโปรเจกต์ในคลังแล้ว"
+        },
+        {
+          "key": "projects.archive",
+          "before": "เก็บเข้ากรุ",
+          "after": "เก็บในคลัง"
+        },
+        {
+          "key": "archive.title",
+          "before": "รายการที่เก็บเข้ากรุ",
+          "after": "คลังเก็บ"
+        },
+        {
+          "key": "archive.description",
+          "before": "งาน โปรเจกต์ เป้าหมาย และบันทึกที่เก็บไว้จะอยู่ที่นี่จนกว่าจะกู้คืน",
+          "after": "งาน โปรเจกต์ เป้าหมาย และโน้ตที่เก็บไว้จะอยู่ที่นี่จนกว่าจะกู้คืน"
+        },
+        {
+          "key": "archive.notes",
+          "before": "บันทึก",
+          "after": "โน้ต"
+        },
+        {
+          "key": "archive.empty",
+          "before": "ยังไม่มีรายการที่เก็บเข้ากรุ",
+          "after": "ยังไม่มีรายการในคลัง"
+        },
+        {
+          "key": "archive.taskBlocksCancelledHint",
+          "before": "ช่วงเวลาที่ผูกกับงานจะถูกยกเลิกเมื่อเก็บงานเข้ากรุ การกู้คืนงานจะไม่กู้คืนช่วงเวลาเหล่านั้น",
+          "after": "ช่วงเวลาที่ผูกกับงานจะถูกยกเลิกเมื่อเก็บงานไว้ในคลัง การกู้คืนงานจะไม่กู้คืนช่วงเวลาเหล่านั้น"
+        },
+        {
+          "key": "archive.projectTasksRemainActiveHint",
+          "before": "การเก็บโปรเจกต์เข้ากรุจะไม่เก็บงานที่ผูกไว้ งานยังทำต่อได้และต้องกู้คืนโปรเจกต์แยกกัน",
+          "after": "เมื่อเก็บโปรเจกต์ไว้ในคลัง งานที่ผูกไว้จะยังทำต่อได้ และต้องกู้คืนโปรเจกต์แยกจากงาน"
+        },
+        {
+          "key": "archive.legacyProjectStatusHint",
+          "before": "รายการเก่ากลุ่มนี้ไม่ได้เก็บสถานะก่อนเข้ากรุไว้ การกู้คืนจะตั้งสถานะเป็นกำลังทำ",
+          "after": "รายการเก่ากลุ่มนี้ไม่ได้บันทึกสถานะเดิมของโปรเจกต์ไว้ การกู้คืนจะตั้งสถานะเป็นกำลังทำ"
+        },
+        {
+          "key": "archive.legacyGoalStatusHint",
+          "before": "เป้าหมายที่เก็บเข้ากรุรายการนี้ไม่ได้บันทึกสถานะก่อนหน้า การกู้คืนจะตั้งสถานะเป็นกำลังทำ",
+          "after": "เป้าหมายที่เก็บไว้ในคลังนี้ไม่ได้บันทึกสถานะก่อนหน้า การกู้คืนจะตั้งสถานะเป็นกำลังทำ"
+        },
+        {
+          "key": "life.description",
+          "before": "เป้าหมายและนิสัยในชีวิตใช้ระบบหลักเดียวกับงาน",
+          "after": "ตั้งเป้าหมายส่วนตัวและติดตามกิจวัตรในแต่ละวัน"
+        },
+        {
+          "key": "life.habitsHeading",
+          "before": "นิสัยวันนี้",
+          "after": "กิจวัตรวันนี้"
+        },
+        {
+          "key": "life.habitProgress",
+          "before": "ความคืบหน้านิสัย",
+          "after": "ความคืบหน้ากิจวัตร"
+        },
+        {
+          "key": "habits.title",
+          "before": "ชื่อนิสัย",
+          "after": "ชื่อกิจวัตร"
+        },
+        {
+          "key": "habits.add",
+          "before": "เพิ่มนิสัย",
+          "after": "เพิ่มกิจวัตร"
+        },
+        {
+          "key": "habits.created",
+          "before": "เพิ่มนิสัยแล้ว",
+          "after": "เพิ่มกิจวัตรแล้ว"
+        },
+        {
+          "key": "habits.completed",
+          "before": "ทำเครื่องหมายนิสัยแล้ว",
+          "after": "ทำกิจวัตรแล้ว"
+        },
+        {
+          "key": "habits.uncompleted",
+          "before": "ยกเลิกการทำเครื่องหมายนิสัยแล้ว",
+          "after": "เปลี่ยนกิจวัตรเป็นยังไม่ได้ทำแล้ว"
+        },
+        {
+          "key": "habits.empty",
+          "before": "ยังไม่มีนิสัย ลองเพิ่มสิ่งเล็ก ๆ ที่อยากทำทุกวัน",
+          "after": "ยังไม่มีกิจวัตร ลองเพิ่มสิ่งเล็ก ๆ ที่อยากทำเป็นประจำ"
+        },
+        {
+          "key": "line.dailyBriefProfessional",
+          "before": "สรุปวันนี้สำหรับมืออาชีพ\nงานสำคัญ:\n{tasks}\nภาระงานที่วางไว้: {plannedWorkload}\nความจุคงเหลือ: {remainingCapacity}\nเปิดเข็มทิศ: {url}",
+          "after": "สรุปวันนี้สำหรับมืออาชีพ\nงานสำคัญ:\n{tasks}\nภาระงานที่วางไว้: {plannedWorkload}\nเวลาคงเหลือ: {remainingCapacity}\nเปิดเข็มทิศ: {url}"
+        },
+        {
+          "key": "line.habitReminder",
+          "before": "เตือนนิสัยวันนี้: {title}\nเปิดหน้าชีวิต: {url}",
+          "after": "เตือนกิจวัตรวันนี้: {title}\nเปิดหน้าชีวิต: {url}"
+        },
+        {
+          "key": "pwa.install.iosSteps",
+          "before": "บน iPhone: แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศร) แล้วเลือก “เพิ่มลงหน้าจอโฮม”",
+          "after": "บน iPhone หรือ iPad: แตะปุ่มแชร์ (สี่เหลี่ยมมีลูกศร) แล้วเลือก “เพิ่มลงหน้าจอโฮม”"
+        },
+        {
+          "key": "photos.attachPlaceholder",
+          "before": "ลากวาง หรือแตะเพื่อถ่าย",
+          "after": "ลากวาง หรือแตะเพื่อเลือกรูป"
+        },
+        {
+          "key": "photos.attachHint",
+          "before": "JPG, PNG · ไม่เกิน 10 MB ต่อรูป",
+          "after": "JPG, PNG, WebP · ไม่เกิน 10 MB ต่อรูป"
+        },
+        {
+          "key": "workflowGuide.priorityRule",
+          "before": "คงงานสำคัญที่ยืนยันไว้ก่อน จากนั้นจัดงานอื่นตามวันครบกำหนด งานค้าง ระดับความสำคัญ และเป้าหมายหรือโครงการที่เชื่อมโยง",
+          "after": "คงงานสำคัญที่ยืนยันไว้ก่อน จากนั้นจัดงานอื่นตามวันครบกำหนด งานค้าง ระดับความสำคัญ และเป้าหมายหรือโปรเจกต์ที่เชื่อมโยง"
+        },
+        {
+          "key": "workflowGuide.steps.freelancer.year.2",
+          "before": "แบ่งงานโครงการเป็นช่วงส่งงานและรอบออกใบแจ้งหนี้",
+          "after": "แบ่งงานโปรเจกต์เป็นช่วงส่งงานและรอบออกใบแจ้งหนี้"
+        }
+      ]
+    },
+    "en": {
+      "beforeLeafCount": 1368,
+      "afterLeafCount": 1369,
+      "updatedCount": 21,
+      "addedCount": 1,
+      "removedKeys": [],
+      "changes": [
+        {
+          "key": "shell.area",
+          "before": "Area",
+          "after": "Scope"
+        },
+        {
+          "key": "today.capacityHeading",
+          "before": "Day capacity",
+          "after": "Time left today"
+        },
+        {
+          "key": "today.capacityNeedsData",
+          "before": "Add estimated task time or calendar blocks to calculate capacity from real data",
+          "after": "Add task estimates or scheduled time to see how much time remains."
+        },
+        {
+          "key": "inbox.captureHeading",
+          "before": "Capture quickly",
+          "after": "Add an Inbox task"
+        },
+        {
+          "key": "inbox.capturePlaceholder",
+          "before": "Anything to remember or do?",
+          "after": "A task to do or follow up on"
+        },
+        {
+          "key": "inbox.noteComposerHint",
+          "before": "Enter to save · Shift+Enter for a new line",
+          "after": "Use the Save button, or press Enter. Use Shift+Enter for a new line."
+        },
+        {
+          "key": "settings.notifications.weeklyReviewDescription",
+          "before": "Reminder to close the week and choose the next focus",
+          "after": "Get a LINE reminder to review your week and choose your next focus."
+        },
+        {
+          "key": "settings.notifications.habitsDescription",
+          "before": "Notify about today's incomplete habits when enabled",
+          "after": "Get a LINE reminder about today's incomplete habits when enabled."
+        },
+        {
+          "key": "settings.notifications.investmentDescription",
+          "before": "Notify about investment goals with a monthly target",
+          "after": "Get a LINE reminder about investment goals with a monthly target."
+        },
+        {
+          "key": "a11y.brandHome",
+          "before": "Go to dashboard",
+          "after": "Go to Today"
+        },
+        {
+          "key": "a11y.toggleTask",
+          "before": "Mark done: {title}",
+          "after": "Task completion: {title}"
+        },
+        {
+          "key": "capture.expenseAmountPlaceholder",
+          "before": null,
+          "after": "0.00"
+        },
+        {
+          "key": "insights.finance.ofBudget",
+          "before": "of {amount} budget",
+          "after": "of {amount} total budget"
+        },
+        {
+          "key": "notifications.lineNotLinked",
+          "before": "LINE is not connected — receive a morning task summary",
+          "after": "Connect LINE and choose which reminders to receive."
+        },
+        {
+          "key": "life.description",
+          "before": "Life goals and habits use the same core system as work",
+          "after": "Set personal goals and track daily habits"
+        },
+        {
+          "key": "pwa.install.iosSteps",
+          "before": "On iPhone: tap Share, then choose “Add to Home Screen”",
+          "after": "On iPhone or iPad, tap Share, then choose “Add to Home Screen”"
+        },
+        {
+          "key": "photos.attachPlaceholder",
+          "before": "Drop here or tap to take a photo",
+          "after": "Drop here or tap to choose a photo"
+        },
+        {
+          "key": "photos.attachHint",
+          "before": "JPG, PNG · up to 10 MB per photo",
+          "after": "JPG, PNG, and WebP · up to 10 MB per photo"
+        },
+        {
+          "key": "entries.kpi.streakToGo",
+          "before": "{days} days to 7",
+          "after": "{days, plural, one {# day} other {# days}} to a 7-day streak"
+        },
+        {
+          "key": "entries.quick.hint",
+          "before": "The compass and chart update immediately",
+          "after": "The running total and chart update after saving."
+        },
+        {
+          "key": "dashboard.empty.description",
+          "before": "One goal is enough. Kemtit can break it into weekly work.",
+          "after": "Start with one goal, then add supporting goals and weekly tasks to your plan."
+        },
+        {
+          "key": "line.dailyBriefProfessional",
+          "before": "Today's professional brief\nPriorities:\n{tasks}\nPlanned workload: {plannedWorkload}\nRemaining capacity: {remainingCapacity}\nOpen Kemtit: {url}",
+          "after": "Today's professional brief\nPriorities:\n{tasks}\nPlanned workload: {plannedWorkload}\nTime remaining: {remainingCapacity}\nOpen Kemtit: {url}"
+        }
+      ]
+    }
+  },
+  "uniqueChangedKeys": 54
+}

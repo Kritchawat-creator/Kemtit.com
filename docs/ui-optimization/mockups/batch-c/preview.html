@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kemtit UI Optimization · Batch C mockups</title>
+    <link rel="stylesheet" href="../batch-b/board.css" />
+    <style>
+      .c-board-note {
+        position: absolute;
+        top: 171px;
+        left: 2060px;
+        width: 580px;
+        border-left: 3px solid var(--brand-200);
+        padding: 3px 0 3px 15px;
+        color: var(--secondary);
+        font-size: 14px;
+        line-height: 1.65;
+      }
+      .c-board-note strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--brand-800);
+        font-size: 16px;
+      }
+      .c-board-note ul {
+        margin: 7px 0 0;
+        padding-left: 18px;
+      }
+      .c-board-note li {
+        margin: 4px 0;
+      }
+      .c-page-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .c-page-heading .page-meta {
+        max-width: 700px;
+        line-height: 1.55;
+      }
+      .c-capture-panel {
+        margin-top: 17px;
+        border: 1px solid #eeebf4;
+        border-radius: 17px;
+        background: #fff;
+        padding: 17px 19px;
+        box-shadow: 0 5px 15px rgb(122 95 224 / 5%);
+      }
+      .c-panel-title {
+        margin: 0;
+        color: var(--brand-800);
+        font-size: 17px;
+        font-weight: 600;
+      }
+      .c-panel-copy {
+        margin: 2px 0 12px;
+        color: var(--secondary);
+        font-size: 12px;
+      }
+      .c-input {
+        display: flex;
+        min-height: 43px;
+        align-items: center;
+        border: 1.5px solid #d6d2e3;
+        border-radius: 10px;
+        background: #fff;
+        padding: 0 12px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .c-input.filled {
+        color: var(--ink);
+      }
+      .c-domain-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        margin-top: 11px;
+      }
+      .c-domain-field {
+        flex: 1;
+        min-width: 0;
+      }
+      .c-field-caption {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--secondary);
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .c-select {
+        display: flex;
+        min-height: 40px;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        padding: 0 11px;
+        color: var(--ink);
+        font-size: 12px;
+      }
+      .c-advanced {
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: var(--subtle);
+        padding: 9px 12px;
+        color: var(--secondary);
+        font-size: 12px;
+      }
+      .c-advanced-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 9px;
+        border-top: 1px solid var(--line);
+        padding-top: 9px;
+      }
+      .c-list-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin: 17px 1px 8px;
+      }
+      .c-list-title {
+        margin: 0;
+        color: var(--brand-800);
+        font-size: 17px;
+        font-weight: 600;
+      }
+      .c-muted-link {
+        color: var(--brand-600);
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .c-inbox-list {
+        overflow: hidden;
+        border: 1px solid #eeebf4;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 5px 15px rgb(122 95 224 / 5%);
+      }
+      .c-inbox-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px 20px;
+        border-bottom: 1px solid var(--line);
+        padding: 15px 17px;
+      }
+      .c-inbox-row:last-child {
+        border-bottom: 0;
+      }
+      .c-row-copy {
+        min-width: 0;
+      }
+      .c-row-title {
+        margin: 0;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+      }
+      .c-row-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px 9px;
+        margin-top: 6px;
+        color: var(--secondary);
+        font-size: 11px;
+      }
+      .c-domain-tag {
+        display: inline-flex;
+        min-height: 23px;
+        align-items: center;
+        gap: 5px;
+        border-radius: 20px;
+        background: #f3f0ff;
+        padding: 0 9px;
+        color: var(--brand-800);
+        font-size: 11px;
+      }
+      .c-domain-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #8b72ea;
+      }
+      .c-priority {
+        display: inline-flex;
+        min-height: 22px;
+        align-items: center;
+        border-radius: 8px;
+        background: var(--subtle);
+        padding: 0 8px;
+        color: var(--secondary);
+        font-size: 10px;
+      }
+      .c-row-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 7px;
+      }
+      .c-date {
+        display: flex;
+        min-height: 37px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        padding: 0 9px;
+        color: var(--secondary);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .c-icon-button {
+        display: inline-flex;
+        width: 38px;
+        height: 38px;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: var(--secondary);
+        font-size: 16px;
+      }
+      .c-undo-toast {
+        position: absolute;
+        z-index: 5;
+        right: 24px;
+        bottom: 24px;
+        display: flex;
+        min-height: 52px;
+        align-items: center;
+        gap: 14px;
+        border: 1px solid #ded8ef;
+        border-radius: 13px;
+        background: #fff;
+        padding: 8px 13px;
+        box-shadow: 0 8px 25px rgb(39 30 66 / 15%);
+        color: var(--ink);
+        font-size: 12px;
+      }
+      .c-undo-action {
+        display: inline-flex;
+        min-height: 34px;
+        align-items: center;
+        border-radius: 9px;
+        background: var(--brand-50);
+        padding: 0 11px;
+        color: var(--brand-800);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .c-task-tools {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin-top: 18px;
+      }
+      .c-search {
+        display: flex;
+        min-height: 43px;
+        flex: 1;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid #d6d2e3;
+        border-radius: 11px;
+        background: #fff;
+        padding: 0 12px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .c-filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin: 11px 0 16px;
+      }
+      .c-filter {
+        display: inline-flex;
+        min-height: 32px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: #fff;
+        padding: 0 12px;
+        color: var(--secondary);
+        font-size: 11px;
+      }
+      .c-filter.active {
+        border-color: #d8cff4;
+        background: var(--brand-50);
+        color: var(--brand-800);
+        font-weight: 600;
+      }
+      .c-task-group {
+        margin-top: 13px;
+      }
+      .c-group-title {
+        margin: 0 0 5px;
+        color: var(--secondary);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .c-task-list {
+        overflow: hidden;
+        border: 1px solid #eeebf4;
+        border-radius: 14px;
+        background: #fff;
+      }
+      .c-task-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid var(--line);
+        padding: 11px 13px;
+      }
+      .c-task-row:last-child {
+        border-bottom: 0;
+      }
+      .c-task-row.selected {
+        background: #faf8ff;
+      }
+      .c-check {
+        display: flex;
+        width: 25px;
+        height: 25px;
+        flex: 0 0 25px;
+        align-items: center;
+        justify-content: center;
+        border: 1.5px solid var(--brand-200);
+        border-radius: 50%;
+        color: transparent;
+      }
+      .c-task-row.done .c-check {
+        border-color: var(--green);
+        background: var(--green);
+        color: #fff;
+      }
+      .c-task-copy {
+        min-width: 0;
+        flex: 1;
+      }
+      .c-task-title {
+        margin: 0;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
+      .c-task-row.done .c-task-title {
+        color: var(--secondary);
+        text-decoration: line-through;
+      }
+      .c-task-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+        margin-top: 4px;
+        color: var(--secondary);
+        font-size: 10px;
+        line-height: 1.5;
+      }
+      .c-task-meta strong {
+        color: var(--secondary);
+        font-weight: 600;
+      }
+      .c-repeat {
+        color: var(--brand-800);
+      }
+      .c-open-indicator {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .c-detail-layer {
+        position: absolute;
+        z-index: 6;
+        inset: 0;
+      }
+      .c-detail-layer .dimmed {
+        position: absolute;
+        inset: 0;
+        background: rgb(32 28 45 / 38%);
+      }
+      .c-detail-modal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 610px;
+        max-height: 88%;
+        transform: translate(-50%, -50%);
+        overflow-y: auto;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: #fff;
+        padding: 22px 24px;
+        box-shadow: 0 22px 65px rgb(22 17 44 / 28%);
+      }
+      .c-detail-title {
+        margin: 13px 0 3px;
+        color: var(--ink);
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+      .c-detail-copy {
+        margin: 0;
+        color: var(--secondary);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      .c-detail-date-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-top: 13px;
+      }
+      .c-detail-date {
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: #fff;
+        padding: 9px 10px;
+      }
+      .c-detail-date strong {
+        display: block;
+        color: var(--secondary);
+        font-size: 10px;
+        font-weight: 500;
+      }
+      .c-detail-date span {
+        display: block;
+        margin-top: 2px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .c-mark-done {
+        width: 100%;
+        min-height: 41px;
+        margin-top: 12px;
+        border: 0;
+        border-radius: 11px;
+        background: var(--brand-500);
+        color: #fff;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      .c-reschedule {
+        margin-top: 14px;
+        border-top: 1px solid var(--line);
+        padding-top: 11px;
+      }
+      .c-reschedule-title {
+        margin: 0 0 8px;
+        color: var(--secondary);
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .c-actions-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .c-action-chip {
+        display: inline-flex;
+        min-height: 31px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        padding: 0 9px;
+        color: var(--secondary);
+        font-size: 10px;
+      }
+      .c-subtasks {
+        margin-top: 13px;
+        border-top: 1px solid var(--line);
+        padding-top: 10px;
+      }
+      .c-subtasks h4 {
+        margin: 0;
+        color: var(--secondary);
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .c-subtasks p {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .c-detail-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 13px;
+      }
+      .c-detail-actions .outline-btn,
+      .c-detail-actions .text-btn {
+        min-height: 36px;
+        flex: 1;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .c-detail-actions .text-btn {
+        color: #6e1f23;
+      }
+
+      .screen-ui.tablet .c-domain-row {
+        align-items: stretch;
+      }
+      .screen-ui.tablet .c-inbox-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .screen-ui.tablet .c-row-actions {
+        justify-content: flex-start;
+      }
+      .screen-ui.tablet .c-page-heading .page-meta {
+        max-width: 480px;
+      }
+      .screen-ui.mobile .c-page-heading {
+        display: block;
+      }
+      .screen-ui.mobile .c-page-heading .primary-btn {
+        margin-top: 8px;
+      }
+      .screen-ui.mobile .c-page-heading .page-meta {
+        font-size: 11px;
+      }
+      .screen-ui.mobile .c-capture-panel {
+        margin-top: 12px;
+        padding: 12px;
+      }
+      .screen-ui.mobile .c-panel-title {
+        font-size: 14px;
+      }
+      .screen-ui.mobile .c-panel-copy {
+        margin-bottom: 9px;
+        font-size: 10px;
+      }
+      .screen-ui.mobile .c-input {
+        min-height: 42px;
+        font-size: 11px;
+      }
+      .screen-ui.mobile .c-domain-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        margin-top: 9px;
+      }
+      .screen-ui.mobile .c-domain-field,
+      .screen-ui.mobile .c-domain-row .primary-btn {
+        width: 100%;
+      }
+      .screen-ui.mobile .c-domain-row .primary-btn {
+        min-height: 40px;
+      }
+      .screen-ui.mobile .c-select {
+        width: 100%;
+        min-height: 40px;
+      }
+      .screen-ui.mobile .c-advanced {
+        margin-top: 8px;
+        padding: 8px 10px;
+        font-size: 10px;
+      }
+      .screen-ui.mobile .c-list-head {
+        align-items: flex-start;
+        margin: 13px 1px 7px;
+      }
+      .screen-ui.mobile .c-list-title {
+        font-size: 13px;
+      }
+      .screen-ui.mobile .c-inbox-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 9px;
+        padding: 11px 12px;
+      }
+      .screen-ui.mobile .c-row-title {
+        font-size: 12px;
+      }
+      .screen-ui.mobile .c-row-meta {
+        margin-top: 5px;
+      }
+      .screen-ui.mobile .c-row-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 42px;
+        justify-content: stretch;
+      }
+      .screen-ui.mobile .c-row-actions .c-date {
+        grid-column: 1 / -1;
+        width: 100%;
+      }
+      .screen-ui.mobile .c-row-actions .outline-btn {
+        width: 100%;
+        min-height: 39px;
+      }
+      .screen-ui.mobile .c-icon-button {
+        width: 42px;
+        height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      .screen-ui.mobile .c-undo-toast {
+        right: 10px;
+        bottom: 85px;
+        left: 10px;
+        justify-content: space-between;
+        min-height: 49px;
+        font-size: 10px;
+      }
+      .screen-ui.mobile .c-task-tools {
+        display: block;
+        margin-top: 12px;
+      }
+      .screen-ui.mobile .c-search {
+        width: 100%;
+        min-height: 41px;
+      }
+      .screen-ui.mobile .c-filter-row {
+        flex-wrap: nowrap;
+        overflow: hidden;
+        gap: 5px;
+        margin: 9px 0 12px;
+      }
+      .screen-ui.mobile .c-filter {
+        min-height: 29px;
+        padding: 0 8px;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+      .screen-ui.mobile .c-task-group {
+        margin-top: 10px;
+      }
+      .screen-ui.mobile .c-group-title {
+        margin-bottom: 4px;
+        font-size: 11px;
+      }
+      .screen-ui.mobile .c-task-row {
+        align-items: flex-start;
+        gap: 7px;
+        padding: 10px;
+      }
+      .screen-ui.mobile .c-check {
+        width: 23px;
+        height: 23px;
+        flex-basis: 23px;
+      }
+      .screen-ui.mobile .c-task-title {
+        font-size: 11px;
+      }
+      .screen-ui.mobile .c-task-meta {
+        gap: 3px 8px;
+        font-size: 9px;
+      }
+      .screen-ui.mobile .c-detail-modal {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 92%;
+        transform: none;
+        border: 0;
+        border-radius: 26px 26px 0 0;
+        padding: 9px 19px 21px;
+        box-shadow: 0 -12px 40px rgb(122 95 224 / 20%);
+      }
+      .screen-ui.mobile .c-detail-modal::before {
+        display: block;
+        width: 40px;
+        height: 4px;
+        margin: 0 auto 9px;
+        border-radius: 9px;
+        background: #d6d2e3;
+        content: "";
+      }
+      .screen-ui.mobile .c-detail-title {
+        margin-top: 10px;
+        font-size: 15px;
+      }
+      .screen-ui.mobile .c-detail-date-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 7px;
+        margin-top: 10px;
+      }
+      .screen-ui.mobile .c-detail-date {
+        width: 100%;
+        padding: 8px 10px;
+      }
+      .screen-ui.mobile .c-mark-done {
+        min-height: 40px;
+        margin-top: 10px;
+      }
+      .screen-ui.mobile .c-reschedule {
+        margin-top: 10px;
+        padding-top: 9px;
+      }
+      .screen-ui.mobile .c-actions-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .screen-ui.mobile .c-action-chip {
+        justify-content: center;
+      }
+      .screen-ui.mobile .c-subtasks {
+        margin-top: 10px;
+        padding-top: 9px;
+      }
+      .screen-ui.mobile .c-detail-actions {
+        margin-top: 10px;
+      }
+      .screen-ui.mobile .c-detail-actions .outline-btn,
+      .screen-ui.mobile .c-detail-actions .text-btn {
+        min-height: 38px;
+      }
+      .screen-ui.tablet .c-detail-modal {
+        width: 560px;
+      }
+      .screen-ui.mobile .task-page .page {
+        padding-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="inbox" class="board">
+      <h1>Batch C · Inbox</h1>
+      <p class="subtitle">
+        Capture remains quick, domain is explicit, priority stays advanced, and planning actions
+        keep the same task identity.
+      </p>
+      <div class="viewport-row" id="inbox-frames"></div>
+      <div class="c-board-note">
+        <strong>Inbox decisions</strong>
+        <ul>
+          <li>Title → Domain → Save.</li>
+          <li>Priority stays in a disclosed advanced section.</li>
+          <li>Mobile places the title first, then date and Plan Today; delete stays secondary.</li>
+          <li>Undo remains visible above the bottom navigation.</li>
+        </ul>
+      </div>
+      <div class="board-footer">
+        Illustrative user-captured task text is used only to review row wrapping and actions. It is
+        not a seeded production record. Deletion is shown within the reversible 5-second Undo
+        window.
+      </div>
+    </main>
+
+    <main id="tasks" class="board task-page">
+      <h1>Batch C · Tasks list and task details</h1>
+      <p class="subtitle">
+        Search and filters stay compact, the task list leads, and details separate planned date,
+        deadline, and recurrence.
+      </p>
+      <div class="viewport-row" id="task-frames"></div>
+      <div class="c-board-note">
+        <strong>Task decisions</strong>
+        <ul>
+          <li>Rows wrap long titles and keep category text visible.</li>
+          <li>Overdue / Planned / Done grouping is scannable without per-task cards.</li>
+          <li>
+            Details open in a centered dialog on larger screens and a full-width mobile sheet.
+          </li>
+          <li>Planned date and deadline retain separate labels.</li>
+        </ul>
+      </div>
+      <div class="board-footer">
+        All task titles, dates, and status chips are illustrative layout examples, not actual user
+        records. Existing canonical Task identity is preserved when a task moves from Inbox to a
+        planned date.
+      </div>
+    </main>
+
+    <script>
+      const navItems = [
+        ["⌂", "วันนี้"],
+        ["▦", "แผน"],
+        ["▣", "Inbox"],
+        ["▦", "ปฏิทิน"],
+        ["◷", "Insights"],
+      ];
+      const devices = [
+        ["desktop", "Desktop · 1440 × 900"],
+        ["tablet", "Tablet · 768 × 1024"],
+        ["mobile", "Mobile · 390 × 844"],
+      ];
+
+      function sidebar() {
+        return `<aside class="sidebar"><div class="brand"><span class="mark">✦</span><span>เข็มทิศ</span></div><div class="nav-group"><p class="nav-caption">หลัก</p>${navItems.map(([icon, label]) => `<div class="nav-item ${label === "Inbox" ? "active" : ""}"><span class="nav-icon">${icon}</span>${label}</div>`).join("")}</div><div class="nav-group"><p class="nav-caption">บริบท</p><div class="nav-item"><span class="nav-icon">◎</span>เป้าหมาย</div><div class="nav-item"><span class="nav-icon">♡</span>ชีวิต</div><div class="nav-item"><span class="nav-icon">▤</span>การเงิน</div></div><div class="nav-account">◉　บัญชี</div></aside>`;
+      }
+
+      function rail() {
+        return `<aside class="rail"><span class="mark">✦</span><span class="rail-item">⌂</span><span class="rail-item">▦</span><span class="rail-item active">▣</span><span class="rail-item">▦</span><span class="rail-item">◷</span><span class="rail-item" style="margin-top:auto">⋯</span></aside>`;
+      }
+
+      function mobileNav() {
+        return `<div class="bottom-nav"><div class="bottom-item"><span class="bottom-icon">⌂</span>วันนี้</div><div class="bottom-item"><span class="bottom-icon">▦</span>แผน</div><div class="bottom-item capture"><span class="bottom-icon">+</span></div><div class="bottom-item"><span class="bottom-icon">◷</span>Insights</div><div class="bottom-item"><span class="bottom-icon">⋯</span>เพิ่มเติม</div></div>`;
+      }
+
+      function shell(device, content, overlay = "") {
+        let app;
+        if (device === "desktop") {
+          app = `<div class="app">${sidebar()}<div class="shell-main"><div class="topbar"><span class="top-icon">♧</span><span class="profile-chip"><span class="avatar">ก</span>บัญชี　›</span></div><div class="page">${content}</div></div></div>`;
+        } else if (device === "tablet") {
+          app = `<div class="app">${rail()}<div class="shell-main"><div class="topbar"><span class="top-icon">♧</span><span class="top-icon">◉</span></div><div class="page">${content}</div></div></div>`;
+        } else {
+          app = `<div class="app"><div class="shell-main"><div class="mobile-head"><div class="brand"><span class="mark">✦</span><span>เข็มทิศ</span></div><span class="top-icon">◉</span></div><div class="page">${content}</div></div>${mobileNav()}</div>`;
+        }
+        return `<div class="screen-ui ${device}">${app}${overlay}</div>`;
+      }
+
+      function frame(device, label, content) {
+        return `<section><div class="device-label">${label}</div><div class="frame-wrap ${device}">${shell(device, content.page, content.overlay)}</div></section>`;
+      }
+
+      function inboxPage(device) {
+        const titleLabel = device === "mobile" ? "Inbox" : "Inbox";
+        const actions =
+          device === "mobile"
+            ? `<span class="primary-btn">＋ Quick Capture</span>`
+            : `<span class="primary-btn">＋ Quick Capture</span>`;
+        return `<div class="c-page-heading"><div><p class="eyebrow">${titleLabel}</p><h2 class="page-title">Inbox</h2><p class="page-meta">เก็บทุกอย่างไว้ก่อน แล้วค่อยตัดสินใจว่าจะทำเมื่อไร</p></div>${actions}</div>
+          <section class="c-capture-panel"><h3 class="c-panel-title">จับความคิดทันที</h3><p class="c-panel-copy">เพิ่มงานเข้า Inbox ก่อนกำหนดวันทำ</p><div class="c-input">มีอะไรที่ต้องจำหรือทำไหม</div><div class="c-domain-row"><label class="c-domain-field"><span class="c-field-caption">ด้านของชีวิต / บริบท</span><span class="c-select">เลือกด้าน　⌄</span></label><span class="primary-btn">เก็บเข้า Inbox</span></div><details class="c-advanced"><summary>ตัวเลือกเพิ่มเติม</summary><div class="c-advanced-content"><span>ความสำคัญ</span><span class="c-select" style="min-width:150px">ปกติ　⌄</span></div></details></section>
+          <div class="c-list-head"><h3 class="c-list-title">งานที่ยังไม่ได้วางแผน <span style="font-weight:400">· 1</span></h3><span class="c-muted-link">กลับ Today　›</span></div>
+          <div class="c-inbox-list"><article class="c-inbox-row"><div class="c-row-copy"><p class="c-row-title">ตรวจรายละเอียดนัดหมายและเตรียมเอกสารสำหรับครอบครัว</p><div class="c-row-meta"><span class="c-domain-tag"><i class="c-domain-dot"></i>ครอบครัว</span><span class="c-priority">ความสำคัญ: ปกติ</span></div></div><div class="c-row-actions"><span class="c-date">▦　23 ก.ย. 2569</span><span class="outline-btn">▦　วางวันนี้</span><button class="c-icon-button" aria-label="ลบ">⌫</button></div></article></div>
+          <div class="c-undo-toast"><span>ลบ “ร่างแผนกิจกรรม” แล้ว</span><span class="c-undo-action">เลิกทำ</span></div>`;
+      }
+
+      function taskRows() {
+        return `<section class="c-task-group"><h3 class="c-group-title">ค้าง · 1</h3><div class="c-task-list"><article class="c-task-row selected"><span class="c-check">✓</span><div class="c-task-copy"><p class="c-task-title">เตรียมเอกสารสรุปยอดขายเพื่อส่งให้ทีมก่อนประชุม</p><div class="c-task-meta"><span class="c-domain-tag"><i class="c-domain-dot"></i>งาน</span><span>วางแผน: 23 ก.ย.</span><span><strong>กำหนดส่ง:</strong> 22 ก.ย.</span><span class="c-repeat">↻ ทุกสัปดาห์</span></div></div><span class="c-open-indicator">›</span></article></div></section>
+          <section class="c-task-group"><h3 class="c-group-title">วางแผนแล้ว · 1</h3><div class="c-task-list"><article class="c-task-row"><span class="c-check">✓</span><div class="c-task-copy"><p class="c-task-title">อัปเดตข้อมูลหน้าสินค้าก่อนส่งลิงก์ให้ทีมตรวจ</p><div class="c-task-meta"><span class="c-domain-tag"><i class="c-domain-dot"></i>งาน</span><span>วางแผน: 24 ก.ย.</span><span>ไม่มีวันครบกำหนด</span></div></div><span class="c-open-indicator">›</span></article></div></section>
+          <section class="c-task-group"><h3 class="c-group-title">เสร็จแล้ว · 1</h3><div class="c-task-list"><article class="c-task-row done"><span class="c-check">✓</span><div class="c-task-copy"><p class="c-task-title">ทบทวนข้อความในแคมเปญประจำสัปดาห์</p><div class="c-task-meta"><span class="c-domain-tag"><i class="c-domain-dot"></i>งาน</span><span>เสร็จแล้ว</span></div></div><span class="c-open-indicator">›</span></article></div></section>`;
+      }
+
+      function taskPage() {
+        return `<div class="c-page-heading"><div><p class="eyebrow">รายการและสถานะ</p><h2 class="page-title">งาน</h2><p class="page-meta">ค้นหาและจัดลำดับงานตามวันที่วางแผนและกำหนดส่ง</p></div><span class="primary-btn">＋ เพิ่มงาน</span></div>
+          <div class="c-task-tools"><div class="c-search">⌕　ค้นหางาน</div><span class="c-select" style="min-width:145px">ด้านทั้งหมด　⌄</span></div>
+          <div class="c-filter-row"><span class="c-filter active">ทั้งหมด</span><span class="c-filter">ค้าง</span><span class="c-filter">วางแผนแล้ว</span><span class="c-filter">เสร็จแล้ว</span></div>
+          ${taskRows()}`;
+      }
+
+      function taskDetail() {
+        return `<div class="c-detail-layer"><div class="dimmed"></div><section class="c-detail-modal"><span class="dialog-close">×</span><header class="dialog-header"><h2 class="dialog-title">รายละเอียดงาน</h2><p class="dialog-description">ตรวจวันและการทำซ้ำแยกจากกัน</p></header><div class="c-detail-title">เตรียมเอกสารสรุปยอดขายเพื่อส่งให้ทีมก่อนประชุม</div><div class="c-row-meta"><span class="c-domain-tag"><i class="c-domain-dot"></i>งาน</span><span class="c-repeat">↻ ทุกสัปดาห์</span></div><div class="c-detail-date-grid"><div class="c-detail-date"><strong>วันที่ตั้งใจทำ</strong><span>23 ก.ย. 2569</span></div><div class="c-detail-date"><strong>กำหนดส่ง</strong><span>22 ก.ย. 2569</span></div></div><button class="c-mark-done">✓　ทำเครื่องหมายว่าเสร็จ</button><div class="c-reschedule"><p class="c-reschedule-title">เลื่อนวัน · เปลี่ยนเฉพาะครั้งนี้</p><div class="c-actions-row"><span class="c-action-chip">วันนี้</span><span class="c-action-chip">พรุ่งนี้</span><span class="c-action-chip">สัปดาห์หน้า</span><span class="c-action-chip">เลือกวัน</span></div></div><div class="c-subtasks"><h4>งานย่อย</h4><p>ยังไม่มีงานย่อย　＋ เพิ่มงานย่อย</p></div><div class="c-detail-actions"><span class="outline-btn">แก้ไข</span><span class="text-btn">ลบงาน</span></div></section></div>`;
+      }
+
+      function render(boardId, targetId, contentFactory, hasDetail = false) {
+        const target = document.getElementById(targetId);
+        target.innerHTML = devices
+          .map(([device, label]) => {
+            const page = contentFactory(device);
+            const overlay = hasDetail ? taskDetail() : "";
+            return frame(device, label, { page, overlay });
+          })
+          .join("");
+      }
+
+      render("inbox", "inbox-frames", inboxPage);
+      render("tasks", "task-frames", taskPage, true);
+      const selected = new URLSearchParams(location.search).get("board") || "inbox";
+      document.getElementById(selected)?.classList.add("visible");
+    </script>
+  </body>
+</html>
