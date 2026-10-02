@@ -28,7 +28,7 @@ export function WidgetSkeleton({ rows = 4, variant = "list" }: Props) {
     );
   }
   return (
-    <div className="rounded-xl bg-bg-surface px-5 pt-4 pb-2 shadow-md" aria-hidden="true">
+    <div className="rounded-xl border border-border bg-bg-surface px-5 pt-4 pb-2 shadow-md" aria-hidden="true">
       <div className="flex items-center justify-between">
         <Skeleton className="h-5 w-24" />
         <Skeleton className="h-6 w-16 rounded-full" />

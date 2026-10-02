@@ -1,11 +1,12 @@
 import { Check, Flag } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { cn } from "cn";
 
 import { periodContains } from "@/core/domain/periods";
 import type { GoalTreeNode } from "@/core/goals/queries";
 import { goalUnit } from "@/core/goals/schema";
+import type { AppLocale } from "@/i18n/config";
 import { isAfterISO, type ISODate, todayBkk } from "@/lib/date";
 import { formatNumber, formatPercent, formatValueWithUnit } from "@/lib/format";
 
@@ -46,13 +47,14 @@ const MARKER: Record<WaypointState, string> = {
 export function GoalCascadeTree({ nodes, destination, today = todayBkk(), depth = 0 }: Props) {
   const t = useTranslations();
   const tp = useTranslations("periods");
+  const locale = useLocale() as AppLocale;
   const sorted = [...nodes].sort((a, b) => b.goal.period_start.localeCompare(a.goal.period_start));
 
   return (
     <ol
       className={cn(
         "relative",
-        depth === 0 ? "rounded-xl bg-bg-surface px-5 py-1.5 shadow-md" : "mt-1 ml-10",
+        depth === 0 ? "rounded-xl border border-border bg-bg-surface px-5 py-1.5 shadow-md" : "mt-1 ml-10",
       )}
     >
       {depth === 0 ? (
@@ -82,13 +84,13 @@ export function GoalCascadeTree({ nodes, destination, today = todayBkk(), depth 
         const unit = goalUnit(goal);
         const isMetric = goal.progress.kind === "metric";
         const value = isMetric
-          ? formatValueWithUnit(goal.progress.target ?? 0, unit)
+          ? formatValueWithUnit(goal.progress.target ?? 0, unit, locale)
           : (goal.progress.tasksTotal ?? 0) > 0
-            ? `${formatNumber(goal.progress.tasksDone ?? 0)}/${formatNumber(goal.progress.tasksTotal ?? 0)}`
-            : formatPercent(goal.progress.percent / 100);
+            ? `${formatNumber(goal.progress.tasksDone ?? 0, locale)}/${formatNumber(goal.progress.tasksTotal ?? 0, locale)}`
+            : formatPercent(goal.progress.percent / 100, locale);
         const achieved = isMetric
           ? (goal.progress.current ?? 0) > 0
-            ? t("goals.achieved", { value: formatValueWithUnit(goal.progress.current ?? 0, unit) })
+            ? t("goals.achieved", { value: formatValueWithUnit(goal.progress.current ?? 0, unit, locale) })
             : null
           : (goal.progress.tasksTotal ?? 0) > 0
             ? t("goals.tasksDoneCount", {
@@ -133,7 +135,7 @@ export function GoalCascadeTree({ nodes, destination, today = todayBkk(), depth 
                   ) : null}
                 </span>
                 <span className="block text-caption text-text-secondary">
-                  {periodLabelText(goal.period, tp)}
+                  {periodLabelText(goal.period, tp, locale)}
                   {achieved ? ` · ${achieved}` : ""}
                 </span>
               </span>

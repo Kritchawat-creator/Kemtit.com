@@ -1,11 +1,12 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { updateCurrentValue } from "@/core/goals/actions";
+import type { AppLocale } from "@/i18n/config";
 import { formatValueWithUnit } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ type Props = {
 export function UpdateValueForm({ goal, unit, onDone, onCompleted }: Props) {
   const t = useTranslations();
   const te = useTranslations("errors");
+  const locale = useLocale() as AppLocale;
   const router = useRouter();
   const [value, setValue] = useState<string>(String(goal.current_value));
   const [error, setError] = useState<string | null>(null);
@@ -73,8 +75,8 @@ export function UpdateValueForm({ goal, unit, onDone, onCompleted }: Props) {
         <p id="current-value-hint" className="text-small text-text-secondary">
           {goal.target_value !== null
             ? t("progress.ofTarget", {
-                current: formatValueWithUnit(Number(value) || 0, unit),
-                target: formatValueWithUnit(goal.target_value, unit),
+                current: formatValueWithUnit(Number(value) || 0, unit, locale),
+                target: formatValueWithUnit(goal.target_value, unit, locale),
               })
             : t("goals.updateValueDescription")}
         </p>

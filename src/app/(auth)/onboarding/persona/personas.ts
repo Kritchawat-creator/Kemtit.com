@@ -1,23 +1,26 @@
-import { Briefcase, Clapperboard, GraduationCap, type LucideIcon } from "lucide-react";
+import { Briefcase, GraduationCap, Laptop, type LucideIcon } from "lucide-react";
 
-import { isPersonaEnabled, PERSONA_IDS, type PersonaId } from "@/core/profile/personas";
+import { ROLE_CODES, type RoleCode } from "@/core/profile/roles";
+import type { WorkMode } from "@/core/profile/work-modes";
 import { sellerPersona } from "@/modules/seller/persona";
 
-/**
- * Composition root ของ persona (app/ เป็นชั้นเดียวที่ import ทั้ง core และ modules)
- * persona ที่ยังไม่มี module ใช้ icon placeholder และแสดง "เร็ว ๆ นี้"
- */
-export type PersonaOption = { id: PersonaId; icon: LucideIcon; enabled: boolean };
+export type RoleOption = { id: RoleCode; icon: LucideIcon };
 
-const ICONS: Record<PersonaId, LucideIcon> = {
+const ROLE_ICONS: Record<RoleCode, LucideIcon> = {
+  employee: Briefcase,
   seller: sellerPersona.icon,
-  creator: Clapperboard,
   student: GraduationCap,
-  office: Briefcase,
+  freelancer: Laptop,
 };
 
-export const PERSONA_OPTIONS: PersonaOption[] = PERSONA_IDS.map((id) => ({
+export const ROLE_OPTIONS: RoleOption[] = ROLE_CODES.map((id) => ({
   id,
-  icon: ICONS[id],
-  enabled: isPersonaEnabled(id),
+  icon: ROLE_ICONS[id],
 }));
+
+/** Legacy export kept until remaining V2 work-mode settings are migrated. */
+export type WorkModeOption = { id: WorkMode; icon: LucideIcon };
+export const WORK_MODE_OPTIONS: WorkModeOption[] = [
+  { id: "seller", icon: sellerPersona.icon },
+  { id: "professional", icon: Briefcase },
+];

@@ -52,7 +52,7 @@ function InputOTPSlot({
       data-filled={char ? true : undefined}
       className={cn(
         // ช่องรหัสแยกกล่อง (Claude Design 3b): มุม 10px ขอบ 1.5px · กรอกแล้ว = พื้น brand-50 · ช่องปัจจุบัน = ขอบ brand-500
-        "relative flex h-14 flex-1 items-center justify-center rounded-sm border-[1.5px] border-border bg-bg-surface text-h1 text-text-primary transition-all outline-none aria-invalid:border-danger-500 data-[active=true]:z-10 data-[active=true]:border-brand-500 data-[filled=true]:bg-brand-50",
+        "relative flex h-14 flex-1 items-center justify-center rounded-md border border-border bg-bg-surface shadow-xs text-h1 text-text-primary transition-all outline-none aria-invalid:border-danger-500 data-[active=true]:z-10 data-[active=true]:border-brand-500 data-[filled=true]:bg-brand-50",
         className,
       )}
       {...props}

@@ -1,9 +1,9 @@
 "use client";
 
 import { NotebookPen, Pencil, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "cn";
 
@@ -16,13 +16,14 @@ import {
   type GoalEntryWithGoal,
 } from "@/core/entries/schema";
 import { goalUnit } from "@/core/goals/schema";
+import type { AppLocale } from "@/i18n/config";
 import type { ISODate } from "@/lib/date";
-import { formatThaiDate, formatValueParts } from "@/lib/format";
+import { formatDate, formatValueParts } from "@/lib/format";
+import { ConfirmSheet } from "@/components/domain/ConfirmSheet";
 import { ResponsiveDialog } from "@/components/ui/responsive-dialog";
+import { Button } from "@/components/ui/button";
 
 import { EntryForm } from "./EntryForm";
-
-const UNDO_MS = 5000; // Design §8.5: undo toast แทน confirm
 
 type Props = {
   rows: GoalEntryWithGoal[];
@@ -43,7 +44,7 @@ const ICON_BUTTON =
 
 /**
  * ตารางบันทึกยอด (Claude Design turn 7 D-10): รหัส · วันที่ · รายการ · ช่องทาง · จำนวน · สถานะ · จัดการ
- * แก้ = ResponsiveDialog + EntryForm · ลบ = ซ่อนทันที + undo toast 5 วิ แล้วค่อยยิง action (แพตเทิร์นเดียวกับ TaskList)
+ * แก้ = ResponsiveDialog + EntryForm · ลบ = ยืนยันก่อนเรียก action เพื่อไม่รายงานความสำเร็จก่อนฐานข้อมูลตอบกลับ
  * ปุ่มไอคอน 32px ตามดีไซน์ แต่ขยายพื้นที่กดเป็น 44px ด้วย pseudo-element (Design §7 touch target)
  */
 export function EntriesTable({
@@ -55,6 +56,7 @@ export function EntriesTable({
   emptyState,
 }: Props) {
   const t = useTranslations();
+  const locale = useLocale() as AppLocale;
   const router = useRouter();
   const [hidden, setHidden] = useState<Record<string, boolean>>({});
   const [prevRows, setPrevRows] = useState(rows);
@@ -63,42 +65,38 @@ export function EntriesTable({
     setHidden({});
   }
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
-  const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const [deletingEntry, setDeletingEntry] = useState<GoalEntryWithGoal | null>(null);
+  const [deletePending, setDeletePending] = useState(false);
 
   const visible = rows.filter((row) => !hidden[row.id]);
   const editing = visible.find((row) => row.id === editingId) ?? null;
 
   function remove(row: GoalEntryWithGoal) {
-    const code = entryCode(row.entry_no);
     setEditingId(null);
-    setHidden((prev) => ({ ...prev, [row.id]: true }));
-    const timer = setTimeout(() => {
-      timers.current.delete(row.id);
-      startTransition(async () => {
-        const result = await deleteEntry({ id: row.id });
-        if (!result.ok) {
-          setHidden((prev) => ({ ...prev, [row.id]: false }));
-          toast.error(t("errors.generic"));
-          return;
-        }
-        router.refresh();
-      });
-    }, UNDO_MS);
-    timers.current.set(row.id, timer);
-    toast(t("entries.toasts.deleted", { code }), {
-      duration: UNDO_MS,
-      action: {
-        label: t("common.undo"),
-        onClick: () => {
-          const pending = timers.current.get(row.id);
-          if (pending) clearTimeout(pending);
-          timers.current.delete(row.id);
-          setHidden((prev) => ({ ...prev, [row.id]: false }));
-          toast.success(t("entries.toasts.restored", { code }));
-        },
-      },
-    });
+    setDeletingEntry(row);
+  }
+
+  async function confirmDelete() {
+    if (!deletingEntry || deletePending) return;
+
+    const entry = deletingEntry;
+    setDeletePending(true);
+    try {
+      const result = await deleteEntry({ id: entry.id });
+      if (!result.ok) {
+        toast.error(t("errors.generic"));
+        return;
+      }
+
+      setHidden((prev) => ({ ...prev, [entry.id]: true }));
+      setDeletingEntry(null);
+      toast.success(t("entries.toasts.deleted", { code: entryCode(entry.entry_no) }));
+      router.refresh();
+    } catch {
+      toast.error(t("errors.generic"));
+    } finally {
+      setDeletePending(false);
+    }
   }
 
   if (visible.length === 0) return <>{emptyState ?? null}</>;
@@ -121,7 +119,7 @@ export function EntriesTable({
           <tbody>
             {visible.map((row) => {
               const unit = row.goal ? goalUnit(row.goal) : null;
-              const parts = formatValueParts(row.amount, unit);
+              const parts = formatValueParts(row.amount, unit, locale);
               const status = entryStatus(row.entry_date, today);
               const isAdjustment = row.note === null;
               return (
@@ -130,7 +128,7 @@ export function EntriesTable({
                     {entryCode(row.entry_no)}
                   </td>
                   <td className={cn(TD, "text-text-primary")}>
-                    {formatThaiDate(row.entry_date, "weekday")}
+                    {formatDate(row.entry_date, "weekday", locale)}
                   </td>
                   <td className={cn(TD, "w-full text-text-primary")}>
                     <span className="flex items-center gap-2.5">
@@ -191,6 +189,7 @@ export function EntriesTable({
                         type="button"
                         aria-label={t("common.delete")}
                         onClick={() => remove(row)}
+                        disabled={deletePending}
                         className={cn(
                           ICON_BUTTON,
                           "hover:bg-danger-100 bg-danger-50 text-danger-800",
@@ -233,6 +232,42 @@ export function EntriesTable({
           />
         ) : null}
       </ResponsiveDialog>
+
+      <ConfirmSheet
+        open={deletingEntry !== null}
+        onOpenChange={(open) => {
+          if (!open && !deletePending) setDeletingEntry(null);
+        }}
+        title={t("entries.deleteConfirm.title")}
+        description={
+          deletingEntry
+            ? t("entries.deleteConfirm.description", {
+                code: entryCode(deletingEntry.entry_no),
+              })
+            : undefined
+        }
+      >
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={deletePending}
+            onClick={() => setDeletingEntry(null)}
+          >
+            {t("common.cancel")}
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={deletePending}
+            onClick={() => void confirmDelete()}
+          >
+            {deletePending
+              ? t("entries.deleteConfirm.pending")
+              : t("entries.deleteConfirm.confirm")}
+          </Button>
+        </div>
+      </ConfirmSheet>
     </>
   );
 }

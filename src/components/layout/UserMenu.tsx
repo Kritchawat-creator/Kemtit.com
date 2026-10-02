@@ -4,9 +4,10 @@ import { ChevronDown, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { signOut } from "@/core/auth/actions";
-import type { PersonaId } from "@/core/profile/personas";
+import type { WorkMode } from "@/core/profile/work-modes";
 import { avatarLetter } from "@/lib/format";
 import { LetterAvatar } from "@/components/domain/AvatarSlot";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,17 +23,13 @@ type Props = {
   displayName: string | null;
   email: string | null;
   avatarUrl?: string | null;
-  /** เฉพาะ variant "chip" — โชว์ชื่อโหมดต่อท้ายชื่อในแถบ */
-  persona?: PersonaId | null;
-  /** avatar = ปุ่มวงกลม 40px เดิม (มือถือ) · chip = แถบมีชื่อ+persona บน desktop (Claude Design turn 7, ค่าเริ่มต้น avatar) */
+  /** เฉพาะ variant "chip" — โชว์ WorkMode ต่อท้ายชื่อในแถบ */
+  workMode?: WorkMode | null;
+  /** avatar = ปุ่มวงกลม 40px · chip = แถบมีชื่อ+WorkMode บน desktop */
   variant?: "avatar" | "chip";
 };
 
-/**
- * avatar 40px ขอบขาว + เงา: ตัวอักษรแรกของชื่อบน brand-100/brand-800 (Design §6A) — รูปโปรไฟล์เมื่ออัปโหลด (MVP, flag uploads)
- * → เมนูผู้ใช้ (ออกจากระบบ) · desktop (turn 7): variant "chip" แสดงชื่อ + persona ในแถบข้าง TopBar
- */
-export function UserMenu({ displayName, email, avatarUrl, persona, variant = "avatar" }: Props) {
+export function UserMenu({ displayName, email, avatarUrl, workMode, variant = "avatar" }: Props) {
   const t = useTranslations();
   const label = displayName?.trim() || email || "";
   const letter = avatarLetter(displayName, email);
@@ -44,7 +41,7 @@ export function UserMenu({ displayName, email, avatarUrl, persona, variant = "av
           <button
             type="button"
             aria-label={t("a11y.userMenu")}
-            className="flex h-11 items-center gap-2.5 rounded-full bg-bg-surface py-1 pr-3.5 pl-1 shadow-sm transition-colors hover:bg-brand-50"
+            className="flex h-11 items-center gap-2.5 rounded-lg border border-border bg-bg-surface py-1 pr-3.5 pl-1 shadow-xs transition-colors hover:bg-bg-subtle"
           >
             {avatarUrl ? (
               <Avatar className="size-9 shrink-0 border-2 border-neutral-0 shadow-sm">
@@ -63,9 +60,9 @@ export function UserMenu({ displayName, email, avatarUrl, persona, variant = "av
               <span className="block truncate text-small font-semibold text-text-primary">
                 {label}
               </span>
-              {persona ? (
-                <span className="block truncate text-[11px] font-medium text-accent-900">
-                  {t(`personas.${persona}.name`)}
+              {workMode ? (
+                <span className="block truncate text-caption font-medium text-accent-900">
+                  {t(`workModes.${workMode}`)}
                 </span>
               ) : null}
             </span>
@@ -102,6 +99,13 @@ export function UserMenu({ displayName, email, avatarUrl, persona, variant = "av
         <DropdownMenuLabel className="truncate text-small font-normal text-text-secondary">
           {label}
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <div className="px-2 py-1.5">
+          <p className="mb-1.5 text-caption font-medium text-text-secondary">
+            {t("settings.language.label")}
+          </p>
+          <LanguageSwitcher compact />
+        </div>
         <DropdownMenuSeparator />
         <form action={signOut}>
           <DropdownMenuItem asChild>

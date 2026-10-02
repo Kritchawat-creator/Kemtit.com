@@ -5,30 +5,20 @@ import { cn } from "cn";
 type Props = {
   title: string;
   titleId?: string;
-  /** สิ่งที่วางต่อท้ายหัวข้อ เช่น DomainTag */
   titleAddon?: React.ReactNode;
-  /** บรรทัดเล็กเหนือหัวข้อบนมือถือ / ข้อความรองต่อท้ายหัวข้อบน desktop เช่น "สวัสดีตอนเช้า ปุ๊ก" */
   eyebrow?: string;
   description?: string;
-  /** ข้อมูลรองที่แสดงเฉพาะ desktop (มือถือใช้ `actions` แทน) เช่น เดือนปัจจุบัน */
   meta?: string;
-  /**
-   * Claude Design turn 7: บรรทัด "Kemtit › {breadcrumb}" ใต้หัวข้อบน desktop เท่านั้น (เมื่อมีค่า จะดึง
-   * `meta` มาต่อท้ายบรรทัดนี้แทนที่จะแสดงแยก) — ไม่ส่ง prop นี้ = แสดงผลเหมือนเดิมทุกจุด (impact HIGH 5 หน้า)
-   */
   breadcrumb?: string;
-  /** มุมขวาของหัวข้อบนมือถือเท่านั้น (desktop มุมขวาเป็น persona/avatar) */
   actions?: React.ReactNode;
-  /** toolbar (Claude Design turn 4): ตัวควบคุมซ้าย — มือถือเต็มความกว้างใต้หัวข้อ · desktop 4 คอลัมน์ */
   toolbarStart?: React.ReactNode;
-  /** ปุ่มการกระทำชิดขวาของ toolbar — desktop เท่านั้น (มือถือใช้ FAB) */
   toolbarEnd?: React.ReactNode;
   className?: string;
 };
 
 /**
- * หัวหน้า: มือถือ = H1 brand-800 ชิดล่างกับ actions ขวา · desktop = header 72px (H1 + ข้อมูลรองบน baseline เดียว)
- * ตามด้วย toolbar grid 12 คอลัมน์ (ซ้าย 4 · ขวา 8) เมื่อมี
+ * Prototype-aligned screen header:
+ * eyebrow → large title → supporting copy, with compact date/meta and one toolbar row.
  */
 export async function PageHeader({
   title,
@@ -43,55 +33,90 @@ export async function PageHeader({
   toolbarEnd,
   className,
 }: Props) {
-  // ใช้เฉพาะบรรทัด breadcrumb ("Kemtit › ...") — เรียกไม่มีเงื่อนไขกันปัญหา narrow ชนิดข้าม branch
   const t = await getTranslations();
+
   return (
-    <div className={cn("mb-4 lg:mb-3", className)}>
-      <div className="flex items-end justify-between gap-3 lg:min-h-[72px] lg:items-center lg:pr-[520px] xl:pr-[600px]">
-        <div className="min-w-0 lg:flex lg:flex-wrap lg:items-baseline lg:gap-x-3">
-          {eyebrow ? <p className="text-small text-text-secondary lg:order-2">{eyebrow}</p> : null}
-          <div className="flex min-w-0 items-center gap-2 lg:order-1">
+    <header className={cn("mb-6 min-w-0", className)}>
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3 min-[761px]:gap-4 min-[1151px]:items-end">
+        <div className="min-w-0 flex-1 basis-[280px]">
+          {eyebrow ? (
+            <p className="mb-3 text-caption font-semibold tracking-[.04em] break-words text-text-secondary">
+              {eyebrow}
+            </p>
+          ) : null}
+
+          <div className="flex min-w-0 flex-wrap items-center gap-2.5">
             <h1
               id={titleId}
-              className={cn("min-w-0 truncate text-h1 text-brand-800", breadcrumb && "lg:text-h2")}
+              className="min-w-0 max-w-full text-[clamp(28px,3vw,38px)] leading-[1.08] font-semibold tracking-[-0.04em] break-words text-text-primary"
             >
               {title}
             </h1>
             {titleAddon}
           </div>
+
           {description ? (
-            <p className="mt-0.5 text-small text-text-secondary lg:order-3 lg:mt-0">
+            <p className="mt-2 max-w-3xl text-small leading-relaxed break-words text-text-secondary">
               {description}
             </p>
           ) : null}
+
           {breadcrumb ? (
-            <p className="hidden w-full items-center gap-1.5 text-caption text-text-secondary lg:order-5 lg:flex">
+            <p className="mt-2 hidden min-w-0 flex-wrap items-center gap-1.5 text-caption break-words text-text-secondary min-[1151px]:flex">
               <span>{t("app.nameLatin")}</span>
               <span aria-hidden="true">›</span>
-              <span className="text-brand-800">{breadcrumb}</span>
+              <span className="min-w-0 font-medium text-text-primary">{breadcrumb}</span>
               {meta ? (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span>{meta}</span>
+                  <span className="min-w-0">{meta}</span>
                 </>
               ) : null}
             </p>
-          ) : meta ? (
-            <p className="hidden text-small text-text-secondary lg:order-4 lg:block">{meta}</p>
           ) : null}
         </div>
-        {actions ? <div className="shrink-0 pb-1 lg:hidden">{actions}</div> : null}
+
+        {!breadcrumb && meta ? (
+          <p className="hidden min-w-0 max-w-full rounded-md border border-border bg-bg-surface px-3 py-1.5 text-caption font-medium break-words text-text-secondary shadow-xs min-[1151px]:block">
+            {meta}
+          </p>
+        ) : null}
+
+        {actions ? (
+          <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2 min-[1151px]:hidden">{actions}</div>
+        ) : null}
       </div>
+
       {toolbarStart || toolbarEnd ? (
-        <div className="mt-3 grid grid-cols-12 items-center gap-3 lg:mt-1 lg:min-h-12 lg:gap-6">
-          <div className="col-span-12 lg:col-span-4">{toolbarStart}</div>
+        <div
+          className={cn(
+            "mt-4 min-w-0",
+            toolbarEnd && "grid grid-cols-12 items-center gap-3 min-[1151px]:gap-4",
+          )}
+        >
+          {toolbarStart ? (
+            <div
+              className={cn(
+                "min-w-0",
+                toolbarEnd ? "col-span-12 min-[1151px]:col-span-5" : "max-w-xl",
+              )}
+            >
+              {toolbarStart}
+            </div>
+          ) : null}
+
           {toolbarEnd ? (
-            <div className="hidden lg:col-span-8 lg:flex lg:items-center lg:justify-end lg:gap-3">
+            <div
+              className={cn(
+                "col-span-12 flex min-w-0 flex-wrap items-center justify-start gap-2 min-[1151px]:justify-end",
+                toolbarStart ? "min-[1151px]:col-span-7" : "min-[1151px]:col-span-12",
+              )}
+            >
               {toolbarEnd}
             </div>
           ) : null}
         </div>
       ) : null}
-    </div>
+    </header>
   );
 }

@@ -1,16 +1,24 @@
 import type { MetadataRoute } from "next";
+import { cookies } from "next/headers";
 
+import { isAppLocale, LOCALE_COOKIE } from "@/i18n/config";
+import en from "@/messages/en.json";
+import th from "@/messages/th.json";
 import { brandThemeColor, pageBackgroundColor } from "@/styles/theme";
 
-/** Web App Manifest (Scope §9 PWA) — ติดตั้งได้บน Android/Chrome; iOS ใช้ apple-touch-icon จาก metadata ของ layout */
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const cookieStore = await cookies();
+  const requestedLocale = cookieStore.get(LOCALE_COOKIE)?.value;
+  const locale = isAppLocale(requestedLocale) ? requestedLocale : "th";
+  const app = locale === "en" ? en.app : th.app;
+
   return {
-    name: "เข็มทิศ (Kemtit)",
-    short_name: "เข็มทิศ",
-    description: "เปลี่ยนเป้าใหญ่ทั้งปี ให้เป็นสิ่งที่ต้องทำวันนี้",
-    lang: "th",
+    name: locale === "th" ? `${app.name} (${app.nameLatin})` : app.name,
+    short_name: app.name,
+    description: app.tagline,
+    lang: locale,
     dir: "ltr",
-    start_url: "/dashboard",
+    start_url: "/today",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

@@ -1,0 +1,213 @@
+{
+  "scope": "Primary notices for direct runtime dependencies and four selected output-generating build packages; excludes transitives and deployment output",
+  "notices": [
+    {
+      "package": "@hookform/resolvers",
+      "version": "5.9.1",
+      "declaredLicense": "MIT",
+      "source": "node_modules/@hookform/resolvers/LICENSE",
+      "file": "public/licenses/hookform-resolvers-LICENSE.txt",
+      "sha256": "e8eeb472f0a5889c2c51625b86a3f9b8630680adb9f49a125352e2e426392780"
+    },
+    {
+      "package": "@supabase/ssr",
+      "version": "0.12.6",
+      "declaredLicense": "MIT",
+      "source": "node_modules/@supabase/ssr/LICENSE",
+      "file": "public/licenses/supabase-ssr-LICENSE.txt",
+      "sha256": "9160ff189e4cf92a12db5ed29ab23456307c45d30dfb4dbca76840560670132a"
+    },
+    {
+      "package": "@supabase/supabase-js",
+      "version": "2.115.0",
+      "declaredLicense": "MIT",
+      "source": "node_modules/@supabase/supabase-js/LICENSE",
+      "file": "public/licenses/supabase-supabase-js-LICENSE.txt",
+      "sha256": "334dd6820e2eaeab2064e7c59001b810566728a28a41a7c1dbf69bbee17d0936"
+    },
+    {
+      "package": "class-variance-authority",
+      "version": "0.7.1",
+      "declaredLicense": "Apache-2.0",
+      "source": "node_modules/class-variance-authority/LICENSE",
+      "file": "public/licenses/class-variance-authority-LICENSE.txt",
+      "sha256": "0ccbf956cffc8dcf515809433cb5242ee67c94513d46e48c261d68d0880de406"
+    },
+    {
+      "package": "cn",
+      "version": "0.2.5",
+      "declaredLicense": "MIT",
+      "source": "node_modules/cn/LICENSE",
+      "file": "public/licenses/cn-LICENSE.txt",
+      "sha256": "00ff8408e93e2ecc4d90c0edeabdf434100c3aff50acc5d330e17eccd4a3faa5"
+    },
+    {
+      "package": "date-fns",
+      "version": "4.4.0",
+      "declaredLicense": "MIT",
+      "source": "node_modules/date-fns/LICENSE.md",
+      "file": "public/licenses/date-fns-LICENSE.txt",
+      "sha256": "8d3951c38967b964b1fe259bfd200c2647cc04c858b55a4414e3122a60f1ef4b"
+    },
+    {
+      "package": "date-fns-tz",
+      "version": "3.2.0",
+      "declaredLicense": "MIT",
+      "source": "node_modules/date-fns-tz/LICENSE.md",
+      "file": "public/licenses/date-fns-tz-LICENSE.txt",
+      "sha256": "54a4274bc32c7e4f8db2f4169e7d5a1affab53625573eea780bed67ff7cd1f4b"
+    },
+    {
+      "package": "input-otp",
+      "version": "1.5.0",
+      "declaredLicense": "MIT",
+      "source": "node_modules/input-otp/LICENSE",
+      "file": "public/licenses/input-otp-LICENSE.txt",
+      "sha256": "079031192fea535a245aa64a637d8433c406b82a14f91c3606b1d63e41c00152"
+    },
+    {
+      "package": "lucide-react",
+      "version": "1.41.0",
+      "declaredLicense": "ISC",
+      "source": "node_modules/lucide-react/LICENSE",
+      "file": "public/licenses/lucide-react-LICENSE.txt",
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    {
+      "package": "motion",
+      "version": "13.2.0",
+      "declaredLicense": "MIT",
+      "source": "node_modules/motion/LICENSE.md",
+      "file": "public/licenses/motion-LICENSE.txt",
+      "sha256": "1bf0dc3f7727723e5a032ed12164a47cf92c05204cb1a3485f123c24e2833ed1"
+    },
+    {
+      "package": "next",
+      "version": "16.3.4",
+      "declaredLicense": "MIT",
+      "source": "node_modules/next/license.md",
+      "file": "public/licenses/next-LICENSE.txt",
+      "sha256": "ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224"
+    },
+    {
+      "package": "next-intl",
+      "version": "4.14.2",
+      "declaredLicense": "MIT",
+      "source": "node_modules/next-intl/LICENSE",
+      "file": "public/licenses/next-intl-LICENSE.txt",
+      "sha256": "3b438242e38b0d127759910e579d4d024fb9e5a7a3d9948ed0eac814f391543e"
+    },
+    {
+      "package": "next-themes",
+      "version": "0.4.6",
+      "declaredLicense": "MIT",
+      "source": "node_modules/next-themes/license.md",
+      "file": "public/licenses/next-themes-LICENSE.txt",
+      "sha256": "b5acfd21b3b61508365224c40ec1b03ec71091248baaf989d4be916551e7d532"
+    },
+    {
+      "package": "radix-ui",
+      "version": "1.6.7",
+      "declaredLicense": "MIT",
+      "source": "node_modules/radix-ui/LICENSE",
+      "file": "public/licenses/radix-ui-LICENSE.txt",
+      "sha256": "0e80a2d229d2fd4fc7e8636142ec5d0ff0bc031f14c15b682e2ac01dfd5b5138"
+    },
+    {
+      "package": "react",
+      "version": "19.2.8",
+      "declaredLicense": "MIT",
+      "source": "node_modules/react/LICENSE",
+      "file": "public/licenses/react-LICENSE.txt",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "package": "react-day-picker",
+      "version": "10.0.1",
+      "declaredLicense": "MIT",
+      "source": "node_modules/react-day-picker/LICENSE",
+      "file": "public/licenses/react-day-picker-LICENSE.txt",
+      "sha256": "22cdffdf17a2b6b4d2e1a8c93df0ad35535193b84e6d32ed4945373126f4f3e6"
+    },
+    {
+      "package": "react-dom",
+      "version": "19.2.8",
+      "declaredLicense": "MIT",
+      "source": "node_modules/react-dom/LICENSE",
+      "file": "public/licenses/react-dom-LICENSE.txt",
+      "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+    },
+    {
+      "package": "react-hook-form",
+      "version": "7.87.0",
+      "declaredLicense": "MIT",
+      "source": "node_modules/react-hook-form/LICENSE",
+      "file": "public/licenses/react-hook-form-LICENSE.txt",
+      "sha256": "e8eeb472f0a5889c2c51625b86a3f9b8630680adb9f49a125352e2e426392780"
+    },
+    {
+      "package": "sonner",
+      "version": "2.0.8",
+      "declaredLicense": "MIT",
+      "source": "node_modules/sonner/LICENSE.md",
+      "file": "public/licenses/sonner-LICENSE.txt",
+      "sha256": "da9201378c36ffd81f51ad0b305f3f0981e90bc558789210ad65d1161eec3b7d"
+    },
+    {
+      "package": "tw-animate-css",
+      "version": "1.4.0",
+      "declaredLicense": "MIT",
+      "source": "node_modules/tw-animate-css/LICENSE",
+      "file": "public/licenses/tw-animate-css-LICENSE.txt",
+      "sha256": "039184dfa0a822397b3f45a435b5b1e538721587fbade96b9fa80f86cb354109"
+    },
+    {
+      "package": "zod",
+      "version": "4.5.4",
+      "declaredLicense": "MIT",
+      "source": "node_modules/zod/LICENSE",
+      "file": "public/licenses/zod-LICENSE.txt",
+      "sha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8"
+    },
+    {
+      "package": "serwist",
+      "version": "9.5.12",
+      "declaredLicense": "MIT",
+      "source": "node_modules/serwist/LICENSE",
+      "file": "public/licenses/serwist-LICENSE.txt",
+      "sha256": "ec1b0afc232737d71ccc63dd2e4113933f07cf793c03b920857b98e04591b8e9"
+    },
+    {
+      "package": "@serwist/next",
+      "version": "9.5.12",
+      "declaredLicense": "MIT",
+      "source": "node_modules/@serwist/next/LICENSE",
+      "file": "public/licenses/serwist-next-LICENSE.txt",
+      "sha256": "ec1b0afc232737d71ccc63dd2e4113933f07cf793c03b920857b98e04591b8e9"
+    },
+    {
+      "package": "tailwindcss",
+      "version": "4.3.3",
+      "declaredLicense": "MIT",
+      "source": "node_modules/tailwindcss/LICENSE",
+      "file": "public/licenses/tailwindcss-LICENSE.txt",
+      "sha256": "60e0b68c0f35c078eef3a5d29419d0b03ff84ec1df9c3f9d6e39a519a5ae7985"
+    },
+    {
+      "package": "@tailwindcss/postcss",
+      "version": "4.3.3",
+      "declaredLicense": "MIT",
+      "source": "node_modules/@tailwindcss/postcss/LICENSE",
+      "file": "public/licenses/tailwindcss-postcss-LICENSE.txt",
+      "sha256": "60e0b68c0f35c078eef3a5d29419d0b03ff84ec1df9c3f9d6e39a519a5ae7985"
+    }
+  ],
+  "unresolved": [
+    {
+      "package": "server-only",
+      "version": "0.0.1",
+      "declaredLicense": "MIT",
+      "reason": "No full LICENSE/NOTICE present locally; exact upstream notice provenance not established"
+    }
+  ]
+}

@@ -6,15 +6,15 @@ import localFont from "next/font/local";
  */
 
 /**
- * IBM Plex Sans Thai (Design §4.1) — self-host ผ่าน next/font/local (ไฟล์ woff2 subset thai+latin ใน src/styles/fonts)
+ * IBM Plex Sans Thai (Design §4.1) — self-host ผ่าน next/font/local (ไฟล์ TTF ต้นฉบับจาก Google Fonts ใน src/styles/fonts; ไม่ทำ subset หรือ re-encode)
  * เหตุผล: next/font/google ดาวน์โหลดจาก Google ตอน build → build ล้มถ้าเครือข่าย/Google Fonts มีปัญหา และเพิ่ม LCP
- * ไฟล์มาจาก google-webfonts-helper (OFL 1.1) — ผูกกับ --font-sans ใน globals.css ผ่านตัวแปรนี้
+ * ไฟล์ต้นฉบับและ OFL 1.1 provenance อยู่ใน src/styles/fonts/source-provenance.md — ผูกกับ --font-sans ใน globals.css ผ่านตัวแปรนี้
  */
 export const plexThai = localFont({
   src: [
-    { path: "./fonts/IBMPlexSansThai-400.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/IBMPlexSansThai-500.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/IBMPlexSansThai-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/IBMPlexSansThai-Regular.ttf", weight: "400", style: "normal" },
+    { path: "./fonts/IBMPlexSansThai-Medium.ttf", weight: "500", style: "normal" },
+    { path: "./fonts/IBMPlexSansThai-SemiBold.ttf", weight: "600", style: "normal" },
   ],
   display: "swap",
   variable: "--font-plex-thai",
@@ -22,7 +22,7 @@ export const plexThai = localFont({
 });
 
 /** ค่าเดียวกับ --color-brand-500 — ใช้กับ <meta name="theme-color"> และ manifest เท่านั้น */
-export const brandThemeColor = "#7a5fe0";
+export const brandThemeColor = "#6656e8";
 
 /** ค่าเดียวกับ --color-neutral-50 (พื้นหน้า) — ใช้กับ manifest background_color เท่านั้น */
-export const pageBackgroundColor = "#fbfaff";
+export const pageBackgroundColor = "#f5f7fb";

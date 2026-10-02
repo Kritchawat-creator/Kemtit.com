@@ -1,0 +1,1747 @@
+{
+  "app": {
+    "name": "Kemtit",
+    "nameLatin": "Kemtit",
+    "tagline": "Turn your yearly goals into what matters today"
+  },
+  "shell": {
+    "personalOs": "Personal OS",
+    "area": "Scope",
+    "navigate": "Navigate",
+    "active": "Active"
+  },
+  "common": {
+    "loading": "Loading",
+    "retry": "Try again",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "undo": "Undo",
+    "done": "Done",
+    "comingSoon": "Coming soon",
+    "signOut": "Sign out",
+    "menu": "Menu",
+    "today": "Today",
+    "optional": "Optional"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "today": "Today",
+    "inbox": "Inbox",
+    "reviews": "Reviews",
+    "life": "Life",
+    "finance": "Finance",
+    "projects": "Projects",
+    "workSales": "Sales",
+    "goals": "Goals",
+    "workspace": "Workspace",
+    "routine": "Routine",
+    "calendar": "Calendar",
+    "rescue": "Replan",
+    "plan": "Plan",
+    "insights": "Insights",
+    "more": "More",
+    "settings": "Settings",
+    "quickAdd": "Add",
+    "addGoal": "Add goal",
+    "addTask": "Add task",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu",
+    "entries": "Entries",
+    "tasks": "Tasks",
+    "reports": "Reports",
+    "sectionPrimary": "Primary",
+    "sectionContext": "Context",
+    "sectionMore": "More",
+    "proSoon": "Available on Pro (coming soon)",
+    "search": "Search",
+    "searchPlaceholder": "Search tasks, goals, entries…",
+    "notifications": "Notifications",
+    "addEntry": "Add entry",
+    "expandItem": "Expand {item}",
+    "collapseItem": "Collapse {item}"
+  },
+  "more": {
+    "description": "More Kemtit features use the same data as Today, Plan and Insights",
+    "items": {
+      "inbox": "Capture unplanned tasks and notes",
+      "calendar": "See tasks, events, time blocks and bills by date",
+      "goals": "Manage yearly, monthly and weekly goals",
+      "reviews": "Review the week and choose your next focus",
+      "life": "See routines and daily life",
+      "finance": "Income, expenses, budgets, bills and financial goals",
+      "projects": "Manage projects and connected tasks",
+      "workSales": "Track sales and work goals",
+      "settings": "Profile, context and notifications"
+    }
+  },
+  "planner": {
+    "title": "Plan",
+    "description": "Plan from Year → Month → Week, then turn it into what matters in Today",
+    "viewLabel": "Plan view",
+    "views": {
+      "year": "Year",
+      "month": "Month",
+      "week": "Week"
+    },
+    "addGoal": "Add goal",
+    "previous": "Previous period",
+    "next": "Next period",
+    "today": "Current period",
+    "yearGoals": "Year goals",
+    "months": "Months",
+    "monthGoals": "Month goals",
+    "weeks": "Weeks",
+    "weekGoals": "Week goals",
+    "weekPlan": "Daily plan for this week",
+    "goalCount": "{count} goals",
+    "taskCount": "{count} tasks",
+    "openToday": "Open Today",
+    "openDay": "Open day",
+    "emptyDay": "No tasks for this day",
+    "emptyDayDescription": "Add a task when you decide to do it",
+    "addTask": "Add task"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "views": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "label": "View"
+    },
+    "nav": {
+      "prev": "Previous",
+      "next": "Next",
+      "today": "Today"
+    },
+    "more": "+{count}",
+    "noTasks": "No tasks",
+    "tasksCount": "{count} tasks",
+    "openDay": "Open {date}",
+    "empty": {
+      "title": "No tasks in this period",
+      "description": "Plan ahead to see which days are busy and which are free",
+      "cta": "Add task"
+    },
+    "emptyDay": {
+      "title": "No tasks today",
+      "titleOther": "No tasks on {date}",
+      "description": "Use the button below to add a task for this date",
+      "cta": "Add task"
+    },
+    "todayLabel": "Today · {date}",
+    "emptySelected": "No tasks today",
+    "tasksUnitShort": "tasks",
+    "timelineHint": "Arrange work by actual time to see free gaps and unscheduled work",
+    "availabilityHeading": "Available time",
+    "availabilitySummary": "Free {free} min · Events {busy} min · Work blocks {blocks} min",
+    "allDay": "All day",
+    "billDue": "Bill due",
+    "billDueAmount": "Bill due · {amount}",
+    "billPaid": "Bill paid",
+    "billPaidAmount": "Paid · {amount}",
+    "unscheduled": "Unscheduled tasks",
+    "noUnscheduled": "No unscheduled tasks for this day"
+  },
+  "calendarEvents": {
+    "title": "Calendar events",
+    "eventTitle": "Event name",
+    "description": "Create a Kemtit appointment or choose a connected calendar for a new event.",
+    "newEvent": "Add event",
+    "editEvent": "Edit event",
+    "dateLabel": "Date",
+    "startDate": "Starts on",
+    "lastDay": "Last day",
+    "startTime": "Starts",
+    "endTime": "Ends",
+    "timeZoneHint": "Times use {timezone}. The final displayed date is included.",
+    "allDay": "All day",
+    "blocksTime": "Blocks availability",
+    "destination": "Save to",
+    "destinationChoose": "Choose where to save",
+    "destinationLocal": "Kemtit only",
+    "destinationProvider": "Connected calendar",
+    "providerGoogle": "Google Calendar",
+    "providerOutlook": "Outlook Calendar",
+    "source": "Event source",
+    "sourceLocal": "Kemtit",
+    "sourceImported": "Connected calendar",
+    "save": "Save event",
+    "delete": "Delete event",
+    "deleteConfirmTitle": "Delete calendar event?",
+    "deleteConfirmDescription": "Permanently delete “{title}” from {source}? This can't be undone.",
+    "deleteConfirm": "Delete permanently",
+    "cancel": "Cancel",
+    "conflict": "This event changed in its calendar. Refresh it and review your changes before saving again.",
+    "readOnly": "Reconnect this calendar with edit permission to change this event.",
+    "seriesReadOnly": "Series events cannot be changed here. Open a single occurrence to edit it.",
+    "pending": "Saving to the calendar…",
+    "queued": "This change is queued and has not been sent to the calendar yet.",
+    "outcomeUnknown": "The calendar may have saved this change, but Kemtit did not receive confirmation.",
+    "reconcile": "Check the connected calendar before retrying.",
+    "loadLatest": "Load latest version",
+    "localSingleDay": "Local appointments can last one calendar day. Keep a multi-day event in its connected calendar.",
+    "noEvents": "No calendar events"
+  },
+  "today": {
+    "title": "Today",
+    "greeting": "Hello, {name}",
+    "greetingNoName": "What matters today",
+    "captureEntryDescription": "Capture a task, event or idea and review the suggestion before saving",
+    "openQuickCapture": "Open Quick Capture",
+    "openQuickCaptureShort": "Open",
+    "daySummary": "Ready for today · choose one important thing first",
+    "scopeLabel": "Scope",
+    "topPriorities": "Priorities",
+    "capacity": "Planned time",
+    "minutes": "min",
+    "weekProgress": "This week",
+    "planHeading": "Today's plan",
+    "planDescription": "Choose what moves you forward, then do one thing at a time",
+    "openInbox": "Open Inbox",
+    "emptyTitle": "No tasks today",
+    "emptyDescription": "Add a small task that moves you closer to your goal",
+    "addTask": "Add task",
+    "scheduleHeading": "Today's schedule",
+    "scheduleDescription": "Reserve time for what really matters",
+    "openCalendar": "Open calendar",
+    "allDay": "All day",
+    "calendarEvent": "Event",
+    "timeBlock": "Time block",
+    "noTimeBlocks": "No time blocks yet",
+    "capacityHeading": "Time left today",
+    "capacityNeedsData": "Add task estimates or scheduled time to see how much time remains.",
+    "overCapacity": "Over capacity by {minutes} min",
+    "capacityRemaining": "{minutes} min remaining",
+    "capacityBar": "Planned time ratio",
+    "estimateHint": "{count} tasks have estimates",
+    "capacityBreakdown": "Events use {busy} min · work blocks {blocks} min",
+    "openRescue": "Open replanning assistant",
+    "planSettings": "Plan today",
+    "startHereHeading": "Start with what matters",
+    "startHereDescription": "Today has no real data yet. Start with one thing; Kemtit will not invent activity for you.",
+    "startPriority": "Add today's priority",
+    "startFocusBlock": "Plan a focus block",
+    "startRoutine": "Add a routine",
+    "startGoal": "Set a monthly goal",
+    "routineHeading": "Routine",
+    "routineProgress": "Done {done}/{total} today",
+    "routineEmpty": "No routines added yet",
+    "openRoutine": "View all",
+    "financeHeading": "Finance",
+    "financeGoalProgress": "{percent}% progress",
+    "billDue": "Bill due today",
+    "billDueAmount": "Bill due today · {amount}",
+    "financeEmpty": "No financial goals or real setup yet",
+    "openFinance": "Open finance",
+    "suggestionsHeading": "Suggested next steps",
+    "suggestionsDescription": "These suggestions are not real records until you choose to act",
+    "suggestAddPriority": "Add a task or priority for today",
+    "suggestPlanTime": "Schedule time for what you need to do",
+    "suggestRoutine": "Add a routine you actually want to do",
+    "suggestFinance": "Start your finance setup"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "description": "Capture first, then decide when to do it",
+    "planTask": "Plan task",
+    "captureHeading": "Add an Inbox task",
+    "capturePlaceholder": "A task to do or follow up on",
+    "captureLabel": "New Inbox task",
+    "priority": "Priority",
+    "area": "Life area / context",
+    "advancedOptions": "More options",
+    "priorities": {
+      "high": "High",
+      "normal": "Normal",
+      "low": "Low"
+    },
+    "prioritiesLabel": "Priority: {value}",
+    "capture": "Save to Inbox",
+    "captured": "Task saved to Inbox",
+    "listHeading": "Unplanned tasks {count}",
+    "backToToday": "Back to Today",
+    "quickCapture": "Quick Capture",
+    "notesHeading": "Notes {count}",
+    "notesTitle": "Notes",
+    "notesCount": "{count}",
+    "notesSummary": "Today's notes {count}",
+    "notesEmpty": "No notes for today",
+    "notesEmptyHint": "Capture something to remember without turning it into a task",
+    "addNote": "Add note",
+    "notePlaceholder": "Type something to remember…",
+    "noteComposerHint": "Use the Save button, or press Enter. Use Shift+Enter for a new line.",
+    "noteCreated": "Note added",
+    "noteUpdated": "Note updated",
+    "noteActions": "Actions for {title}",
+    "convertToTask": "Convert to task",
+    "convertPrompt": "Choose the task context",
+    "convertConfirm": "Create task",
+    "noteConverted": "Note converted to task",
+    "noteLinkedTask": "Converted to task",
+    "archive": "Archive note",
+    "archiveNote": "Archive note {title}",
+    "noteArchived": "Note archived",
+    "showMoreNotes": "Show {count} more",
+    "showLessNotes": "Show less",
+    "empty": "Inbox is clear. New tasks will appear here.",
+    "planDate": "Plan date",
+    "planToday": "Plan today",
+    "planned": "Task moved to plan"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile",
+      "displayName": "Display name",
+      "displayNamePlaceholder": "e.g. Alex",
+      "save": "Save name",
+      "savedToast": "Name saved",
+      "email": "Email"
+    },
+    "context": {
+      "title": "Planning context",
+      "description": "Adjust your role, focus areas and default scope without duplicating your existing records",
+      "role": "Primary role",
+      "focusAreas": "Focus Areas",
+      "workMode": "Work mode",
+      "scope": "Default Today scope",
+      "saved": "Context saved"
+    },
+    "planning": {
+      "title": "Working hours & breaks",
+      "description": "Used with events and time blocks to calculate free time without double-counting overlaps",
+      "timezone": "Time zone {timezone}",
+      "workStart": "Work starts",
+      "workEnd": "Work ends",
+      "breakStart": "Break starts (optional)",
+      "breakEnd": "Break ends (optional)",
+      "save": "Save working hours",
+      "saving": "Saving…",
+      "saved": "Working hours saved"
+    },
+    "language": {
+      "title": "Language & Region",
+      "description": "Language changes the UI and calendar era. Time zone remains Bangkok (UTC+7).",
+      "label": "Language",
+      "thai": "Thai",
+      "english": "English",
+      "calendarTitle": "Calendar format",
+      "calendarThai": "Buddhist Era (B.E.)",
+      "calendarEnglish": "Gregorian (A.D.)",
+      "timezoneTitle": "Time zone",
+      "timezoneBangkok": "Bangkok (UTC+7)",
+      "previewThai": "26 September 2569 B.E.",
+      "previewEnglish": "26 September 2026"
+    },
+    "calendar": {
+      "title": "External calendar",
+      "description": "Connect Google Calendar or Outlook to sync calendar events with Kemtit.",
+      "optionalHint": "Connected events appear in Calendar, Plan and Today. Choose a connected calendar when creating an event to save it there.",
+      "providers": {
+        "google": "Google Calendar",
+        "outlook": "Outlook Calendar"
+      },
+      "connectGoogle": "Connect and sync Google Calendar",
+      "connectOutlook": "Connect and sync Outlook Calendar",
+      "lastSynced": "Last synced {date}",
+      "notSyncedYet": "Not synced yet",
+      "syncNow": "Sync now",
+      "working": "Working…",
+      "disconnect": "Disconnect",
+      "reconnect": "Reconnect calendar",
+      "reconnectForEditing": "Reconnect to enable editing",
+      "readOnlyHint": "This connection can show events, but cannot edit them. Reconnect to grant editing access.",
+      "writeEnabled": "Events you explicitly save to this calendar and supported title, time, all-day, and availability edits sync with this account. Tasks and bills are never sent.",
+      "windowHint": "Kemtit syncs calendar events from one year before through one year after today. Changes outside that window are not reconciled.",
+      "syncErrorHint": "The last sync had a problem. Try syncing again or reconnect the account.",
+      "connectionUnavailable": "This connection is unavailable. Reconnect or disconnect it.",
+      "providerUnavailable": "{provider} can’t be connected because this environment isn’t configured for it.",
+      "syncFailed": "Calendar sync failed",
+      "syncSuccess": "Synced {count} changes",
+      "disconnectFailed": "Could not disconnect",
+      "disconnected": "Calendar disconnected",
+      "notConfigured": "Calendar provider unavailable",
+      "notConfiguredHint": "This provider cannot be connected in the current environment.",
+      "notices": {
+        "connected": "Calendar connected and its events were imported.",
+        "sync-error": "Calendar connected, but the first sync failed. Try Sync now.",
+        "connect-error": "Could not connect this calendar. Check provider consent and try again.",
+        "cancelled": "Calendar connection cancelled.",
+        "invalid-state": "The connection expired or could not be verified. Start again.",
+        "not-configured": "This calendar provider is unavailable in this environment."
+      },
+      "connectionStatuses": {
+        "revoked": "Reconnect required",
+        "error": "Unavailable"
+      },
+      "statuses": {
+        "idle": "Ready to sync",
+        "syncing": "Syncing",
+        "ok": "Connected",
+        "error": "Sync issue"
+      }
+    },
+    "line": {
+      "title": "LINE notifications",
+      "description": "Get notified about overdue tasks and completed goals",
+      "linked": "Connected",
+      "notLinked": "Not connected",
+      "linkedSince": "Connected {date}",
+      "connect": "Connect LINE",
+      "disconnect": "Disconnect",
+      "requesting": "Creating code…",
+      "codeTitle": "Connection code",
+      "step1": "Add the Kemtit LINE Official Account",
+      "step2": "Send this code in chat, then return here",
+      "addFriend": "Add friend",
+      "expiresIn": "Code expires in {minutes} minutes",
+      "expired": "Code expired. Request a new one.",
+      "waiting": "Waiting for code from chat…",
+      "newCode": "New code",
+      "linkedToast": "LINE connected",
+      "unlinkedToast": "LINE disconnected",
+      "noBasicId": "The LINE official account is not ready yet. Contact the administrator.",
+      "dryRunHint": "LINE messaging is not connected yet, so messages cannot be sent."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "overdue": "Overdue task alerts via LINE",
+      "overdueDescription": "Once each morning, all overdue tasks in one message",
+      "dailyBrief": "Daily plan summary",
+      "dailyBriefDescription": "Morning summary of priorities and workload via LINE",
+      "weeklyReview": "Weekly review reminder",
+      "weeklyReviewDescription": "Get a LINE reminder to review your week and choose your next focus.",
+      "habits": "Habit reminders",
+      "habitsDescription": "Get a LINE reminder about today's incomplete habits when enabled.",
+      "investment": "Monthly investment reminder",
+      "investmentDescription": "Get a LINE reminder about investment goals with a monthly target.",
+      "savedToast": "Settings saved"
+    },
+    "account": {
+      "title": "Account",
+      "signOut": "Sign out"
+    },
+    "empty": {
+      "title": "More settings coming soon",
+      "description": "Display name, LINE connection and notifications live here",
+      "cta": "Back to dashboard"
+    }
+  },
+  "domains": {
+    "work": "Work",
+    "health": "Health",
+    "family": "Family",
+    "finance": "Finance",
+    "growth": "Growth",
+    "relationships": "Relationships"
+  },
+  "dates": {
+    "pick": "Pick a date",
+    "today": "Today",
+    "clear": "Clear date"
+  },
+  "workModes": {
+    "seller": "Seller / Shop",
+    "sellerDescription": "Turn sales and shop work into today's plan",
+    "professional": "Professional / Projects",
+    "professionalDescription": "Prioritise deliverables, projects and progress"
+  },
+  "scopes": {
+    "all": "All",
+    "work": "Work",
+    "life": "Life"
+  },
+  "a11y": {
+    "brandHome": "Go to Today",
+    "openQuickAdd": "Open add menu",
+    "userMenu": "User menu",
+    "mainNav": "Main navigation",
+    "currentPersona": "Current mode",
+    "progress": "Progress",
+    "openCalendar": "Open calendar",
+    "toggleChildren": "Collapse or expand sub-goals for {title}",
+    "closeDialog": "Close dialog",
+    "goalActions": "Goal actions",
+    "toggleTask": "Task completion: {title}",
+    "openTask": "Open details for {title}",
+    "weekdays": "Days of the week"
+  },
+  "domainFilter": {
+    "all": "All",
+    "work": "Work",
+    "life": "Personal",
+    "label": "Show"
+  },
+  "periods": {
+    "year": "Year",
+    "quarter": "Quarter",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "rangeLabel": "{start} – {end}",
+    "typeLabel": "Period"
+  },
+  "goalKinds": {
+    "metric": "Numeric target",
+    "metricHint": "A numeric target such as revenue 50,000 THB",
+    "execution": "Complete",
+    "executionHint": "Measured from completed sub-goals and tasks"
+  },
+  "progress": {
+    "tasksDone": "Tasks done {done}/{total}",
+    "ofTarget": "{current} of {target}",
+    "remaining": "{remaining} remaining",
+    "perDayNeeded": "Need {amount} per day",
+    "daysLeft": "{days} days left",
+    "noChildren": "No sub-goals or tasks yet",
+    "children": "{count} sub-goals",
+    "label": "Progress",
+    "endsOn": "Ends"
+  },
+  "pace": {
+    "onTrack": "On track",
+    "behind": "Behind",
+    "notStarted": "Not started",
+    "done": "Done"
+  },
+  "planning": {
+    "suggestedPrioritiesHint": "Suggested from your overdue and due tasks. Review or change the selection, then save your plan.",
+    "planOptionsLabel": "Adjust time and notes",
+    "planOptionsSummary": "Daily time budget: {minutes} minutes · {notes}",
+    "noPlanNotes": "No notes",
+    "timeBlockSuggestedSlot": "Suggested free slot for {minutes} minutes. Review the time before scheduling.",
+    "timeBlockDefaultEstimate": "No duration has been set, so this suggestion uses {minutes} minutes. You can adjust it.",
+    "timeBlockNoSuggestedSlot": "No free slot fits this task. Choose another time or adjust the duration.",
+    "topPriorities": "Top 3 priorities today",
+    "topPrioritiesHint": "Selected {count}/{max}",
+    "noPriorityTasks": "No planned tasks for today",
+    "minutesShort": "{minutes} min",
+    "availableMinutes": "Available time today (minutes)",
+    "notes": "Notes for today",
+    "notesPlaceholder": "e.g. Limited time this morning",
+    "savePlan": "Save plan",
+    "saved": "Today's plan saved",
+    "timeBlockTitle": "Time block title",
+    "linkTask": "Link task",
+    "noLinkedTask": "No linked task",
+    "starts": "Starts",
+    "ends": "Ends",
+    "schedule": "Schedule",
+    "timeBlockSaved": "Time block scheduled",
+    "timeBlockUpdated": "Time block updated",
+    "timeBlockCancelled": "Time block cancelled",
+    "timeBlockRestored": "Time block restored",
+    "editTimeBlock": "Edit time",
+    "cancelTimeBlock": "Cancel",
+    "restoreTimeBlock": "Restore"
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again in a moment.",
+    "validation": "Some information is invalid. Check the highlighted fields.",
+    "required": "This field is required",
+    "tooLong": "Too long",
+    "invalidEmail": "Invalid email address",
+    "invalidDate": "Invalid date",
+    "invalidTime": "Invalid time",
+    "invalidTimeRange": "End time must be after start time",
+    "notFound": "Not found",
+    "unauthorized": "Your session expired. Sign in again.",
+    "positive": "Must be greater than 0",
+    "invalidNumber": "Must be a number",
+    "notNegative": "Must not be negative",
+    "focusAreaRequired": "Choose at least one Focus Area",
+    "timeBlockConflict": "This time overlaps an existing block",
+    "timeBlockLocked": "A linked time block is locked. Unlock it before rescheduling the task.",
+    "timeBlockAnchorMissing": "This task has a linked block but no prior planned date. Align the block with the new date before planning it.",
+    "timeBlockAnchorMismatch": "A linked block is not on this task's current planned date. Review the block before rescheduling.",
+    "calendarSyncFailed": "External calendar sync failed. Try again.",
+    "externalCalendarUnavailable": "The connected calendar is unavailable. Try again in a moment.",
+    "externalCalendarConflict": "This event changed in its calendar. Load the latest version before saving.",
+    "externalCalendarOutcomeUnknown": "The calendar may have saved this change, but confirmation was lost. Load the event before trying again.",
+    "otpFormat": "The code must contain 6 digits",
+    "otpInvalid": "The code is invalid or expired. Request a new code.",
+    "otpRateLimited": "Too many code requests. Wait a moment and try again.",
+    "googleAuthFailed": "Google sign-in failed. Try again or use email instead.",
+    "googleAuthCancelled": "Google sign-in was cancelled. Choose another method.",
+    "personaInvalid": "Unknown selection",
+    "personaDisabled": "This option is not available yet. Choose another one.",
+    "billAmountRequired": "Enter the bill amount before marking it paid.",
+    "periodOutsideParent": "This period does not overlap the parent goal. Choose another period or parent.",
+    "notMetric": "This goal is not measured numerically.",
+    "invalidParent": "The parent goal is invalid.",
+    "invalidGoal": "The linked goal is invalid.",
+    "invalidProject": "The linked project is invalid.",
+    "recurringOccurrenceRequired": "This recurring task cannot be moved this way without affecting other occurrences.",
+    "occurrenceOnlyForRecurring": "This action is only available for recurring tasks.",
+    "occurrenceConflict": "This task already has an occurrence on the new date.",
+    "pickWeekday": "Choose at least one day.",
+    "pageTitle": "Something went wrong on this page",
+    "pageDescription": "An unrecoverable error occurred. Reload the page; if it continues, return to the dashboard.",
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "The link may have expired or the data may have been deleted.",
+    "backToDashboard": "Back to dashboard",
+    "photoLimit": "The photo limit has been reached. Remove an old photo before adding another.",
+    "photoType": "Only JPG, PNG and WebP are supported.",
+    "photoInvalid": "This file isn’t a valid supported image. Choose a JPEG, PNG, or WebP image.",
+    "photoDimensions": "This image is too large in pixel dimensions. Choose a smaller image.",
+    "photoTooLarge": "The photo is larger than 10 MB.",
+    "uploadFailed": "Upload failed. Try again.",
+    "uploadUncertain": "The upload may have completed, but the confirmation was lost. Refresh and check the image before trying again.",
+    "featureDisabled": "This feature is not enabled yet.",
+    "tooLarge": "The number is too large.",
+    "goalArchived": "This goal is archived.",
+    "entryOutsidePeriod": "The date is outside this goal period.",
+    "workModeInvalid": "The selected work mode is invalid.",
+    "roleInvalid": "The selected role is invalid.",
+    "focusAreaInvalid": "The selected Focus Area is invalid.",
+    "suggestionPending": "This item is still being added. Try again in a moment.",
+    "captureUnsupported": "This item type is not ready for Quick Capture.",
+    "capturePending": "This item is already being confirmed. Kemtit will not create a duplicate; try again in a moment.",
+    "scopeInvalid": "The selected scope is invalid.",
+    "rescueConflict": "The data changed while you were reviewing the plan. Create a new preview before confirming."
+  },
+  "roles": {
+    "employee": {
+      "name": "Employee",
+      "description": "Manage work, goals, time and daily life in one place"
+    },
+    "seller": {
+      "name": "Seller / Shop",
+      "description": "Connect sales, goals, finance and what needs to happen today"
+    },
+    "student": {
+      "name": "Student",
+      "description": "Plan study, assignments, exams and daily routines"
+    },
+    "freelancer": {
+      "name": "Freelancer",
+      "description": "Manage projects, client work, time, finance and personal life"
+    }
+  },
+  "focusAreas": {
+    "work": {
+      "name": "Work",
+      "description": "Important tasks, projects, goals and deliverables"
+    },
+    "daily_life": {
+      "name": "Daily life",
+      "description": "Errands, personal matters and everyday responsibilities"
+    },
+    "finance": {
+      "name": "Finance",
+      "description": "Budgets, bills, savings and financial goals"
+    },
+    "health": {
+      "name": "Health",
+      "description": "Routines, movement and self-care"
+    },
+    "study": {
+      "name": "Study",
+      "description": "Reading, revision, assignments and learning goals"
+    }
+  },
+  "capture": {
+    "livePreview": "Preview updates as you type",
+    "editDetails": "Edit details (optional)",
+    "typeField": "Type",
+    "title": "Quick Capture",
+    "description": "Type once, then review what Kemtit prepared before saving",
+    "prompt": "What would you like to add?",
+    "placeholder": "e.g. Send the report tomorrow or exercise every week",
+    "hint": "Review the suggested type, date and context before saving. You can edit them.",
+    "smartDefaultsHint": "If you do not specify a context, Kemtit uses your scope, Focus Areas and recent behaviour as defaults. You can change any value before saving.",
+    "estimatedMinutes": "Estimated time (minutes)",
+    "estimatedMinutesOptional": "Optional",
+    "historyDefaultHint": "This default is based on your recent task timing. Edit it or leave it blank.",
+    "continue": "Prepare item",
+    "manualLabel": "Or choose a type",
+    "back": "Edit text",
+    "titleField": "Item title",
+    "proposalLabel": "Review and edit before saving",
+    "domain": "Life area / context",
+    "when": "Date",
+    "goalMonth": "Goal month",
+    "repeat": "Frequency",
+    "targetPerWeek": "Target per week",
+    "amount": "Detected amount",
+    "billAmount": "Bill amount",
+    "billRecurrence": "Bill recurrence",
+    "billRecurrenceOptions": {
+      "none": "One time",
+      "monthly": "Monthly"
+    },
+    "expenseAmount": "Amount spent",
+    "amountOptional": "Unknown for now — leave blank",
+    "expenseAmountPlaceholder": "0.00",
+    "dueDate": "Due date",
+    "occurredOn": "Date spent",
+    "expenseAmountRequired": "An expense needs an amount before saving",
+    "canonicalHint": "After confirmation, Kemtit saves directly to the owning module and other areas link to the same record.",
+    "unsupportedTitle": "This type was detected but cannot be saved automatically yet",
+    "unsupportedDescription": "{type} does not yet have a canonical model that can safely connect every area, so Kemtit will not create a substitute record.",
+    "overrideLabel": "If you intended a different type, choose it below",
+    "confirmHint": "Review the suggestion and save when it is correct.",
+    "save": "Confirm and save",
+    "types": {
+      "task": "Task",
+      "event": "Event",
+      "habit": "Habit",
+      "bill": "Bill",
+      "expense": "Expense",
+      "goal": "Goal",
+      "note": "Note"
+    },
+    "cadence": {
+      "daily": "Daily",
+      "weekly": "Weekly"
+    }
+  },
+  "tasks": {
+    "title": "Tasks",
+    "new": "Add task",
+    "edit": "Edit task",
+    "detail": "Task details",
+    "library": {
+      "description": "Search and review planned work while keeping planned dates and deadlines separate",
+      "searchLabel": "Search by task title",
+      "searchPlaceholder": "Type a task title",
+      "viewLabel": "Show tasks",
+      "views": {
+        "planned": "Active",
+        "all": "All",
+        "done": "Done",
+        "overdue": "Overdue"
+      },
+      "sections": {
+        "overdue": "Overdue",
+        "planned": "Planned",
+        "done": "Done"
+      },
+      "plannedDate": "Planned date",
+      "deadline": "Deadline",
+      "notPlanned": "Not planned",
+      "noDeadline": "No deadline",
+      "empty": "No tasks in this view",
+      "moreResults": "There are more than 200 tasks. Search by title to narrow the results."
+    },
+    "sections": {
+      "overdue": "Past planned date",
+      "today": "Today",
+      "due": "To do",
+      "done": "Done",
+      "upcoming": "Upcoming"
+    },
+    "recurrence": {
+      "label": "Repeat",
+      "none": "One time",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "weekdaysLabel": "Days",
+      "badgeDaily": "Daily",
+      "badgeWeekly": "Weekly"
+    },
+    "form": {
+      "title": "Task title",
+      "titlePlaceholder": "e.g. Reply to pending customer messages",
+      "dueDate": "Plan date",
+      "plannedDate": "Planned date",
+      "deadline": "Deadline (optional)",
+      "domain": "Life area",
+      "pickDomain": "Choose a life area",
+      "goal": "Link goal",
+      "noGoal": "No goal",
+      "project": "Link project",
+      "noProject": "No project",
+      "priority": "Priority",
+      "estimatedMinutes": "Estimated time (minutes)",
+      "notes": "Notes",
+      "notesPlaceholder": "Context, links or details to remember",
+      "submitCreate": "Save task",
+      "submitEdit": "Save changes"
+    },
+    "reschedule": {
+      "label": "Reschedule",
+      "today": "Plan today",
+      "tomorrow": "Tomorrow",
+      "nextWeek": "Next week",
+      "pickDate": "Pick date",
+      "recurringHint": "Move only this occurrence without changing the series schedule",
+      "skip": "Skip this occurrence",
+      "skipped": "Occurrence skipped"
+    },
+    "toasts": {
+      "created": "Task added",
+      "updated": "Task updated",
+      "deleted": "Archived “{title}”",
+      "archived": "Archived “{title}”",
+      "restored": "Restored “{title}”",
+      "rescheduled": "Moved to {date}",
+      "goalCompleted": "Completed “{title}” at 100%"
+    },
+    "meta": {
+      "due": "Due {date}",
+      "plannedFor": "Planned for {date}",
+      "overdueSince": "Overdue since {date}",
+      "goal": "Goal: {title}",
+      "today": "Today",
+      "skipped": "Skipped"
+    },
+    "subtasks": {
+      "heading": "Subtasks",
+      "placeholder": "Add subtask",
+      "add": "Add",
+      "edit": "Edit subtask",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete subtask",
+      "moveUp": "Move subtask up",
+      "moveDown": "Move subtask down",
+      "empty": "No subtasks yet"
+    },
+    "empty": {
+      "today": {
+        "title": "No tasks today",
+        "description": "Add one small task that moves you closer to this month's goal",
+        "cta": "Add task"
+      },
+      "day": {
+        "title": "No tasks on this day",
+        "description": "Add a task to plan ahead",
+        "cta": "Add task"
+      },
+      "goal": {
+        "title": "No tasks linked to this goal",
+        "description": "Tasks are the smallest steps toward a goal",
+        "cta": "Add task"
+      }
+    },
+    "markDone": "Mark done",
+    "markUndone": "Mark not done",
+    "deleteTask": "Archive task",
+    "streakLabel": "{days}-day streak"
+  },
+  "insights": {
+    "title": "Insights",
+    "description": "Understand what is happening from your real data, separate from Weekly Review where you reflect and decide",
+    "tabsLabel": "Report type",
+    "tabs": {
+      "overview": "Overview",
+      "productivity": "Productivity",
+      "time": "Time",
+      "finance": "Finance",
+      "goals": "Goals",
+      "routine": "Routine",
+      "lifeBalance": "Life Balance"
+    },
+    "metrics": {
+      "tasks": "Tasks completed",
+      "time": "Planned time",
+      "routine": "Routine",
+      "finance": "Net finance",
+      "thisWeek": "This week",
+      "thisMonth": "This month",
+      "plannedTime": "Total time blocks this week",
+      "habitTarget": "Completed occurrences vs weekly target",
+      "netThisMonth": "Income minus expenses this month"
+    },
+    "overview": {
+      "direction": "Direction from current data",
+      "activeGoals": "Active goals",
+      "averageGoalProgress": "Average active-goal progress",
+      "streak": "Task streak"
+    },
+    "productivity": {
+      "completionRate": "Completion rate",
+      "tasksDone": "Tasks completed",
+      "ofTasks": "of {total} tasks due this week",
+      "streak": "Task streak",
+      "streakHint": "Counts only days with real completed tasks"
+    },
+    "time": {
+      "blocks": "Time Blocks",
+      "planned": "Scheduled time",
+      "plannedHint": "Total time blocks you actually created",
+      "average": "Average per block",
+      "averageHint": "Calculated from real time blocks"
+    },
+    "finance": {
+      "income": "Income",
+      "expense": "Expenses",
+      "balance": "Net balance",
+      "net": "Income − expenses",
+      "budgetRemaining": "Budget remaining",
+      "noBudget": "No monthly budget set",
+      "ofBudget": "of {amount} total budget",
+      "bills": "Bills this month",
+      "dueBills": "Due",
+      "paidBills": "Paid"
+    },
+    "goals": {
+      "active": "Active goals",
+      "activeHint": "Excludes archived goals and template data",
+      "completed": "Completed goals",
+      "completedHint": "Real goals with completed status",
+      "averageProgress": "Average progress",
+      "averageHint": "Active goals only"
+    },
+    "routine": {
+      "today": "Today's routine",
+      "todayHint": "Completed vs active habits",
+      "week": "This week's routine",
+      "weekHint": "Actual completions vs weekly targets",
+      "habits": "Active habits",
+      "habitsHint": "Excludes archived habits and template data"
+    },
+    "lifeBalance": {
+      "title": "Where your focus is going",
+      "description": "Counts active goals, this week's tasks and real routines by life area",
+      "items": "{count} items",
+      "disclaimer": "This chart only describes the distribution of existing data. It is not a quality-of-life score and does not say one allocation is better than another."
+    },
+    "values": {
+      "days": "{count} days"
+    }
+  },
+  "pro": {
+    "tierFree": "Free plan",
+    "tierPro": "Pro plan",
+    "pitch": "Pro: unlimited goals · weekly reports",
+    "upgrade": "Upgrade to Pro",
+    "comingSoon": "Pro subscriptions are coming soon",
+    "badge": "PRO"
+  },
+  "notifications": {
+    "overdue": "{count} overdue tasks",
+    "lineNotLinked": "Connect LINE and choose which reminders to receive.",
+    "empty": "No new notifications"
+  },
+  "auth": {
+    "title": "Sign in to Kemtit",
+    "subtitle": "Enter your email and we'll send a 6-digit code. No password needed.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "sendCode": "Send verification code",
+    "sending": "Sending…",
+    "codeTitle": "Enter the code sent to {email}",
+    "codeHint": "The 6-digit code expires in 10 minutes. Verification starts automatically when complete.",
+    "codeLabel": "6-digit verification code",
+    "verifying": "Verifying…",
+    "verify": "Verify",
+    "resend": "Send a new code",
+    "resendIn": "You can resend in {seconds} seconds",
+    "changeEmail": "Change email",
+    "codeSent": "Code sent. Check your email and spam folder.",
+    "or": "or",
+    "googleSignIn": "Continue with Google",
+    "googleSigningIn": "Signing in with Google…",
+    "consent": "By signing in, you allow Kemtit to store your email for authentication and notifications only.",
+    "codeTitleShort": "Enter the code sent to"
+  },
+  "personas": {
+    "seller": {
+      "name": "Online seller",
+      "description": "Connect this month's sales target to today's tasks"
+    },
+    "creator": {
+      "name": "Creator",
+      "description": "Plan content toward your audience goals"
+    },
+    "student": {
+      "name": "Student",
+      "description": "Count down to exams with a study plan"
+    },
+    "office": {
+      "name": "Office professional",
+      "description": "Quarterly OKRs with weekly reviews"
+    }
+  },
+  "rescue": {
+    "title": "Replan",
+    "dateLabel": "Date {date}",
+    "openCalendar": "Open calendar",
+    "backToToday": "Back to Today",
+    "capacityLabel": "Day capacity summary",
+    "capacitySummary": "{free} min free · {tasks} min of tasks still need scheduling",
+    "previewHeading": "Replan preview",
+    "previewDescription": "Review before confirming. Kemtit will not move deadlines or locked time blocks.",
+    "itemsLabel": "Replan items",
+    "unplacedMinutes": "{minutes} min could not be placed",
+    "noPlacement": "No continuous time slot available",
+    "recurringOccurrenceRequired": "This recurring task needs a time block linked to this occurrence before Rescue can reschedule it.",
+    "deadlineRisk": "Warning: the proposed date may be after the deadline",
+    "confirm": "Confirm this plan",
+    "noChanges": "No items need to move",
+    "undo": "Undo replanning",
+    "applied": "New plan confirmed",
+    "undone": "Replanning undone",
+    "actions": {
+      "keep": "Keep",
+      "move": "Move",
+      "unplaced": "Unplaced",
+      "atRisk": "At risk"
+    }
+  },
+  "reviews": {
+    "title": "Weekly Review",
+    "description": "Close the week clearly and choose your next focus",
+    "statsHeading": "Week overview",
+    "tasksCompleted": "Tasks completed this week",
+    "habitsCompleted": "Habit completions vs weekly target",
+    "plannedTime": "Time scheduled this week",
+    "weekOf": "Week of {date}",
+    "saved": "Review saved",
+    "weekNavigation": "Choose a week to review",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "previousReference": "A previous review is available for reference only",
+    "carryoverTitle": "Carry unfinished tasks into next week",
+    "carryoverDescription": "The same tasks will be planned on the first day of next week without changing their deadlines",
+    "carryoverAction": "Carry selected tasks forward",
+    "carryoverSaved": "Carried {count} tasks into next week",
+    "deadline": "Deadline {date}",
+    "deadlineConflict": "Some tasks have a deadline before the selected date and were not moved",
+    "form": {
+      "title": "Review notes",
+      "wins": "What went well?",
+      "winsPlaceholder": "A small win or something worth remembering",
+      "blockers": "What got in the way?",
+      "blockersPlaceholder": "What slowed you down or should change?",
+      "nextFocus": "Next focus",
+      "nextFocusPlaceholder": "The most important thing for next week",
+      "submit": "Save review"
+    }
+  },
+  "projects": {
+    "title": "Projects",
+    "description": "Group ongoing work that needs to move toward a goal",
+    "createHeading": "Create project",
+    "listHeading": "Active projects {count}",
+    "empty": "No projects yet. Create one to group related work.",
+    "created": "Project created",
+    "updated": "Project saved",
+    "archived": "Project archived",
+    "summary": "Project overview",
+    "progress": "Progress",
+    "plannedWorkload": "Planned workload",
+    "targetDateLabel": "Target date",
+    "backToList": "Back to projects",
+    "archive": "Archive",
+    "tasks": "Project tasks",
+    "addTask": "Add task",
+    "emptyTasks": "No tasks in this project yet",
+    "emptyTasksDescription": "Add the next task to keep the project moving",
+    "notFound": "Project not found",
+    "targetDate": "Target {date}",
+    "form": {
+      "title": "Project name",
+      "titlePlaceholder": "e.g. Launch the new collection",
+      "goal": "Link work goal",
+      "noGoal": "No linked goal",
+      "description": "Description",
+      "targetDate": "Target completion date",
+      "submit": "Create project",
+      "save": "Save project"
+    }
+  },
+  "archive": {
+    "title": "Archive",
+    "description": "Archived tasks, projects, goals, and notes stay here until you restore them.",
+    "tasks": "Tasks",
+    "projects": "Projects",
+    "notes": "Notes",
+    "goals": "Goals",
+    "restore": "Restore",
+    "empty": "Nothing in this archive yet.",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "restored": "Restored “{title}”",
+    "restoreUncertain": "We couldn't confirm the restore. Refresh to check the archive before trying again.",
+    "taskBlocksCancelledHint": "Linked time blocks are cancelled when a task is archived. Restoring a task does not restore those blocks.",
+    "projectTasksRemainActiveHint": "Archiving a project leaves its linked tasks active. Restore the project separately from its tasks.",
+    "legacyProjectStatusHint": "This older archive did not retain the project's previous status. Restoring it will set the status to Active.",
+    "legacyGoalStatusHint": "This archived goal did not retain its previous status. Restoring it will set the status to Active."
+  },
+  "life": {
+    "title": "Life",
+    "description": "Set personal goals and track daily habits",
+    "goalsHeading": "Life goals",
+    "viewGoals": "View all goals",
+    "emptyGoals": "No life goals yet",
+    "habitsHeading": "Today's habits",
+    "habitsDescription": "Repeat small actions that move life in the direction you chose",
+    "habitProgress": "Habit progress",
+    "thisWeek": "This week"
+  },
+  "habits": {
+    "title": "Habit name",
+    "placeholder": "e.g. Walk for 20 minutes",
+    "area": "Life area",
+    "targetPerWeek": "Target per week",
+    "estimatedMinutes": "Minutes per occurrence",
+    "goal": "Link goal",
+    "noGoal": "No linked goal",
+    "add": "Add habit",
+    "created": "Habit added",
+    "completed": "Habit marked complete",
+    "uncompleted": "Habit marked incomplete",
+    "empty": "No habits yet. Add one small thing you want to repeat.",
+    "toggle": "Toggle {title}"
+  },
+  "pwa": {
+    "offline": "You're offline — view only. You can save again when you're back online.",
+    "install": {
+      "title": "Install Kemtit on your Home Screen",
+      "description": "Open it quickly like an app without typing the URL",
+      "android": "Install app",
+      "iosSteps": "On iPhone or iPad, tap Share, then choose “Add to Home Screen”",
+      "dismiss": "Maybe later"
+    }
+  },
+  "photos": {
+    "count": "{count} photos",
+    "add": "Add photo",
+    "attach": "Attach photo",
+    "attachCount": "{count}/{max} photos",
+    "attachPlaceholder": "Drop here or tap to choose a photo",
+    "attachHint": "JPG, PNG, and WebP · up to 10 MB per photo",
+    "remove": "Remove photo",
+    "removed": "Photo removed",
+    "uploaded": "Photo added",
+    "uploading": "Uploading…",
+    "view": "View full-screen",
+    "avatar": "Profile photo",
+    "avatarHint": "Tap the photo to change it · remove it to use a letter avatar",
+    "unavailable": "The photo could not be loaded or was removed"
+  },
+  "entries": {
+    "title": "Entries",
+    "new": "Add entry",
+    "delete": "Delete entry",
+    "deleteConfirm": {
+      "title": "Delete this entry?",
+      "description": "Permanently delete entry {code}? This cannot be undone.",
+      "confirm": "Delete permanently",
+      "pending": "Deleting…"
+    },
+    "noChannel": "—",
+    "adjustment": "Adjustment",
+    "fromDashboard": "Added from dashboard",
+    "status": {
+      "today": "Today",
+      "confirmed": "Confirmed"
+    },
+    "kpi": {
+      "monthTotal": "Sales this month",
+      "monthTotalGeneric": "Total this month",
+      "vsLastMonth": "vs {month}",
+      "noCompare": "No comparison data yet",
+      "todayTotal": "Sales today",
+      "todayTotalGeneric": "Total today",
+      "vsYesterday": "vs yesterday",
+      "weekTasks": "Tasks completed this week",
+      "overdue": "Previously overdue",
+      "noOverdue": "No overdue tasks",
+      "entryStreak": "Entry streak",
+      "streakHit": "7 days complete",
+      "streakToGo": "{days, plural, one {# day} other {# days}} to a 7-day streak",
+      "streakHint": "Daily entries build consistency"
+    },
+    "chart": {
+      "title": "Cumulative sales",
+      "titleGeneric": "Cumulative total",
+      "total": "Total",
+      "avgPerDay": "Avg/day",
+      "needPerDay": "Needed/day",
+      "legendTotal": "Cumulative",
+      "legendPlan": "Average plan",
+      "legendToday": "Today",
+      "aria": "Cumulative {total} of {target}",
+      "routeTo": "Path to {target}",
+      "legendHint": "Dashed line = average daily plan · pink dot = today"
+    },
+    "compass": {
+      "title": "This month's compass",
+      "daysLeft": "Days left",
+      "remaining": "{unit} remaining",
+      "remainingPlain": "Remaining",
+      "perDay": "{unit}/day",
+      "perDayPlain": "Per day"
+    },
+    "recent": {
+      "title": "Recent entries",
+      "viewAll": "View all",
+      "empty": "No entries yet — start from the panel on the right"
+    },
+    "quick": {
+      "title": "Log today",
+      "amountLabel": "Today's amount",
+      "placeholder": "Today's sales (THB)",
+      "placeholderGeneric": "Today's amount",
+      "button": "Save",
+      "hint": "The running total and chart update after saving."
+    },
+    "history": {
+      "title": "Entry history",
+      "count": "{count} entries · click to edit",
+      "edit": "Edit entry",
+      "empty": "No entries yet",
+      "all": "View all"
+    },
+    "form": {
+      "goal": "Goal",
+      "noMetricGoal": "No numeric goal yet — create one first",
+      "amount": "Amount",
+      "date": "Date",
+      "channel": "Channel",
+      "noChannel": "Not specified",
+      "note": "Note",
+      "notePlaceholder": "e.g. Live at 20:00 / Friday promo",
+      "submitCreate": "Save entry",
+      "submitEdit": "Save changes"
+    },
+    "channels": {
+      "shopee": "Shopee",
+      "lazada": "Lazada",
+      "tiktok": "TikTok Shop",
+      "line": "LINE OA",
+      "facebook": "Facebook",
+      "storefront": "Storefront",
+      "other": "Other"
+    },
+    "table": {
+      "code": "Code",
+      "date": "Date",
+      "note": "Note",
+      "channel": "Channel",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "toasts": {
+      "logged": "Saved +{amount} · total {total}",
+      "updated": "Entry updated",
+      "deleted": "Deleted entry {code}",
+      "restored": "Restored entry {code}"
+    }
+  },
+  "goals": {
+    "title": "Goals",
+    "subtitle": "Year → Month → Week → Today",
+    "new": "Add goal",
+    "edit": "Edit goal",
+    "editShort": "Edit",
+    "addChild": "Add sub-goal",
+    "children": "Sub-goals",
+    "tasks": "Linked tasks",
+    "noTasks": "No tasks linked to this goal yet",
+    "addTask": "Add task",
+    "parentLabel": "Under {title}",
+    "backToList": "All goals",
+    "archive": "Archive",
+    "archivedToast": "Archived “{title}”",
+    "restoredToast": "Restored “{title}”",
+    "createdToast": "Goal saved",
+    "updatedToast": "Goal updated",
+    "updateValue": "Update value",
+    "updateValueTitle": "Latest value for “{title}”",
+    "updateValueDescription": "Enter the current total, not the increment",
+    "currentValueLabel": "Current value",
+    "valueSavedToast": "Value saved",
+    "completedToast": "Completed “{title}” at 100%",
+    "notFound": "Goal not found",
+    "statusArchived": "Archived",
+    "statusCompleted": "Completed",
+    "groups": {
+      "year": "Year goals",
+      "quarter": "Quarter goals",
+      "month": "Month goals",
+      "week": "Week goals",
+      "day": "Day goals"
+    },
+    "form": {
+      "title": "Goal name",
+      "titlePlaceholder": "e.g. Sales this month",
+      "kind": "Measurement",
+      "target": "Numeric target",
+      "targetPlaceholder": "50000",
+      "unit": "Unit",
+      "unitPlaceholder": "THB / times / books",
+      "unitTHB": "THB",
+      "period": "Period",
+      "periodStart": "Start date",
+      "periodHint": "Kemtit will snap the date to the start of the {period}",
+      "domain": "Life area",
+      "parent": "Parent goal",
+      "noParent": "None (top-level goal)",
+      "noParentCandidates": "No parent goals overlap this period",
+      "submitCreate": "Save goal",
+      "submitEdit": "Save changes"
+    },
+    "empty": {
+      "title": "No goals yet",
+      "description": "Start with this month, then build out toward the year",
+      "cta": "Set a goal",
+      "eyebrow": "No direction set yet"
+    },
+    "emptyFiltered": {
+      "title": "No goals in this group",
+      "description": "Try “All” or create a new goal",
+      "cta": "Set a goal"
+    },
+    "route": "Path",
+    "routeCount": "{count} {period}",
+    "destination": "Destination · {date}",
+    "youAreHere": "You are here",
+    "achieved": "Achieved {value}",
+    "tasksDoneCount": "{done}/{total} done",
+    "tasksUnit": "{count} tasks",
+    "tasksUnitShort": "tasks",
+    "over": "Over by {value}",
+    "newDesktop": "New goal",
+    "aheadOfPlan": "Ahead by {value}",
+    "behindPlan": "Behind by {value}",
+    "onPlan": "On plan",
+    "waypointHere": "Here",
+    "destinationShort": "Destination",
+    "routePerWeek": "waypoint {amount} / {period}"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "empty": {
+      "title": "Set your first goal for this month",
+      "description": "Start with one goal, then add supporting goals and weekly tasks to your plan.",
+      "cta": "Set a goal",
+      "eyebrow": "No direction set yet"
+    },
+    "heading": "Today's direction",
+    "greeting": {
+      "morning": "Good morning, {name}",
+      "afternoon": "Good afternoon, {name}",
+      "evening": "Good evening, {name}",
+      "night": "Good evening, {name} — it's getting late"
+    },
+    "greetingNoName": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "night": "Good evening — it's getting late"
+    }
+  },
+  "widgets": {
+    "goalProgress": {
+      "title": "Main goal this month",
+      "othersTitle": "Other goals this month",
+      "viewGoal": "View goal",
+      "updateValue": "Update value",
+      "remaining": "{remaining} remaining",
+      "perDay": "{amount} per day",
+      "daysLeft": "{days} days left",
+      "reached": "Destination reached",
+      "tasks": "Tasks done {done}/{total}",
+      "children": "{count} sub-goals",
+      "empty": {
+        "title": "No monthly goal yet",
+        "description": "Set one goal for this month and check progress here each morning",
+        "cta": "Set monthly goal",
+        "eyebrow": "No direction set yet"
+      },
+      "target": "Target {target}",
+      "tasksUnit": "tasks"
+    },
+    "todayTasks": {
+      "title": "Today's tasks",
+      "summary": "{due} to do · {overdue} overdue · {done} done",
+      "streak": "{days}-day streak",
+      "viewCalendar": "View calendar",
+      "add": "Add task",
+      "empty": {
+        "title": "No tasks today",
+        "description": "Add one small task that moves you closer to this month's goal",
+        "cta": "Add task"
+      },
+      "doneCount": "{done}/{total} done",
+      "overdueHint": "{overdue} overdue tasks",
+      "quickPlaceholder": "Task for today"
+    }
+  },
+  "finance": {
+    "title": "Finance",
+    "description": "Track savings, investments and debt repayment alongside the rest of your life goals",
+    "empty": "No financial goals yet",
+    "createGoal": "Create financial goal",
+    "type": "Goal type",
+    "types": {
+      "saving": "Savings",
+      "investment": "Investment",
+      "debt": "Debt repayment"
+    },
+    "monthlyTarget": "Monthly target",
+    "thisMonth": "This month",
+    "configureHint": "Choose a type and monthly target to make the plan concrete",
+    "metricRequired": "This financial goal is not measured numerically, so monthly contributions cannot be tracked yet",
+    "save": "Save plan",
+    "saved": "Finance plan saved",
+    "starter": {
+      "exampleBadge": "EXAMPLE · not your data",
+      "title": "Set up real finance one step at a time",
+      "description": "Choose only what you need now. The examples below are previews and are not counted in Today, Finance or Insights.",
+      "notYourData": "This example is not saved automatically",
+      "budget": {
+        "title": "Monthly budget",
+        "description": "Set a monthly spending limit using your real numbers",
+        "cta": "Set my budget"
+      },
+      "bill": {
+        "title": "Recurring bill",
+        "description": "For example electricity, rent or a service with a due date",
+        "cta": "Add my bill"
+      },
+      "saving": {
+        "title": "Savings goal",
+        "description": "Create a financial goal and track real contributions later",
+        "cta": "Set my savings goal"
+      }
+    },
+    "operations": {
+      "summary": "This month's finance summary",
+      "income": "Income",
+      "expense": "Expenses",
+      "balance": "Net balance",
+      "budgetRemaining": "Budget remaining",
+      "addTransaction": "Add income / expense",
+      "transactionHint": "Record real transactions only. Kemtit will include them in Finance and Insights.",
+      "type": "Transaction type",
+      "date": "Transaction date",
+      "title": "Transaction name",
+      "titlePlaceholder": "e.g. Lunch or client payment",
+      "amount": "Amount",
+      "amountPlaceholder": "0.00",
+      "saveTransaction": "Save transaction",
+      "transactionSaved": "Transaction saved",
+      "monthlyBudget": "Monthly budget",
+      "budgetHint": "Set a real monthly spending limit without creating fictional expenses",
+      "budgetPlaceholder": "Monthly spending budget",
+      "saveBudget": "Save budget",
+      "budgetSaved": "Budget saved",
+      "bills": "Bills and due dates",
+      "billsHint": "A bill is one record shared by Finance and Calendar without creating a duplicate Task",
+      "billTitle": "Bill name",
+      "billTitlePlaceholder": "e.g. Electricity",
+      "billDueDate": "Due date",
+      "billAmount": "Bill amount",
+      "billAmountOptional": "Amount (leave blank if unknown)",
+      "recurrence": "Recurrence",
+      "once": "One time",
+      "monthly": "Monthly",
+      "addBill": "Add bill",
+      "billSaved": "Bill added",
+      "noBills": "No bills added yet",
+      "due": "Due {date}",
+      "paid": "Paid",
+      "dueStatus": "Due",
+      "enterBillAmount": "Enter an amount before marking the bill paid",
+      "billAmountFor": "Amount for {title}",
+      "saveAmount": "Save amount",
+      "markPaid": "Mark paid",
+      "billPaid": "Bill payment saved",
+      "recentTransactions": "Recent transactions this month",
+      "noTransactions": "No real income or expenses recorded this month",
+      "goals": "Financial goals"
+    }
+  },
+  "onboarding": {
+    "step": "Step {current} of {total}",
+    "stepShort": "{current}/{total}",
+    "role": {
+      "title": "What role best describes how you use Kemtit?",
+      "subtitle": "Choose the role closest to your life right now. Kemtit uses it to prepare suggestions, not to split the app into separate systems.",
+      "continue": "Use this role"
+    },
+    "focus": {
+      "title": "What do you want to focus on right now?",
+      "subtitle": "Choose as many as you like. Kemtit uses them to prepare a Starter Workspace relevant to you.",
+      "hint": "Choose at least one. You can change this later.",
+      "continue": "Prepare Starter Workspace"
+    },
+    "starter": {
+      "title": "Your Starter Workspace is ready",
+      "subtitle": "These are suggestions only. Add, edit or skip them before anything becomes real data.",
+      "nothingAddedTitle": "Nothing has been added as real data yet",
+      "nothingAddedDescription": "Suggestions are not counted in tasks, goals, routines, finance or reports until you add them.",
+      "accept": "Add",
+      "edit": "Edit",
+      "skip": "Skip",
+      "accepted": "Added",
+      "suggested": "Suggested",
+      "finish": "Go to Today",
+      "finishing": "Preparing Today…",
+      "manualHint": "You do not need to add everything. You can start empty and configure things yourself later.",
+      "allSkippedTitle": "All suggestions skipped",
+      "allSkippedDescription": "No example data was created. You can still use Today and add your own real data.",
+      "calendarTitle": "Google Calendar is optional",
+      "calendarDescription": "Kemtit works without an external calendar. If connected, events are imported as events and are not duplicated as tasks.",
+      "calendarConnect": "Connect Google Calendar",
+      "calendarConnected": "Google Calendar is connected. You can continue.",
+      "calendarUnavailable": "Google Calendar is not configured in this environment. You can skip this step.",
+      "reasonRole": "Suggested from your selected role",
+      "reasonFocus": "Suggested from your selected Focus Area",
+      "types": {
+        "task": "Task",
+        "goal": "Goal",
+        "habit": "Routine"
+      },
+      "suggestions": {
+        "employeeGoal": {
+          "title": "Define this month's key outcome",
+          "subtitle": "Create one monthly work goal, then connect real tasks to it later."
+        },
+        "sellerGoal": {
+          "title": "Set the shop's main goal for this month",
+          "subtitle": "Start with the direction for the month without inventing sales or financial figures."
+        },
+        "studentGoal": {
+          "title": "Set this month's learning goal",
+          "subtitle": "Choose an outcome you want to achieve, then connect reading or revision tasks later."
+        },
+        "freelancerGoal": {
+          "title": "Define this month's main deliverable",
+          "subtitle": "Use it as the direction for projects and real client work."
+        },
+        "workPriority": {
+          "title": "Choose today's most important task",
+          "subtitle": "Add a task for today so Today has a clear starting point."
+        },
+        "dailyLifePlan": {
+          "title": "Handle one important personal item today",
+          "subtitle": "Start with one small real action instead of creating fictional life items."
+        },
+        "financeBudget": {
+          "title": "Set this month's budget",
+          "subtitle": "Add only a setup task. No fictional amount or balance is created."
+        },
+        "healthRoutine": {
+          "title": "Move for 20 minutes",
+          "subtitle": "A routine three times per week. Edit the name before adding if you want."
+        },
+        "studyRoutine": {
+          "title": "Study or review for 25 minutes",
+          "subtitle": "A routine five times per week. Edit the name before adding if you want."
+        }
+      }
+    },
+    "persona": {
+      "title": "What will you mainly use Kemtit for?",
+      "subtitle": "Choose one Work Mode. Personal life and every Life Area still work together.",
+      "continue": "Use this mode",
+      "choose": "Choose {name}",
+      "disabledHint": ""
+    },
+    "firstGoal": {
+      "title": "Set your first goal",
+      "subtitle": "Start with this month's sales goal. Kemtit will break it into weekly goals and sample tasks.",
+      "professionalTitle": "Set your first work goal",
+      "professionalSubtitle": "Define this month's outcome. Kemtit will break it into weekly goals and starter tasks.",
+      "targetLabel": "Sales target",
+      "targetPlaceholder": "50000",
+      "unit": "THB",
+      "professionalTargetLabel": "Deliverables to complete",
+      "professionalTargetPlaceholder": "3",
+      "professionalUnit": "deliverables",
+      "professionalOutcomeLabel": "Key outcome you want to achieve",
+      "professionalOutcomePlaceholder": "e.g. Launch the new system into production",
+      "professionalOutcomeHint": "Kemtit will break this outcome into weekly goals and starter tasks.",
+      "monthLabel": "For month",
+      "thisMonth": "This month ({month})",
+      "nextMonth": "Next month ({month})",
+      "fewDaysLeftHint": "Only a few days remain this month, so next month is selected by default. You can change it.",
+      "submit": "Get started",
+      "submitting": "Creating goal…",
+      "monthGoalTitle": "Sales {month}",
+      "professionalMonthGoalTitle": "Deliverables {month}",
+      "weekGoalTitle": "Week {index}/{total}",
+      "sampleTasks": {
+        "1": "Set this week's pricing and promotion",
+        "2": "Post sales content at least 3 times",
+        "3": "Follow up with customers who have not closed",
+        "4": "Review this week's sales and adjust the plan",
+        "5": "Prepare stock for next week",
+        "6": "Review best sellers and plan next month"
+      },
+      "perWeekHint": "≈ {amount} THB per week · {count} waypoints",
+      "perWeekEmpty": "Automatically split into {count} weekly goals",
+      "professionalPerWeekHint": "≈ {amount} deliverables per week · {count} waypoints",
+      "professionalPerWeekEmpty": "Automatically split into {count} weekly goals",
+      "professionalSampleTasks": {
+        "1": "Prioritise this week's deliverables",
+        "2": "Finish one important deliverable",
+        "3": "Request feedback and revise the work",
+        "4": "Summarise the outcome and keep evidence",
+        "5": "Clear pending work and prepare the next cycle",
+        "6": "Review deliverables and plan next month"
+      }
+    }
+  },
+  "line": {
+    "greeting": "Hello, this is Kemtit.\nTo connect your account, open the app → Settings → Connect LINE, then send the 6-digit code here.",
+    "linkSuccess": "Account connected. Overdue-task and goal-completion notifications will be sent here.",
+    "linkInvalid": "The code is invalid or expired. Return to the app → Settings → Connect LINE and request a new code.",
+    "notCode": "Send the 6-digit code from Settings → Connect LINE to connect your account.",
+    "goalCompleted": "Completed “{title}” at 100%\nView goal: {url}",
+    "overdue": "You have {count} overdue tasks\n{list}\nOpen Kemtit: {url}",
+    "overdueMore": "…and {count} more",
+    "dailyPlanReady": "Today's plan is ready\nOpen plan: {url}",
+    "dailyBriefSeller": "Today's seller brief\nPriorities:\n{tasks}\nRevenue remaining: {revenueRemaining}\nRequired pace today: {requiredDailyPace}\nOpen Kemtit: {url}",
+    "dailyBriefProfessional": "Today's professional brief\nPriorities:\n{tasks}\nPlanned workload: {plannedWorkload}\nTime remaining: {remainingCapacity}\nOpen Kemtit: {url}",
+    "weeklyReviewReady": "Time for your weekly review\nWeek starts: {weekStart}\nOpen review: {url}",
+    "habitReminder": "Today's habit reminder: {title}\nOpen Life: {url}",
+    "investmentReminder": "Investment goal reminder: {title}\nMonthly target: {monthlyTarget}\nOpen Finance: {url}"
+  },
+  "workflowGuide": {
+    "title": "Planning steps",
+    "roleAndPeriod": "{role} guidance · {period}",
+    "nextAction": "Start here",
+    "horizonNavigation": "Planning period",
+    "showSteps": "View all 3 steps",
+    "priorityLabel": "When prioritizing tasks",
+    "priorityRule": "Keep confirmed priorities first. Then order other tasks by deadline, overdue status, your priority, and linked goals or projects.",
+    "addAnotherGoal": "Add another goal",
+    "periods": {
+      "year": "Year",
+      "month": "Month",
+      "week": "Week",
+      "day": "Day"
+    },
+    "roles": {
+      "employee": "Employee",
+      "seller": "Seller or shop owner",
+      "student": "Student",
+      "freelancer": "Freelancer",
+      "general": "General"
+    },
+    "actions": {
+      "openGoal": "Review {title}",
+      "chooseGoal": "Set a goal for this period",
+      "todayPriorities": "Go to today's tasks"
+    },
+    "steps": {
+      "employee": {
+        "year": {
+          "1": "Set the important work deliverables for this year.",
+          "2": "Break them into monthly outcomes and key meetings.",
+          "3": "Review delivery progress each month."
+        },
+        "month": {
+          "1": "Choose this month's deliverable and key meetings.",
+          "2": "Break the deliverable into smaller tasks and weekly steps.",
+          "3": "Review completed work and what needs to happen next."
+        },
+        "week": {
+          "1": "Check this week's deadlines and meetings.",
+          "2": "Choose one main deliverable and its supporting work.",
+          "3": "Reserve focus time and prepare for meetings."
+        },
+        "day": {
+          "1": "Check today's deadlines and meetings.",
+          "2": "Choose one main deliverable and up to two other priorities.",
+          "3": "Reserve work time, then do and record what is complete."
+        }
+      },
+      "seller": {
+        "year": {
+          "1": "Set shop outcomes around product launches and key orders.",
+          "2": "Plan launch milestones and review recurring shop bills.",
+          "3": "Review launches, orders, and bills each month."
+        },
+        "month": {
+          "1": "Choose products to launch and orders to manage this month.",
+          "2": "Break the work into listings, content, stock, and packing.",
+          "3": "Review orders and shop bills that are due."
+        },
+        "week": {
+          "1": "Check order deadlines, launches, and bills coming due.",
+          "2": "Choose orders to ship and the next launch steps.",
+          "3": "Reserve time to make, pack, and follow up with customers."
+        },
+        "day": {
+          "1": "Check urgent orders, bills due, and dispatch times.",
+          "2": "Choose up to three order or launch tasks.",
+          "3": "Reserve time to prepare, pack, and confirm shipments."
+        }
+      },
+      "student": {
+        "year": {
+          "1": "Choose the learning outcomes that matter this year.",
+          "2": "Break the year into term goals, exam milestones, and assignments.",
+          "3": "Review assignment and exam progress each month."
+        },
+        "month": {
+          "1": "Check assignments and exam periods, then choose a learning goal.",
+          "2": "Break projects and study work into weekly steps.",
+          "3": "Review submitted assignments and adjust the study plan."
+        },
+        "week": {
+          "1": "Check assignments due and upcoming exams.",
+          "2": "Choose a main assignment and topics to review.",
+          "3": "Reserve study time around your class schedule."
+        },
+        "day": {
+          "1": "Check today's assignments and exam topics to study.",
+          "2": "Choose up to three study tasks, such as an assignment or review.",
+          "3": "Study or work in the reserved time, then record the next step."
+        }
+      },
+      "freelancer": {
+        "year": {
+          "1": "Choose important client milestones and project deliverables.",
+          "2": "Break projects into delivery milestones and invoice checkpoints.",
+          "3": "Review deadlines, delivered work, and invoices each month."
+        },
+        "month": {
+          "1": "Choose this month's client deliverables and milestones.",
+          "2": "Break work into weekly production, review, and revision steps.",
+          "3": "Check deliverables and invoices that are due."
+        },
+        "week": {
+          "1": "Check client deadlines, requested revisions, and invoices.",
+          "2": "Choose the next delivery milestone and client follow-ups.",
+          "3": "Reserve time for project work, revisions, and invoices."
+        },
+        "day": {
+          "1": "Check today's client deliveries and overdue invoices.",
+          "2": "Choose up to three client tasks that move delivery forward.",
+          "3": "Reserve focus time, send work, reply, and invoice when due."
+        }
+      },
+      "general": {
+        "year": {
+          "1": "Choose an important outcome to reach this year.",
+          "2": "Break the outcome into monthly milestones.",
+          "3": "Review progress and adjust milestones each month."
+        },
+        "month": {
+          "1": "Choose an important outcome for this month.",
+          "2": "Break the outcome into weekly tasks.",
+          "3": "Review what is done and what needs to happen next."
+        },
+        "week": {
+          "1": "Check this week's deadlines and commitments.",
+          "2": "Choose one main outcome and its important tasks.",
+          "3": "Reserve enough time for the work you chose."
+        },
+        "day": {
+          "1": "Check urgent items and today's commitments.",
+          "2": "Choose up to three important tasks.",
+          "3": "Reserve time, do the work, and record what is complete."
+        }
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -16,6 +16,7 @@ import {
   type EntryFormValues,
   type EntryGoalOption,
 } from "@/core/entries/schema";
+import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
 import { formatValueParts, formatValueWithUnit } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,7 @@ type Props = {
   goalOptions: EntryGoalOption[];
   initial?: Partial<EntryFormValues>;
   onDone: () => void;
-  /** โหมดแก้ไข: แสดงปุ่มลบ (ผู้เรียกเป็นคนจัดการ undo toast เอง) */
+  /** โหมดแก้ไข: แสดงปุ่มลบ (ผู้เรียกเป็นคนเปิดกล่องยืนยันก่อนลบ) */
   onDelete?: () => void;
 };
 
@@ -53,6 +54,7 @@ type Props = {
 export function EntryForm({ mode, entryId, goalOptions, initial, onDone, onDelete }: Props) {
   const t = useTranslations();
   const te = useTranslations("errors");
+  const locale = useLocale() as AppLocale;
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -73,7 +75,7 @@ export function EntryForm({ mode, entryId, goalOptions, initial, onDone, onDelet
   // ไม่ใช้ form.watch (React Compiler memo ไม่ได้) — เก็บเป้าที่เลือกไว้ใน state คู่ขนานกับค่าในฟอร์ม
   const [selectedGoalId, setSelectedGoalId] = useState(defaultGoalId);
   const goal = goalOptions.find((g) => g.id === selectedGoalId) ?? goalOptions[0] ?? null;
-  const unitLabel = formatValueParts(0, goal?.unit ?? null).unit;
+  const unitLabel = formatValueParts(0, goal?.unit ?? null, locale).unit;
   const isTHB = goal?.unit === "THB" || goal?.unit === "บาท";
 
   if (goalOptions.length === 0) {
@@ -117,8 +119,8 @@ export function EntryForm({ mode, entryId, goalOptions, initial, onDone, onDelet
       toast.success(
         mode === "create"
           ? t("entries.toasts.logged", {
-              amount: formatValueWithUnit(values.amount, goal?.unit ?? null),
-              total: formatValueWithUnit(result.data.total, goal?.unit ?? null),
+              amount: formatValueWithUnit(values.amount, goal?.unit ?? null, locale),
+              total: formatValueWithUnit(result.data.total, goal?.unit ?? null, locale),
             })
           : t("entries.toasts.updated"),
       );
@@ -208,7 +210,7 @@ export function EntryForm({ mode, entryId, goalOptions, initial, onDone, onDelet
                       className="h-8 flex-1 px-0 text-small"
                       onClick={() => field.onChange((Number(field.value) || 0) + chip)}
                     >
-                      +{formatValueParts(chip, null).value}
+                      +{formatValueParts(chip, null, locale).value}
                     </Button>
                   ))}
                 </div>

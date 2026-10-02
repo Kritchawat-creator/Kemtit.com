@@ -8,19 +8,23 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 /**
  * Toast โทนสว่างตาม token (Claude Design 3o): สำเร็จ = success-50, ผิดพลาด = danger-50, ทั่วไป/undo = brand-50
  * ปุ่ม action เป็น pill ขาวตัวหนังสือ brand-600 · เงาม่วงแทนเงาดำ · มุม 14px
  */
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ containerAriaLabel, toastOptions, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
+  const tCommon = useTranslations("common");
+  const tNav = useTranslations("nav");
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
+      containerAriaLabel={containerAriaLabel ?? tNav("notifications")}
       richColors
       icons={{
         success: <CircleCheckIcon className="size-4" />,
@@ -30,15 +34,21 @@ const Toaster = ({ ...props }: ToasterProps) => {
         loading: <Loader2Icon className="size-4 animate-spin" />,
       }}
       toastOptions={{
-        classNames: {
-          toast: "!border-0 !shadow-toast !font-sans !text-base !font-medium !py-3 !pl-4 !pr-3",
-          title: "!text-base !font-medium",
-          description: "!text-small !opacity-80",
-          actionButton:
-            "!h-8 !rounded-full !bg-bg-surface !px-3 !text-sm !font-medium !text-brand-600 hover:!bg-brand-100",
-          cancelButton: "!h-8 !rounded-full !bg-transparent !px-3 !text-sm !font-medium",
-          closeButton: "!border-0 !bg-bg-surface !text-text-secondary !shadow-xs",
-        },
+        ...toastOptions,
+        closeButtonAriaLabel: toastOptions?.closeButtonAriaLabel ?? tCommon("close"),
+        ...(toastOptions === undefined
+          ? {
+              classNames: {
+                toast: "!border-0 !shadow-toast !font-sans !text-base !font-medium !py-3 !pl-4 !pr-3",
+                title: "!text-base !font-medium",
+                description: "!text-small !opacity-80",
+                actionButton:
+                  "!h-8 !rounded-md !border !border-border !bg-bg-surface !px-3 !text-sm !font-medium !text-brand-600 hover:!bg-bg-subtle",
+                cancelButton: "!h-8 !rounded-md !bg-transparent !px-3 !text-sm !font-medium",
+                closeButton: "!border-0 !bg-bg-surface !text-text-secondary !shadow-xs",
+              },
+            }
+          : {}),
       }}
       style={
         {

@@ -18,11 +18,11 @@ export function WidgetShell({ title, description, action, children, className }:
   return (
     <section
       aria-label={title}
-      className={cn("flex flex-col rounded-xl bg-bg-surface px-5 pt-4 pb-3 shadow-md", className)}
+      className={cn("flex flex-col rounded-xl border border-border bg-bg-surface px-5 pt-4 pb-4 shadow-xs", className)}
     >
       <header className="mb-2 flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-h2 text-brand-800">{title}</h2>
+          <h2 className="text-h2 text-text-primary">{title}</h2>
           {description ? (
             <p className="mt-0.5 text-caption text-text-secondary">{description}</p>
           ) : null}

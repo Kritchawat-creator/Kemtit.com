@@ -9,52 +9,53 @@ export const DOMAIN_STYLES: Record<
   { pill: string; dot: string; tint: string; text: string; selected: string }
 > = {
   work: {
-    pill: "bg-domain-work-bg text-domain-work-fg",
+    pill: "bg-domain-work-bg text-domain-work-fg hover:bg-domain-work-bg hover:text-domain-work-fg",
     dot: "bg-domain-work-dot",
     tint: "bg-domain-work-bg/40",
     text: "text-domain-work-fg",
     selected:
-      "data-[state=on]:border-domain-work-fg data-[state=on]:bg-domain-work-bg data-[state=on]:text-domain-work-fg",
+      "data-[state=on]:border-domain-work-fg data-[state=on]:bg-domain-work-bg data-[state=on]:text-domain-work-fg data-[state=on]:hover:bg-domain-work-bg data-[state=on]:hover:text-domain-work-fg",
   },
   health: {
-    pill: "bg-domain-health-bg text-domain-health-fg",
+    pill: "bg-domain-health-bg text-domain-health-fg hover:bg-domain-health-bg hover:text-domain-health-fg",
     dot: "bg-domain-health-dot",
     tint: "bg-domain-health-bg/40",
     text: "text-domain-health-fg",
     selected:
-      "data-[state=on]:border-domain-health-fg data-[state=on]:bg-domain-health-bg data-[state=on]:text-domain-health-fg",
+      "data-[state=on]:border-domain-health-fg data-[state=on]:bg-domain-health-bg data-[state=on]:text-domain-health-fg data-[state=on]:hover:bg-domain-health-bg data-[state=on]:hover:text-domain-health-fg",
   },
   family: {
-    pill: "bg-domain-family-bg text-domain-family-fg",
+    pill: "bg-domain-family-bg text-domain-family-fg hover:bg-domain-family-bg hover:text-domain-family-fg",
     dot: "bg-domain-family-dot",
     tint: "bg-domain-family-bg/40",
     text: "text-domain-family-fg",
     selected:
-      "data-[state=on]:border-domain-family-fg data-[state=on]:bg-domain-family-bg data-[state=on]:text-domain-family-fg",
+      "data-[state=on]:border-domain-family-fg data-[state=on]:bg-domain-family-bg data-[state=on]:text-domain-family-fg data-[state=on]:hover:bg-domain-family-bg data-[state=on]:hover:text-domain-family-fg",
   },
   finance: {
-    pill: "bg-domain-finance-bg text-domain-finance-fg",
+    pill: "bg-domain-finance-bg text-domain-finance-fg hover:bg-domain-finance-bg hover:text-domain-finance-fg",
     dot: "bg-domain-finance-dot",
     tint: "bg-domain-finance-bg/40",
     text: "text-domain-finance-fg",
     selected:
-      "data-[state=on]:border-domain-finance-fg data-[state=on]:bg-domain-finance-bg data-[state=on]:text-domain-finance-fg",
+      "data-[state=on]:border-domain-finance-fg data-[state=on]:bg-domain-finance-bg data-[state=on]:text-domain-finance-fg data-[state=on]:hover:bg-domain-finance-bg data-[state=on]:hover:text-domain-finance-fg",
   },
   growth: {
-    pill: "bg-domain-growth-bg text-domain-growth-fg",
+    pill: "bg-domain-growth-bg text-domain-growth-fg hover:bg-domain-growth-bg hover:text-domain-growth-fg",
     dot: "bg-domain-growth-dot",
     tint: "bg-domain-growth-bg/40",
     text: "text-domain-growth-fg",
     selected:
-      "data-[state=on]:border-domain-growth-fg data-[state=on]:bg-domain-growth-bg data-[state=on]:text-domain-growth-fg",
+      "data-[state=on]:border-domain-growth-fg data-[state=on]:bg-domain-growth-bg data-[state=on]:text-domain-growth-fg data-[state=on]:hover:bg-domain-growth-bg data-[state=on]:hover:text-domain-growth-fg",
   },
   relationships: {
-    pill: "bg-domain-relationships-bg text-domain-relationships-fg",
+    pill:
+      "bg-domain-relationships-bg text-domain-relationships-fg hover:bg-domain-relationships-bg hover:text-domain-relationships-fg",
     dot: "bg-domain-relationships-dot",
     tint: "bg-domain-relationships-bg/40",
     text: "text-domain-relationships-fg",
     selected:
-      "data-[state=on]:border-domain-relationships-fg data-[state=on]:bg-domain-relationships-bg data-[state=on]:text-domain-relationships-fg",
+      "data-[state=on]:border-domain-relationships-fg data-[state=on]:bg-domain-relationships-bg data-[state=on]:text-domain-relationships-fg data-[state=on]:hover:bg-domain-relationships-bg data-[state=on]:hover:text-domain-relationships-fg",
   },
 };
 

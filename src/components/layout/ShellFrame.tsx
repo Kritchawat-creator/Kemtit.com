@@ -4,11 +4,11 @@ import type * as React from "react";
 import { useCallback, useSyncExternalStore } from "react";
 import { cn } from "cn";
 
-import type { PersonaId } from "@/core/profile/personas";
+import type { WorkMode } from "@/core/profile/work-modes";
 
 import { Sidebar } from "./Sidebar";
 
-const STORAGE_KEY = "kemtit.sidebarCollapsed";
+const STORAGE_KEY = "kemtit.sidebarCollapsed.modernMinimal";
 const EVENT = "kemtit:sidebar";
 
 function readCollapsed(): boolean {
@@ -35,14 +35,14 @@ type Props = {
   profile: {
     displayName: string | null;
     email: string | null;
-    persona: PersonaId | null;
+    workMode: WorkMode | null;
     avatarUrl: string | null;
   };
 };
 
 /**
- * โครง desktop (Claude Design turn 4/7): sidebar ซ้ายพับได้ (240 → 72px) จำสถานะใน localStorage
- * เนื้อหาเลื่อนตามความกว้าง sidebar · มือถือไม่มี sidebar (bottom nav แทน)
+ * Modern Minimal shell: the Prototype-style sidebar appears above 1150px and
+ * collapses 268 → 72px. Compact viewports use the drawer in TopBar instead.
  */
 export function ShellFrame({ children, shell, profile }: Props) {
   const collapsed = useSyncExternalStore(subscribe, readCollapsed, () => false);
@@ -60,8 +60,8 @@ export function ShellFrame({ children, shell, profile }: Props) {
       <Sidebar collapsed={collapsed} onToggle={toggle} shell={shell} profile={profile} />
       <div
         className={cn(
-          "relative min-h-dvh transition-[padding] duration-200",
-          collapsed ? "lg:pl-[72px]" : "lg:pl-60",
+          "relative min-h-dvh min-w-0 w-full transition-[padding] duration-200",
+          collapsed ? "min-[1151px]:pl-[72px]" : "min-[1151px]:pl-[268px]",
         )}
       >
         {children}

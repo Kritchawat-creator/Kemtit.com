@@ -30,17 +30,17 @@
     "Segoe UI", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* ---- Brand — lavender (Design §3.1) ---- */
-  --color-brand-50: #f3f0ff;
-  --color-brand-100: #ddd4fb;
-  --color-brand-200: #b9a8f5;
-  --color-brand-300: #a08cf0;
-  --color-brand-400: #8b72ea;
-  --color-brand-500: #7a5fe0; /* primary */
-  --color-brand-600: #6549c9;
-  --color-brand-700: #513aa4;
-  --color-brand-800: #3e2b84; /* text on brand-50/100 */
-  --color-brand-900: #281a57;
+  /* ---- Brand — Modern Minimal indigo (Prototype: minimal) ---- */
+  --color-brand-50: #eeecff;
+  --color-brand-100: #e3dfff;
+  --color-brand-200: #cbc4ff;
+  --color-brand-300: #aaa0fa;
+  --color-brand-400: #8476f2;
+  --color-brand-500: #6656e8; /* primary */
+  --color-brand-600: #5847d8;
+  --color-brand-700: #5140c7;
+  --color-brand-800: #4034a8;
+  --color-brand-900: #2b2570;
 
   /* ---- Accent — peach pink (ใช้เน้นจุดเดียวต่อหน้าจอ) ---- */
   --color-accent-50: #fff0f3;
@@ -50,18 +50,18 @@
   --color-accent-700: #c33862;
   --color-accent-900: #7d1f3c;
 
-  /* ---- Neutral — cool gray แต้มม่วงจาง ---- */
+  /* ---- Neutral — cool slate from the Modern Minimal prototype ---- */
   --color-neutral-0: #ffffff;
-  --color-neutral-50: #fbfaff;
-  --color-neutral-100: #f5f3fa;
-  --color-neutral-200: #e9e6f2;
-  --color-neutral-300: #d6d2e3;
-  --color-neutral-400: #a8a3ba;
-  --color-neutral-500: #7b7590;
-  --color-neutral-600: #5b566e;
-  --color-neutral-700: #423e52;
-  --color-neutral-800: #2b2836;
-  --color-neutral-900: #1a1822;
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f5f7fb;
+  --color-neutral-200: #e4e7ec;
+  --color-neutral-300: #d0d5dd;
+  --color-neutral-400: #98a2b3;
+  --color-neutral-500: #667085;
+  --color-neutral-600: #5b6474;
+  --color-neutral-700: #344054;
+  --color-neutral-800: #1d2939;
+  --color-neutral-900: #111827;
   --color-white: #ffffff; /* สำหรับ class ของ shadcn (text-white, bg-black/50) เท่านั้น */
   --color-black: #000000;
 
@@ -96,16 +96,13 @@
   --color-domain-relationships-dot: #b457c9;
   --color-domain-relationships-fg: #5c1b69;
 
-  /* ---- Semantic layer (Design §3.4) — component ใช้ชั้นนี้ ---- */
-  /* Design (Claude Design "Kemtit" 2a): พื้นหน้าทั้งจอเป็น brand-50 ให้การ์ดขาว/hero brand-100 เด้ง */
-  --color-bg-page: var(--color-brand-50);
+  /* ---- Semantic layer — Modern Minimal: neutral canvas + white surfaces ---- */
+  --color-bg-page: var(--color-neutral-100);
   --color-bg-surface: var(--color-neutral-0);
-  --color-bg-subtle: var(--color-neutral-100);
+  --color-bg-subtle: var(--color-neutral-50);
   --color-text-primary: var(--color-neutral-900);
   --color-text-secondary: var(--color-neutral-600);
-  /* Design ระบุ neutral-400 แต่บนพื้น 50 ได้ contrast ~2.2:1 ไม่ผ่าน AA (Lighthouse) → ใช้ neutral-600 สำหรับข้อความ
-     neutral-400 คงไว้สำหรับ icon/เส้นประกอบที่ไม่ใช่ข้อความเท่านั้น */
-  --color-text-muted: var(--color-neutral-600);
+  --color-text-muted: var(--color-neutral-500);
   --color-border: var(--color-neutral-200);
   --color-border-strong: var(--color-neutral-300);
 
@@ -118,35 +115,35 @@
   --color-popover-foreground: var(--color-text-primary);
   --color-primary: var(--color-brand-500);
   --color-primary-foreground: var(--color-neutral-0);
-  --color-secondary: var(--color-brand-50);
-  --color-secondary-foreground: var(--color-brand-800);
+  --color-secondary: var(--color-bg-subtle);
+  --color-secondary-foreground: var(--color-text-primary);
   --color-muted: var(--color-bg-subtle);
   --color-muted-foreground: var(--color-text-secondary);
   --color-accent: var(--color-brand-50);
-  --color-accent-foreground: var(--color-brand-800);
+  --color-accent-foreground: var(--color-brand-700);
   --color-destructive: var(--color-danger-500);
   --color-destructive-foreground: var(--color-neutral-0);
   --color-input: var(--color-border-strong);
   --color-ring: var(--color-brand-500);
 
-  /* ---- Radius (Design §5.2 + Claude Design 2a) — rounded-full สำหรับ pill/ปุ่ม/avatar/FAB ---- */
-  --radius-sm: 10px; /* input, badge เล็ก, ปุ่มวันที่ */
-  --radius-md: 14px; /* segmented control, toast, icon tile */
-  --radius-lg: 20px; /* goal card, persona card, component card */
-  --radius-xl: 24px; /* white card (งานวันนี้, ตั้งค่า, ฟอร์ม login) */
-  --radius-2xl: 28px; /* hero card, bottom nav, bottom sheet, empty state */
+  /* ---- Radius — restrained geometry from the Modern Minimal prototype ---- */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
 
-  /* ---- Elevation (Design §5.3 + Claude Design 2a) — เงาสี brand นุ่ม ๆ แทนเงาเทา ---- */
-  --shadow-xs: 0 1px 3px rgb(122 95 224 / 0.08); /* alias ให้ class shadow-xs ของ shadcn */
-  --shadow-sm: 0 4px 12px rgb(122 95 224 / 0.1); /* persona pill, avatar, segmented active */
-  --shadow-md: 0 8px 24px rgb(122 95 224 / 0.1); /* white card */
-  --shadow-lg: 0 12px 32px rgb(122 95 224 / 0.16); /* hero card */
-  --shadow-nav: 0 -8px 24px rgb(122 95 224 / 0.1); /* bottom nav */
-  --shadow-sidebar: 8px 0 24px rgb(122 95 224 / 0.08); /* sidebar desktop */
-  --shadow-sheet: 0 -12px 40px rgb(122 95 224 / 0.2); /* bottom sheet */
-  --shadow-toast: 0 10px 28px rgb(122 95 224 / 0.14);
-  --shadow-fab: 0 10px 24px rgb(245 100 140 / 0.35); /* FAB สีพีช — เงาสีเดียวกับปุ่ม */
-  --drop-shadow-dial: 0 8px 16px rgb(122 95 224 / 0.18); /* หน้าปัดเข็มทิศบน hero */
+  /* ---- Elevation — neutral and intentionally subtle ---- */
+  --shadow-xs: 0 1px 2px rgb(16 24 40 / 0.04);
+  --shadow-sm: 0 1px 3px rgb(16 24 40 / 0.06), 0 1px 2px rgb(16 24 40 / 0.04);
+  --shadow-md: 0 8px 24px rgb(16 24 40 / 0.06);
+  --shadow-lg: 0 18px 45px rgb(16 24 40 / 0.08);
+  --shadow-nav: 0 14px 40px rgb(15 23 42 / 0.16);
+  --shadow-sidebar: 1px 0 0 var(--color-border);
+  --shadow-sheet: 0 -12px 40px rgb(15 23 42 / 0.16);
+  --shadow-toast: 0 10px 28px rgb(15 23 42 / 0.12);
+  --shadow-fab: 0 10px 24px rgb(102 86 232 / 0.24);
+  --drop-shadow-dial: 0 8px 16px rgb(102 86 232 / 0.14);
 
   /* ---- Motion: ปลายเข็ม pulse เมื่อถึงจุดหมาย (100%) — ปิดเองเมื่อ prefers-reduced-motion ด้านล่าง ---- */
   --animate-km-pulse: km-pulse 1.6s ease-out infinite;
@@ -194,11 +191,11 @@
   --text-h2--line-height: 1.45;
   --text-h2--font-weight: 600;
 
-  --text-2xl: 24px;
-  --text-2xl--line-height: 1.4;
+  --text-2xl: 28px;
+  --text-2xl--line-height: 1.3;
   --text-2xl--font-weight: 600;
-  --text-h1: 24px;
-  --text-h1--line-height: 1.4;
+  --text-h1: 28px;
+  --text-h1--line-height: 1.3;
   --text-h1--font-weight: 600;
 
   --text-4xl: 36px;

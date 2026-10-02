@@ -1,15 +1,16 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { cn } from "cn";
 
 import { addEntry } from "@/core/entries/actions";
+import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
-import { formatThaiDate, formatValueParts, formatValueWithUnit } from "@/lib/format";
+import { formatDate, formatValueParts, formatValueWithUnit } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -38,6 +39,7 @@ function digitsOnly(value: string): string {
 export function QuickEntryForm({ goal, layout = "compact", className }: Props) {
   const t = useTranslations();
   const te = useTranslations("errors");
+  const locale = useLocale() as AppLocale;
   const router = useRouter();
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +47,7 @@ export function QuickEntryForm({ goal, layout = "compact", className }: Props) {
   const [pending, startTransition] = useTransition();
 
   const isTHB = goal.unit === "THB" || goal.unit === "บาท";
-  const unitLabel = formatValueParts(0, goal.unit).unit;
+  const unitLabel = formatValueParts(0, goal.unit, locale).unit;
   const inputId = `quick-entry-${goal.id}`;
 
   function submit(event: React.FormEvent) {
@@ -68,8 +70,8 @@ export function QuickEntryForm({ goal, layout = "compact", className }: Props) {
       }
       toast.success(
         t("entries.toasts.logged", {
-          amount: formatValueWithUnit(amount, goal.unit),
-          total: formatValueWithUnit(result.data.total, goal.unit),
+          amount: formatValueWithUnit(amount, goal.unit, locale),
+          total: formatValueWithUnit(result.data.total, goal.unit, locale),
         }),
       );
       if (result.data.completed) {
@@ -117,7 +119,7 @@ export function QuickEntryForm({ goal, layout = "compact", className }: Props) {
   return (
     <form
       onSubmit={submit}
-      className={cn("flex flex-col gap-2.5 rounded-xl bg-bg-surface p-5 shadow-md", className)}
+      className={cn("flex flex-col gap-2.5 rounded-xl border border-border bg-bg-surface p-5 shadow-md", className)}
       noValidate
     >
       <div className="flex items-center justify-between gap-3">
@@ -125,7 +127,7 @@ export function QuickEntryForm({ goal, layout = "compact", className }: Props) {
           {t("entries.quick.title")}
         </label>
         <span className="shrink-0 text-small text-text-secondary">
-          {formatThaiDate(todayBkk(), "weekday")}
+          {formatDate(todayBkk(), "weekday", locale)}
         </span>
       </div>
 
@@ -157,7 +159,7 @@ export function QuickEntryForm({ goal, layout = "compact", className }: Props) {
               className="h-8 flex-1 px-0 text-small"
               onClick={() => setValue(String((Number(value) || 0) + chip))}
             >
-              +{formatValueParts(chip, null).value}
+              +{formatValueParts(chip, null, locale).value}
             </Button>
           ))}
         </div>

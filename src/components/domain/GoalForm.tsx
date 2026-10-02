@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import { normalizePeriodStart, periodOf, type PeriodType } from "@/core/domain/p
 import { createGoal, updateGoal } from "@/core/goals/actions";
 import { candidatesFor } from "@/core/goals/candidates";
 import { goalFormSchema, type GoalFormValues, type ParentCandidate } from "@/core/goals/schema";
+import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,6 +54,7 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
   const t = useTranslations();
   const te = useTranslations("errors");
   const tp = useTranslations("periods");
+  const locale = useLocale() as AppLocale;
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -256,7 +258,7 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
                 />
               </FormControl>
               <FormDescription>
-                {periodLabelText(period, tp)} ·{" "}
+                {periodLabelText(period, tp, locale)} ·{" "}
                 {t("goals.form.periodHint", { period: tp(periodType) })}
               </FormDescription>
               <FormMessageI18n />

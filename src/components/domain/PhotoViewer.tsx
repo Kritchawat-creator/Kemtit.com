@@ -20,7 +20,7 @@ export function PhotoViewer({ src, alt, onClose, onDelete, busy }: Props) {
   const t = useTranslations("photos");
   return (
     <Dialog open={src !== null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[92dvh] w-[calc(100%-1.5rem)] max-w-3xl gap-3 p-2 sm:p-3">
+      <DialogContent className="max-h-[92dvh] w-[calc(100%_-_1.5rem)] max-w-3xl gap-3 p-2 sm:p-3">
         <DialogTitle className="sr-only">{alt}</DialogTitle>
         <DialogDescription className="sr-only">{t("view")}</DialogDescription>
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-bg-subtle">

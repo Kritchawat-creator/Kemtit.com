@@ -12,6 +12,7 @@ export type EmptyStateProps = {
   description?: string;
   /** ปุ่ม CTA (Design §8.6: empty state ต้องเชิญชวนและมีทางไปต่อ) */
   action?: React.ReactNode;
+  variant?: "standalone" | "inline";
   className?: string;
 };
 
@@ -36,7 +37,6 @@ function CompassIllustration() {
   );
 }
 
-/** Empty state = การ์ดขาวมุม 28px มีเงา ข้อความกลาง (Claude Design 3e) */
 export function EmptyState({
   icon: Icon,
   illustration,
@@ -44,12 +44,17 @@ export function EmptyState({
   title,
   description,
   action,
+  variant = "standalone",
   className,
 }: EmptyStateProps) {
   return (
     <div
+      data-variant={variant}
       className={cn(
-        "flex flex-col items-center rounded-2xl bg-bg-surface px-5 py-8 text-center shadow-md",
+        "flex min-w-0 flex-col items-center text-center",
+        variant === "inline"
+          ? "min-h-[140px] justify-center bg-transparent px-4 py-6"
+          : "rounded-2xl bg-bg-surface px-5 py-8 shadow-md",
         className,
       )}
     >
@@ -58,16 +63,21 @@ export function EmptyState({
           <CompassIllustration />
         </span>
       ) : Icon ? (
-        <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-brand-50 text-brand-700">
+        <span
+          className={cn(
+            "flex items-center justify-center bg-brand-50 text-brand-700",
+            variant === "inline" ? "mb-3 size-10 rounded-xl" : "mb-4 size-12 rounded-full",
+          )}
+        >
           <Icon className="size-6" strokeWidth={1.5} aria-hidden="true" />
         </span>
       ) : null}
       {eyebrow ? <p className="mb-1 text-caption text-text-secondary">{eyebrow}</p> : null}
-      <h2 className="text-h2 text-brand-800">{title}</h2>
+      <h2 className="text-h2 break-words text-text-primary">{title}</h2>
       {description ? (
-        <p className="mt-1 max-w-xs text-body text-text-secondary">{description}</p>
+        <p className="mt-1 max-w-xs text-body break-words text-text-secondary">{description}</p>
       ) : null}
-      {action ? <div className="mt-4">{action}</div> : null}
+      {action ? <div className="mt-4 max-w-full">{action}</div> : null}
     </div>
   );
 }

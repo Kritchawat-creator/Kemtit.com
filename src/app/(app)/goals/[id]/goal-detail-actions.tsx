@@ -8,7 +8,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { childPeriodType } from "@/core/domain/periods";
-import { setGoalStatus } from "@/core/goals/actions";
+import { restoreGoal, setGoalStatus } from "@/core/goals/actions";
 import type { GoalWithProgress } from "@/core/goals/queries";
 import { goalUnit, type ParentCandidate } from "@/core/goals/schema";
 import { Celebration } from "@/components/domain/Celebration";
@@ -46,10 +46,12 @@ export function GoalDetailActions({ goal, parentCandidates }: Props) {
           label: t("common.undo"),
           onClick: () => {
             startTransition(async () => {
-              const restored = await setGoalStatus({ id: goal.id, status: "active" });
+              const restored = await restoreGoal({ id: goal.id });
               if (restored.ok) {
                 toast.success(t("goals.restoredToast", { title: goal.title }));
                 router.refresh();
+              } else {
+                toast.error(t("errors.generic"));
               }
             });
           },
@@ -83,10 +85,12 @@ export function GoalDetailActions({ goal, parentCandidates }: Props) {
           variant="ghost"
           onClick={() =>
             startTransition(async () => {
-              const restored = await setGoalStatus({ id: goal.id, status: "active" });
+              const restored = await restoreGoal({ id: goal.id });
               if (restored.ok) {
                 toast.success(t("goals.restoredToast", { title: goal.title }));
                 router.refresh();
+              } else {
+                toast.error(t("errors.generic"));
               }
             })
           }

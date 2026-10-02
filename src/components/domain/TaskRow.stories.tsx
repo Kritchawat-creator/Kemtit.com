@@ -8,6 +8,7 @@ import { TaskRow } from "./TaskRow";
 const task: TaskWithGoal = {
   id: "t1",
   user_id: "u1",
+  data_origin: "USER",
   goal_id: "g1",
   domain: "work",
   title: "ตอบแชทลูกค้าค้าง",

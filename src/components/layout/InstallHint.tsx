@@ -80,7 +80,7 @@ export function InstallHint() {
   return (
     <aside
       aria-label={t("title")}
-      className="mt-4 flex items-start gap-3 rounded-xl bg-bg-surface p-4 shadow-md"
+      className="mt-4 flex items-start gap-3 rounded-xl border border-border bg-bg-surface p-4 shadow-md"
     >
       <span className="flex size-9 shrink-0 items-center justify-center rounded-sm bg-brand-50 text-brand-600">
         <Download className="size-[18px]" strokeWidth={1.5} aria-hidden="true" />

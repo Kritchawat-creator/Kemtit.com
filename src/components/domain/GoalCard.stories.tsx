@@ -7,6 +7,7 @@ import { GoalCard } from "./GoalCard";
 const base: GoalWithProgress = {
   id: "g1",
   user_id: "u1",
+  data_origin: "USER",
   parent_id: null,
   period_type: "month",
   period_start: "2026-09-01",
@@ -17,6 +18,8 @@ const base: GoalWithProgress = {
   current_value: 21500,
   persona_data: { unit: "THB" },
   status: "active",
+  archived_at: null,
+  archived_from_status: null,
   completed_at: null,
   created_at: "2026-09-01T00:00:00Z",
   updated_at: "2026-09-01T00:00:00Z",

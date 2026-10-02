@@ -1,60 +1,114 @@
 import {
-  BarChart3,
   CalendarDays,
-  CheckSquare,
+  ClipboardCheck,
+  FolderKanban,
+  HeartPulse,
+  Inbox,
   LayoutDashboard,
-  NotebookPen,
+  MoreHorizontal,
+  Plus,
   Settings,
+  ShoppingBag,
   Target,
+  RefreshCw,
+  WalletCards,
   type LucideIcon,
 } from "lucide-react";
 
+import type { WorkMode } from "@/core/profile/work-modes";
+
 export type NavKey =
-  "dashboard" | "goals" | "entries" | "tasks" | "calendar" | "reports" | "settings";
+  | "today"
+  | "plan"
+  | "insights"
+  | "more"
+  | "inbox"
+  | "quickAdd"
+  | "goals"
+  | "calendar"
+  | "reviews"
+  | "life"
+  | "finance"
+  | "projects"
+  | "workSales"
+  | "dashboard"
+  | "entries"
+  | "tasks"
+  | "reports"
+  | "rescue"
+  | "settings";
 
 export type NavItem = {
   key: NavKey;
   href: string;
   icon: LucideIcon;
-  /** "tasks" = จำนวนงานค้าง/ต้องทำวันนี้ (ซ่อนเมื่อ 0) · "pro" = ป้าย PRO คงที่ */
   badge?: "tasks" | "pro";
-  /** เมนูที่ยังไม่เปิดใช้งานจริงใน POC (เช่น รายงาน Pro) — render เป็น span ไม่ใช่ลิงก์ */
   disabled?: boolean;
 };
 
-/**
- * เมนู sidebar desktop (Claude Design turn 7): กลุ่ม "หลัก" 5 รายการ + "เพิ่มเติม" 2 รายการ
- * แทนที่ NAV_ITEMS เดิม (4 แท็บ) — มือถือยังใช้ 4 แท็บเดิมผ่าน MOBILE_NAV_ITEMS ด้านล่าง ไม่เปลี่ยน
- */
-export const NAV_SECTIONS: ReadonlyArray<{ key: "primary" | "more"; items: NavItem[] }> = [
-  {
-    key: "primary",
-    items: [
-      { key: "dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { key: "goals", href: "/goals", icon: Target },
-      { key: "entries", href: "/entries", icon: NotebookPen },
-      { key: "tasks", href: "/tasks", icon: CheckSquare, badge: "tasks" },
-      { key: "calendar", href: "/calendar", icon: CalendarDays },
-    ],
-  },
-  {
-    key: "more",
-    items: [
-      { key: "reports", href: "#", icon: BarChart3, disabled: true, badge: "pro" },
-      { key: "settings", href: "/settings", icon: Settings },
-    ],
-  },
+export type NavSection = {
+  key: "primary" | "context" | "more";
+  items: NavItem[];
+};
+
+const PRIMARY_ITEMS: NavItem[] = [
+  { key: "today", href: "/today", icon: LayoutDashboard },
+  { key: "plan", href: "/plan", icon: CalendarDays },
+  { key: "inbox", href: "/inbox", icon: Inbox },
+  { key: "calendar", href: "/calendar", icon: CalendarDays },
+  { key: "insights", href: "/insights", icon: ClipboardCheck },
 ];
 
-/** 4 แท็บบนมือถือ (Design §8.1) — ลำดับเดียวกันทั้ง bottom nav และ sidebar เดิม ไม่เปลี่ยน */
-export const MOBILE_NAV_ITEMS: ReadonlyArray<{ key: NavKey; href: string; icon: LucideIcon }> = [
-  { key: "dashboard", href: "/dashboard", icon: LayoutDashboard },
+const LIFE_ITEMS: NavItem[] = [
   { key: "goals", href: "/goals", icon: Target },
-  { key: "calendar", href: "/calendar", icon: CalendarDays },
+  { key: "reviews", href: "/reviews", icon: ClipboardCheck },
+  { key: "life", href: "/life", icon: HeartPulse },
+  { key: "finance", href: "/finance", icon: WalletCards },
+];
+
+const MORE_ITEMS: NavItem[] = [
+  { key: "rescue", href: "/rescue", icon: RefreshCw },
   { key: "settings", href: "/settings", icon: Settings },
 ];
 
-/** alias ของเดิมไว้ให้ของที่ยังอ้างชื่อนี้ (text-search ยืนยันมีแค่ Sidebar/BottomNav ที่ import — ทั้งคู่แก้ตามด้านบนแล้ว) */
+/** Desktop keeps operational surfaces visible while contextual modules remain grouped. */
+export function navigationForWorkMode(workMode: WorkMode | null): NavSection[] {
+  const workItems: NavItem[] =
+    workMode === "professional"
+      ? [{ key: "projects", href: "/work/projects", icon: FolderKanban }]
+      : workMode === "seller"
+        ? [{ key: "workSales", href: "/work/sales", icon: ShoppingBag }]
+        : [];
+
+  return [
+    { key: "primary", items: PRIMARY_ITEMS },
+    { key: "context", items: [...workItems, ...LIFE_ITEMS] },
+    { key: "more", items: MORE_ITEMS },
+  ];
+}
+
+export const NAV_SECTIONS = navigationForWorkMode(null);
+
+/** Tablet keeps the five most-used destinations and the More hub. */
+export const TABLET_NAV_ITEMS: ReadonlyArray<NavItem> = [
+  ...PRIMARY_ITEMS,
+  { key: "more", href: "/more", icon: MoreHorizontal },
+];
+
+/** Product core loop: Today → Plan → Capture → Insights → More. */
+export const MOBILE_NAV_ITEMS: ReadonlyArray<{
+  key: NavKey;
+  href: string;
+  icon: LucideIcon;
+  quick?: boolean;
+}> = [
+  { key: "today", href: "/today", icon: LayoutDashboard },
+  { key: "plan", href: "/plan", icon: CalendarDays },
+  { key: "quickAdd", href: "#quick-add", icon: Plus, quick: true },
+  { key: "insights", href: "/insights", icon: ClipboardCheck },
+  { key: "more", href: "/more", icon: MoreHorizontal },
+];
+
 export const NAV_ITEMS = MOBILE_NAV_ITEMS;
 
 export function isActivePath(pathname: string, href: string) {

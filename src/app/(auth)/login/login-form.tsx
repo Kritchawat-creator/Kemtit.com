@@ -9,7 +9,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { requestOtp, verifyOtp } from "@/core/auth/actions";
+import { requestOtp, startGoogleSignIn, verifyOtp } from "@/core/auth/actions";
 import { requestOtpSchema, type RequestOtpInput } from "@/core/auth/schema";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
@@ -27,7 +27,7 @@ type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
  * ขั้น 1 ของ onboarding (Design §8.3): อีเมล → รหัส 6 หลัก auto-submit เมื่อครบ
  * ข้อความทั้งหมดจาก th.json; error จาก action เป็น key ใน errors.*
  */
-export function LoginForm({ next }: { next?: string }) {
+export function LoginForm({ next, error: initialError }: { next?: string; error?: string }) {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
@@ -36,7 +36,7 @@ export function LoginForm({ next }: { next?: string }) {
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(initialError ?? null);
   const [cooldown, setCooldown] = useState(0);
   const [pending, startTransition] = useTransition();
   const otpRef = useRef<HTMLInputElement>(null);
@@ -91,6 +91,18 @@ export function LoginForm({ next }: { next?: string }) {
     });
   }
 
+  function signInWithGoogle() {
+    setServerError(null);
+    startTransition(async () => {
+      const result = await startGoogleSignIn({ next });
+      if (!result.ok) {
+        setServerError(result.error);
+        return;
+      }
+      window.location.assign(result.data.url);
+    });
+  }
+
   if (step === "code") {
     return (
       <section aria-labelledby="otp-title" className="space-y-5">
@@ -106,14 +118,14 @@ export function LoginForm({ next }: { next?: string }) {
           >
             <ArrowLeft className="size-6" strokeWidth={1.5} aria-hidden="true" />
           </Button>
-          <h1 id="otp-title" className="mt-1 text-h1 text-brand-800">
+          <h1 id="otp-title" className="mt-1 text-h1 text-text-primary">
             {t("codeTitleShort")}
             <span className="mt-0.5 block text-h3 break-all text-text-secondary">{email}</span>
           </h1>
           <p className="mt-1 text-body text-text-secondary">{t("codeHint")}</p>
         </div>
 
-        <div className="space-y-4 rounded-xl bg-bg-surface p-5 shadow-md">
+        <div className="space-y-4 rounded-xl border border-border bg-bg-surface p-5 shadow-md">
           <InputOTP
             ref={otpRef}
             maxLength={OTP_LENGTH}
@@ -166,7 +178,7 @@ export function LoginForm({ next }: { next?: string }) {
   return (
     <section aria-labelledby="login-title" className="space-y-5">
       <div>
-        <h1 id="login-title" className="text-h1 text-brand-800">
+        <h1 id="login-title" className="text-h1 text-text-primary">
           {t("title")}
         </h1>
         <p className="mt-1 text-body text-text-secondary">{t("subtitle")}</p>
@@ -175,7 +187,7 @@ export function LoginForm({ next }: { next?: string }) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(sendCode)}
-          className="space-y-4 rounded-xl bg-bg-surface p-5 shadow-md"
+          className="space-y-4 rounded-xl border border-border bg-bg-surface p-5 shadow-md"
           noValidate
         >
           <FormField
@@ -207,6 +219,25 @@ export function LoginForm({ next }: { next?: string }) {
           </Button>
         </form>
       </Form>
+
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 text-caption text-text-muted">
+          <span className="h-px flex-1 bg-border" />
+          <span>{t("or")}</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+        <Button
+          type="button"
+          size="lg"
+          variant="outline"
+          className="w-full"
+          onClick={signInWithGoogle}
+          disabled={pending}
+        >
+          <span aria-hidden="true" className="font-semibold text-accent-700">G</span>
+          {pending ? t("googleSigningIn") : t("googleSignIn")}
+        </Button>
+      </div>
 
       <p className="text-center text-caption text-text-muted">{t("consent")}</p>
     </section>

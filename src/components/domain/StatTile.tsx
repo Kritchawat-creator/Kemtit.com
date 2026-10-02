@@ -56,7 +56,7 @@ export function StatTile({
   if (Icon) {
     const BadgeIcon = badge?.icon ? BADGE_ICON[badge.icon] : null;
     return (
-      <div className={cn("rounded-lg bg-bg-surface px-6 py-5 shadow-md", className)}>
+      <div className={cn("rounded-xl border border-border bg-bg-surface px-5 py-5 shadow-xs", className)}>
         <div className="flex items-center gap-3">
           <span className="flex size-12 shrink-0 items-center justify-center rounded-md bg-brand-50 text-brand-600">
             <Icon className="size-6" strokeWidth={1.5} aria-hidden="true" />
@@ -90,7 +90,7 @@ export function StatTile({
   }
 
   return (
-    <div className={cn("rounded-lg bg-bg-surface p-4 shadow-md", className)}>
+    <div className={cn("rounded-xl border border-border bg-bg-surface p-4 shadow-xs", className)}>
       <p className="text-caption text-text-secondary">{label}</p>
       <p className={cn("mt-1 text-h1", TONE[tone])}>{value}</p>
       {hint ? <p className="mt-1 text-small text-text-muted">{hint}</p> : null}

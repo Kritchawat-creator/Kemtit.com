@@ -14,7 +14,7 @@ export function ProCard({ tier }: Props) {
   const isPro = tier === "pro";
 
   return (
-    <div className="mt-1 flex flex-col gap-1.5 rounded-lg bg-brand-50 p-3">
+    <div className="mt-1 flex flex-col gap-1.5 rounded-lg border border-border bg-bg-subtle p-3">
       <div className="flex items-center justify-between gap-2">
         <span className="text-small font-semibold text-brand-800">
           {isPro ? t("pro.tierPro") : t("pro.tierFree")}
@@ -31,7 +31,7 @@ export function ProCard({ tier }: Props) {
           <button
             type="button"
             onClick={() => toast(t("pro.comingSoon"))}
-            className="h-10 w-full rounded-full bg-brand-500 text-small font-medium text-neutral-0 transition-colors hover:bg-brand-600"
+            className="h-10 w-full rounded-md bg-brand-500 text-small font-medium text-neutral-0 transition-colors hover:bg-brand-600"
           >
             {t("pro.upgrade")}
           </button>

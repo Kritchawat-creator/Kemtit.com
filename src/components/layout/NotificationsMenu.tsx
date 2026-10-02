@@ -28,7 +28,7 @@ export function NotificationsMenu({ overdue, lineLinked }: Props) {
         <button
           type="button"
           aria-label={t("nav.notifications")}
-          className="relative flex size-11 items-center justify-center rounded-md bg-bg-surface text-brand-800 shadow-sm transition-colors hover:bg-brand-50"
+          className="relative flex size-11 items-center justify-center rounded-lg border border-border bg-bg-surface text-text-secondary shadow-xs transition-colors hover:bg-bg-subtle hover:text-text-primary"
         >
           <Bell className="size-5" strokeWidth={1.5} aria-hidden="true" />
           {hasItems ? (

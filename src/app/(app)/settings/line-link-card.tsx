@@ -1,7 +1,7 @@
 "use client";
 
 import { ExternalLink, MessageCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import {
   unlinkLine,
   type LineLinkView,
 } from "@/core/profile/line-actions";
+import type { AppLocale } from "@/i18n/config";
 import { formatDateTime } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ const POLL_MS = 3000;
 /** การ์ดเชื่อม LINE (Decision 2.1): ขอรหัส → เพิ่มเพื่อน → พิมพ์รหัสในแชท → หน้านี้ poll สถานะจนเชื่อมสำเร็จ */
 export function LineLinkCard({ initial, addFriendUrl, dryRun }: Props) {
   const t = useTranslations("settings.line");
+  const locale = useLocale() as AppLocale;
   const te = useTranslations("errors");
   const router = useRouter();
   const [view, setView] = useState<LineLinkView>(initial);
@@ -93,7 +95,7 @@ export function LineLinkCard({ initial, addFriendUrl, dryRun }: Props) {
         </Badge>
         {view.linked && view.linkedAt ? (
           <span className="text-small text-text-secondary">
-            {t("linkedSince", { date: formatDateTime(view.linkedAt) })}
+            {t("linkedSince", { date: formatDateTime(view.linkedAt, locale) })}
           </span>
         ) : null}
       </div>

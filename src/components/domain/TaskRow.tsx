@@ -1,18 +1,20 @@
 "use client";
 
 import { Repeat } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "cn";
 
 import type { DayTaskItem } from "@/core/domain/dayplan";
 import { parseRRule } from "@/core/domain/recurrence";
 import type { TaskWithGoal } from "@/core/tasks/schema";
 import type { ISODate } from "@/lib/date";
-import { formatThaiDate } from "@/lib/format";
+import type { AppLocale } from "@/i18n/config";
+import { formatDate } from "@/lib/format";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { DomainTag } from "./DomainTag";
 import { TaskAttachmentCount, TaskThumbs } from "./TaskPhotos";
+import { getTaskDateDisplay } from "./task-date-display";
 
 /**
  * การแสดงรูปแนบท้ายแถว (Design §6A.3): none = ซ่อน (flag ปิด) · icon = Lucide image + จำนวน (dashboard/ปฏิทิน)
@@ -42,8 +44,10 @@ export function TaskRow({
   attachments = "none",
 }: TaskRowProps) {
   const t = useTranslations();
+  const locale = useLocale() as AppLocale;
   const { task } = item;
   const rule = parseRRule(task.recurrence_rule);
+  const dateDisplay = getTaskDateDisplay(item, today);
   const checkboxId = `task-${item.key}`;
   const photos = task.photos ?? [];
 
@@ -53,6 +57,7 @@ export function TaskRow({
         <Checkbox
           id={checkboxId}
           checked={item.done}
+          disabled={item.actionable === false}
           onCheckedChange={(value) => onToggle(item, value === true)}
           aria-label={t("a11y.toggleTask", { title: task.title })}
           className="size-6 rounded-full border-[1.5px] border-brand-200 transition-all duration-150 data-[state=checked]:border-success-500 data-[state=checked]:bg-success-500 data-[state=checked]:text-neutral-0"
@@ -67,7 +72,7 @@ export function TaskRow({
       >
         <span
           className={cn(
-            "block truncate text-body transition-all duration-150",
+            "block text-body break-words transition-all duration-150",
             item.done ? "text-text-muted line-through" : "text-text-primary",
           )}
         >
@@ -82,12 +87,22 @@ export function TaskRow({
                 : t("tasks.recurrence.badgeWeekly")}
             </span>
           ) : null}
-          {item.overdue ? (
+          {dateDisplay.overdueSince ? (
             <span className="text-danger-800">
-              {t("tasks.meta.overdueSince", { date: formatThaiDate(item.date, "short") })}
+              {t("tasks.meta.overdueSince", {
+                date: formatDate(dateDisplay.overdueSince, "short", locale),
+              })}
+            </span>
+          ) : item.skipped ? (
+            <span>{t("tasks.meta.skipped")}</span>
+          ) : item.overdue ? (
+            <span>
+              {t("tasks.meta.plannedFor", {
+                date: formatDate(dateDisplay.plannedDate ?? item.date, "short", locale),
+              })}
             </span>
           ) : item.date !== today ? (
-            <span>{formatThaiDate(item.date, "weekday")}</span>
+            <span>{formatDate(item.date, "weekday", locale)}</span>
           ) : null}
           {showGoal && task.goal ? (
             <span className="truncate">{t("tasks.meta.goal", { title: task.goal.title })}</span>

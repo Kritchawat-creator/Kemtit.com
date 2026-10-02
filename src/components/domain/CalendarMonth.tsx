@@ -1,169 +1,141 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { CalendarClock, Clock3, ReceiptText } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { cn } from "cn";
 
 import type { DayTaskItem, PlanTask } from "@/core/domain/dayplan";
+import type { CalendarContextByDay } from "@/core/domain/calendar-context";
 import type { Domain } from "@/core/domain/domains";
+import type { AppLocale } from "@/i18n/config";
 import { type ISODate, startOfMonthISO } from "@/lib/date";
-import { formatThaiDate, formatWeekdayNarrow } from "@/lib/format";
+import { formatDate, formatWeekdayNarrow } from "@/lib/format";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 
 import { calendarHref } from "./CalendarNav";
 import { DOMAIN_STYLES } from "./DomainTag";
 
 const MAX_DOTS = 4;
-const MAX_CHIPS = 2;
 
 type Props = {
   date: ISODate;
   weeks: ISODate[][];
   byDay: Record<ISODate, DayTaskItem<PlanTask>[]>;
+  contextByDay?: CalendarContextByDay;
   today: ISODate;
-  /** วันที่เลือกอยู่ (desktop): ช่องพื้น brand-50 + แผงงานด้านขวา (Claude Design 4d) */
   selected?: ISODate;
 };
 
-/**
- * เดือน: มือถือ = การ์ดขาว grid 7 คอลัมน์ จุดสี domain + จำนวนงาน แตะ → มุมมองวัน (Design §8.2)
- * desktop = ช่องสูง 112px มีเส้นแบ่ง ชื่องาน 2 รายการ + "+N งาน" แตะ → เลือกวัน (คงมุมมองเดือน)
- */
-export function CalendarMonth({ date, weeks, byDay, today, selected }: Props) {
+export function CalendarMonth({ date, weeks, byDay, contextByDay = {}, today, selected }: Props) {
   const t = useTranslations("calendar");
+  const ta = useTranslations();
+  const locale = useLocale() as AppLocale;
   const isMobile = useIsMobile();
   const monthStart = startOfMonthISO(date);
   const headerDays = weeks[0] ?? [];
 
-  if (!isMobile) {
-    return (
-      <div className="overflow-hidden rounded-xl bg-bg-surface shadow-md">
-        <div className="grid grid-cols-7 px-0 pt-4 pb-2" aria-hidden="true">
-          {headerDays.map((day, i) => (
-            <div
-              key={day}
-              className={cn(
-                "text-center text-caption font-medium",
-                i === 0 ? "text-brand-500" : "text-text-secondary",
-              )}
-            >
-              {formatWeekdayNarrow(day)}
-            </div>
-          ))}
-        </div>
-        <ol className="grid grid-cols-7 border-l border-border">
-          {weeks.flat().map((day) => {
-            const items = byDay[day] ?? [];
-            const inMonth = startOfMonthISO(day) === monthStart;
-            const isToday = day === today;
-            const isSelected = day === selected;
-            return (
-              <li key={day} className="min-w-0">
-                <Link
-                  href={calendarHref("month", day)}
-                  aria-label={`${formatThaiDate(day, "long")} · ${t("tasksCount", { count: items.length })}`}
-                  aria-current={isSelected ? "date" : undefined}
-                  className={cn(
-                    "flex min-h-28 flex-col items-start gap-1 border-t border-r border-border px-2.5 py-2 text-left transition-colors focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none focus-visible:ring-inset",
-                    isSelected ? "bg-brand-50" : "bg-bg-surface hover:bg-bg-subtle",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "mb-0.5 flex size-7 items-center justify-center rounded-full text-small font-semibold",
-                      !inMonth && "text-border-strong",
-                      inMonth && isSelected && "bg-brand-500 text-neutral-0",
-                      inMonth && !isSelected && "text-text-primary",
-                      isToday && !isSelected && "border-[1.5px] border-brand-500",
-                    )}
-                  >
-                    {formatThaiDate(day, "day")}
-                  </span>
-                  {inMonth
-                    ? items.slice(0, MAX_CHIPS).map((item) => (
-                        <span
-                          key={item.key}
-                          className={cn(
-                            "flex max-w-full items-center gap-1.5 text-caption font-medium",
-                            DOMAIN_STYLES[item.task.domain as Domain].text,
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              "size-1.5 shrink-0 rounded-full",
-                              DOMAIN_STYLES[item.task.domain as Domain].dot,
-                            )}
-                            aria-hidden="true"
-                          />
-                          <span className={cn("truncate", item.done && "line-through opacity-70")}>
-                            {item.task.title}
-                          </span>
-                        </span>
-                      ))
-                    : null}
-                  {inMonth && items.length > MAX_CHIPS ? (
-                    <span className="text-caption font-medium text-text-secondary">
-                      {t("more", { count: items.length - MAX_CHIPS })} {t("tasksUnitShort")}
-                    </span>
-                  ) : null}
-                </Link>
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-    );
-  }
-
   return (
-    <div className="rounded-xl bg-bg-surface p-3 shadow-md">
-      <div className="grid grid-cols-7 gap-1" aria-hidden="true">
+    <section
+      aria-label={formatDate(date, "monthYear", locale)}
+      className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[761px]:p-6"
+    >
+      <h2 className="mb-3 text-h3 font-semibold text-text-primary">
+        {formatDate(date, "monthYear", locale)}
+      </h2>
+      <div className="grid grid-cols-7 gap-[3px] min-[761px]:gap-1" aria-hidden="true">
         {headerDays.map((day) => (
-          <div key={day} className="py-1 text-center text-caption text-text-secondary">
-            {formatWeekdayNarrow(day)}
+          <div
+            key={day}
+            className="min-w-0 py-1 text-center text-caption font-medium text-text-secondary"
+          >
+            {formatWeekdayNarrow(day, locale)}
           </div>
         ))}
       </div>
-      <ol className="grid grid-cols-7 gap-1">
+      <ol className="mt-1 grid grid-cols-7 gap-[3px] min-[761px]:gap-1">
         {weeks.flat().map((day) => {
           const items = byDay[day] ?? [];
+          const context = contextByDay[day];
           const inMonth = startOfMonthISO(day) === monthStart;
           const isToday = day === today;
-          const domains = [...new Set(items.map((i) => i.task.domain as Domain))];
+          const isSelected = day === selected;
+          const domains = [...new Set(items.map((item) => item.task.domain as Domain))];
+          const contextKinds = [
+            context?.events.length ? "event" : null,
+            context?.timeBlocks.length ? "timeBlock" : null,
+            context?.bills.length ? "bill" : null,
+          ].filter((kind): kind is "event" | "timeBlock" | "bill" => kind !== null);
+          const contextLabels = contextKinds.map((kind) =>
+            kind === "event"
+              ? ta("today.calendarEvent")
+              : kind === "timeBlock"
+                ? ta("today.timeBlock")
+                : ta("capture.types.bill"),
+          );
+
           return (
-            <li key={day}>
+            <li key={day} className="min-w-0">
               <Link
-                href={calendarHref("day", day)}
-                aria-label={`${formatThaiDate(day, "long")} · ${t("tasksCount", { count: items.length })}`}
+                href={calendarHref(isMobile ? "day" : "month", day)}
+                aria-label={`${formatDate(day, "long", locale)} · ${t("tasksCount", { count: items.length })}${contextLabels.length ? ` · ${contextLabels.join(" · ")}` : ""}`}
+                aria-current={isSelected ? "date" : undefined}
                 className={cn(
-                  "flex min-h-14 flex-col items-center gap-1 rounded-md p-1 transition-colors hover:bg-bg-subtle focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none",
-                  !inMonth && "opacity-40",
+                  "flex min-h-11 min-w-0 flex-col items-start justify-between gap-1 rounded-[9px] border p-1.5 text-small transition-colors focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none min-[761px]:min-h-12",
+                  isSelected
+                    ? "border-brand-500 bg-brand-500 text-neutral-0"
+                    : isToday
+                      ? "border-brand-500 bg-brand-50 text-brand-700"
+                      : "border-transparent text-text-primary hover:border-border hover:bg-bg-subtle",
+                  !inMonth && !isSelected && "opacity-40",
                 )}
               >
-                <span
-                  className={cn(
-                    "inline-flex size-8 items-center justify-center rounded-full text-small font-semibold",
-                    isToday ? "bg-brand-500 text-neutral-0" : "text-text-primary",
-                  )}
-                >
-                  {formatThaiDate(day, "day")}
+                <span className="font-semibold">{formatDate(day, "day", locale)}</span>
+                <span className="flex min-h-1.5 flex-wrap gap-[3px]" aria-hidden="true">
+                  {contextKinds.map((kind) => (
+                    <span
+                      key={kind}
+                      className={cn(
+                        "size-1.5",
+                        isSelected
+                          ? "rounded-full bg-neutral-0"
+                          : kind === "bill"
+                            ? "rounded-sm bg-warning-500"
+                            : kind === "timeBlock"
+                              ? "rounded-none bg-brand-700"
+                              : "rounded-full bg-brand-500",
+                      )}
+                    />
+                  ))}
+                  {domains.slice(0, Math.max(0, MAX_DOTS - contextKinds.length)).map((domain) => (
+                    <span
+                      key={domain}
+                      className={cn(
+                        "size-1.5 rounded-full",
+                        isSelected ? "bg-neutral-0" : DOMAIN_STYLES[domain].dot,
+                      )}
+                    />
+                  ))}
                 </span>
-                {items.length > 0 ? (
-                  <span className="flex flex-wrap items-center gap-0.5">
-                    {domains.slice(0, MAX_DOTS).map((d) => (
-                      <span
-                        key={d}
-                        className={cn("size-1.5 rounded-full", DOMAIN_STYLES[d].dot)}
-                        aria-hidden="true"
-                      />
-                    ))}
-                  </span>
-                ) : null}
               </Link>
             </li>
           );
         })}
       </ol>
-    </div>
+      <ul className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-caption text-text-secondary" aria-label={ta("today.scheduleHeading")}>
+        <li className="inline-flex items-center gap-1.5">
+          <CalendarClock className="size-3.5 text-brand-500" aria-hidden="true" />
+          {ta("today.calendarEvent")}
+        </li>
+        <li className="inline-flex items-center gap-1.5">
+          <Clock3 className="size-3.5 text-brand-700" aria-hidden="true" />
+          {ta("today.timeBlock")}
+        </li>
+        <li className="inline-flex items-center gap-1.5">
+          <ReceiptText className="size-3.5 text-warning-800" aria-hidden="true" />
+          {ta("capture.types.bill")}
+        </li>
+      </ul>
+    </section>
   );
 }

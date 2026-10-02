@@ -1,34 +1,36 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import type { Period } from "@/core/domain/periods";
-import { formatThaiDate, formatThaiYear } from "@/lib/format";
+import type { AppLocale } from "@/i18n/config";
+import { formatDate, formatYear } from "@/lib/format";
 
-/** ป้ายช่วงเวลาของ goal: "พ.ศ. 2569" / "กันยายน 2569" / "30 ส.ค. – 5 ก.ย." */
 export function periodLabelText(
   period: Period,
   t: ReturnType<typeof useTranslations<"periods">>,
+  locale: AppLocale = "th",
 ): string {
   switch (period.type) {
     case "year":
-      return formatThaiYear(period.start);
+      return formatYear(period.start, locale);
     case "month":
-      return formatThaiDate(period.start, "monthYear");
+      return formatDate(period.start, "monthYear", locale);
     case "quarter":
       return t("rangeLabel", {
-        start: formatThaiDate(period.start, "short"),
-        end: formatThaiDate(period.end, "medium"),
+        start: formatDate(period.start, "short", locale),
+        end: formatDate(period.end, "medium", locale),
       });
     case "week":
       return t("rangeLabel", {
-        start: formatThaiDate(period.start, "short"),
-        end: formatThaiDate(period.end, "short"),
+        start: formatDate(period.start, "short", locale),
+        end: formatDate(period.end, "short", locale),
       });
     case "day":
-      return formatThaiDate(period.start, "weekday");
+      return formatDate(period.start, "weekday", locale);
   }
 }
 
 export function PeriodLabel({ period, className }: { period: Period; className?: string }) {
   const t = useTranslations("periods");
-  return <span className={className}>{periodLabelText(period, t)}</span>;
+  const locale = useLocale() as AppLocale;
+  return <span className={className}>{periodLabelText(period, t, locale)}</span>;
 }

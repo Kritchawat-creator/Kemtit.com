@@ -35,7 +35,7 @@ export function DomainSelect({ value, onValueChange, disabled, id }: Props) {
           aria-label={t(domain)}
           className={cn(
             // pill หมวด (Claude Design 3l): พื้นสี domain อ่อน + จุด · เลือกแล้ว = ขอบ 1.5px สีตัวหนังสือของหมวด
-            "h-9 gap-1.5 rounded-full border-[1.5px] border-transparent px-3 text-small font-medium shadow-none hover:bg-transparent hover:text-current data-[spacing=2]:rounded-full",
+            "h-9 gap-1.5 rounded-full border-[1.5px] border-transparent px-3 text-small font-medium shadow-none data-[spacing=2]:rounded-full",
             DOMAIN_STYLES[domain].pill,
             DOMAIN_STYLES[domain].selected,
           )}

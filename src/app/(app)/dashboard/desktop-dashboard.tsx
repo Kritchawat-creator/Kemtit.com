@@ -1,5 +1,5 @@
 import { CircleDollarSign, Flame, Plus, ShoppingBag, SquareCheck } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import {
@@ -19,8 +19,9 @@ import {
 import { getMainMonthGoal } from "@/core/goals/queries";
 import { goalUnit } from "@/core/goals/schema";
 import { getDayPlan, getWeekTaskStats } from "@/core/tasks/queries";
+import type { AppLocale } from "@/i18n/config";
 import { addDaysISO, addMonthsISO, endOfMonthISO, type ISODate, startOfMonthISO } from "@/lib/date";
-import { formatThaiDate, formatValueParts } from "@/lib/format";
+import { formatDate, formatValueParts } from "@/lib/format";
 import { CompassDial } from "@/components/domain/CompassDial";
 import { EmptyState } from "@/components/domain/EmptyState";
 import { EntriesTable } from "@/components/domain/EntriesTable";
@@ -56,11 +57,11 @@ function Card({
   return (
     <section
       aria-label={title}
-      className={`${spanClass} flex flex-col gap-3 rounded-lg bg-bg-surface px-6 py-5 shadow-md`}
+      className={`${spanClass} min-w-0 overflow-hidden flex flex-col gap-3 rounded-xl border border-border bg-bg-surface px-5 py-5 shadow-xs`}
     >
       {title ? (
         <div className="flex min-h-8 items-center justify-between gap-3">
-          <h2 className="truncate text-h3 text-brand-800">{title}</h2>
+          <h2 className="truncate text-h3 font-semibold text-text-primary">{title}</h2>
           {action ? <div className="flex shrink-0 items-center gap-2">{action}</div> : null}
         </div>
       ) : null}
@@ -84,6 +85,7 @@ export async function DesktopDashboard({ today, chart }: Props) {
     getEntryStreak(today),
     listEntries({ limit: RECENT_LIMIT }),
   ]);
+  const locale = (await getLocale()) as AppLocale;
 
   const isMetric = goal?.goal_kind === "metric";
   const unit = goal ? goalUnit(goal) : null;
@@ -109,10 +111,10 @@ export async function DesktopDashboard({ today, chart }: Props) {
   const monthDelta = percentChange(total, prevMonthToDate);
   const todayDelta = percentChange(todayTotal, yesterday);
   const overdue = plan.overdue.length;
-  const prevMonthLabel = formatThaiDate(addMonthsISO(monthStart, -1), "monthShort");
+  const prevMonthLabel = formatDate(addMonthsISO(monthStart, -1), "monthShort", locale);
 
-  const totalParts = formatValueParts(total, unit);
-  const todayParts = formatValueParts(todayTotal, unit);
+  const totalParts = formatValueParts(total, unit, locale);
+  const todayParts = formatValueParts(todayTotal, unit, locale);
 
   return (
     <div className="grid gap-5 lg:grid-cols-12 lg:items-start">
@@ -226,11 +228,11 @@ export async function DesktopDashboard({ today, chart }: Props) {
                 <Figure label={t("entries.chart.total")} value={totalParts} />
                 <Figure
                   label={t("entries.chart.avgPerDay")}
-                  value={formatValueParts(averagePerDay(total, goal.period, today), unit)}
+                  value={formatValueParts(averagePerDay(total, goal.period, today), unit, locale)}
                 />
                 <Figure
                   label={t("entries.chart.needPerDay")}
-                  value={formatValueParts(perDayNeeded(remaining, left), unit)}
+                  value={formatValueParts(perDayNeeded(remaining, left), unit, locale)}
                 />
               </div>
               <div className="flex gap-4 text-caption font-medium text-text-secondary">
@@ -287,7 +289,7 @@ export async function DesktopDashboard({ today, chart }: Props) {
               <ul className="grid grid-cols-3 gap-2">
                 <Tile value={String(left)} label={t("entries.compass.daysLeft")} />
                 <Tile
-                  value={formatValueParts(remaining, unit).value}
+                  value={formatValueParts(remaining, unit, locale).value}
                   label={
                     totalParts.unit
                       ? t("entries.compass.remaining", { unit: totalParts.unit })
@@ -295,7 +297,7 @@ export async function DesktopDashboard({ today, chart }: Props) {
                   }
                 />
                 <Tile
-                  value={formatValueParts(perDayNeeded(remaining, left), unit).value}
+                  value={formatValueParts(perDayNeeded(remaining, left), unit, locale).value}
                   label={
                     totalParts.unit
                       ? t("entries.compass.perDay", { unit: totalParts.unit })

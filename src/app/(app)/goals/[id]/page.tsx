@@ -1,6 +1,6 @@
 import { ArrowLeft, CheckSquare, ChevronLeft, Plus } from "lucide-react";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cn } from "cn";
@@ -9,8 +9,9 @@ import { childPeriodType, daysLeft } from "@/core/domain/periods";
 import { getGoalDetail, listParentCandidates } from "@/core/goals/queries";
 import { goalUnit } from "@/core/goals/schema";
 import { getGoalTaskItems } from "@/core/tasks/queries";
+import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
-import { formatNumber, formatThaiDate, formatValueParts, formatValueWithUnit } from "@/lib/format";
+import { formatDate, formatNumber, formatValueParts, formatValueWithUnit } from "@/lib/format";
 import { CompassDial } from "@/components/domain/CompassDial";
 import { DomainTag } from "@/components/domain/DomainTag";
 import { EmptyState } from "@/components/domain/EmptyState";
@@ -45,6 +46,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
     getTranslations("periods"),
   ]);
   if (!detail) notFound();
+  const locale = (await getLocale()) as AppLocale;
 
   const { goal, parent, tree } = detail;
   const unit = goalUnit(goal);
@@ -56,9 +58,9 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
     : 0;
   const reached = goal.progress.percent >= 100;
   const parts = isMetric
-    ? formatValueParts(goal.progress.current ?? 0, unit)
+    ? formatValueParts(goal.progress.current ?? 0, unit, locale)
     : {
-        value: `${formatNumber(goal.progress.tasksDone ?? 0)}/${formatNumber(goal.progress.tasksTotal ?? 0)}`,
+        value: `${formatNumber(goal.progress.tasksDone ?? 0, locale)}/${formatNumber(goal.progress.tasksTotal ?? 0, locale)}`,
         unit: t("goals.tasksUnitShort"),
       };
   const childType = childPeriodType(goal.period_type);
@@ -102,7 +104,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
           <section
             aria-labelledby="goal-title"
             className={cn(
-              "space-y-4 rounded-2xl bg-brand-100 p-5 shadow-lg lg:p-6",
+              "space-y-4 rounded-xl border border-border bg-bg-surface p-5 shadow-xs lg:p-6",
               goal.status === "archived" && "opacity-80",
             )}
           >
@@ -147,17 +149,18 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
                 <p className="text-small text-brand-800">
                   {isMetric
                     ? t("widgets.goalProgress.target", {
-                        target: formatValueWithUnit(goal.progress.target ?? 0, unit),
+                        target: formatValueWithUnit(goal.progress.target ?? 0, unit, locale),
                       })
-                    : `${t("progress.endsOn")} ${formatThaiDate(goal.period.end, "medium")}`}
+                    : `${t("progress.endsOn")} ${formatDate(goal.period.end, "medium", locale)}`}
                   {isMetric && !reached && remaining > 0
-                    ? ` · ${t("progress.remaining", { remaining: formatValueWithUnit(remaining, unit) })}`
+                    ? ` · ${t("progress.remaining", { remaining: formatValueWithUnit(remaining, unit, locale) })}`
                     : ""}
                   {isMetric && reached && (goal.progress.current ?? 0) > (goal.progress.target ?? 0)
                     ? ` · ${t("goals.over", {
                         value: formatValueWithUnit(
                           (goal.progress.current ?? 0) - (goal.progress.target ?? 0),
                           unit,
+                          locale,
                         ),
                       })}`
                     : ""}
@@ -165,7 +168,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
                 {isMetric && !reached && remaining > 0 && remainingDays > 0 ? (
                   <p className="text-caption text-text-secondary">
                     {t("progress.perDayNeeded", {
-                      amount: formatValueWithUnit(Math.ceil(remaining / remainingDays), unit),
+                      amount: formatValueWithUnit(Math.ceil(remaining / remainingDays), unit, locale),
                     })}
                   </p>
                 ) : null}
@@ -182,7 +185,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
         <div className="mt-6 space-y-6 lg:col-span-8 lg:mt-0">
           <section aria-labelledby="children-title">
             <div className="mb-2 flex items-baseline justify-between gap-3">
-              <h2 id="children-title" className="text-h2 text-brand-800">
+              <h2 id="children-title" className="text-h2 text-text-primary">
                 {t("goals.route")}
               </h2>
               {tree.length > 0 && childType ? (
@@ -197,15 +200,15 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
                 today={today}
                 destination={{
                   label: t("goals.destination", {
-                    date: formatThaiDate(goal.period.end, "short"),
+                    date: formatDate(goal.period.end, "short", locale),
                   }),
                   value: isMetric
-                    ? formatValueWithUnit(goal.progress.target ?? 0, unit)
+                    ? formatValueWithUnit(goal.progress.target ?? 0, unit, locale)
                     : undefined,
                 }}
               />
             ) : (
-              <div className="rounded-xl bg-bg-surface px-5 py-4 shadow-md">
+              <div className="rounded-xl border border-border bg-bg-surface px-5 py-4 shadow-xs">
                 <p className="text-small text-text-secondary">{t("progress.noChildren")}</p>
               </div>
             )}
@@ -213,7 +216,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
 
           <section aria-labelledby="tasks-title">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <h2 id="tasks-title" className="text-h2 text-brand-800">
+              <h2 id="tasks-title" className="text-h2 text-text-primary">
                 {t("goals.tasks")}
               </h2>
               <div className="flex items-center gap-2">

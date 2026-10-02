@@ -7,6 +7,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
 import { periodOf, suggestChildPeriods } from "@/core/domain/periods";
+import type { WorkMode } from "@/core/profile/work-modes";
 import type { ISODate } from "@/lib/date";
 import { formatNumber } from "@/lib/format";
 import { DomainTag } from "@/components/domain/DomainTag";
@@ -25,13 +26,14 @@ type Props = {
   monthOptions: { value: ISODate; label: string }[];
   defaultMonth: ISODate;
   fewDaysLeft: boolean;
+  workMode: WorkMode;
 };
 
 /**
- * template seller (Design §8.3 + Claude Design 3d): hero card brand-100 "ยอดขาย [เดือน]" + DomainTag งาน
- * ช่องตัวเลขใหญ่ในกล่องขาวขอบ brand-500 + "≈ ต่อสัปดาห์ · N waypoint" → เลือกเดือน → "เริ่มเลย"
+ * Seller starts from a revenue metric. Professional starts from a concrete
+ * outcome and uses execution progress, avoiding an arbitrary "number of items".
  */
-export function FirstGoalForm({ monthOptions, defaultMonth, fewDaysLeft }: Props) {
+export function FirstGoalForm({ monthOptions, defaultMonth, fewDaysLeft, workMode }: Props) {
   const t = useTranslations("onboarding.firstGoal");
   const te = useTranslations("errors");
   const router = useRouter();
@@ -40,13 +42,22 @@ export function FirstGoalForm({ monthOptions, defaultMonth, fewDaysLeft }: Props
 
   const form = useForm<FirstGoalInput>({
     resolver: zodResolver(firstGoalSchema),
-    defaultValues: { targetValue: undefined as unknown as number, monthStart: defaultMonth },
+    defaultValues: {
+      workMode,
+      targetValue: undefined,
+      title: "",
+      monthStart: defaultMonth,
+    },
   });
+
   const targetValue = form.watch("targetValue");
   const monthStart = form.watch("monthStart");
   const weekCount = suggestChildPeriods(periodOf("month", monthStart), "week").length;
   const perWeek =
-    typeof targetValue === "number" && targetValue > 0 && weekCount > 0
+    workMode === "seller" &&
+    typeof targetValue === "number" &&
+    targetValue > 0 &&
+    weekCount > 0
       ? Math.ceil(targetValue / weekCount)
       : null;
 
@@ -66,49 +77,83 @@ export function FirstGoalForm({ monthOptions, defaultMonth, fewDaysLeft }: Props
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(submit)} className="space-y-5" noValidate>
+        <input type="hidden" {...form.register("workMode")} />
+
         <div className="space-y-4 rounded-2xl bg-brand-100 p-5 shadow-lg">
-          <FormField
-            control={form.control}
-            name="targetValue"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center justify-between gap-3">
-                  <FormLabel className="text-h3 text-brand-800">{t("targetLabel")}</FormLabel>
-                  <DomainTag domain="work" size="md" />
-                </div>
-                <div className="flex items-baseline gap-2 rounded-lg border-[1.5px] border-brand-500 bg-bg-surface px-5 py-3 has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-brand-500/15">
+          {workMode === "professional" ? (
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between gap-3">
+                    <FormLabel className="text-h3 text-brand-800">
+                      {t("professionalOutcomeLabel")}
+                    </FormLabel>
+                    <DomainTag domain="work" size="md" />
+                  </div>
                   <FormControl>
                     <Input
-                      type="number"
-                      inputMode="numeric"
-                      min={0}
-                      step="1"
-                      placeholder={t("targetPlaceholder")}
-                      className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-display focus-visible:ring-0"
-                      value={(field.value as number | undefined) ?? ""}
-                      onChange={(e) =>
-                        field.onChange(e.target.value === "" ? undefined : Number(e.target.value))
-                      }
-                      onBlur={field.onBlur}
-                      name={field.name}
-                      ref={field.ref}
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder={t("professionalOutcomePlaceholder")}
+                      className="h-14 border-[1.5px] border-brand-500 bg-bg-surface px-4 text-h3"
                     />
                   </FormControl>
-                  <span className="text-body text-text-secondary">{t("unit")}</span>
-                </div>
-                <p className="flex items-center gap-2 text-small text-brand-800">
-                  <span
-                    aria-hidden="true"
-                    className="size-2.5 shrink-0 rounded-full border-[1.5px] border-brand-500 bg-bg-surface"
-                  />
-                  {perWeek !== null
-                    ? t("perWeekHint", { amount: formatNumber(perWeek), count: weekCount })
-                    : t("perWeekEmpty", { count: weekCount })}
-                </p>
-                <FormMessageI18n />
-              </FormItem>
-            )}
-          />
+                  <p className="text-small text-brand-800">{t("professionalOutcomeHint")}</p>
+                  <FormMessageI18n />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <FormField
+              control={form.control}
+              name="targetValue"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between gap-3">
+                    <FormLabel className="text-h3 text-brand-800">{t("targetLabel")}</FormLabel>
+                    <DomainTag domain="work" size="md" />
+                  </div>
+                  <div className="flex items-baseline gap-2 rounded-lg border-[1.5px] border-brand-500 bg-bg-surface px-5 py-3 has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-brand-500/15">
+                    <FormControl>
+                      <Input
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        step="1"
+                        placeholder={t("targetPlaceholder")}
+                        className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-display focus-visible:ring-0"
+                        value={field.value ?? ""}
+                        onChange={(event) =>
+                          field.onChange(
+                            event.target.value === "" ? undefined : Number(event.target.value),
+                          )
+                        }
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                      />
+                    </FormControl>
+                    <span className="text-body text-text-secondary">{t("unit")}</span>
+                  </div>
+                  <p className="flex items-center gap-2 text-small text-brand-800">
+                    <span
+                      aria-hidden="true"
+                      className="size-2.5 shrink-0 rounded-full border-[1.5px] border-brand-500 bg-bg-surface"
+                    />
+                    {perWeek !== null
+                      ? t("perWeekHint", {
+                          amount: formatNumber(perWeek),
+                          count: weekCount,
+                        })
+                      : t("perWeekEmpty", { count: weekCount })}
+                  </p>
+                  <FormMessageI18n />
+                </FormItem>
+              )}
+            />
+          )}
         </div>
 
         <FormField

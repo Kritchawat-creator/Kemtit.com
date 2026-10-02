@@ -1,13 +1,14 @@
 import { Plus } from "lucide-react";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import type { DomainFilter } from "@/core/domain/domains";
 import { PERIOD_TYPES, type PeriodType } from "@/core/domain/periods";
 import { listGoalsWithProgress, type GoalWithProgress } from "@/core/goals/queries";
+import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
-import { formatThaiDate } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import { EmptyState } from "@/components/domain/EmptyState";
 import { GoalCard } from "@/components/domain/GoalCard";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -36,6 +37,7 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
     getTranslations("domainFilter"),
     listGoalsWithProgress({ domainFilter: filter }),
   ]);
+  const locale = (await getLocale()) as AppLocale;
 
   const groups = PERIOD_TYPES.map((type) => ({
     type,
@@ -46,10 +48,10 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
     <>
       <PageHeader
         title={t("title")}
-        meta={formatThaiDate(todayBkk(), "monthYear")}
+        meta={formatDate(todayBkk(), "monthYear", locale)}
         actions={
           <span className="inline-flex h-7 items-center rounded-full bg-bg-surface px-3 text-caption font-medium text-text-secondary">
-            {formatThaiDate(todayBkk(), "monthYear")}
+            {formatDate(todayBkk(), "monthYear", locale)}
           </span>
         }
         toolbarStart={
@@ -114,7 +116,7 @@ function GoalGroup({
 }) {
   return (
     <section aria-labelledby={`group-${type}`}>
-      <h2 id={`group-${type}`} className="mb-2 text-h2 text-brand-800">
+      <h2 id={`group-${type}`} className="mb-2 text-h2 text-text-primary">
         {label}
       </h2>
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">

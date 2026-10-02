@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-const QUERY = "(max-width: 639px)"; // Design §7.1: mobile < 640px
+const QUERY = "(max-width: 767px)"; // V2 compact contract: mobile < 768px
 
 function subscribe(callback: () => void) {
   const media = window.matchMedia(QUERY);
@@ -10,7 +10,7 @@ function subscribe(callback: () => void) {
   return () => media.removeEventListener("change", callback);
 }
 
-/** true บนมือถือ (< 640px) — SSR ถือว่าเป็นมือถือก่อน (mobile-first) */
+/** true บน compact/mobile (< 768px) — SSR ถือว่าเป็น compact ก่อน */
 export function useIsMobile(): boolean {
   return useSyncExternalStore(
     subscribe,

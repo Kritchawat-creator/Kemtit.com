@@ -8,6 +8,7 @@ const goal = (
   over: Partial<GoalWithProgress> & { id: string; title: string },
 ): GoalWithProgress => ({
   user_id: "u1",
+  data_origin: "USER",
   parent_id: null,
   period_type: "month",
   period_start: "2026-09-01",
@@ -17,6 +18,8 @@ const goal = (
   current_value: 0,
   persona_data: {},
   status: "active",
+  archived_at: null,
+  archived_from_status: null,
   completed_at: null,
   created_at: "2026-09-01T00:00:00Z",
   updated_at: "2026-09-01T00:00:00Z",

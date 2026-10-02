@@ -1,3 +1,8 @@
+LEGACY-ONLY NOTICE — this summary applies only to the pre-existing WOFF2 files in
+this production font directory. They are unused by the active font setup. The
+active TTF files are licensed by the bundled OFL.txt; see source-provenance.md for
+the exact upstream commit, URLs, and hashes.
+
 IBM Plex Sans Thai — Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
 Licensed under the SIL Open Font License, Version 1.1: https://openfontlicense.org
 Files: woff2 subsets (thai + latin) weights 400/500/600 from google-webfonts-helper (gwfh.mranftl.com), v11

@@ -2,22 +2,21 @@ import type * as React from "react";
 
 import { getDayPlan } from "@/core/tasks/queries";
 import type { Me } from "@/core/profile/queries";
+import { workModeFromProfile } from "@/core/profile/work-modes";
 import { todayBkk } from "@/lib/date";
 
 import { BottomNav } from "./BottomNav";
-import { Fab } from "./Fab";
 import { ShellFrame } from "./ShellFrame";
 import { TopBar } from "./TopBar";
 
 type Props = { me: Me; children: React.ReactNode };
 
 /**
- * โครงหน้าหลักของแอป (Design §7 + Claude Design 2a/turn 4/7)
- * มือถือ = แถว persona/avatar + เนื้อหาบนพื้น brand-50 + bottom nav มน + FAB พีช
- * desktop = sidebar 2 กลุ่ม + การ์ด Pro (ShellFrame) + top bar ค้นหา/แจ้งเตือน/user chip + เนื้อหากว้างสุด 1200px กึ่งกลาง
- * คำนวณ "shell data" (งานค้าง/เชื่อม LINE แล้วหรือยัง/แพ็กเกจ) จุดเดียวที่นี่ผ่าน getDayPlan ที่ cache() ไว้แล้ว (§2.9)
- * แล้วส่งต่อให้ Sidebar/TopBar (§3.2) — getDayPlan(today) จึงถูกเรียกซ้ำในหน้าเดิม (เช่น dashboard) แต่ cache()
- * dedupe ให้เหลือ query เดียวต่อ request
+ * Prototype-aligned application shell.
+ * Desktop uses the 268px grouped sidebar + command topbar.
+ * Tablet/mobile hide the sidebar and use the navigation drawer; mobile also keeps
+ * the floating Today / Plan / Capture / Insights / More execution dock.
+ * Shell data is calculated once here and reused by navigation utilities.
  */
 export async function AppShell({ me, children }: Props) {
   const today = todayBkk();
@@ -26,6 +25,7 @@ export async function AppShell({ me, children }: Props) {
   const overdue = plan.overdue.length;
   const lineLinked = Boolean(me.profile.line_user_id);
   const tier = me.profile.subscription_tier;
+  const workMode = workModeFromProfile(me.profile.work_mode, me.profile.active_persona);
 
   return (
     <ShellFrame
@@ -33,23 +33,22 @@ export async function AppShell({ me, children }: Props) {
       profile={{
         displayName: me.profile.display_name,
         email: me.email,
-        persona: me.profile.active_persona,
+        workMode,
         avatarUrl: me.avatarUrl,
       }}
     >
       <TopBar
-        persona={me.profile.active_persona}
+        workMode={workMode}
         displayName={me.profile.display_name}
         email={me.email}
         avatarUrl={me.avatarUrl}
         overdue={overdue}
         lineLinked={lineLinked}
       />
-      <main className="mx-auto w-full max-w-[1200px] px-5 pt-3 pb-32 lg:px-8 lg:pt-0 lg:pb-10">
+      <main className="w-full min-w-0 px-3 pt-3 pb-32 min-[381px]:px-4 min-[381px]:pt-4 min-[761px]:px-6 min-[761px]:pt-6 md:pb-10">
         {children}
       </main>
-      <BottomNav />
-      <Fab />
+      <BottomNav workMode={workMode} />
     </ShellFrame>
   );
 }

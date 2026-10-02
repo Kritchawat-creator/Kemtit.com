@@ -1,23 +1,26 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import type { z } from "zod";
 
 import type { ParentCandidate } from "@/core/goals/schema";
 import { createTask, updateTask } from "@/core/tasks/actions";
-import { RECURRENCE_OPTIONS, taskFormSchema, type TaskFormValues } from "@/core/tasks/schema";
+import { RECURRENCE_OPTIONS, TASK_PRIORITIES, taskFormSchema, type TaskFormValues } from "@/core/tasks/schema";
 import { addDaysISO, todayBkk } from "@/lib/date";
 import { UPLOADS_ENABLED } from "@/lib/flags";
+import type { AppLocale } from "@/i18n/config";
 import { formatWeekdayShort } from "@/lib/format";
 import { usePhotoUpload } from "@/hooks/use-photo-upload";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { FormMessageI18n } from "@/components/ui/form-i18n";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -34,6 +37,7 @@ import { PendingPhotoPicker } from "./TaskPhotos";
 
 type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
 const NO_GOAL = "__none__";
+const NO_PROJECT = "__none_project__";
 const SUNDAY_ANCHOR = "2026-09-06"; // วันอาทิตย์ ใช้ทำ label ชื่อวัน อา.–ส.
 
 type Props = {
@@ -41,6 +45,7 @@ type Props = {
   taskId?: string;
   initial?: Partial<TaskFormValues>;
   goalOptions: ParentCandidate[];
+  projectOptions?: { id: string; title: string }[];
   /** จำนวนรูปที่งานมีอยู่แล้ว (โหมดแก้ไข) — ใช้คุมเพดาน 5 รูป/งาน */
   existingPhotoCount?: number;
   onDone: () => void;
@@ -52,10 +57,12 @@ export function TaskForm({
   taskId,
   initial,
   goalOptions,
+  projectOptions = [],
   existingPhotoCount = 0,
   onDone,
 }: Props) {
   const t = useTranslations();
+  const locale = useLocale() as AppLocale;
   const te = useTranslations("errors");
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
@@ -63,15 +70,21 @@ export function TaskForm({
   const [pendingPhotos, setPendingPhotos] = useState<File[]>([]);
   const { upload: uploadPhoto } = usePhotoUpload();
 
-  const form = useForm<TaskFormValues>({
+  const form = useForm<z.input<typeof taskFormSchema>, undefined, TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
       title: "",
-      dueDate: todayBkk(),
+      dueDate: initial?.dueDate ?? todayBkk(),
+      plannedDate: initial?.plannedDate ?? initial?.dueDate ?? todayBkk(),
+      deadline: null,
       domain: "work",
       recurrence: "none",
       weekdays: [],
       goalId: null,
+      projectId: null,
+      priority: "normal",
+      estimatedMinutes: null,
+      notes: null,
       ...initial,
     },
   });
@@ -126,14 +139,37 @@ export function TaskForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
-            name="dueDate"
+            name="plannedDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("tasks.form.dueDate")}</FormLabel>
+                <FormLabel>{t("tasks.form.plannedDate")}</FormLabel>
                 <FormControl>
                   <DatePicker
-                    value={field.value}
-                    onChange={(next) => next && field.onChange(next)}
+                    ariaLabel={t("tasks.form.plannedDate")}
+                    value={field.value ?? todayBkk()}
+                    onChange={(next) => {
+                      if (!next) return;
+                      field.onChange(next);
+                      form.setValue("dueDate", next, { shouldDirty: true });
+                    }}
+                  />
+                </FormControl>
+                <FormMessageI18n />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="deadline"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("tasks.form.deadline")}</FormLabel>
+                <FormControl>
+                  <DatePicker
+                    ariaLabel={t("tasks.form.deadline")}
+                    value={field.value ?? undefined}
+                    clearable
+                    onChange={(next) => field.onChange(next ?? null)}
                   />
                 </FormControl>
                 <FormMessageI18n />
@@ -170,6 +206,37 @@ export function TaskForm({
           />
         </div>
 
+        {projectOptions.length > 0 ? (
+          <FormField
+            control={form.control}
+            name="projectId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("tasks.form.project")}</FormLabel>
+                <Select
+                  value={field.value ?? NO_PROJECT}
+                  onValueChange={(value) => field.onChange(value === NO_PROJECT ? null : value)}
+                >
+                  <FormControl>
+                    <SelectTrigger className="h-12 w-full">
+                      <SelectValue placeholder={t("tasks.form.noProject")} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value={NO_PROJECT}>{t("tasks.form.noProject")}</SelectItem>
+                    {projectOptions.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessageI18n />
+              </FormItem>
+            )}
+          />
+        ) : null}
+
         <FormField
           control={form.control}
           name="domain"
@@ -179,6 +246,78 @@ export function TaskForm({
               <FormControl>
                 <DomainSelect value={field.value} onValueChange={field.onChange} />
               </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="priority"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("tasks.form.priority")}</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger className="h-12 w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {TASK_PRIORITIES.map((priority) => (
+                      <SelectItem key={priority} value={priority}>
+                        {t(`inbox.priorities.${priority}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessageI18n />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="estimatedMinutes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("tasks.form.estimatedMinutes")}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={1440}
+                    step={5}
+                    value={field.value ?? ""}
+                    onChange={(event) =>
+                      field.onChange(event.target.value === "" ? null : Number(event.target.value))
+                    }
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                  />
+                </FormControl>
+                <FormMessageI18n />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("tasks.form.notes")}</FormLabel>
+              <FormControl>
+                <Textarea
+                  value={field.value ?? ""}
+                  onChange={(event) => field.onChange(event.target.value || null)}
+                  placeholder={t("tasks.form.notesPlaceholder")}
+                  rows={3}
+                />
+              </FormControl>
+              <FormMessageI18n />
             </FormItem>
           )}
         />
@@ -237,7 +376,7 @@ export function TaskForm({
                         value={String(i)}
                         className="size-11 rounded-full data-[state=on]:bg-brand-500 data-[state=on]:text-neutral-0 md:size-9"
                       >
-                        {formatWeekdayShort(addDaysISO(SUNDAY_ANCHOR, i))}
+                        {formatWeekdayShort(addDaysISO(SUNDAY_ANCHOR, i), locale)}
                       </ToggleGroupItem>
                     ))}
                   </ToggleGroup>

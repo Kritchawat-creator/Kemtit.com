@@ -1,7 +1,8 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "cn";
 
 import { planValueAt } from "@/core/domain/entries";
+import type { AppLocale } from "@/i18n/config";
 import type { Period } from "@/core/domain/periods";
 import {
   addDaysISO,
@@ -12,7 +13,7 @@ import {
   isBeforeISO,
   startOfWeekISO,
 } from "@/lib/date";
-import { formatNumber, formatThaiDate, formatValueWithUnit } from "@/lib/format";
+import { formatDate, formatNumber, formatValueWithUnit } from "@/lib/format";
 
 export type SalesPoint = { date: ISODate; total: number };
 
@@ -37,9 +38,11 @@ const PAD_T = 22;
 const PAD_B = 30;
 
 /** 25000 → "25k" · 0 → "0" — ป้ายแกน Y ให้สั้นพอไม่ชนเส้น */
-function axisLabel(value: number): string {
+function axisLabel(value: number, locale: AppLocale): string {
   if (value === 0) return "0";
-  return value >= 1000 ? `${formatNumber(Math.round(value / 1000))}k` : formatNumber(value);
+  return value >= 1000
+    ? `${formatNumber(Math.round(value / 1000), locale)}k`
+    : formatNumber(value, locale);
 }
 
 /**
@@ -49,6 +52,7 @@ function axisLabel(value: number): string {
  */
 export function SalesChart({ series, target, period, today, range, unit, className }: Props) {
   const t = useTranslations("entries.chart");
+  const locale = useLocale() as AppLocale;
 
   const rangeStart = range === "week" ? startOfWeekISO(today) : period.start;
   const rangeEnd = range === "week" ? endOfWeekISO(today) : period.end;
@@ -89,11 +93,11 @@ export function SalesChart({ series, target, period, today, range, unit, classNa
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      className={cn("block h-auto w-full overflow-visible font-sans", className)}
+      className={cn("block h-auto w-full overflow-hidden font-sans", className)}
       role="img"
       aria-label={t("aria", {
-        total: formatValueWithUnit(lastTotal, unit),
-        target: formatValueWithUnit(target, unit),
+        total: formatValueWithUnit(lastTotal, unit, locale),
+        target: formatValueWithUnit(target, unit, locale),
       })}
     >
       {gridValues.map((value) => (
@@ -115,7 +119,7 @@ export function SalesChart({ series, target, period, today, range, unit, classNa
             fontWeight={500}
             className="fill-text-secondary"
           >
-            {axisLabel(value)}
+            {axisLabel(value, locale)}
           </text>
         </g>
       ))}
@@ -154,7 +158,7 @@ export function SalesChart({ series, target, period, today, range, unit, classNa
           fontWeight={500}
           className="fill-text-secondary"
         >
-          {formatThaiDate(addDaysISO(rangeStart, d - 1), "short")}
+          {formatDate(addDaysISO(rangeStart, d - 1), "short", locale)}
         </text>
       ))}
 
@@ -183,7 +187,7 @@ export function SalesChart({ series, target, period, today, range, unit, classNa
             fontWeight={600}
             className="fill-text-primary"
           >
-            {formatNumber(todayPoint.total)}
+            {formatNumber(todayPoint.total, locale)}
           </text>
         </>
       ) : null}

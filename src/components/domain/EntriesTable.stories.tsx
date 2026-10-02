@@ -22,6 +22,7 @@ const goalOptions: EntryGoalOption[] = [
 const base: Omit<GoalEntryWithGoal, "id" | "entry_no" | "entry_date" | "amount" | "note"> = {
   user_id: "u1",
   goal_id: "g1",
+  data_origin: "USER",
   channel: "shopee",
   created_at: "2026-09-06T01:00:00Z",
   updated_at: "2026-09-06T01:00:00Z",
@@ -58,7 +59,7 @@ const meta = {
   parameters: { layout: "padded" },
   decorators: [
     (Story) => (
-      <div className="rounded-xl bg-bg-surface p-6 shadow-md">
+      <div className="rounded-xl border border-border bg-bg-surface p-6 shadow-md">
         <Story />
       </div>
     ),

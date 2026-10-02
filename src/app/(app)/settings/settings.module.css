@@ -1,0 +1,29 @@
+.workspace {
+  container-name: settings;
+  container-type: inline-size;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  min-width: 0;
+}
+
+.column {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Keep forms readable after accounting for the sidebar and content gutters. */
+@container settings (min-width: 960px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
