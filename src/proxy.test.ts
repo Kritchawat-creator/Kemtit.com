@@ -25,8 +25,8 @@ function configureGetClaims(getClaims: () => unknown) {
   createServerClientMock.mockReturnValue({ auth: { getClaims } });
 }
 
-function request(pathname: string) {
-  return new NextRequest(`https://kemtit.example${pathname}`);
+function request(pathname: string, init?: ConstructorParameters<typeof NextRequest>[1]) {
+  return new NextRequest(`https://kemtit.example${pathname}`, init);
 }
 
 describe("proxy auth failure handling", () => {
@@ -122,5 +122,39 @@ describe("proxy auth failure handling", () => {
 
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toContain("/today");
+  });
+
+  it("allows an authenticated registration Server Action to save the verified user's name", async () => {
+    configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
+
+    const response = await proxy(
+      request("/register", { method: "POST", headers: { "Next-Action": "save-profile" } }),
+    );
+
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+    expect(response.headers.get("location")).toBeNull();
+  });
+
+  it("keeps redirecting an authenticated plain POST from registration", async () => {
+    configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
+
+    const response = await proxy(request("/register", { method: "POST" }));
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/today");
+  });
+
+  it("still gates a signed-out protected Server Action POST", async () => {
+    configureGetClaims(async () => ({
+      data: { claims: null },
+      error: new AuthSessionMissingError(),
+    }));
+
+    const response = await proxy(
+      request("/today", { method: "POST", headers: { "Next-Action": "protected-action" } }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/login?next=%2Ftoday");
   });
 });

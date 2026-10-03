@@ -76,7 +76,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
+  // OTP verification creates the session before the registration Server Action saves its name.
+  const isRegistrationProfileAction =
+    pathname === "/register" && request.method === "POST" && request.headers.has("next-action");
+
+  if (
+    isAuthenticated &&
+    !isRegistrationProfileAction &&
+    (pathname === "/login" || pathname === "/register")
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/today";
     url.search = "";

@@ -13,7 +13,8 @@ test("new user can register with email OTP and reach onboarding", async ({ page 
     await page.setViewportSize({ width: 320, height: 844 });
   }
 
-  const email = uniqueEmail("register");
+  const email = uniqueEmail("member".repeat(6));
+  const displayName = "Kemtit E2E Member";
   const next = "/today?source=register&view=focus";
   const encodedNext = encodeURIComponent(next);
 
@@ -27,6 +28,7 @@ test("new user can register with email OTP and reach onboarding", async ({ page 
   await signInLink.click();
   await expect(page).toHaveURL(/\/login\?/);
   expect(new URL(page.url()).searchParams.get("next")).toBe(next);
+  await expect(page.getByLabel("ชื่อที่แสดง")).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 
   const registerLink = page.getByRole("link", { name: "สมัครใช้งาน" });
@@ -34,7 +36,9 @@ test("new user can register with email OTP and reach onboarding", async ({ page 
   await registerLink.click();
   await expect(page).toHaveURL(/\/register\?/);
   expect(new URL(page.url()).searchParams.get("next")).toBe(next);
+  await expect(page.getByLabel("ชื่อที่แสดง")).toBeVisible();
 
+  await page.getByLabel("ชื่อที่แสดง").fill(displayName);
   await page.getByLabel("อีเมล").fill(email);
   await page.getByRole("button", { name: "รับรหัสยืนยัน" }).click();
   await expect(page.getByRole("heading", { name: "ยืนยันอีเมล" })).toBeVisible();
@@ -47,4 +51,10 @@ test("new user can register with email OTP and reach onboarding", async ({ page 
   await page.getByLabel("รหัสยืนยัน 6 หลัก").fill(code);
   await expect(page).toHaveURL(/\/onboarding\/persona/, { timeout: 15_000 });
   await completeOnboarding(page);
+
+  await page.goto("/settings");
+  const savedDisplayName = page.getByLabel("ชื่อที่แสดง");
+  await expect(savedDisplayName).toHaveValue(displayName);
+  await page.reload();
+  await expect(savedDisplayName).toHaveValue(displayName);
 });

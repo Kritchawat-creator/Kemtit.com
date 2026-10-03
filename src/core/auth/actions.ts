@@ -41,8 +41,10 @@ export async function requestOtp(input: unknown): Promise<ActionResult> {
   return ok(null);
 }
 
-/** ขั้น 2: ตรวจรหัส → ตั้ง session cookie → บอกหน้าถัดไปตามสถานะ onboarding */
-export async function verifyOtp(input: unknown): Promise<ActionResult<{ next: string }>> {
+/** ขั้น 2: ตรวจรหัส → ตั้ง session cookie → บอกสถานะ onboarding และหน้าถัดไป */
+export async function verifyOtp(
+  input: unknown,
+): Promise<ActionResult<{ next: string; onboardingRequired: boolean }>> {
   const parsed = verifyOtpSchema.safeParse(input);
   if (!parsed.success) return zodFail(parsed.error);
 
@@ -63,13 +65,11 @@ export async function verifyOtp(input: unknown): Promise<ActionResult<{ next: st
   const gate = nextRouteFor(profile);
   const requested = safeInternalPath(parsed.data.next);
   const next = gate === ROUTES.dashboard && requested ? requested : gate;
-  return ok({ next });
+  return ok({ next, onboardingRequired: gate.startsWith("/onboarding/") });
 }
 
 /** Start Google sign-in only. Calendar access is a separate opt-in integration. */
-export async function startGoogleSignIn(
-  input: unknown,
-): Promise<ActionResult<{ url: string }>> {
+export async function startGoogleSignIn(input: unknown): Promise<ActionResult<{ url: string }>> {
   const parsed = googleSignInSchema.safeParse(input);
   if (!parsed.success) return zodFail(parsed.error);
 

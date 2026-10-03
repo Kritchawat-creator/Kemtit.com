@@ -76,6 +76,12 @@ afterAll(() => {
 });
 
 describe("LoginForm", () => {
+  it("does not ask returning members for a display name", () => {
+    render(<LoginForm />);
+
+    expect(screen.queryByLabelText("registerNameLabel")).not.toBeInTheDocument();
+  });
+
   it("validates the email before requesting a code", async () => {
     const next = "/goals?filter=week&sort=desc";
     render(<LoginForm next={next} />);
@@ -90,71 +96,6 @@ describe("LoginForm", () => {
       "invalidEmail",
     );
     expect(mocks.requestOtp).not.toHaveBeenCalled();
-  });
-
-  it("renders registration copy, encodes next on the sign-in link, and requests the same OTP", async () => {
-    const otpRequest = deferred<{ ok: true; data: null }>();
-    mocks.requestOtp.mockReturnValue(otpRequest.promise);
-    const next = "/today?source=register&view=focus";
-    render(<LoginForm mode="register" next={next} />);
-
-    expect(screen.getByRole("heading", { name: "registerTitle" })).toBeInTheDocument();
-    expect(screen.getByText("registerSubtitle")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "registerSendCode" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "registerGoogleSignIn" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "signInLink" })).toHaveAttribute(
-      "href",
-      `/login?next=${encodeURIComponent(next)}`,
-    );
-
-    fillEmail("new-person@example.com");
-    fireEvent.click(screen.getByRole("button", { name: "registerSendCode" }));
-    await waitFor(() =>
-      expect(mocks.requestOtp).toHaveBeenCalledWith({ email: "new-person@example.com" }),
-    );
-
-    expect(screen.getByRole("button", { name: "sending" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "registerGoogleSignIn" })).toBeDisabled();
-    expect(screen.queryByRole("button", { name: "googleSigningIn" })).not.toBeInTheDocument();
-    expect(screen.getByLabelText("emailLabel")).toBeDisabled();
-
-    await act(async () => {
-      otpRequest.resolve({ ok: true, data: null });
-      await otpRequest.promise;
-    });
-
-    const otpInput = await screen.findByLabelText("codeLabel", {}, { timeout: ASYNC_TIMEOUT_MS });
-    await waitFor(() => expect(otpInput).toBeEnabled(), { timeout: ASYNC_TIMEOUT_MS });
-    expect(screen.getByRole("heading", { name: "registerCodeTitle" })).toBeInTheDocument();
-    expect(screen.getByText("registerCodeRecipient")).toBeInTheDocument();
-    expect(screen.getByText("new-person@example.com")).toBeInTheDocument();
-    expect(screen.getByText("registerCodeHint")).toBeInTheDocument();
-    expect(screen.getByText("registerOnboardingHint")).toBeInTheDocument();
-
-    expect(mocks.requestOtp).toHaveBeenCalledWith({ email: "new-person@example.com" });
-  });
-
-  it("uses the existing Google sign-in action from registration", async () => {
-    const googleRequest = deferred<{ ok: false; error: "generic" }>();
-    mocks.startGoogleSignIn.mockReturnValue(googleRequest.promise);
-    render(<LoginForm mode="register" next="/today" />);
-
-    fireEvent.click(screen.getByRole("button", { name: "registerGoogleSignIn" }));
-
-    await waitFor(() => expect(mocks.startGoogleSignIn).toHaveBeenCalledWith({ next: "/today" }), {
-      timeout: ASYNC_TIMEOUT_MS,
-    });
-    expect(screen.getByRole("button", { name: "googleSigningIn" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "registerSendCode" })).toBeDisabled();
-    expect(screen.getByLabelText("emailLabel")).toBeDisabled();
-
-    await act(async () => {
-      googleRequest.resolve({ ok: false, error: "generic" });
-      await googleRequest.promise;
-    });
-    expect(await screen.findByRole("alert", {}, { timeout: ASYNC_TIMEOUT_MS })).toHaveTextContent(
-      "generic",
-    );
   });
 
   it("shows the send status, not verification status, while resending a code", async () => {

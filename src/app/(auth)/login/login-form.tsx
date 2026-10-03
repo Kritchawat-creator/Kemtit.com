@@ -23,30 +23,16 @@ const RESEND_COOLDOWN_SECONDS = 60;
 const OTP_LENGTH = 6;
 
 type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
-type LoginFormMode = "login" | "register";
 type PendingAction = "sendOtp" | "verifyOtp" | "google" | null;
 
-/**
- * ขั้น 1 ของ onboarding (Design §8.3): อีเมล → รหัส 6 หลัก auto-submit เมื่อครบ
- * ข้อความทั้งหมดจาก th.json; error จาก action เป็น key ใน errors.*
- */
-export function LoginForm({
-  mode = "login",
-  next,
-  error: initialError,
-}: {
-  mode?: LoginFormMode;
-  next?: string;
-  error?: string;
-}) {
+/** ขั้นเข้าสู่ระบบ: อีเมล → รหัส 6 หลัก auto-submit เมื่อครบ */
+export function LoginForm({ next, error: initialError }: { next?: string; error?: string }) {
   const t = useTranslations("auth");
   const ta = useTranslations("app");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
   const router = useRouter();
-  const isRegister = mode === "register";
-  const otherAuthPath = isRegister ? "/login" : "/register";
-  const otherAuthHref = next ? `${otherAuthPath}?next=${encodeURIComponent(next)}` : otherAuthPath;
+  const otherAuthHref = next ? `/register?next=${encodeURIComponent(next)}` : "/register";
 
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
@@ -59,16 +45,6 @@ export function LoginForm({
   const isSendingOtp = pending && pendingAction === "sendOtp";
   const isVerifyingOtp = pending && pendingAction === "verifyOtp";
   const isGooglePending = pending && pendingAction === "google";
-  const sendCodeLabel = isSendingOtp
-    ? t("sending")
-    : isRegister
-      ? t("registerSendCode")
-      : t("sendCode");
-  const googleSignInLabel = isGooglePending
-    ? t("googleSigningIn")
-    : isRegister
-      ? t("registerGoogleSignIn")
-      : t("googleSignIn");
 
   const form = useForm<RequestOtpInput>({
     resolver: zodResolver(requestOtpSchema),
@@ -213,26 +189,11 @@ export function LoginForm({
           >
             <ArrowLeft className="size-6" strokeWidth={1.5} aria-hidden="true" />
           </Button>
-          {isRegister ? (
-            <>
-              <h1 id="otp-title" className="mt-1 text-h1 text-text-primary">
-                {t("registerCodeTitle")}
-              </h1>
-              <p className="mt-1 text-body text-text-secondary">{t("registerCodeRecipient")}</p>
-              <p className="text-h3 break-all text-text-secondary">{email}</p>
-            </>
-          ) : (
-            <h1 id="otp-title" className="mt-1 text-h1 text-text-primary">
-              {t("codeTitleShort")}
-              <span className="mt-0.5 block text-h3 break-all text-text-secondary">{email}</span>
-            </h1>
-          )}
-          <p className="mt-1 text-body text-text-secondary">
-            {isRegister ? t("registerCodeHint") : t("codeHint")}
-          </p>
-          {isRegister ? (
-            <p className="text-small text-text-muted">{t("registerOnboardingHint")}</p>
-          ) : null}
+          <h1 id="otp-title" className="mt-1 text-h1 text-text-primary">
+            {t("codeTitleShort")}
+            <span className="mt-0.5 block text-h3 break-all text-text-secondary">{email}</span>
+          </h1>
+          <p className="mt-1 text-body text-text-secondary">{t("codeHint")}</p>
         </div>
 
         <div className="space-y-4">
@@ -290,11 +251,9 @@ export function LoginForm({
       <section aria-labelledby="login-title" className="space-y-5">
         <div>
           <h1 id="login-title" className="text-h1 text-text-primary">
-            {isRegister ? t("registerTitle") : t("title")}
+            {t("title")}
           </h1>
-          <p className="mt-1 text-body text-text-secondary">
-            {isRegister ? t("registerSubtitle") : t("subtitle")}
-          </p>
+          <p className="mt-1 text-body text-text-secondary">{t("subtitle")}</p>
         </div>
 
         <Form {...form}>
@@ -325,7 +284,7 @@ export function LoginForm({
               </p>
             ) : null}
             <Button type="submit" size="lg" className="w-full" disabled={pending}>
-              {sendCodeLabel}
+              {isSendingOtp ? t("sending") : t("sendCode")}
             </Button>
           </form>
         </Form>
@@ -347,25 +306,23 @@ export function LoginForm({
             <span aria-hidden="true" className="font-semibold text-accent-700">
               G
             </span>
-            {googleSignInLabel}
+            {isGooglePending ? t("googleSigningIn") : t("googleSignIn")}
           </Button>
         </div>
 
-        {!isRegister ? (
-          <p className="text-center text-caption text-text-muted">{t("consent")}</p>
-        ) : null}
+        <p className="text-center text-caption text-text-muted">{t("consent")}</p>
         <p className="text-center text-caption text-text-secondary">
-          <span>{isRegister ? t("haveAccount") : t("noAccount")} </span>
+          <span>{t("noAccount")} </span>
           {pending ? (
             <span aria-disabled="true" className="font-medium text-text-muted">
-              {isRegister ? t("signInLink") : t("registerLink")}
+              {t("registerLink")}
             </span>
           ) : (
             <Link
               href={otherAuthHref}
               className="font-medium text-brand-700 underline underline-offset-4"
             >
-              {isRegister ? t("signInLink") : t("registerLink")}
+              {t("registerLink")}
             </Link>
           )}
         </p>
