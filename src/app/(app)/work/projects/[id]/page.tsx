@@ -44,6 +44,7 @@ export default async function ProjectDetailPage({ params }: PageProps<"/work/pro
   const locale = (await getLocale()) as AppLocale;
 
   const { project, tasks, progress, plannedMinutes } = detail;
+  const hasTasks = tasks.length > 0;
   const progressPercent = progress.total
     ? Math.round((progress.completed / progress.total) * 100)
     : 0;
@@ -67,8 +68,8 @@ export default async function ProjectDetailPage({ params }: PageProps<"/work/pro
         toolbarEnd={<ProjectArchiveButton projectId={project.id} />}
       />
 
-      <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
-        <aside className="space-y-4 lg:col-span-4">
+      <div className={hasTasks ? "grid gap-4 lg:grid-cols-12 lg:gap-6" : "grid gap-4"}>
+        <aside className={hasTasks ? "space-y-4 lg:col-span-4" : "space-y-4"}>
           <section
             className="rounded-xl border border-border bg-bg-surface p-5 shadow-xs"
             aria-labelledby="project-summary"
@@ -126,7 +127,10 @@ export default async function ProjectDetailPage({ params }: PageProps<"/work/pro
           />
         </aside>
 
-        <section className="space-y-3 lg:col-span-8" aria-labelledby="project-tasks-heading">
+        <section
+          className={hasTasks ? "space-y-3 lg:col-span-8" : "space-y-3"}
+          aria-labelledby="project-tasks-heading"
+        >
           <div className="flex items-center justify-between gap-3">
             <h2 id="project-tasks-heading" className="text-h2 text-text-primary">
               {t("projects.tasks")}
