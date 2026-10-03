@@ -108,17 +108,17 @@ export function InboxList({
     <ul
       className={
         embedded
-          ? "divide-y divide-border"
-          : "divide-y divide-border rounded-xl border border-border bg-bg-surface px-4 shadow-xs"
+          ? "@container/inbox-list divide-y divide-border"
+          : "@container/inbox-list divide-y divide-border rounded-xl border border-border bg-bg-surface px-4 shadow-xs"
       }
     >
       {visibleTasks.map((task) => (
         <li
           key={task.id}
           data-task-id={task.id}
-          className="flex min-w-0 flex-col gap-3 py-4 md:flex-row md:items-center"
+          className="flex min-w-0 flex-col gap-3 py-4 @min-[42rem]/inbox-list:flex-row @min-[42rem]/inbox-list:items-center"
         >
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 @min-[42rem]/inbox-list:flex-1">
             <p className="text-body font-medium break-words text-text-primary">{task.title}</p>
             <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2">
               <DomainTag domain={task.domain} />
@@ -129,7 +129,7 @@ export function InboxList({
               </span>
             </div>
           </div>
-          <div className="grid w-full min-w-0 grid-cols-1 gap-2 md:flex md:w-auto md:flex-wrap md:items-center">
+          <div className="grid w-full min-w-0 grid-cols-1 gap-2 @min-[26rem]/inbox-list:flex @min-[26rem]/inbox-list:flex-wrap @min-[26rem]/inbox-list:items-center @min-[42rem]/inbox-list:w-auto">
             <label className="sr-only" htmlFor={`inbox-date-${task.id}`}>
               {t("inbox.planDate")}
             </label>
@@ -137,13 +137,13 @@ export function InboxList({
               id={`inbox-date-${task.id}`}
               value={today}
               disabled={pendingId === task.id}
-              className="h-12 w-full md:h-11 md:w-[170px]"
+              className="h-12 w-full @min-[26rem]/inbox-list:h-11 @min-[26rem]/inbox-list:w-[170px]"
               onChange={(next) => next && plan(task.id, next)}
             />
             <Button
               type="button"
               variant="outline"
-              className="w-full md:w-auto"
+              className="w-full @min-[26rem]/inbox-list:w-auto"
               disabled={pendingId === task.id}
               onClick={() => plan(task.id, today)}
             >
@@ -154,7 +154,7 @@ export function InboxList({
               type="button"
               variant="ghost"
               aria-label={t("tasks.deleteTask")}
-              className="w-full md:w-auto"
+              className="w-full @min-[26rem]/inbox-list:w-auto"
               disabled={pendingId === task.id}
               onClick={() => archive(task)}
             >
