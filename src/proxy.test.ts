@@ -44,6 +44,18 @@ describe("proxy auth failure handling", () => {
     expect(response.headers.get("location")).toContain("/login?next=%2Ftoday");
   });
 
+  it("allows a confirmed signed-out user to open registration", async () => {
+    configureGetClaims(async () => ({
+      data: { claims: null },
+      error: new AuthSessionMissingError(),
+    }));
+
+    const response = await proxy(request("/register"));
+
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+    expect(response.headers.get("location")).toBeNull();
+  });
+
   it.each([
     [
       "returned retryable fetch failure",
@@ -98,6 +110,15 @@ describe("proxy auth failure handling", () => {
     configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
 
     const response = await proxy(request("/login"));
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/today");
+  });
+
+  it("redirects a validated user away from registration", async () => {
+    configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
+
+    const response = await proxy(request("/register"));
 
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toContain("/today");

@@ -8,7 +8,7 @@ import { authFailureContext, isUnauthenticatedAuthError } from "@/core/auth/sess
  * Next 16 proxy (แทน middleware): refresh session cookie ของ Supabase ทุก request
  * และกันคนที่ยังไม่ login ออกจากหน้าในแอป — การ gate onboarding อยู่ที่ (app)/layout.tsx
  */
-const PUBLIC_PATHS = new Set(["/login", "/auth/callback"]);
+const PUBLIC_PATHS = new Set(["/login", "/register", "/auth/callback"]);
 
 function isPublicPath(pathname: string) {
   return (
@@ -76,7 +76,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isAuthenticated && pathname === "/login") {
+  if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
     const url = request.nextUrl.clone();
     url.pathname = "/today";
     url.search = "";

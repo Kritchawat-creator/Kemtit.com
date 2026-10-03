@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { ArrowLeft, Compass } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -22,17 +23,30 @@ const RESEND_COOLDOWN_SECONDS = 60;
 const OTP_LENGTH = 6;
 
 type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
+type LoginFormMode = "login" | "register";
+type PendingAction = "sendOtp" | "verifyOtp" | "google" | null;
 
 /**
  * ขั้น 1 ของ onboarding (Design §8.3): อีเมล → รหัส 6 หลัก auto-submit เมื่อครบ
  * ข้อความทั้งหมดจาก th.json; error จาก action เป็น key ใน errors.*
  */
-export function LoginForm({ next, error: initialError }: { next?: string; error?: string }) {
+export function LoginForm({
+  mode = "login",
+  next,
+  error: initialError,
+}: {
+  mode?: LoginFormMode;
+  next?: string;
+  error?: string;
+}) {
   const t = useTranslations("auth");
   const ta = useTranslations("app");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
   const router = useRouter();
+  const isRegister = mode === "register";
+  const otherAuthPath = isRegister ? "/login" : "/register";
+  const otherAuthHref = next ? `${otherAuthPath}?next=${encodeURIComponent(next)}` : otherAuthPath;
 
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
@@ -40,7 +54,21 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
   const [serverError, setServerError] = useState<string | null>(initialError ?? null);
   const [cooldown, setCooldown] = useState(0);
   const [pending, startTransition] = useTransition();
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const otpRef = useRef<HTMLInputElement>(null);
+  const isSendingOtp = pending && pendingAction === "sendOtp";
+  const isVerifyingOtp = pending && pendingAction === "verifyOtp";
+  const isGooglePending = pending && pendingAction === "google";
+  const sendCodeLabel = isSendingOtp
+    ? t("sending")
+    : isRegister
+      ? t("registerSendCode")
+      : t("sendCode");
+  const googleSignInLabel = isGooglePending
+    ? t("googleSigningIn")
+    : isRegister
+      ? t("registerGoogleSignIn")
+      : t("googleSignIn");
 
   const form = useForm<RequestOtpInput>({
     resolver: zodResolver(requestOtpSchema),
@@ -62,45 +90,66 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
 
   function sendCode(values: RequestOtpInput) {
     setServerError(null);
+    setPendingAction("sendOtp");
     startTransition(async () => {
-      const result = await requestOtp(values);
-      if (!result.ok) {
-        setServerError(result.error);
-        return;
+      try {
+        const result = await requestOtp(values);
+        if (!result.ok) {
+          setServerError(result.error);
+          return;
+        }
+        setEmail(values.email);
+        setCode("");
+        setStep("code");
+        setCooldown(RESEND_COOLDOWN_SECONDS);
+        toast.success(t("codeSent"));
+      } finally {
+        setPendingAction(null);
       }
-      setEmail(values.email);
-      setCode("");
-      setStep("code");
-      setCooldown(RESEND_COOLDOWN_SECONDS);
-      toast.success(t("codeSent"));
     });
   }
 
   function submitCode(value: string) {
     if (pending || value.length !== OTP_LENGTH) return;
     setServerError(null);
+    setPendingAction("verifyOtp");
     startTransition(async () => {
-      const result = await verifyOtp({ email, token: value, next });
-      if (!result.ok) {
-        setServerError(result.error);
-        setCode("");
-        otpRef.current?.focus();
-        return;
+      try {
+        const result = await verifyOtp({ email, token: value, next });
+        if (!result.ok) {
+          setServerError(result.error);
+          setCode("");
+          otpRef.current?.focus();
+          return;
+        }
+        router.replace(result.data.next);
+        router.refresh();
+      } finally {
+        setPendingAction(null);
       }
-      router.replace(result.data.next);
-      router.refresh();
     });
+  }
+
+  function returnToEmail() {
+    setServerError(null);
+    setCode("");
+    setStep("email");
   }
 
   function signInWithGoogle() {
     setServerError(null);
+    setPendingAction("google");
     startTransition(async () => {
-      const result = await startGoogleSignIn({ next });
-      if (!result.ok) {
-        setServerError(result.error);
-        return;
+      try {
+        const result = await startGoogleSignIn({ next });
+        if (!result.ok) {
+          setServerError(result.error);
+          return;
+        }
+        window.location.assign(result.data.url);
+      } finally {
+        setPendingAction(null);
       }
-      window.location.assign(result.data.url);
     });
   }
 
@@ -159,16 +208,31 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
             size="icon"
             className="-ml-3 text-brand-800"
             aria-label={tc("back")}
-            onClick={() => setStep("email")}
+            onClick={returnToEmail}
             disabled={pending}
           >
             <ArrowLeft className="size-6" strokeWidth={1.5} aria-hidden="true" />
           </Button>
-          <h1 id="otp-title" className="mt-1 text-h1 text-text-primary">
-            {t("codeTitleShort")}
-            <span className="mt-0.5 block text-h3 break-all text-text-secondary">{email}</span>
-          </h1>
-          <p className="mt-1 text-body text-text-secondary">{t("codeHint")}</p>
+          {isRegister ? (
+            <>
+              <h1 id="otp-title" className="mt-1 text-h1 text-text-primary">
+                {t("registerCodeTitle")}
+              </h1>
+              <p className="mt-1 text-body text-text-secondary">{t("registerCodeRecipient")}</p>
+              <p className="text-h3 break-all text-text-secondary">{email}</p>
+            </>
+          ) : (
+            <h1 id="otp-title" className="mt-1 text-h1 text-text-primary">
+              {t("codeTitleShort")}
+              <span className="mt-0.5 block text-h3 break-all text-text-secondary">{email}</span>
+            </h1>
+          )}
+          <p className="mt-1 text-body text-text-secondary">
+            {isRegister ? t("registerCodeHint") : t("codeHint")}
+          </p>
+          {isRegister ? (
+            <p className="text-small text-text-muted">{t("registerOnboardingHint")}</p>
+          ) : null}
         </div>
 
         <div className="space-y-4">
@@ -196,7 +260,7 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
               {translateError(serverError)}
             </p>
           ) : null}
-          {pending ? (
+          {isVerifyingOtp ? (
             <p className="text-center text-small text-text-muted" aria-live="polite">
               {t("verifying")}
             </p>
@@ -208,12 +272,16 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
             disabled={cooldown > 0 || pending}
             onClick={() => sendCode({ email })}
           >
-            {cooldown > 0 ? t("resendIn", { seconds: cooldown }) : t("resend")}
+            {isSendingOtp
+              ? t("sending")
+              : cooldown > 0
+                ? t("resendIn", { seconds: cooldown })
+                : t("resend")}
           </Button>
         </div>
 
         <div className="flex justify-center">
-          <Button type="button" variant="link" onClick={() => setStep("email")} disabled={pending}>
+          <Button type="button" variant="link" onClick={returnToEmail} disabled={pending}>
             {t("changeEmail")}
           </Button>
         </div>
@@ -222,9 +290,11 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
       <section aria-labelledby="login-title" className="space-y-5">
         <div>
           <h1 id="login-title" className="text-h1 text-text-primary">
-            {t("title")}
+            {isRegister ? t("registerTitle") : t("title")}
           </h1>
-          <p className="mt-1 text-body text-text-secondary">{t("subtitle")}</p>
+          <p className="mt-1 text-body text-text-secondary">
+            {isRegister ? t("registerSubtitle") : t("subtitle")}
+          </p>
         </div>
 
         <Form {...form}>
@@ -242,6 +312,7 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
                       autoComplete="email"
                       placeholder={t("emailPlaceholder")}
                       {...field}
+                      disabled={pending}
                     />
                   </FormControl>
                   <FormMessageI18n />
@@ -254,7 +325,7 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
               </p>
             ) : null}
             <Button type="submit" size="lg" className="w-full" disabled={pending}>
-              {pending ? t("sending") : t("sendCode")}
+              {sendCodeLabel}
             </Button>
           </form>
         </Form>
@@ -276,11 +347,28 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
             <span aria-hidden="true" className="font-semibold text-accent-700">
               G
             </span>
-            {pending ? t("googleSigningIn") : t("googleSignIn")}
+            {googleSignInLabel}
           </Button>
         </div>
 
-        <p className="text-center text-caption text-text-muted">{t("consent")}</p>
+        {!isRegister ? (
+          <p className="text-center text-caption text-text-muted">{t("consent")}</p>
+        ) : null}
+        <p className="text-center text-caption text-text-secondary">
+          <span>{isRegister ? t("haveAccount") : t("noAccount")} </span>
+          {pending ? (
+            <span aria-disabled="true" className="font-medium text-text-muted">
+              {isRegister ? t("signInLink") : t("registerLink")}
+            </span>
+          ) : (
+            <Link
+              href={otherAuthHref}
+              className="font-medium text-brand-700 underline underline-offset-4"
+            >
+              {isRegister ? t("signInLink") : t("registerLink")}
+            </Link>
+          )}
+        </p>
       </section>
     );
 

@@ -32,6 +32,7 @@ const THAI_ALLOWED_LATIN_TOKENS_BY_PATH: Record<string, readonly string[]> = {
   "auth.emailPlaceholder": ["you", "example.com"],
   "auth.googleSignIn": ["Google"],
   "auth.googleSigningIn": ["Google"],
+  "auth.registerGoogleSignIn": ["Google"],
   "onboarding.starter.calendarTitle": ["Google", "Calendar"],
   "onboarding.starter.calendarConnect": ["Google", "Calendar"],
   "onboarding.starter.calendarConnected": ["Google", "Calendar"],
