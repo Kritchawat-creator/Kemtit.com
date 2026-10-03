@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { cn } from "cn";
 
 import { getActiveHabits, getHabitWeekStats } from "@/core/habits/queries";
 import { listGoalsWithProgress } from "@/core/goals/queries";
@@ -23,11 +24,16 @@ export default async function LifePage() {
     getActiveHabits(today),
     getHabitWeekStats(startOfWeekISO(today), endOfWeekISO(today)),
   ]);
+  const hasGoals = goals.length > 0;
+
   return (
     <>
       <PageHeader title={t("life.title")} description={t("life.description")} />
-      <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
-        <section className="space-y-3 lg:col-span-7" aria-labelledby="life-goals-heading">
+      <div className={cn("grid gap-4", hasGoals && "lg:grid-cols-12 lg:gap-6")}>
+        <section
+          className={cn("space-y-3", hasGoals && "lg:col-span-7")}
+          aria-labelledby="life-goals-heading"
+        >
           <div className="flex items-center justify-between gap-3">
             <h2 id="life-goals-heading" className="text-h2 text-text-primary">
               {t("life.goalsHeading")}
@@ -52,7 +58,10 @@ export default async function LifePage() {
           )}
         </section>
         <section
-          className="rounded-xl border border-border bg-bg-surface p-5 shadow-xs lg:col-span-5"
+          className={cn(
+            "rounded-xl border border-border bg-bg-surface p-5 shadow-xs",
+            hasGoals && "lg:col-span-5",
+          )}
           aria-labelledby="life-habits-heading"
         >
           <h2 id="life-habits-heading" className="text-h2 text-text-primary">
