@@ -1,4 +1,4 @@
-import { Check, Flag } from "lucide-react";
+import { Check, Flag } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { cn } from "cn";

@@ -13,7 +13,7 @@ import {
   RefreshCw,
   WalletCards,
   type LucideIcon,
-} from "lucide-react";
+} from "@/components/icons/ui-icons";
 
 import type { WorkMode } from "@/core/profile/work-modes";
 

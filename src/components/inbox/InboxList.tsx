@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, CalendarDays } from "lucide-react";
+import { Archive, CalendarDays } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

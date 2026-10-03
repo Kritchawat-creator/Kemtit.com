@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Check, RotateCcw } from "lucide-react";
+import { AlertTriangle, Check, RotateCcw } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

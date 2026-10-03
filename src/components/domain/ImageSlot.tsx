@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageIcon, Loader2, Plus, X } from "lucide-react";
+import { ImageIcon, Loader2, Plus, X } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useId, useRef, useState, type ReactNode } from "react";

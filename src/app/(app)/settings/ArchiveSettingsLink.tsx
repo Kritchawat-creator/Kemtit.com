@@ -1,4 +1,4 @@
-import { Archive } from "lucide-react";
+import { Archive } from "@/components/icons/ui-icons";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 

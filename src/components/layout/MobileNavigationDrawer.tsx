@@ -13,13 +13,14 @@ import {
   Menu,
   Settings,
   WalletCards,
-} from "lucide-react";
+} from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "cn";
 
+import { BrandLogo } from "@/components/BrandLogo";
 import type { WorkMode } from "@/core/profile/work-modes";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
@@ -93,9 +94,7 @@ export function MobileNavigationDrawer({ workMode, triggerVariant = "topbar" }: 
       >
         <SheetHeader className="border-b border-border px-4 py-4 text-left">
           <SheetTitle className="flex items-center gap-2.5 text-text-primary">
-            <span className="flex size-8 items-center justify-center rounded-md bg-brand-500 text-small font-bold text-neutral-0">
-              K
-            </span>
+            <BrandLogo className="size-8 shrink-0" />
             <span>
               <span className="block text-base font-bold">{t("app.name")}</span>
               <small className="block text-[10px] font-semibold tracking-[.08em] text-text-muted uppercase">

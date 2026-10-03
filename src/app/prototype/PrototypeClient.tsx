@@ -1,6 +1,6 @@
 "use client";
 
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "@/components/icons/ui-icons";
 import {
   ArrowRight,
   BarChart3,
@@ -31,10 +31,11 @@ import {
   StickyNote,
   WalletCards,
   X,
-} from "lucide-react";
+} from "@/components/icons/ui-icons";
 import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { BrandLogo } from "@/components/BrandLogo";
 import {
   formatPrototypeDate,
   formatPrototypeDuration,
@@ -1609,7 +1610,7 @@ export function PrototypeClient() {
         {compact && drawerOpen ? <button type="button" className={styles.drawerBackdrop} aria-label="Close navigation" onClick={() => { drawerDismissalRequestedRef.current = true; setDrawerOpen(false); }} /> : null}
         <aside id="prototype-navigation" ref={drawerRef} className={styles.sidebar + (compact && drawerOpen ? " " + styles.sidebarOpen : "")} aria-label="Prototype navigation drawer" data-testid="mobile-drawer" role={compact && drawerOpen ? "dialog" : undefined} aria-modal={compact && drawerOpen ? true : undefined} aria-hidden={compact && !drawerOpen} inert={compact && !drawerOpen}>
           <div className={styles.brand}>
-            <span className={styles.logoMark}>K</span>
+            <BrandLogo className={styles.logoMark} />
             <span className={styles.brandText}><span className={styles.brandName}>Kemtit</span><small>Personal OS</small></span>
             {compact ? <button type="button" className={styles.drawerClose} aria-label="Close navigation" data-testid="drawer-close-button" onClick={() => { drawerDismissalRequestedRef.current = true; setDrawerOpen(false); }}><X size={17} /></button> : <button type="button" className={styles.brandAction} aria-label="Quick capture" onClick={() => openQuickCapture()}><Plus size={16} /></button>}
           </div>

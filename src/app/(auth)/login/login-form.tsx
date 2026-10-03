@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { ArrowLeft, Compass } from "lucide-react";
+import { ArrowLeft } from "@/components/icons/ui-icons";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { BrandLogo } from "@/components/BrandLogo";
 import { requestOtp, startGoogleSignIn, verifyOtp } from "@/core/auth/actions";
 import { requestOtpSchema, type RequestOtpInput } from "@/core/auth/schema";
 import { Button } from "@/components/ui/button";
@@ -133,9 +134,7 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
     <aside className="flex min-w-0 flex-col justify-between gap-5 border-b border-brand-100 bg-brand-50 p-4 sm:p-6 md:min-h-[32rem] md:border-r md:border-b-0 md:p-8">
       <div>
         <div className="flex min-w-0 items-center gap-3">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-neutral-0 shadow-xs">
-            <Compass className="size-6" strokeWidth={1.6} aria-hidden="true" />
-          </span>
+          <BrandLogo className="size-11 shrink-0" />
           <p className="min-w-0 text-h2 text-brand-800">{ta("nameLatin")}</p>
         </div>
 

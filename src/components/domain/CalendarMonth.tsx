@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarClock, Clock3, ReceiptText } from "lucide-react";
+import { CalendarClock, Clock3, ReceiptText } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { cn } from "cn";

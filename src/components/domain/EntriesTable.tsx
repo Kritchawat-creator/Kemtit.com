@@ -1,6 +1,6 @@
 "use client";
 
-import { NotebookPen, Pencil, Trash2 } from "lucide-react";
+import { NotebookPen, Pencil, Trash2 } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

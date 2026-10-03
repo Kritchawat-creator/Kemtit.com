@@ -1,4 +1,4 @@
-import { CircleDollarSign, Flame, Plus, ShoppingBag, SquareCheck } from "lucide-react";
+import { CircleDollarSign, Flame, Plus, ShoppingBag, SquareCheck } from "@/components/icons/ui-icons";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 

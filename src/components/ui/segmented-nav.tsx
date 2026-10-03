@@ -1,4 +1,4 @@
-import { Lock } from "lucide-react";
+import { Lock } from "@/components/icons/ui-icons";
 import Link from "next/link";
 import { cn } from "cn";
 

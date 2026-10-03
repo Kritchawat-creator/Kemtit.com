@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Clock3, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { CalendarDays, Clock3, Pencil, Plus, RefreshCw, Trash2 } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";

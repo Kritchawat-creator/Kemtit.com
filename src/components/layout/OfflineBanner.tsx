@@ -1,6 +1,6 @@
 "use client";
 
-import { WifiOff } from "lucide-react";
+import { WifiOff } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
 

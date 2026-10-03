@@ -1,6 +1,6 @@
 "use client";
 
-import { Command, Plus, Sparkles } from "lucide-react";
+import { Command, Plus, Sparkles } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";

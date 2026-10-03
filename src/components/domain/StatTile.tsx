@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, type LucideIcon } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, type LucideIcon } from "@/components/icons/ui-icons";
 import { cn } from "cn";
 
 type Badge = {

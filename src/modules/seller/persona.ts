@@ -1,4 +1,4 @@
-import { Store } from "lucide-react";
+import { Store } from "@/components/icons/ui-icons";
 
 import type { PersonaId } from "@/core/profile/personas";
 

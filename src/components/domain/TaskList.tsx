@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, CalendarClock, Check, Pencil, Undo2 } from "lucide-react";
+import { Archive, CalendarClock, Check, Pencil, Undo2 } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type ReactNode } from "react";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Pencil, Trash2 } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";

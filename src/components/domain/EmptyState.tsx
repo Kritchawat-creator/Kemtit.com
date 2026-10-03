@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "@/components/icons/ui-icons";
 import type * as React from "react";
 import { cn } from "cn";
 

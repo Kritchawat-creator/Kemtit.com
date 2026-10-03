@@ -1,6 +1,6 @@
 "use client";
 
-import { Repeat } from "lucide-react";
+import { Repeat } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "cn";
 

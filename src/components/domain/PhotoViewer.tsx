@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { Trash2 } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 

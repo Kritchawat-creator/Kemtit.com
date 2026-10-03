@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Pencil } from "lucide-react";
+import { CheckCircle2, Pencil } from "@/components/icons/ui-icons";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";

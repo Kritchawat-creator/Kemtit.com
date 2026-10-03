@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, X } from "lucide-react";
+import { Download, X } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import { useState, useSyncExternalStore } from "react";
 

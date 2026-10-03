@@ -1,4 +1,4 @@
-import { Briefcase, GraduationCap, Laptop, type LucideIcon } from "lucide-react";
+import { Briefcase, GraduationCap, Laptop, type LucideIcon } from "@/components/icons/ui-icons";
 
 import { ROLE_CODES, type RoleCode } from "@/core/profile/roles";
 import type { WorkMode } from "@/core/profile/work-modes";

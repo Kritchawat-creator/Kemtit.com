@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { cn } from "cn";

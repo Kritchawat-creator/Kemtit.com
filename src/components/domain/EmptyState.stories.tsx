@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Target } from "lucide-react";
+import { Target } from "@/components/icons/ui-icons";
 
 import { Button } from "@/components/ui/button";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, GraduationCap, HeartPulse, House, WalletCards, type LucideIcon } from "lucide-react";
+import { Briefcase, GraduationCap, HeartPulse, House, WalletCards, type LucideIcon } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

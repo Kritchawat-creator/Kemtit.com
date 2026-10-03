@@ -12,13 +12,14 @@ import {
   Settings,
   WalletCards,
   type LucideIcon,
-} from "lucide-react";
+} from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { cn } from "cn";
 
+import { BrandLogo } from "@/components/BrandLogo";
 import { LetterAvatar } from "@/components/domain/AvatarSlot";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { WorkMode } from "@/core/profile/work-modes";
@@ -170,9 +171,7 @@ export function Sidebar({ collapsed, onToggle, shell, profile }: Props) {
             aria-label={t("a11y.brandHome")}
             className="flex min-w-0 items-center gap-2.5 rounded-md focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none"
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-brand-500 text-neutral-0 shadow-xs">
-              <span className="text-small font-bold">K</span>
-            </span>
+            <BrandLogo className="size-8 shrink-0" />
             <span className="min-w-0">
               <span className="block truncate text-base font-bold tracking-[-0.02em] text-text-primary">
                 {t("app.name")}

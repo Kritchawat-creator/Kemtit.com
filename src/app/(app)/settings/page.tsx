@@ -1,4 +1,4 @@
-import { Bell, CalendarDays, LogOut, MessageCircle } from "lucide-react";
+import { Bell, CalendarDays, LogOut, MessageCircle } from "@/components/icons/ui-icons";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";

@@ -8,7 +8,7 @@ import {
   ShoppingBag,
   Target,
   WalletCards,
-} from "lucide-react";
+} from "@/components/icons/ui-icons";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";

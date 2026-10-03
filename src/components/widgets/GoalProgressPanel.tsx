@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Flag, Target, TrendingUp } from "lucide-react";
+import { Check, Flag, Target, TrendingUp } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useState } from "react";

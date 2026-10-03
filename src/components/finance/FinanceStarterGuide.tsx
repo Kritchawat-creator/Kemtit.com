@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ReceiptText, Target, WalletCards } from "lucide-react";
+import { ReceiptText, Target, WalletCards } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";

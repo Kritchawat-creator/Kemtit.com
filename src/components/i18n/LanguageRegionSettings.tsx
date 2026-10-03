@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Clock3 } from "lucide-react";
+import { CalendarDays, Clock3 } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 
 import { APP_TIME_ZONE, type AppLocale } from "@/i18n/config";

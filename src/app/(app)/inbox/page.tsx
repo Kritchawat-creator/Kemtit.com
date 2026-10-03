@@ -1,4 +1,4 @@
-import { Inbox as InboxIcon, NotebookPen, Plus } from "lucide-react";
+import { Inbox as InboxIcon, NotebookPen, Plus } from "@/components/icons/ui-icons";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";

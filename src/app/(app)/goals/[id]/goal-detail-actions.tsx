@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, Pencil, Plus, RotateCcw, TrendingUp } from "lucide-react";
+import { Archive, Pencil, Plus, RotateCcw, TrendingUp } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

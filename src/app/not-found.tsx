@@ -1,4 +1,4 @@
-import { Compass } from "lucide-react";
+import { Compass } from "@/components/icons/ui-icons";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 

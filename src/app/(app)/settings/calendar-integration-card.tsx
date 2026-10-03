@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCw, Unplug } from "lucide-react";
+import { RefreshCw, Unplug } from "@/components/icons/ui-icons";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";

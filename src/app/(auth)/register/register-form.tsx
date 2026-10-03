@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { ArrowLeft, Compass } from "lucide-react";
+import { ArrowLeft } from "@/components/icons/ui-icons";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { BrandLogo } from "@/components/BrandLogo";
 import { requestOtp, startGoogleSignIn, verifyOtp } from "@/core/auth/actions";
 import { requestOtpSchema } from "@/core/auth/schema";
 import { updateDisplayName } from "@/core/profile/actions";
@@ -375,9 +376,7 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
       <section className="overflow-hidden rounded-2xl border border-border bg-bg-surface shadow-md">
         <header className="border-b border-border bg-bg-subtle px-4 py-5 sm:px-8 sm:py-7">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-neutral-0 shadow-xs">
-              <Compass className="size-5" strokeWidth={1.6} aria-hidden="true" />
-            </span>
+            <BrandLogo className="size-10 shrink-0" />
             <div className="min-w-0">
               <p className="text-h3 text-brand-800">{ta("nameLatin")}</p>
               <p className="text-small text-text-secondary">{t("registerWelcome")}</p>

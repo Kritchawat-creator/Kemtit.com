@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, RotateCcw, X } from "lucide-react";
+import { Pencil, RotateCcw, X } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";

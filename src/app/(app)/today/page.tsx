@@ -11,7 +11,7 @@ import {
   Target,
   WalletCards,
   type LucideIcon,
-} from "lucide-react";
+} from "@/components/icons/ui-icons";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";

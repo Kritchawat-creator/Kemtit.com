@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, CheckCircle2, MoreHorizontal, Pencil, Plus, WandSparkles } from "lucide-react";
+import { Archive, CheckCircle2, MoreHorizontal, Pencil, Plus, WandSparkles } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";

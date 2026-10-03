@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 
 import { signOut } from "@/core/auth/actions";

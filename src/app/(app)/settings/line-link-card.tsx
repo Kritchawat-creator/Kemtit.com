@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, MessageCircle } from "lucide-react";
+import { ExternalLink, MessageCircle } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";

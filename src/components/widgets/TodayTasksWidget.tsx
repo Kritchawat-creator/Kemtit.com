@@ -1,4 +1,4 @@
-import { CheckSquare, Flame, Plus } from "lucide-react";
+import { CheckSquare, Flame, Plus } from "@/components/icons/ui-icons";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 

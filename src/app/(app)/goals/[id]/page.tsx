@@ -1,4 +1,4 @@
-import { ArrowLeft, CheckSquare, ChevronLeft, Plus } from "lucide-react";
+import { ArrowLeft, CheckSquare, ChevronLeft, Plus } from "@/components/icons/ui-icons";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";

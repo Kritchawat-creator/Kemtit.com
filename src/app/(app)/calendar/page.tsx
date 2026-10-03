@@ -1,4 +1,4 @@
-import { CalendarClock, CalendarDays, NotebookPen, Plus, ReceiptText } from "lucide-react";
+import { CalendarClock, CalendarDays, NotebookPen, Plus, ReceiptText } from "@/components/icons/ui-icons";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
