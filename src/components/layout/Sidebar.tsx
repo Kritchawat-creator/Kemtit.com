@@ -344,7 +344,7 @@ export function Sidebar({ collapsed, onToggle, shell, profile }: Props) {
       </nav>
 
       {!collapsed ? (
-        <div className="mt-2 grid shrink-0 gap-2">
+        <div className="mt-2 grid min-w-0 shrink-0 grid-cols-1 gap-2">
           <QuickAddMenu variant="sidebar" />
           <Link
             href="/settings"

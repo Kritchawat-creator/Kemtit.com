@@ -62,7 +62,7 @@ export function QuickAddMenu({ variant = "button", className }: Props) {
         onClick={openCapture}
         aria-label={t("a11y.openQuickAdd")}
         className={cn(
-          "grid w-full grid-cols-[32px_minmax(0,1fr)_auto] items-center gap-2 rounded-lg border border-dashed border-brand-200 bg-brand-50/70 p-2 text-left transition-[border-color,background-color,box-shadow] hover:border-brand-300 hover:bg-brand-50 focus-visible:ring-[3px] focus-visible:ring-brand-500/10 focus-visible:outline-none",
+          "box-border grid w-full min-w-0 max-w-full grid-cols-[32px_minmax(0,1fr)_auto] items-center gap-2 rounded-lg border border-dashed border-brand-200 bg-brand-50/70 p-2 text-left transition-[border-color,background-color,box-shadow] hover:border-brand-300 hover:bg-brand-50 focus-visible:ring-[3px] focus-visible:ring-brand-500/10 focus-visible:outline-none",
           className,
         )}
       >
