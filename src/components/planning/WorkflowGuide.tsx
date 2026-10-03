@@ -46,9 +46,12 @@ export function WorkflowGuide({
   return (
     <section
       aria-labelledby="planning-workflow-guide-heading"
-      className="mb-4 min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+      className="@container/workflow mb-4 min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
     >
-      <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] sm:items-start">
+      <div
+        data-testid="workflow-guide-content-grid"
+        className="grid min-w-0 gap-4 @min-[40rem]/workflow:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] @min-[40rem]/workflow:items-start"
+      >
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h2

@@ -245,10 +245,14 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
         />
       </div>
 
-      <div className="grid min-w-0 items-start gap-4 min-[1151px]:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)_minmax(0,0.7fr)]">
-        <div className="today-column order-1 grid min-w-0 content-start gap-4 max-[1150px]:contents min-[1151px]:col-start-1">
+      <div
+        data-testid="today-card-layout"
+        className="grid min-w-0 gap-0 min-[1151px]:block min-[1151px]:columns-2 min-[1151px]:gap-x-4 min-[1440px]:columns-3"
+      >
+        <div className="contents">
           <section
-            className="order-1 min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[1151px]:order-none"
+            data-testid="today-layout-card"
+            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
             aria-labelledby="today-plan-heading"
           >
             <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -293,25 +297,12 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
             />
             <QuickTaskInput today={today} defaultDomain={scope === "life" ? null : "work"} />
           </section>
-          {mainGoal ? (
-            <section
-              className="order-4 min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[1151px]:order-none"
-              aria-label={mainGoal.title}
-            >
-              <GoalProgressPanel
-                goal={mainGoal}
-                others={monthGoals.filter((goal) => goal.id !== mainGoal.id)}
-                waypoints={waypoints}
-                today={today}
-                compact
-              />
-            </section>
-          ) : null}
         </div>
 
-        <div className="today-column order-2 grid min-w-0 content-start gap-4 max-[1150px]:contents min-[1151px]:col-start-2">
+        <div className="contents">
           <section
-            className="order-2 min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[1151px]:order-none"
+            data-testid="today-layout-card"
+            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
             aria-labelledby="today-schedule-heading"
           >
             <div className="mb-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -375,10 +366,11 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
               suggestionNow={nowAt}
             />
           </section>
-          <div className="order-3 grid min-w-0 content-start gap-4 min-[1151px]:order-none">
+          <div className="contents">
             {showLifeContext ? (
               <section
-                className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+                data-testid="today-layout-card"
+                className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
                 aria-labelledby="today-routine-heading"
               >
                 <div className="flex items-start justify-between gap-3">
@@ -438,7 +430,8 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
             ) : null}
 
             <section
-              className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+              data-testid="today-layout-card"
+              className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
               aria-labelledby="today-capacity-heading"
             >
               <div className="mb-3 flex items-center gap-2">
@@ -494,10 +487,29 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
               )}
             </section>
           </div>
+
+          {mainGoal ? (
+            <section
+              data-testid="today-layout-card"
+              className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+              aria-label={mainGoal.title}
+            >
+              <GoalProgressPanel
+                goal={mainGoal}
+                others={monthGoals.filter((goal) => goal.id !== mainGoal.id)}
+                waypoints={waypoints}
+                today={today}
+                compact
+              />
+            </section>
+          ) : null}
         </div>
 
-        <div className="today-column order-5 grid min-w-0 content-start gap-4 max-[1150px]:contents min-[1151px]:col-start-3">
-          <div className="order-4 min-w-0 min-[1151px]:order-first">
+        <div className="contents">
+          <div
+            data-testid="today-layout-card"
+            className="mb-4 min-w-0 break-inside-avoid-column [&>section]:mb-0"
+          >
             <WorkflowGuide
               roleCode={me.profile.role_code}
               horizon="day"
@@ -506,7 +518,8 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
             />
           </div>
           <section
-            className="order-5 min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[1151px]:order-none"
+            data-testid="today-layout-card"
+            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
             aria-labelledby="today-plan-settings-heading"
           >
             <div className="mb-3 flex items-start gap-2">
@@ -544,10 +557,11 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
             />
           </section>
           {showContextUtility ? (
-            <div className="order-6 grid min-w-0 content-start gap-4 min-[1151px]:order-none">
+            <div className="contents">
               {showLifeContext ? (
                 <section
-                  className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+                  data-testid="today-layout-card"
+                  className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
                   aria-labelledby="today-finance-heading"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -613,7 +627,8 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
 
               {hasSuggestions ? (
                 <section
-                  className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+                  data-testid="today-layout-card"
+                  className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
                   aria-labelledby="today-suggestions-heading"
                 >
                   <div className="flex items-center gap-2">
@@ -653,7 +668,8 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
             </div>
           ) : null}
           <section
-            className="order-7 min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[1151px]:order-none"
+            data-testid="today-layout-card"
+            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
             aria-labelledby="today-notes-heading"
           >
             <div className="mb-3 flex min-w-0 items-center gap-2">
