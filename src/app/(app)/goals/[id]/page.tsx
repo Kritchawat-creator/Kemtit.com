@@ -128,7 +128,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
             <div className="flex justify-center py-1">
               <CompassDial
                 value={goal.progress.percent}
-                className="size-[196px] drop-shadow-dial lg:size-56"
+                className="h-auto w-full max-w-[196px] aspect-square drop-shadow-dial lg:max-w-56"
               />
             </div>
 

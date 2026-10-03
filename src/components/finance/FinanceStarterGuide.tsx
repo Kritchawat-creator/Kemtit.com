@@ -15,7 +15,7 @@ export function FinanceStarterGuide() {
 
   return (
     <section
-      className="mb-4 rounded-2xl bg-brand-50 p-5 shadow-md lg:mb-6"
+      className="mb-4 rounded-xl bg-brand-50 p-5 shadow-md lg:mb-6"
       aria-labelledby="finance-starter-heading"
     >
       <div className="max-w-2xl">

@@ -200,7 +200,7 @@ export default async function FinancePage() {
               return (
                 <section
                   key={goal.id}
-                  className="grid gap-3 rounded-2xl bg-bg-surface p-4 shadow-xs lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.75fr)] lg:items-start lg:p-5"
+                  className="grid gap-3 rounded-xl bg-bg-surface p-4 shadow-xs lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.75fr)] lg:items-start lg:p-5"
                   aria-label={goal.title}
                 >
                   <div className="min-w-0">
