@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Compass } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -29,6 +29,7 @@ type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
  */
 export function LoginForm({ next, error: initialError }: { next?: string; error?: string }) {
   const t = useTranslations("auth");
+  const ta = useTranslations("app");
   const tc = useTranslations("common");
   const te = useTranslations("errors");
   const router = useRouter();
@@ -53,8 +54,8 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
   }, [cooldown]);
 
   useEffect(() => {
-    if (step === "code") otpRef.current?.focus();
-  }, [step]);
+    if (step === "code" && !pending) otpRef.current?.focus();
+  }, [pending, step]);
 
   const translateError = (key: string) =>
     te.has(key as ErrorKey) ? te(key as ErrorKey) : te("generic");
@@ -103,8 +104,53 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
     });
   }
 
-  if (step === "code") {
-    return (
+  const introduction = (
+    <aside className="flex min-w-0 flex-col justify-between gap-5 border-b border-brand-100 bg-brand-50 p-4 sm:p-6 md:min-h-[32rem] md:border-r md:border-b-0 md:p-8">
+      <div>
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-neutral-0 shadow-xs">
+            <Compass className="size-6" strokeWidth={1.6} aria-hidden="true" />
+          </span>
+          <p className="min-w-0 text-h2 text-brand-800">{ta("nameLatin")}</p>
+        </div>
+
+        <div className="mt-5 space-y-2 sm:mt-7">
+          <h2 className="text-h2 text-text-primary md:text-h1">{t("loginIntroTitle")}</h2>
+          <p className="max-w-md text-body text-text-secondary">{t("loginIntroDescription")}</p>
+        </div>
+      </div>
+
+      <div
+        aria-hidden="true"
+        className="hidden rounded-xl border border-brand-100 bg-bg-surface p-4 shadow-xs sm:block"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <span className="h-2.5 w-28 rounded-full bg-brand-200" />
+          <span className="size-7 rounded-lg bg-brand-50" />
+        </div>
+        <div className="mt-4 grid grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] gap-3">
+          <div className="space-y-3 rounded-xl bg-bg-subtle p-3">
+            <span className="block h-2.5 w-2/3 rounded-full bg-brand-200" />
+            <span className="block h-2 w-full rounded-full bg-neutral-200" />
+            <span className="block h-2 w-4/5 rounded-full bg-neutral-200" />
+          </div>
+          <div className="flex flex-col justify-between rounded-xl bg-brand-50 p-3">
+            <span className="size-6 rounded-lg bg-brand-100" />
+            <div className="space-y-2">
+              <span className="block h-2 w-full rounded-full bg-brand-200" />
+              <span className="block h-2 w-2/3 rounded-full bg-brand-100" />
+            </div>
+          </div>
+        </div>
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-100">
+          <span className="block h-full w-3/5 rounded-full bg-brand-300" />
+        </div>
+      </div>
+    </aside>
+  );
+
+  const loginContent =
+    step === "code" ? (
       <section aria-labelledby="otp-title" className="space-y-5">
         <div>
           <Button
@@ -125,7 +171,7 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
           <p className="mt-1 text-body text-text-secondary">{t("codeHint")}</p>
         </div>
 
-        <div className="space-y-4 rounded-xl border border-border bg-bg-surface p-5 shadow-md">
+        <div className="space-y-4">
           <InputOTP
             ref={otpRef}
             maxLength={OTP_LENGTH}
@@ -139,9 +185,9 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
             disabled={pending}
             containerClassName="justify-center"
           >
-            <InputOTPGroup className="gap-2">
+            <InputOTPGroup className="gap-1 sm:gap-2">
               {Array.from({ length: OTP_LENGTH }, (_, i) => (
-                <InputOTPSlot key={i} index={i} className="text-h2" />
+                <InputOTPSlot key={i} index={i} className="h-12 text-h2" />
               ))}
             </InputOTPGroup>
           </InputOTP>
@@ -172,74 +218,79 @@ export function LoginForm({ next, error: initialError }: { next?: string; error?
           </Button>
         </div>
       </section>
+    ) : (
+      <section aria-labelledby="login-title" className="space-y-5">
+        <div>
+          <h1 id="login-title" className="text-h1 text-text-primary">
+            {t("title")}
+          </h1>
+          <p className="mt-1 text-body text-text-secondary">{t("subtitle")}</p>
+        </div>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(sendCode)} className="space-y-4" noValidate>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("emailLabel")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      placeholder={t("emailPlaceholder")}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessageI18n />
+                </FormItem>
+              )}
+            />
+            {serverError ? (
+              <p role="alert" aria-live="polite" className="text-small text-danger-800">
+                {translateError(serverError)}
+              </p>
+            ) : null}
+            <Button type="submit" size="lg" className="w-full" disabled={pending}>
+              {pending ? t("sending") : t("sendCode")}
+            </Button>
+          </form>
+        </Form>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 text-caption text-text-muted">
+            <span className="h-px flex-1 bg-border" />
+            <span>{t("or")}</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            className="w-full"
+            onClick={signInWithGoogle}
+            disabled={pending}
+          >
+            <span aria-hidden="true" className="font-semibold text-accent-700">
+              G
+            </span>
+            {pending ? t("googleSigningIn") : t("googleSignIn")}
+          </Button>
+        </div>
+
+        <p className="text-center text-caption text-text-muted">{t("consent")}</p>
+      </section>
     );
-  }
 
   return (
-    <section aria-labelledby="login-title" className="space-y-5">
-      <div>
-        <h1 id="login-title" className="text-h1 text-text-primary">
-          {t("title")}
-        </h1>
-        <p className="mt-1 text-body text-text-secondary">{t("subtitle")}</p>
-      </div>
-
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(sendCode)}
-          className="space-y-4 rounded-xl border border-border bg-bg-surface p-5 shadow-md"
-          noValidate
-        >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("emailLabel")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder={t("emailPlaceholder")}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessageI18n />
-              </FormItem>
-            )}
-          />
-          {serverError ? (
-            <p role="alert" aria-live="polite" className="text-small text-danger-800">
-              {translateError(serverError)}
-            </p>
-          ) : null}
-          <Button type="submit" size="lg" className="w-full" disabled={pending}>
-            {pending ? t("sending") : t("sendCode")}
-          </Button>
-        </form>
-      </Form>
-
-      <div className="space-y-3">
-        <div className="flex items-center gap-3 text-caption text-text-muted">
-          <span className="h-px flex-1 bg-border" />
-          <span>{t("or")}</span>
-          <span className="h-px flex-1 bg-border" />
-        </div>
-        <Button
-          type="button"
-          size="lg"
-          variant="outline"
-          className="w-full"
-          onClick={signInWithGoogle}
-          disabled={pending}
-        >
-          <span aria-hidden="true" className="font-semibold text-accent-700">G</span>
-          {pending ? t("googleSigningIn") : t("googleSignIn")}
-        </Button>
-      </div>
-
-      <p className="text-center text-caption text-text-muted">{t("consent")}</p>
-    </section>
+    <div
+      data-login-page
+      className="grid min-w-0 grid-cols-1 overflow-hidden rounded-2xl border border-border bg-bg-surface shadow-md md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"
+    >
+      {introduction}
+      <div className="min-w-0 p-4 sm:p-6 md:p-8">{loginContent}</div>
+    </div>
   );
 }

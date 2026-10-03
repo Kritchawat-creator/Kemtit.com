@@ -1,0 +1,15 @@
+.main:has([data-login-page]) {
+  max-width: 64rem;
+  padding-top: clamp(1.25rem, 4vw, 3rem);
+  padding-bottom: clamp(1.25rem, 4vw, 3rem);
+}
+
+.main:has([data-login-page]) > .brandHeader {
+  display: none;
+}
+
+@media (min-width: 48rem) and (min-height: 42rem) {
+  .main:has([data-login-page]) {
+    justify-content: center;
+  }
+}

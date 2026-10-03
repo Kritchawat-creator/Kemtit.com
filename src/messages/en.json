@@ -924,8 +924,10 @@
     "empty": "No new notifications"
   },
   "auth": {
-    "title": "Sign in to Kemtit",
-    "subtitle": "Enter your email and we'll send a 6-digit code. No password needed.",
+    "title": "Sign in",
+    "subtitle": "Get a 6-digit code by email. No password needed.",
+    "loginIntroTitle": "Clear goals. A fresh start every day.",
+    "loginIntroDescription": "Bring your goals, tasks, and personal plans together in one place.",
     "emailLabel": "Email",
     "emailPlaceholder": "you@example.com",
     "sendCode": "Send verification code",
