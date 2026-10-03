@@ -65,10 +65,17 @@ export function CalendarRangeNav({
 
   if (layout === "desktop") {
     return (
-      <div className={cn("flex items-center gap-3", className)}>
-        <div className="flex items-center gap-1">
+      <div
+        className={cn(
+          "flex w-fit max-w-full min-w-0 flex-wrap items-center justify-center gap-x-3 gap-y-1",
+          className,
+        )}
+      >
+        <div className="flex min-w-0 items-center gap-1">
           {prev}
-          <span className="min-w-36 text-center text-h3 text-brand-800">{label}</span>
+          <span className="max-w-full min-w-36 text-center text-h3 break-words text-brand-800">
+            {label}
+          </span>
           {next}
         </div>
         <Button variant="outline" asChild>
