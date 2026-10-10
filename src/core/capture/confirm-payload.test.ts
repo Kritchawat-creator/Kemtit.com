@@ -19,6 +19,9 @@ function proposal(overrides: Partial<CaptureProposal> = {}): CaptureProposal {
     estimatedMinutes: null,
     amount: null,
     currency: null,
+    eventAllDay: null,
+    eventStartTime: null,
+    eventEndTime: null,
     ...overrides,
   };
 }
@@ -62,7 +65,7 @@ describe("buildConfirmCapturePayload", () => {
     });
     expect(
       buildConfirmCapturePayload(
-        proposal({ kind: "event", dueDate: "2026-09-27" }),
+        proposal({ kind: "event", dueDate: "2026-09-27", eventAllDay: true }),
         "request-1",
         today,
       ),
@@ -71,6 +74,9 @@ describe("buildConfirmCapturePayload", () => {
       kind: "event",
       title: "Send the report",
       eventDate: "2026-09-27",
+      allDay: true,
+      startTime: null,
+      endTime: null,
     });
     expect(
       buildConfirmCapturePayload(

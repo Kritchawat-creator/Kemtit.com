@@ -22,7 +22,11 @@ type Props = {
   nextWeekStart?: string;
 };
 
-export function WeeklyReviewForm({
+export function WeeklyReviewForm(props: Props) {
+  return <WeeklyReviewFormContents key={props.weekStart} {...props} />;
+}
+
+function WeeklyReviewFormContents({
   weekStart,
   initial,
   carryoverTasks = [],

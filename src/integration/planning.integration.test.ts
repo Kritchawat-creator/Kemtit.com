@@ -91,10 +91,28 @@ describe.skipIf(!integrationEnabled)("planner rescue local Supabase", () => {
       expect(archiveBlockError).toBeNull();
       expect(archiveBlock).not.toBeNull();
 
+      const { data: preparedSystemTask, error: preparedSystemTaskError } = await admin
+        .from("tasks")
+        .insert({
+          user_id: userId,
+          title: "System task for prepared rescue overlap",
+          due_date: "2030-04-02",
+          planned_date: "2030-04-02",
+          domain: "work",
+          status: "planned",
+          priority: "normal",
+          data_origin: "SYSTEM",
+        })
+        .select("id")
+        .single();
+      expect(preparedSystemTaskError).toBeNull();
+      expect(preparedSystemTask).not.toBeNull();
+
       const { data: preparedBlock, error: preparedBlockError } = await client
         .from("time_blocks")
         .insert({
           user_id: userId,
+          task_id: preparedSystemTask!.id,
           title: "Prepared rescue overlap",
           start_at: "2030-04-02T02:00:00.000Z",
           end_at: "2030-04-02T03:00:00.000Z",
@@ -103,11 +121,6 @@ describe.skipIf(!integrationEnabled)("planner rescue local Supabase", () => {
         .single();
       expect(preparedBlockError).toBeNull();
       expect(preparedBlock).not.toBeNull();
-      const { error: preparedOriginError } = await admin
-        .from("time_blocks")
-        .update({ data_origin: "SYSTEM" })
-        .eq("id", preparedBlock!.id);
-      expect(preparedOriginError).toBeNull();
 
       const operationId = crypto.randomUUID();
       const plan = {

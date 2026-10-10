@@ -450,16 +450,6 @@ describe.skipIf(!integrationEnabled)("task-card scheduling atomic RPC on local S
       expect(created.error).toBeNull();
       const blockId = (created.data as { blockIds: string[] }).blockIds[0];
 
-      const allDayEvent = await owner.client.from("calendar_events").insert({
-        user_id: owner.id,
-        title: "New all-day event covering old schedule",
-        event_date: "2030-06-05",
-        all_day: true,
-        blocks_time: true,
-        data_origin: "USER",
-      });
-      expect(allDayEvent.error).toBeNull();
-
       const movedTaskBefore = await readTask(admin, task.id);
       const movedBlockBefore = await readBlock(admin, blockId);
       const move = await schedule(owner.client, {
@@ -470,6 +460,16 @@ describe.skipIf(!integrationEnabled)("task-card scheduling atomic RPC on local S
         blocks: [snapshot(movedBlockBefore)],
       });
       expect(move.error).toBeNull();
+
+      const allDayEvent = await owner.client.from("calendar_events").insert({
+        user_id: owner.id,
+        title: "New all-day event covering old schedule",
+        event_date: "2030-06-05",
+        all_day: true,
+        blocks_time: true,
+        data_origin: "USER",
+      });
+      expect(allDayEvent.error).toBeNull();
 
       const undo = await owner.client.rpc("undo_task_card_schedule_atomic", {
         p_operation_id: (move.data as { operationId: string }).operationId,

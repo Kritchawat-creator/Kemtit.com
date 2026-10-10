@@ -80,6 +80,7 @@ export default async function DailyPrintPage({ searchParams }: PageProps<"/today
     priorityIds,
   );
   const completed = plan.done.filter((item) => isTaskInScope(item.task, scope));
+  const skipped = plan.skipped.filter((item) => isTaskInScope(item.task, scope));
   const timeline = [
     ...events.map((event) => ({
       id: `event:${event.id}`,
@@ -168,6 +169,21 @@ export default async function DailyPrintPage({ searchParams }: PageProps<"/today
               />
             </>
           ) : null}
+          {skipped.length > 0 ? (
+            <>
+              <h2 className={styles.sectionHeading}>{t("skipped")}</h2>
+              <TaskRows
+                items={skipped}
+                displayDate={date}
+                emptyText={t("noTasks")}
+                formatMinutes={(minutes) => messages("planning.minutesShort", { minutes })}
+                locale={locale}
+                overdueLabel={t("overdue")}
+                plannedDateLabel={messages("taskCards.plannedDate")}
+                skipped
+              />
+            </>
+          ) : null}
 
           <h2 className={styles.sectionHeading}>{t("schedule")}</h2>
           {timeline.length > 0 ? (
@@ -197,6 +213,7 @@ function TaskRows({
   emptyText,
   formatMinutes,
   completed = false,
+  skipped = false,
   locale,
   overdueLabel,
   plannedDateLabel,
@@ -206,6 +223,7 @@ function TaskRows({
   emptyText: string;
   formatMinutes: (minutes: number) => string;
   completed?: boolean;
+  skipped?: boolean;
   locale: AppLocale;
   overdueLabel: string;
   plannedDateLabel: string;
@@ -214,7 +232,7 @@ function TaskRows({
   return (
     <ul className={styles.itemList}>
       {items.map((item) => {
-        const dateStatus = completed ? null : getPrintTaskDateStatus(item.task, displayDate);
+        const dateStatus = completed || skipped ? null : getPrintTaskDateStatus(item.task, displayDate);
         const metadata = [
           dateStatus?.kind === "overdue"
             ? overdueLabel
@@ -227,7 +245,7 @@ function TaskRows({
         return (
           <li key={item.key} className={styles.item}>
             <span className={styles.itemTitle}>
-              {completed ? "✓ " : "□ "}
+              {completed ? "✓ " : skipped ? "– " : "□ "}
               {item.task.title}
             </span>
             {metadata.length > 0 ? (

@@ -6,7 +6,7 @@ import { DOMAINS } from "@/core/domain/domains";
 import { getInsightsSnapshot } from "@/core/insights/queries";
 import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
-import { formatDate, formatNumber, formatPercent, formatTHB } from "@/lib/format";
+import { formatDate, formatDuration, formatNumber, formatPercent, formatTHB } from "@/lib/format";
 import { InsightCard } from "@/components/domain/InsightCard";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { SegmentedNav } from "@/components/ui/segmented-nav";
@@ -92,7 +92,7 @@ async function Overview({ snapshot }: { snapshot: Snapshot }) {
         />
         <InsightCard
           label={t("insights.metrics.time")}
-          value={formatDuration(snapshot.time.minutes)}
+          value={formatDuration(snapshot.time.minutes, locale)}
           helper={t("insights.metrics.plannedTime")}
         />
         <InsightCard
@@ -174,14 +174,14 @@ async function TimeReport({ snapshot }: { snapshot: Snapshot }) {
       />
       <InsightCard
         label={t("insights.time.planned")}
-        value={formatDuration(snapshot.time.minutes)}
+        value={formatDuration(snapshot.time.minutes, locale)}
         helper={t("insights.time.plannedHint")}
       />
       <InsightCard
         label={t("insights.time.average")}
         value={
           snapshot.time.blocks > 0
-            ? formatDuration(Math.round(snapshot.time.minutes / snapshot.time.blocks))
+            ? formatDuration(Math.round(snapshot.time.minutes / snapshot.time.blocks), locale)
             : "—"
         }
         helper={t("insights.time.averageHint")}
@@ -372,12 +372,4 @@ function MiniMetric({ label, value }: { label: string; value: string }) {
       <p className="mt-1 text-h2 text-text-primary">{value}</p>
     </div>
   );
-}
-
-function formatDuration(minutes: number) {
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  if (hours === 0) return `${rest}m`;
-  if (rest === 0) return `${hours}h`;
-  return `${hours}h ${rest}m`;
 }

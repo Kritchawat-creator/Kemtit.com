@@ -77,3 +77,4 @@ export const applyRescueSchema = z.object({
 export type ApplyRescueInput = z.infer<typeof applyRescueSchema>;
 
 export const undoRescueSchema = z.object({ operationId: z.uuid() });
+export const latestUndoableRescueSchema = z.object({ targetDate: isoDate });

@@ -115,6 +115,10 @@ describe("FeedbackHost", () => {
 
     expect(await screen.findByTestId("feedback-success")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Thanks for your feedback" })).toBeInTheDocument();
+    expect(screen.getAllByText(englishMessages.feedback.successDescription)).toHaveLength(1);
+    expect(screen.getByRole("dialog")).toHaveAccessibleDescription(
+      englishMessages.feedback.successDescription,
+    );
     expect(window.sessionStorage.getItem(pendingStorageKey)).toBeNull();
   });
 

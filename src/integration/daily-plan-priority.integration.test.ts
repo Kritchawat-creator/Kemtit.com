@@ -282,13 +282,19 @@ describe.skipIf(!integrationEnabled)("daily plan priority order local Supabase",
         .from("daily_plan_priority_orders")
         .select("user_id, priority_task_ids, version")
         .in("user_id", [owner.userId, other.userId])
-        .eq("plan_date", planDate)
-        .order("user_id");
+        .eq("plan_date", planDate);
       expect(ordersError).toBeNull();
-      expect(orders).toEqual([
-        { user_id: owner.userId, priority_task_ids: [ownerTaskId], version: 0 },
-        { user_id: other.userId, priority_task_ids: [otherTaskId], version: 1 },
-      ]);
+      expect(orders).toHaveLength(2);
+      expect(orders?.find(({ user_id }) => user_id === owner.userId)).toEqual({
+        user_id: owner.userId,
+        priority_task_ids: [ownerTaskId],
+        version: 0,
+      });
+      expect(orders?.find(({ user_id }) => user_id === other.userId)).toEqual({
+        user_id: other.userId,
+        priority_task_ids: [otherTaskId],
+        version: 1,
+      });
     } finally {
       if (taskIds.length) await admin.from("tasks").delete().in("id", taskIds);
       for (const userId of userIds) await admin.auth.admin.deleteUser(userId);

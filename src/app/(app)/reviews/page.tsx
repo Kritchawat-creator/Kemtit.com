@@ -7,7 +7,7 @@ import { getReviewCarryoverTasks, getTimeBlockStatsForRange, getWeeklyReview } f
 import { getWeekTaskStats } from "@/core/tasks/queries";
 import type { AppLocale } from "@/i18n/config";
 import { addDaysISO, endOfWeekISO, isISODate, startOfWeekISO, todayBkk } from "@/lib/date";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatDuration } from "@/lib/format";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { WeeklyReviewForm } from "@/components/reviews/WeeklyReviewForm";
 
@@ -75,8 +75,9 @@ export default async function ReviewsPage({ searchParams }: PageProps<"/reviews"
             value={habitStats.target > 0 ? `${habitStats.done}/${habitStats.target}` : "—"}
             label={t("reviews.habitsCompleted")}
           />
+          <p className="px-1 text-caption text-text-secondary">{t("reviews.habitTargetBasis")}</p>
           <ReviewMetric
-            value={formatMinutes(timeStats.minutes)}
+            value={formatDuration(timeStats.minutes, locale)}
             label={t("reviews.plannedTime")}
           />
 
@@ -108,12 +109,4 @@ function ReviewMetric({ value, label }: { value: string; label: string }) {
       <p className="mt-1 text-small text-text-secondary">{label}</p>
     </div>
   );
-}
-
-function formatMinutes(minutes: number) {
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  if (hours === 0) return `${rest}m`;
-  if (rest === 0) return `${hours}h`;
-  return `${hours}h ${rest}m`;
 }

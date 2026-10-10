@@ -90,6 +90,28 @@ export function QuickCapture({ today, preferredDomain, smartDefaults, onDone }: 
   const titleError = titleErrorKey ? te(titleErrorKey as ErrorKey) : null;
   const expenseMissingAmount =
     proposal?.kind === "expense" && (proposal.amount === null || proposal.amount <= 0);
+  const eventScheduleError =
+    proposal?.kind !== "event"
+      ? null
+      : proposal.eventAllDay === null
+        ? "eventScheduleRequired"
+        : proposal.eventAllDay
+          ? null
+          : !proposal.eventStartTime
+            ? "eventScheduleRequired"
+            : !proposal.eventEndTime
+              ? "eventEndRequired"
+              : proposal.eventEndTime <= proposal.eventStartTime
+                ? "eventInvalidRange"
+                : null;
+  const eventScheduleErrorMessage =
+    eventScheduleError === "eventEndRequired"
+      ? t("capture.eventEndRequired")
+      : eventScheduleError === "eventInvalidRange"
+        ? t("capture.eventInvalidRange")
+        : eventScheduleError
+          ? t("capture.eventScheduleRequired")
+          : null;
   const hasDomain =
     proposal?.kind === "task" || proposal?.kind === "habit" || proposal?.kind === "goal";
   const hasDate =
@@ -132,7 +154,8 @@ export function QuickCapture({ today, preferredDomain, smartDefaults, onDone }: 
       submittingRef.current ||
       !proposal?.supported ||
       titleInvalid ||
-      expenseMissingAmount
+      expenseMissingAmount ||
+      eventScheduleError
     ) {
       return;
     }
@@ -181,6 +204,27 @@ export function QuickCapture({ today, preferredDomain, smartDefaults, onDone }: 
       label: dateLabel,
       value: proposal.dueDate ? formatDate(proposal.dueDate, "medium", locale) : "—",
     });
+  }
+  if (proposal?.kind === "event") {
+    previewDetails.push({
+      label: t("capture.eventMode"),
+      value:
+        proposal.eventAllDay === null
+          ? t("capture.eventScheduleRequired")
+          : t(proposal.eventAllDay ? "capture.eventAllDay" : "capture.eventTimed"),
+    });
+    if (proposal.eventAllDay === false) {
+      previewDetails.push(
+        {
+          label: t("capture.eventStartTime"),
+          value: proposal.eventStartTime ?? "—",
+        },
+        {
+          label: t("capture.eventEndTime"),
+          value: proposal.eventEndTime ?? "—",
+        },
+      );
+    }
   }
   if (proposal?.kind === "goal") {
     previewDetails.push({
@@ -278,6 +322,11 @@ export function QuickCapture({ today, preferredDomain, smartDefaults, onDone }: 
             {titleError ? (
               <p role="alert" className="mt-3 text-caption text-danger-800">
                 {titleError}
+              </p>
+            ) : null}
+            {proposal.kind === "event" && eventScheduleError ? (
+              <p role="alert" className="mt-3 text-caption text-danger-800">
+                {eventScheduleErrorMessage}
               </p>
             ) : null}
             {proposal.kind === "expense" ? (
@@ -403,6 +452,83 @@ export function QuickCapture({ today, preferredDomain, smartDefaults, onDone }: 
                     />
                   </div>
                 </div>
+              ) : null}
+
+              {proposal.kind === "event" ? (
+                <>
+                  <div>
+                    <label
+                      htmlFor="quick-capture-event-mode"
+                      className="block text-caption font-medium text-text-secondary"
+                    >
+                      {t("capture.eventMode")}
+                    </label>
+                    <select
+                      id="quick-capture-event-mode"
+                      value={
+                        proposal.eventAllDay === null
+                          ? ""
+                          : proposal.eventAllDay
+                            ? "allDay"
+                            : "timed"
+                      }
+                      disabled={pending}
+                      onChange={(event) => {
+                        const mode = event.target.value;
+                        updateProposal("eventAllDay", mode === "" ? null : mode === "allDay");
+                        if (mode === "allDay") {
+                          updateProposal("eventStartTime", null);
+                          updateProposal("eventEndTime", null);
+                        }
+                      }}
+                      className="mt-1 h-11 w-full rounded-md border border-border bg-bg-surface px-3.5 text-base text-text-primary shadow-xs outline-none focus:border-brand-500 focus:ring-[3px] focus:ring-brand-500/10"
+                    >
+                      <option value="">{t("capture.eventModePlaceholder")}</option>
+                      <option value="allDay">{t("capture.eventAllDay")}</option>
+                      <option value="timed">{t("capture.eventTimed")}</option>
+                    </select>
+                  </div>
+                  {proposal.eventAllDay === false ? (
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="quick-capture-event-start"
+                          className="block text-caption font-medium text-text-secondary"
+                        >
+                          {t("capture.eventStartTime")}
+                        </label>
+                        <Input
+                          id="quick-capture-event-start"
+                          type="time"
+                          value={proposal.eventStartTime ?? ""}
+                          disabled={pending}
+                          onChange={(event) =>
+                            updateProposal("eventStartTime", event.target.value || null)
+                          }
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="quick-capture-event-end"
+                          className="block text-caption font-medium text-text-secondary"
+                        >
+                          {t("capture.eventEndTime")}
+                        </label>
+                        <Input
+                          id="quick-capture-event-end"
+                          type="time"
+                          value={proposal.eventEndTime ?? ""}
+                          disabled={pending}
+                          onChange={(event) =>
+                            updateProposal("eventEndTime", event.target.value || null)
+                          }
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+                </>
               ) : null}
 
               {proposal.kind === "goal" ? (
@@ -582,7 +708,8 @@ export function QuickCapture({ today, preferredDomain, smartDefaults, onDone }: 
           !proposal?.supported ||
           !proposal.title.trim() ||
           proposal.title.trim().length > titleLimit ||
-          expenseMissingAmount
+          expenseMissingAmount ||
+          Boolean(eventScheduleError)
         }
       >
         <Sparkles aria-hidden="true" />

@@ -12,7 +12,32 @@ import { Input } from "@/components/ui/input";
 
 type TimeBlock = Database["public"]["Tables"]["time_blocks"]["Row"];
 
-type Props = Pick<TimeBlock, "id" | "title" | "start_at" | "end_at" | "version" | "status">;
+type Props = Pick<TimeBlock, "id" | "title" | "start_at" | "end_at" | "version" | "status" | "is_locked">;
+
+function mutationErrorKey(error: string):
+  | "timeBlockConflict"
+  | "timeBlockLocked"
+  | "timeBlockStale"
+  | "timeBlockInactive"
+  | "timeBlockNotFound"
+  | "generic" {
+  switch (error) {
+    case "timeBlockConflict":
+      return "timeBlockConflict";
+    case "calendarEventConflict":
+      return "generic";
+    case "timeBlockLocked":
+      return "timeBlockLocked";
+    case "timeBlockStale":
+      return "timeBlockStale";
+    case "timeBlockInactive":
+      return "timeBlockInactive";
+    case "timeBlockNotFound":
+      return "timeBlockNotFound";
+    default:
+      return "generic";
+  }
+}
 
 function toBangkokInput(value: string) {
   return new Intl.DateTimeFormat("sv-SE", {
@@ -32,8 +57,18 @@ function toBangkokIso(value: string) {
   return new Date(`${value}:00+07:00`).toISOString();
 }
 
-export function TimeBlockActions({ id, title: initialTitle, start_at, end_at, version: initialVersion, status: initialStatus }: Props) {
+export function TimeBlockActions({
+  id,
+  title: initialTitle,
+  start_at,
+  end_at,
+  version: initialVersion,
+  status: initialStatus,
+  is_locked,
+}: Props) {
   const t = useTranslations();
+  const te = useTranslations("errors");
+  const tCards = useTranslations("taskCards");
   const [title, setTitle] = useState(initialTitle);
   const [startAt, setStartAt] = useState(toBangkokInput(start_at));
   const [endAt, setEndAt] = useState(toBangkokInput(end_at));
@@ -54,11 +89,9 @@ export function TimeBlockActions({ id, title: initialTitle, start_at, end_at, ve
         expectedVersion: version,
       });
       if (!result.ok) {
-        toast.error(
-          result.error === "timeBlockConflict"
-            ? t("errors.timeBlockConflict")
-            : t("errors.generic"),
-        );
+        toast.error(result.error === "calendarEventConflict"
+          ? tCards("calendarEventConflict")
+          : te(mutationErrorKey(result.error)));
         return;
       }
       setVersion((current) => current + 1);
@@ -71,11 +104,9 @@ export function TimeBlockActions({ id, title: initialTitle, start_at, end_at, ve
     startTransition(async () => {
       const result = await setTimeBlockStatus({ id, expectedVersion: version, status: nextStatus });
       if (!result.ok) {
-        toast.error(
-          result.error === "timeBlockConflict"
-            ? t("errors.timeBlockConflict")
-            : t("errors.generic"),
-        );
+        toast.error(result.error === "calendarEventConflict"
+          ? tCards("calendarEventConflict")
+          : te(mutationErrorKey(result.error)));
         return;
       }
       setVersion((current) => current + 1);
@@ -122,10 +153,12 @@ export function TimeBlockActions({ id, title: initialTitle, start_at, end_at, ve
         </div>
       ) : (
         <div className="flex flex-wrap gap-1">
-          <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(true)} disabled={pending}>
-            <Pencil aria-hidden="true" />
-            {t("planning.editTimeBlock")}
-          </Button>
+          {!is_locked ? (
+            <Button type="button" variant="ghost" size="sm" onClick={() => setEditing(true)} disabled={pending}>
+              <Pencil aria-hidden="true" />
+              {t("planning.editTimeBlock")}
+            </Button>
+          ) : null}
           <Button type="button" variant="ghost" size="sm" onClick={() => changeStatus("cancelled")} disabled={pending}>
             <X aria-hidden="true" />
             {t("planning.cancelTimeBlock")}

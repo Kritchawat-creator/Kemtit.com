@@ -31,6 +31,9 @@ export type ConfirmCapturePayload =
       kind: "event";
       title: string;
       eventDate: ISODate;
+      allDay: boolean;
+      startTime: string | null;
+      endTime: string | null;
     }
   | {
       requestId: string;
@@ -86,11 +89,23 @@ export function buildConfirmCapturePayload(
         periodStart: proposal.periodStart ?? today,
       };
     case "event":
+      if (proposal.eventAllDay === null) return null;
+      if (
+        !proposal.eventAllDay &&
+        (!proposal.eventStartTime ||
+          !proposal.eventEndTime ||
+          proposal.eventEndTime <= proposal.eventStartTime)
+      ) {
+        return null;
+      }
       return {
         requestId,
         kind: "event",
         title: proposal.title,
         eventDate: proposal.dueDate ?? today,
+        allDay: proposal.eventAllDay,
+        startTime: proposal.eventAllDay ? null : proposal.eventStartTime,
+        endTime: proposal.eventAllDay ? null : proposal.eventEndTime,
       };
     case "bill":
       return {

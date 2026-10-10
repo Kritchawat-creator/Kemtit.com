@@ -241,7 +241,12 @@ export function TaskList({
         {
           key: "done",
           label: t("tasks.sections.done"),
-          items: visible.filter((i) => i.done || i.skipped),
+          items: visible.filter((i) => i.done && !i.skipped),
+        },
+        {
+          key: "skipped",
+          label: t("tasks.sections.skipped"),
+          items: visible.filter((i) => i.skipped),
         },
       ].filter((s) => s.items.length > 0)
     : [{ key: "all", label: "", items: visible }];

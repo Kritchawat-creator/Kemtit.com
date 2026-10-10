@@ -199,6 +199,131 @@ describe.skipIf(!integrationEnabled)("task cards, groups, and ordered photos on 
     }
   });
 
+  it("retains a source group after members move out and deletes it only when empty", async () => {
+    assertLocalConfiguration();
+    const admin = serviceClient();
+    const userIds: string[] = [];
+    const taskIds: string[] = [];
+
+    try {
+      const owner = await createUser(admin);
+      userIds.push(owner.id);
+      const client = userClient();
+      await signInAndApproveFixtureSession(client, admin, {
+        email: owner.email,
+        password: owner.password,
+        userId: owner.id,
+      });
+
+      const tasks = await Promise.all([
+        createTask(admin, owner.id, "Singleton source one"),
+        createTask(admin, owner.id, "Singleton source two"),
+        createTask(admin, owner.id, "Singleton target one"),
+        createTask(admin, owner.id, "Singleton target two"),
+      ]);
+      taskIds.push(...tasks.map((task) => task.id));
+
+      async function createGroup(
+        title: string,
+        members: Array<{ id: string; updated_at: string }>,
+      ) {
+        const created = await client.rpc("mutate_task_card_group_atomic", {
+          p_operation_id: crypto.randomUUID(),
+          p_action: "create",
+          p_group_id: null,
+          p_task_ids: members.map((task) => task.id),
+          p_title: title,
+          p_expected_group_versions: [] as Json,
+          p_expected_task_states: members.map((task) => ({
+            id: task.id,
+            updatedAt: task.updated_at,
+            groupId: null,
+          })) as Json,
+        });
+        expect(created.error).toBeNull();
+        return (created.data as { groupId: string }).groupId;
+      }
+
+      const sourceGroupId = await createGroup("Source group", tasks.slice(0, 2));
+      const targetGroupId = await createGroup("Target group", tasks.slice(2));
+
+      async function groupVersions(groupIds: string[]) {
+        const result = await client.from("task_groups").select("id,version").in("id", groupIds);
+        expect(result.error).toBeNull();
+        return (result.data ?? []).map((group) => ({ groupId: group.id, version: group.version })) as Json;
+      }
+
+      async function taskStates(ids: string[]) {
+        const result = await client.from("tasks").select("id,updated_at,task_group_id").in("id", ids);
+        expect(result.error).toBeNull();
+        return (result.data ?? []).map((task) => ({
+          id: task.id,
+          updatedAt: task.updated_at,
+          groupId: task.task_group_id,
+        })) as Json;
+      }
+
+      const transfer = await client.rpc("mutate_task_card_group_atomic", {
+        p_operation_id: crypto.randomUUID(),
+        p_action: "add",
+        p_group_id: targetGroupId,
+        p_task_ids: [tasks[1]!.id],
+        p_title: null,
+        p_expected_group_versions: await groupVersions([sourceGroupId, targetGroupId]),
+        p_expected_task_states: await taskStates(tasks.map((task) => task.id)),
+      });
+      expect(transfer.error).toBeNull();
+      const singletonSource = await client
+        .from("task_groups")
+        .select("id")
+        .eq("id", sourceGroupId)
+        .maybeSingle();
+      expect(singletonSource.error).toBeNull();
+      expect(singletonSource.data?.id).toBe(sourceGroupId);
+      const singletonMembers = await client
+        .from("tasks")
+        .select("id")
+        .eq("task_group_id", sourceGroupId);
+      expect(singletonMembers.data).toEqual([{ id: tasks[0]!.id }]);
+
+      const undoTransfer = await client.rpc("undo_task_card_group_atomic", {
+        p_operation_id: (transfer.data as { operationId: string }).operationId,
+      });
+      expect(undoTransfer.error).toBeNull();
+      expect(undoTransfer.data).toMatchObject({ undone: true });
+
+      const removeAll = await client.rpc("mutate_task_card_group_atomic", {
+        p_operation_id: crypto.randomUUID(),
+        p_action: "remove",
+        p_group_id: sourceGroupId,
+        p_task_ids: [tasks[0]!.id, tasks[1]!.id],
+        p_title: null,
+        p_expected_group_versions: await groupVersions([sourceGroupId]),
+        p_expected_task_states: await taskStates([tasks[0]!.id, tasks[1]!.id]),
+      });
+      expect(removeAll.error).toBeNull();
+      const emptyGroup = await client.from("task_groups").select("id").eq("id", sourceGroupId).maybeSingle();
+      expect(emptyGroup.error).toBeNull();
+      expect(emptyGroup.data).toBeNull();
+
+      const undoRemove = await client.rpc("undo_task_card_group_atomic", {
+        p_operation_id: (removeAll.data as { operationId: string }).operationId,
+      });
+      expect(undoRemove.error).toBeNull();
+      const restoredGroup = await client.from("task_groups").select("id").eq("id", sourceGroupId).maybeSingle();
+      expect(restoredGroup.data?.id).toBe(sourceGroupId);
+      const restoredMembers = await client
+        .from("tasks")
+        .select("id")
+        .eq("task_group_id", sourceGroupId)
+        .order("task_group_position");
+      expect(restoredMembers.data?.map((task) => task.id)).toEqual([tasks[0]!.id, tasks[1]!.id]);
+    } finally {
+      if (taskIds.length) await admin.from("tasks").delete().in("id", taskIds);
+      for (const userId of userIds) await admin.auth.admin.deleteUser(userId);
+    }
+  });
+
   it("reserves photos in selection order, resolves legacy attaches, and releases failed slots safely", async () => {
     assertLocalConfiguration();
     const admin = serviceClient();

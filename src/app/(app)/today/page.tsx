@@ -239,6 +239,10 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
     ? timelineItems.findIndex((item) => item.startMinutes >= 0 && item.endMinutes > nowTime)
     : -1;
   const allTasks = [...scopedPlan.overdue, ...scopedPlan.due, ...scopedPlan.done];
+  const taskEmptyState =
+    allTasks.length === 0
+      ? emptyTaskState(t("today.noEligibleTasks"), "")
+      : emptyTaskState(emptySelectedTitle, emptySelectedDescription);
   const hasCapacityInputs =
     openItems.some((item) => item.task.estimated_minutes != null) ||
     availability.busyMinutes > 0 ||
@@ -319,7 +323,7 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
             version={priorityOrder?.version ?? 0}
             priorityIsSaved={priorityIsSaved}
             goalOptions={goalOptions}
-            emptyState={emptyTaskState(emptySelectedTitle, emptySelectedDescription)}
+            emptyState={taskEmptyState}
           />
 
           <QuickTaskInput
@@ -446,6 +450,28 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
               </h2>
               <TaskList
                 items={scopedPlan.done}
+                today={selectedDate}
+                goalOptions={goalOptions}
+                showGoal
+                groupByStatus={false}
+                variant="plain"
+              />
+            </section>
+          ) : null}
+
+          {scopedPlan.skipped.length > 0 ? (
+            <section
+              className="min-w-0 rounded-lg border border-border p-4"
+              aria-labelledby="today-skipped-heading"
+            >
+              <h2
+                id="today-skipped-heading"
+                className="mb-2 text-h3 font-semibold text-text-primary"
+              >
+                {t("plannerPrint.skipped")}
+              </h2>
+              <TaskList
+                items={scopedPlan.skipped}
                 today={selectedDate}
                 goalOptions={goalOptions}
                 showGoal
@@ -748,6 +774,7 @@ function filterPlan(plan: DayPlan<TaskWithGoal>, scope: Scope): DayPlan<TaskWith
     overdue: filter(plan.overdue),
     due: filter(plan.due),
     done: filter(plan.done),
+    skipped: filter(plan.skipped),
   };
 }
 

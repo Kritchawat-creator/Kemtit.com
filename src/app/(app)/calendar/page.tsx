@@ -118,6 +118,7 @@ async function DayView({ date, today, scope, userId }: { date: ISODate; today: I
   ]);
   const openItems = [...plan.overdue, ...plan.due].filter((item) => domainInScope(item.task.domain, scope));
   const doneItems = plan.done.filter((item) => domainInScope(item.task.domain, scope));
+  const skippedItems = plan.skipped.filter((item) => domainInScope(item.task.domain, scope));
   const timeline = await getTimelineBoardItems(openItems, scope, date);
   const timelineItems = timeline.items;
   const availability = calculateDayAvailability({
@@ -146,6 +147,7 @@ async function DayView({ date, today, scope, userId }: { date: ISODate; today: I
   const visibleTaskIds = new Set([
     ...timelineItems.map((item) => item.task.id),
     ...doneItems.map((item) => item.task.id),
+    ...skippedItems.map((item) => item.task.id),
   ]);
 
   return (
@@ -174,8 +176,8 @@ async function DayView({ date, today, scope, userId }: { date: ISODate; today: I
         <h2 className="mb-3 text-h2 text-text-primary">{ta("today.scheduleHeading")}</h2>
         {timeBlocks.length ? <CalendarRangeTimeBlocks timeBlocks={timeBlocks} visibleTaskIds={visibleTaskIds} busyLabel={t("busyTimeBlock")} /> : <p className="text-small text-text-secondary">{ta("today.noTimeBlocks")}</p>}
       </section>
-      {doneItems.length ? (
-        <TaskList items={doneItems} today={today} goalOptions={goalOptions} groupByStatus={false} showGoal variant="plain" />
+      {doneItems.length || skippedItems.length ? (
+        <TaskList items={[...doneItems, ...skippedItems]} today={today} goalOptions={goalOptions} showGoal variant="plain" />
       ) : null}
       <section className="rounded-xl border border-border bg-bg-surface p-4 shadow-xs" aria-label={ta("inbox.notesTitle")}>
         <div className="mb-3 flex min-w-0 items-center gap-2">
@@ -225,9 +227,10 @@ async function RangeView({
   const byDay = itemsByDay(scopedTasks, scopedCompletions, from, to, scopedOccurrences);
   const contextByDay = calendarContextByDay(events, bills, timeBlocks);
   const hasAny = Object.keys(byDay).length > 0 || Object.keys(contextByDay).length > 0;
-  const dayItems = [...plan.overdue, ...plan.due, ...plan.done].filter((item) => domainInScope(item.task.domain, scope));
+  const dayItems = [...plan.overdue, ...plan.due, ...plan.done, ...plan.skipped].filter((item) => domainInScope(item.task.domain, scope));
   const openDayItems = [...plan.overdue, ...plan.due].filter((item) => domainInScope(item.task.domain, scope));
   const doneDayItems = plan.done.filter((item) => domainInScope(item.task.domain, scope));
+  const skippedDayItems = plan.skipped.filter((item) => domainInScope(item.task.domain, scope));
   const timeline = await getTimelineBoardItems(openDayItems, scope, date);
   const timelineItems = timeline.items;
   const dayEvents = events.filter((event) => event.event_date === date);
@@ -238,6 +241,7 @@ async function RangeView({
   const visibleTaskIds = new Set([
     ...timelineItems.map((item) => item.task.id),
     ...doneDayItems.map((item) => item.task.id),
+    ...skippedDayItems.map((item) => item.task.id),
   ]);
 
   if (view === "week") {
@@ -256,7 +260,9 @@ async function RangeView({
               <CalendarContextItems events={dayEvents} bills={dayBills} compact />
               <TimelineBoard date={date} userId={userId} items={timelineItems} groups={timeline.groups} hasMoreTasks={timeline.hasMoreTasks} blocks={schedule.blocks} busyItems={busyItems} />
               <CalendarRangeTimeBlocks timeBlocks={dayTimeBlocks} visibleTaskIds={visibleTaskIds} busyLabel={t("busyTimeBlock")} />
-              {doneDayItems.length ? <TaskList items={doneDayItems} today={today} goalOptions={goalOptions} groupByStatus={false} showGoal /> : null}
+              {doneDayItems.length || skippedDayItems.length ? (
+                <TaskList items={[...doneDayItems, ...skippedDayItems]} today={today} goalOptions={goalOptions} showGoal />
+              ) : null}
             </div>
           }
         />
@@ -304,7 +310,9 @@ async function RangeView({
           <CalendarContextItems events={dayEvents} bills={dayBills} compact />
           <TimelineBoard date={date} userId={userId} items={timelineItems} groups={timeline.groups} hasMoreTasks={timeline.hasMoreTasks} blocks={schedule.blocks} busyItems={busyItems} />
           <CalendarRangeTimeBlocks timeBlocks={dayTimeBlocks} visibleTaskIds={visibleTaskIds} busyLabel={t("busyTimeBlock")} />
-          {doneDayItems.length ? <TaskList items={doneDayItems} today={today} goalOptions={goalOptions} groupByStatus={false} showGoal variant="plain" /> : null}
+          {doneDayItems.length || skippedDayItems.length ? (
+            <TaskList items={[...doneDayItems, ...skippedDayItems]} today={today} goalOptions={goalOptions} showGoal variant="plain" />
+          ) : null}
         </div>
       </aside>
     </div>
@@ -393,6 +401,7 @@ async function CalendarRangeTimeBlocks({
               end_at={block.end_at}
               version={block.version}
               status={block.status}
+              is_locked={block.is_locked}
             />
           ) : null}
           <span className="sr-only">{t("today.timeBlock")}</span>

@@ -37,6 +37,22 @@ export function formatNumber(value: number, locale: AppLocale = "th"): string {
   }).format(value);
 }
 
+export function formatDuration(minutes: number, locale: AppLocale = "th"): string {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  const formatter = (value: number, unit: "hour" | "minute") =>
+    new Intl.NumberFormat(intlLocale(locale), {
+      style: "unit",
+      unit,
+      unitDisplay: "short",
+      maximumFractionDigits: 0,
+    }).format(value);
+
+  if (hours === 0) return formatter(remainingMinutes, "minute");
+  if (remainingMinutes === 0) return formatter(hours, "hour");
+  return `${formatter(hours, "hour")} ${formatter(remainingMinutes, "minute")}`;
+}
+
 export function formatPercent(ratio: number, locale: AppLocale = "th"): string {
   return new Intl.NumberFormat(numberLocale(locale), {
     style: "percent",

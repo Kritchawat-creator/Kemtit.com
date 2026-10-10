@@ -104,4 +104,44 @@ describe("habit queries", () => {
       habits: 0,
     });
   });
+
+  it("excludes habits started after the week and prorates a partial Bangkok start week", async () => {
+    configureSupabase({
+      habits: success([
+        { id: "before", target_per_week: 3, created_at: "2026-09-20T04:00:00.000Z" },
+        // 28 Sep 00:00 Bangkok: six eligible dates remain in the selected week.
+        { id: "during", target_per_week: 3, created_at: "2026-09-27T17:00:00.000Z" },
+        // 4 Oct 01:00 Bangkok: this habit had not started during the selected week.
+        { id: "after", target_per_week: 7, created_at: "2026-10-03T18:00:00.000Z" },
+      ]),
+      habit_completions: success([
+        { habit_id: "before", completed_on: "2026-09-27" },
+        { habit_id: "during", completed_on: "2026-09-27" },
+        { habit_id: "during", completed_on: "2026-09-28" },
+        { habit_id: "after", completed_on: "2026-10-03" },
+      ]),
+    });
+
+    await expect(getHabitWeekStats("2026-09-27", "2026-10-03")).resolves.toEqual({
+      done: 2,
+      target: 6,
+      habits: 2,
+    });
+  });
+
+  it("does not count completions before a habit's effective Bangkok start date", async () => {
+    configureSupabase({
+      habits: success([{ id: "new", target_per_week: 7, created_at: "2026-09-29T17:00:00.000Z" }]),
+      habit_completions: success([
+        { habit_id: "new", completed_on: "2026-09-29" },
+        { habit_id: "new", completed_on: "2026-09-30" },
+      ]),
+    });
+
+    await expect(getHabitWeekStats("2026-09-27", "2026-10-03")).resolves.toEqual({
+      done: 1,
+      target: 4,
+      habits: 1,
+    });
+  });
 });

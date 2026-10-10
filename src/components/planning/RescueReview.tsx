@@ -3,10 +3,14 @@
 import { AlertTriangle, Check, RotateCcw } from "@/components/icons/ui-icons";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { confirmRescue, undoRescue } from "@/core/planning/actions";
+import {
+  confirmRescue,
+  getLatestUndoableRescueOperation,
+  undoRescue,
+} from "@/core/planning/actions";
 import type { AppLocale } from "@/i18n/config";
 import type { RescueProposal, RescueProposalAction } from "@/core/planning/rescue";
 import { Button } from "@/components/ui/button";
@@ -22,14 +26,63 @@ const ACTION_KEYS: Record<
 };
 
 export function RescueReview({ proposal }: { proposal: RescueProposal }) {
+  return <RescueReviewForTargetDate key={proposal.targetDate} proposal={proposal} />;
+}
+
+function RescueReviewForTargetDate({ proposal }: { proposal: RescueProposal }) {
   const t = useTranslations();
   const te = useTranslations("errors");
   const locale = useLocale() as AppLocale;
   const router = useRouter();
-  const [operationId] = useState(() => crypto.randomUUID());
-  const [applied, setApplied] = useState(false);
+  const [operationId, setOperationId] = useState(() => crypto.randomUUID());
+  const [undoOperationId, setUndoOperationId] = useState<string | null>(null);
+  const [undoReadbackComplete, setUndoReadbackComplete] = useState(false);
+  const [undoReadbackFailed, setUndoReadbackFailed] = useState(false);
   const [pending, startTransition] = useTransition();
   const hasChanges = proposal.items.some((item) => item.action === "move" || item.action === "at_risk");
+
+  useEffect(() => {
+    let current = true;
+
+    void (async () => {
+      try {
+        const result = await getLatestUndoableRescueOperation({ targetDate: proposal.targetDate });
+        if (!current) return;
+        if (!result.ok) {
+          setUndoReadbackFailed(true);
+          return;
+        }
+        setUndoOperationId(result.data?.operationId ?? null);
+      } catch {
+        if (current) setUndoReadbackFailed(true);
+      } finally {
+        if (current) setUndoReadbackComplete(true);
+      }
+    })();
+
+    return () => {
+      current = false;
+    };
+  }, [proposal.targetDate]);
+
+  function retryUndoReadback() {
+    startTransition(async () => {
+      setUndoReadbackComplete(false);
+      setUndoReadbackFailed(false);
+      try {
+        const result = await getLatestUndoableRescueOperation({ targetDate: proposal.targetDate });
+        if (!result.ok) {
+          setUndoReadbackFailed(true);
+          return;
+        }
+        setUndoOperationId(result.data?.operationId ?? null);
+      } catch {
+        setUndoReadbackFailed(true);
+      } finally {
+        setUndoReadbackComplete(true);
+      }
+    });
+  }
 
   function apply() {
     startTransition(async () => {
@@ -43,20 +96,37 @@ export function RescueReview({ proposal }: { proposal: RescueProposal }) {
         toast.error(te(result.error === "rescueConflict" ? "rescueConflict" : "generic"));
         return;
       }
-      setApplied(true);
+      setUndoOperationId(result.data.id);
+      setUndoReadbackComplete(true);
       toast.success(t("rescue.applied"));
       router.refresh();
     });
   }
 
   function undo() {
+    if (!undoOperationId) return;
     startTransition(async () => {
-      const result = await undoRescue({ operationId });
+      const result = await undoRescue({ operationId: undoOperationId });
       if (!result.ok) {
         toast.error(te(result.error === "rescueConflict" ? "rescueConflict" : "generic"));
         return;
       }
-      setApplied(false);
+      setOperationId(crypto.randomUUID());
+      setUndoOperationId(null);
+      setUndoReadbackComplete(false);
+      setUndoReadbackFailed(false);
+      try {
+        const latest = await getLatestUndoableRescueOperation({ targetDate: proposal.targetDate });
+        if (!latest.ok) {
+          setUndoReadbackFailed(true);
+        } else {
+          setUndoOperationId(latest.data?.operationId ?? null);
+        }
+      } catch {
+        setUndoReadbackFailed(true);
+      } finally {
+        setUndoReadbackComplete(true);
+      }
       toast.success(t("rescue.undone"));
       router.refresh();
     });
@@ -125,16 +195,25 @@ export function RescueReview({ proposal }: { proposal: RescueProposal }) {
       </ul>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {!applied ? (
-          <Button type="button" onClick={apply} disabled={pending || !hasChanges}>
-            {t(hasChanges ? "rescue.confirm" : "rescue.noChanges")}
-          </Button>
-        ) : (
+        {undoReadbackFailed ? (
+          <>
+            <p role="alert" className="w-full text-caption text-danger-800">
+              {t("rescue.undoReadbackFailed")}
+            </p>
+            <Button type="button" variant="outline" onClick={retryUndoReadback} disabled={pending}>
+              {t("rescue.retryUndoReadback")}
+            </Button>
+          </>
+        ) : undoOperationId ? (
           <Button type="button" variant="outline" onClick={undo} disabled={pending}>
             <RotateCcw aria-hidden="true" />
             {t("rescue.undo")}
           </Button>
-        )}
+        ) : undoReadbackComplete ? (
+          <Button type="button" onClick={apply} disabled={pending || !hasChanges}>
+            {t(hasChanges ? "rescue.confirm" : "rescue.noChanges")}
+          </Button>
+        ) : null}
       </div>
     </section>
   );

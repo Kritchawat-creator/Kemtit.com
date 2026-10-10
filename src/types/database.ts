@@ -1949,9 +1949,24 @@ export type Database = {
         };
         Returns: string;
       };
+      create_time_block_atomic_result: {
+        Args: {
+          p_end_at: string;
+          p_source?: string;
+          p_start_at: string;
+          p_task_id?: string;
+          p_task_occurrence_id?: string;
+          p_title: string;
+        };
+        Returns: Json;
+      };
       set_time_block_status_atomic: {
         Args: { p_expected_version: number; p_id: string; p_status: string };
         Returns: string;
+      };
+      set_time_block_status_atomic_result: {
+        Args: { p_expected_version: number; p_id: string; p_status: string };
+        Returns: Json;
       };
       update_time_block_atomic: {
         Args: {
@@ -1962,6 +1977,16 @@ export type Database = {
           p_title: string;
         };
         Returns: string;
+      };
+      update_time_block_atomic_result: {
+        Args: {
+          p_end_at: string;
+          p_expected_version: number;
+          p_id: string;
+          p_start_at: string;
+          p_title: string;
+        };
+        Returns: Json;
       };
       reschedule_task_occurrence_atomic: {
         Args: {
@@ -2151,6 +2176,10 @@ export type Database = {
       undo_rescue_operation: {
         Args: { p_operation_id: string };
         Returns: string;
+      };
+      latest_undoable_rescue_operation: {
+        Args: { p_target_date: string };
+        Returns: { operation_id: string; target_date: string }[];
       };
     };
     Enums: {

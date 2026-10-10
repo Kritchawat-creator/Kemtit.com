@@ -27,7 +27,8 @@ export async function TodayTasksWidget({
     getStreak(today),
     listParentCandidates(),
   ]);
-  const items = [...plan.overdue, ...plan.due, ...plan.done];
+  const actionableItems = [...plan.overdue, ...plan.due, ...plan.done];
+  const items = [...actionableItems, ...plan.skipped];
 
   return (
     <WidgetShell
@@ -43,9 +44,9 @@ export async function TodayTasksWidget({
               {t("streak", { days: streak })}
             </span>
           ) : null}
-          {items.length > 0 ? (
+          {actionableItems.length > 0 ? (
             <span className="inline-flex h-6 items-center rounded-full bg-brand-50 px-2.5 text-caption font-medium text-brand-800">
-              {t("doneCount", { done: plan.done.length, total: items.length })}
+              {t("doneCount", { done: plan.done.length, total: actionableItems.length })}
             </span>
           ) : null}
           <Button variant="ghost" size="icon-sm" className="-mr-2" asChild>

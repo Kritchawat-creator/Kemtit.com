@@ -41,6 +41,30 @@ describe("prepareCapture", () => {
     const proposal = prepareCapture("ประชุมทีมพรุ่งนี้", today);
     expect(proposal.kind).toBe("event");
     expect(proposal.dueDate).toBe("2026-09-21");
+    expect(proposal.eventAllDay).toBe(true);
+  });
+
+  it("parses explicit 24-hour and 12-hour event times without inferring an end", () => {
+    expect(prepareCapture("นัด QA พรุ่งนี้ 14:00", today, "event")).toMatchObject({
+      eventAllDay: false,
+      eventStartTime: "14:00",
+      eventEndTime: null,
+    });
+    expect(prepareCapture("Meeting tomorrow 2:00 PM", today, "event")).toMatchObject({
+      eventAllDay: false,
+      eventStartTime: "14:00",
+      eventEndTime: null,
+    });
+    expect(prepareCapture("Meeting tomorrow 14:00–15:30", today, "event")).toMatchObject({
+      eventAllDay: false,
+      eventStartTime: "14:00",
+      eventEndTime: "15:30",
+    });
+  });
+
+  it("requires an explicit scheduling choice when time intent is unsupported or invalid", () => {
+    expect(prepareCapture("Meeting 25:30", today, "event").eventAllDay).toBeNull();
+    expect(prepareCapture("Meeting 15:00-14:00", today, "event").eventAllDay).toBeNull();
   });
 
   it("uses the user's preferred domain only when text has no stronger context", () => {

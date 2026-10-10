@@ -90,6 +90,7 @@ export default async function WeeklyPrintPage({ searchParams }: PageProps<"/toda
       const openItems = orderTasksByPriority(openTasks, date, priorityIds).map(({ item }) => item);
       const separatedItems = splitPrioritizedDayItems(openItems, priorityIds);
       const completed = plan.done.filter((item) => domainInScope(item.task.domain, scope));
+      const skipped = plan.skipped.filter((item) => domainInScope(item.task.domain, scope));
       const dayEvents = events.filter((event) => event.event_date === date);
       const schedule = [
         ...dayEvents.map((event) => {
@@ -130,6 +131,7 @@ export default async function WeeklyPrintPage({ searchParams }: PageProps<"/toda
         priorities: separatedItems.prioritized,
         tasks: separatedItems.remaining,
         completed,
+        skipped,
         schedule,
       };
     }),
@@ -208,6 +210,21 @@ export default async function WeeklyPrintPage({ searchParams }: PageProps<"/toda
                 />
               </>
             ) : null}
+            {day.skipped.length > 0 ? (
+              <>
+                <h3 className={styles.sectionHeading}>{t("skipped")}</h3>
+                <TaskRows
+                  items={day.skipped}
+                  displayDate={day.date}
+                  emptyText={t("noTasks")}
+                  formatMinutes={(minutes) => messages("planning.minutesShort", { minutes })}
+                  locale={locale}
+                  overdueLabel={t("overdue")}
+                  plannedDateLabel={messages("taskCards.plannedDate")}
+                  skipped
+                />
+              </>
+            ) : null}
 
             <h3 className={styles.sectionHeading}>{t("schedule")}</h3>
             {day.schedule.length > 0 ? (
@@ -238,6 +255,7 @@ function TaskRows({
   emptyText,
   formatMinutes,
   completed = false,
+  skipped = false,
   locale,
   overdueLabel,
   plannedDateLabel,
@@ -247,6 +265,7 @@ function TaskRows({
   emptyText: string;
   formatMinutes: (minutes: number) => string;
   completed?: boolean;
+  skipped?: boolean;
   locale: AppLocale;
   overdueLabel: string;
   plannedDateLabel: string;
@@ -255,7 +274,7 @@ function TaskRows({
   return (
     <ul className={styles.itemList}>
       {items.map((item) => {
-        const dateStatus = completed ? null : getPrintTaskDateStatus(item.task, displayDate);
+        const dateStatus = completed || skipped ? null : getPrintTaskDateStatus(item.task, displayDate);
         const metadata = [
           dateStatus?.kind === "overdue"
             ? overdueLabel
@@ -268,7 +287,7 @@ function TaskRows({
         return (
           <li key={item.key} className={styles.item}>
             <span className={styles.itemTitle}>
-              {completed ? "✓ " : "□ "}
+              {completed ? "✓ " : skipped ? "– " : "□ "}
               {item.task.title}
             </span>
             {metadata.length > 0 ? (

@@ -20,7 +20,11 @@ type Props = {
   } | null;
 };
 
-export function DailyPlanForm({ planDate, defaultAvailableMinutes, initial }: Props) {
+export function DailyPlanForm(props: Props) {
+  return <DailyPlanFormContents key={props.planDate} {...props} />;
+}
+
+function DailyPlanFormContents({ planDate, defaultAvailableMinutes, initial }: Props) {
   const t = useTranslations();
   const daily = useTranslations("lifePlannerDaily");
   const router = useRouter();

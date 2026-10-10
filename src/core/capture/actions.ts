@@ -17,6 +17,7 @@ import { revalidatePath } from "next/cache";
 const isoDate = z.string().refine(isISODate, { error: "invalidDate" });
 const title = z.string().trim().min(1, { error: "required" }).max(200, { error: "tooLong" });
 const requestId = z.uuid({ error: "validation" });
+const eventTime = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { error: "invalidTime" }).nullable().optional();
 
 const confirmCaptureSchema = z.discriminatedUnion("kind", [
   z.object({
@@ -47,6 +48,16 @@ const confirmCaptureSchema = z.discriminatedUnion("kind", [
     kind: z.literal("event"),
     title,
     eventDate: isoDate,
+    allDay: z.boolean().default(true),
+    startTime: eventTime,
+    endTime: eventTime,
+  }).superRefine((value, ctx) => {
+    if (value.allDay) return;
+    if (!value.startTime || !value.endTime) {
+      ctx.addIssue({ code: "custom", path: [!value.startTime ? "startTime" : "endTime"], message: "required" });
+    } else if (value.endTime <= value.startTime) {
+      ctx.addIssue({ code: "custom", path: ["endTime"], message: "invalidTimeRange" });
+    }
   }),
   z.object({
     requestId,
@@ -220,9 +231,9 @@ export async function confirmQuickCapture(
     created = await createCalendarEvent({
       title: parsed.data.title,
       eventDate: parsed.data.eventDate,
-      allDay: true,
-      startTime: null,
-      endTime: null,
+      allDay: parsed.data.allDay,
+      startTime: parsed.data.allDay ? null : (parsed.data.startTime ?? null),
+      endTime: parsed.data.allDay ? null : (parsed.data.endTime ?? null),
       notes: null,
     });
   } else if (parsed.data.kind === "bill") {

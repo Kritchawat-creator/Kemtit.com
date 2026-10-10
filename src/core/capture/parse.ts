@@ -31,6 +31,9 @@ export type CaptureProposal = {
   estimatedMinutes: number | null;
   amount: number | null;
   currency: "THB" | null;
+  eventAllDay: boolean | null;
+  eventStartTime: string | null;
+  eventEndTime: string | null;
 };
 
 const WEEKDAYS: Array<{ day: number; terms: RegExp }> = [
@@ -53,6 +56,7 @@ export function prepareCapture(
   const title = rawInput.trim().replace(/\s+/g, " ");
   const detectedKind = manualKind ?? classifyCapture(title);
   const dueDate = extractDate(title, today);
+  const eventSchedule = detectedKind === "event" ? extractEventSchedule(title) : null;
   const amount =
     detectedKind === "bill" || detectedKind === "expense" ? extractThbAmount(title) : null;
   const domain = inferDomain(title, detectedKind, preferredDomain);
@@ -93,7 +97,63 @@ export function prepareCapture(
         : null,
     amount,
     currency: amount === null ? null : "THB",
+    eventAllDay: eventSchedule?.allDay ?? null,
+    eventStartTime: eventSchedule?.startTime ?? null,
+    eventEndTime: eventSchedule?.endTime ?? null,
   };
+}
+
+type EventSchedule = {
+  allDay: boolean | null;
+  startTime: string | null;
+  endTime: string | null;
+};
+
+const TIME_TOKEN = /(?<!\d)(\d{1,2})(?::([0-5]\d))?\s*(a\.?m\.?|p\.?m\.?)?(?!\d)/gi;
+const TIME_RANGE = /(?:\s*(?:-|–|—|\bto\b|\buntil\b|ถึง)\s*)/i;
+
+function extractEventSchedule(input: string): EventSchedule {
+  const tokens = [...input.matchAll(TIME_TOKEN)].filter((match) => {
+    return match[2] !== undefined || match[3] !== undefined;
+  });
+  const hasTimeIntent = /(?<!\d)\d{1,2}\s*[:.]\s*\d{2}(?!\d)|(?<!\d)\d{1,2}\s*(?:a\.?m\.?|p\.?m\.?)(?!\w)/i.test(input);
+  if (!hasTimeIntent) return { allDay: true, startTime: null, endTime: null };
+  if (tokens.length < 1 || tokens.length > 2) {
+    return { allDay: null, startTime: null, endTime: null };
+  }
+
+  const parsedTimes = tokens.map(parseTimeToken);
+  if (parsedTimes.some((time) => time === null)) {
+    return { allDay: null, startTime: null, endTime: null };
+  }
+
+  if (tokens.length === 1) {
+    return { allDay: false, startTime: parsedTimes[0], endTime: null };
+  }
+
+  const between = input.slice(tokens[0].index! + tokens[0][0].length, tokens[1].index!);
+  const startTime = parsedTimes[0]!;
+  const endTime = parsedTimes[1]!;
+  if (!TIME_RANGE.test(between) || endTime <= startTime) {
+    return { allDay: null, startTime: null, endTime: null };
+  }
+  return { allDay: false, startTime, endTime };
+}
+
+function parseTimeToken(match: RegExpMatchArray): string | null {
+  const hourValue = Number(match[1]);
+  const minuteValue = Number(match[2] ?? "0");
+  const meridiem = match[3]?.toLowerCase().replaceAll(".", "");
+  let hour = hourValue;
+
+  if (meridiem) {
+    if (hourValue < 1 || hourValue > 12) return null;
+    hour = hourValue % 12 + (meridiem === "pm" ? 12 : 0);
+  } else if (match[2] === undefined || hourValue > 23) {
+    return null;
+  }
+
+  return `${String(hour).padStart(2, "0")}:${String(minuteValue).padStart(2, "0")}`;
 }
 
 export function classifyCapture(input: string): CaptureKind {

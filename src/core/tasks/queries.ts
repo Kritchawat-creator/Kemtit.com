@@ -7,6 +7,7 @@ import {
   goalTaskItems,
   type DayPlan,
   type DayTaskItem,
+  type PlanTask,
   type PlanOccurrence,
 } from "@/core/domain/dayplan";
 import { currentStreak } from "@/core/domain/streak";
@@ -15,6 +16,7 @@ import { COUNTED_DATA_ORIGINS } from "@/core/shared/data-origin";
 import { QueryError } from "@/core/shared/query-error";
 import {
   addDaysISO,
+  eachDayISO,
   endOfWeekISO,
   type ISODate,
   startOfWeekISO,
@@ -52,7 +54,7 @@ export const getDayPlan = cache(async (date: ISODate): Promise<DayPlan<TaskWithG
       .is("archived_at", null)
       .is("deleted_at", null)
       .or(
-        `due_date.eq.${date},recurrence_rule.not.is.null,and(due_date.lt.${today},completed_at.is.null,recurrence_rule.is.null)`,
+        `planned_date.eq.${date},and(planned_date.is.null,due_date.eq.${date}),recurrence_rule.not.is.null,and(completed_at.is.null,recurrence_rule.is.null,or(planned_date.lt.${today},and(planned_date.is.null,due_date.lt.${today})))`,
       )
       .order("due_date")
       .order("created_at"),
@@ -99,7 +101,9 @@ export async function getRangeTasks(from: ISODate, to: ISODate) {
       .in("data_origin", [...COUNTED_DATA_ORIGINS])
       .is("archived_at", null)
       .is("deleted_at", null)
-      .or(`and(due_date.gte.${from},due_date.lte.${to}),recurrence_rule.not.is.null`)
+      .or(
+        `and(planned_date.gte.${from},planned_date.lte.${to}),and(planned_date.is.null,due_date.gte.${from},due_date.lte.${to}),recurrence_rule.not.is.null`,
+      )
       .order("due_date"),
     supabase
       .from("task_completions")
@@ -225,29 +229,59 @@ export const getStreak = cache(async (today: ISODate): Promise<number> => {
   return currentStreak(dates, today);
 });
 
-/**
- * งานสัปดาห์นี้ (Claude Design turn 7 KPI "งานเสร็จสัปดาห์นี้"): task เดี่ยว (ไม่ใช่ตัวซ้ำ) ที่ครบกำหนดใน
- * สัปดาห์นี้ (อาทิตย์–เสาร์) → { done, total } — task ซ้ำนับสถานะรายวันซับซ้อนกว่านี้ จึงไม่รวมในสถิตินี้ (POC)
- */
+/** Weekly planned-work cohort: one-off plans and actual recurring occurrences. */
 export async function getWeekTaskStats(today: ISODate): Promise<{ done: number; total: number }> {
   const supabase = await createServerSupabase();
   const from = startOfWeekISO(today);
   const to = endOfWeekISO(today);
-  const { data, error } = await supabase
-    .from("tasks")
-    .select("completed_at")
-    .in("data_origin", [...COUNTED_DATA_ORIGINS])
-    .is("recurrence_rule", null)
-    .is("archived_at", null)
-    .is("deleted_at", null)
-    .gte("due_date", from)
-    .lte("due_date", to);
-  if (error) {
-    console.error("[tasks] getWeekTaskStats failed", { code: error.code });
-    throw new QueryError("tasks.getWeekTaskStats", error.code);
+  const [
+    { data: tasks, error: taskError },
+    { data: completions, error: completionError },
+    { data: occurrences, error: occurrenceError },
+  ] = await Promise.all([
+    supabase
+      .from("tasks")
+      .select("id, title, domain, goal_id, due_date, planned_date, recurrence_rule, completed_at")
+      .in("data_origin", [...COUNTED_DATA_ORIGINS])
+      .is("archived_at", null)
+      .is("deleted_at", null)
+      .or(
+        `recurrence_rule.not.is.null,and(planned_date.gte.${from},planned_date.lte.${to}),and(planned_date.is.null,due_date.gte.${from},due_date.lte.${to})`,
+      ),
+    supabase
+      .from("task_completions")
+      .select("task_id, completed_on")
+      .in("data_origin", [...COUNTED_DATA_ORIGINS])
+      .gte("completed_on", from)
+      .lte("completed_on", to),
+    supabase
+      .from("task_occurrences")
+      .select("id, task_id, occurrence_date, scheduled_date, status")
+      .in("data_origin", [...COUNTED_DATA_ORIGINS])
+      .or(
+        `and(occurrence_date.gte.${from},occurrence_date.lte.${to}),and(scheduled_date.gte.${from},scheduled_date.lte.${to})`,
+      ),
+  ]);
+  if (taskError || completionError || occurrenceError) {
+    const code = taskError?.code ?? completionError?.code ?? occurrenceError?.code;
+    console.error("[tasks] getWeekTaskStats failed", { code });
+    throw new QueryError("tasks.getWeekTaskStats", code);
   }
-  const rows = data ?? [];
-  return { done: rows.filter((t) => t.completed_at !== null).length, total: rows.length };
+
+  // DayPlan prefers planned_date and falls back to due_date for uninterpreted legacy rows.
+  const planTasks = (tasks ?? []) as PlanTask[];
+  const legacyCompletions = (completions ?? []) as { task_id: string; completed_on: string }[];
+  const occurrenceRows = (occurrences ?? []) as PlanOccurrence[];
+  const stats = { done: 0, total: 0 };
+
+  for (const date of eachDayISO(from, to)) {
+    const plan = buildDayPlan(planTasks, legacyCompletions, date, today, occurrenceRows);
+    // Skipped work remains in the planned cohort, but is never reported as done.
+    stats.done += plan.done.length;
+    stats.total += plan.due.length + plan.done.length + plan.skipped.length;
+  }
+
+  return stats;
 }
 
 /** Tasks captured without a date. Inbox is a task state, not a second table. */

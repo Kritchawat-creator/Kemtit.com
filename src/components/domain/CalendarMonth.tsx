@@ -58,6 +58,7 @@ export function CalendarMonth({ date, weeks, byDay, contextByDay = {}, today, se
       <ol className="mt-1 grid grid-cols-7 gap-[3px] min-[761px]:gap-1">
         {weeks.flat().map((day) => {
           const items = byDay[day] ?? [];
+          const skippedCount = items.filter((item) => item.skipped).length;
           const context = contextByDay[day];
           const inMonth = startOfMonthISO(day) === monthStart;
           const isToday = day === today;
@@ -80,7 +81,7 @@ export function CalendarMonth({ date, weeks, byDay, contextByDay = {}, today, se
             <li key={day} className="min-w-0">
               <Link
                 href={calendarHref(isMobile ? "day" : "month", day, scope)}
-                aria-label={`${formatDate(day, "long", locale)} · ${t("tasksCount", { count: items.length })}${contextLabels.length ? ` · ${contextLabels.join(" · ")}` : ""}`}
+                aria-label={`${formatDate(day, "long", locale)} · ${t("tasksCount", { count: items.length })}${skippedCount ? ` · ${ta("tasks.meta.skipped")}: ${skippedCount}` : ""}${contextLabels.length ? ` · ${contextLabels.join(" · ")}` : ""}`}
                 aria-current={isSelected ? "date" : undefined}
                 className={cn(
                   "flex min-h-11 min-w-0 flex-col items-start justify-between gap-1 rounded-[9px] border p-1.5 text-small transition-colors focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none min-[761px]:min-h-12",

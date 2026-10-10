@@ -5,6 +5,7 @@ import {
   formatDate,
   formatDateTime,
   formatDayDistance,
+  formatDuration,
   formatPercent,
   formatTHB,
   formatThaiDate,
@@ -72,6 +73,20 @@ describe("locale-aware calendar formatting", () => {
     const timestamp = "2026-09-26T00:00:00.000Z";
     expect(formatDateTime(timestamp, "th")).toMatch(/07[:.]00/);
     expect(formatDateTime(timestamp, "en")).toMatch(/07[:.]00/);
+  });
+});
+
+describe("locale-aware duration formatting", () => {
+  it("formats zero, minutes, hours, and mixed durations in Thai and English", () => {
+    expect(formatDuration(0, "th")).toMatch(/นาที/);
+    expect(formatDuration(30, "th")).toMatch(/นาที/);
+    expect(formatDuration(60, "th")).toMatch(/ชม/);
+    expect(formatDuration(90, "th")).toMatch(/ชม.*นาที/);
+
+    expect(formatDuration(0, "en")).toMatch(/min/);
+    expect(formatDuration(30, "en")).toMatch(/min/);
+    expect(formatDuration(60, "en")).toMatch(/hr/);
+    expect(formatDuration(90, "en")).toMatch(/hr.*min/);
   });
 });
 

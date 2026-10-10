@@ -59,6 +59,7 @@ export function HabitList({ habits, date }: { habits: Habit[]; date: ISODate }) 
             size="icon"
             variant={habit.done ? "default" : "outline"}
             aria-label={t("habits.toggle", { title: habit.title })}
+            aria-pressed={habit.done}
             onClick={() => toggle(habit)}
           >
             <Check aria-hidden="true" />

@@ -396,7 +396,6 @@ export function FeedbackHost({
         >
           {status === "success" ? (
             <div className="space-y-5" data-testid="feedback-success">
-              <p className="text-small text-text-secondary">{t("feedback.successDescription")}</p>
               <Button
                 type="button"
                 onClick={() => handleOpenChange(false)}

@@ -10,7 +10,12 @@ import type { z } from "zod";
 
 import type { ParentCandidate } from "@/core/goals/schema";
 import { createTask, updateTask } from "@/core/tasks/actions";
-import { RECURRENCE_OPTIONS, TASK_PRIORITIES, taskFormSchema, type TaskFormValues } from "@/core/tasks/schema";
+import {
+  RECURRENCE_OPTIONS,
+  TASK_PRIORITIES,
+  taskFormSchema,
+  type TaskFormValues,
+} from "@/core/tasks/schema";
 import { addDaysISO, todayBkk } from "@/lib/date";
 import { UPLOADS_ENABLED } from "@/lib/flags";
 import type { AppLocale } from "@/i18n/config";
@@ -287,7 +292,7 @@ export function TaskForm({
                     type="number"
                     min={1}
                     max={1440}
-                    step={5}
+                    step={1}
                     value={field.value ?? ""}
                     onChange={(event) =>
                       field.onChange(event.target.value === "" ? null : Number(event.target.value))

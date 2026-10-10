@@ -42,7 +42,9 @@ export async function createCalendarEvent(input: unknown): Promise<ActionResult<
 
   if (error || !data) {
     console.error("[calendar-events] create failed", { code: error?.code });
-    return fail("generic");
+    return fail(error?.code === "23P01" && error.message.includes("calendar_event_conflict")
+      ? "calendarEventConflict"
+      : "generic");
   }
 
   revalidateCalendar();
@@ -109,7 +111,9 @@ export async function updateCalendarEvent(
 
   if (error) {
     console.error("[calendar-events] update failed", { code: error.code });
-    return fail("generic");
+    return fail(error.code === "23P01" && error.message.includes("calendar_event_conflict")
+      ? "calendarEventConflict"
+      : "generic");
   }
   if (!data) return fail("notFound");
 

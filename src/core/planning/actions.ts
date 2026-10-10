@@ -12,6 +12,7 @@ import type { Json } from "@/types/database";
 import {
   dailyPlanSchema,
   applyRescueSchema,
+  latestUndoableRescueSchema,
   setTimeBlockStatusSchema,
   timeBlockSchema,
   undoRescueSchema,
@@ -25,6 +26,33 @@ async function requireUser() {
     data: { user },
   } = await supabase.auth.getUser();
   return { supabase, user };
+}
+
+function timeBlockMutationError(status: string): string {
+  switch (status) {
+    case "conflict":
+      return "timeBlockConflict";
+    case "locked":
+      return "timeBlockLocked";
+    case "stale":
+      return "timeBlockStale";
+    case "inactive":
+      return "timeBlockInactive";
+    case "notFound":
+      return "timeBlockNotFound";
+    case "invalid":
+      return "invalidDate";
+    default:
+      return "generic";
+  }
+}
+
+function parseTimeBlockMutation(data: Json | null): { status: string; id: string | null } | null {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+  const value = data as Record<string, Json | undefined>;
+  return typeof value.status === "string"
+    ? { status: value.status, id: typeof value.id === "string" ? value.id : null }
+    : null;
 }
 
 export async function savePlanningPreferences(input: unknown): Promise<ActionResult> {
@@ -181,20 +209,27 @@ export async function createTimeBlock(input: unknown): Promise<ActionResult<{ id
     ...(parsed.data.taskId ? { p_task_id: parsed.data.taskId } : {}),
     ...(taskOccurrenceId ? { p_task_occurrence_id: taskOccurrenceId } : {}),
   };
-  const { data: id, error } = await supabase.rpc("create_time_block_atomic", rpcArgs);
+  const { data, error } = await supabase.rpc("create_time_block_atomic_result", rpcArgs);
   if (error) {
     console.error("[planning] createTimeBlock failed", { code: error.code });
     await cleanupUnlinkedOccurrence();
-    return fail("generic");
+    return fail(
+      error.code === "23P01"
+        ? error.message.includes("calendar_event_conflict")
+          ? "calendarEventConflict"
+          : "timeBlockConflict"
+        : "generic",
+    );
   }
-  if (!id) {
+  const result = parseTimeBlockMutation(data);
+  if (!result || result.status !== "ok" || !result.id) {
     await cleanupUnlinkedOccurrence();
-    return fail("timeBlockConflict");
+    return fail(timeBlockMutationError(result?.status ?? "generic"));
   }
 
   revalidatePath("/today");
   revalidatePath("/calendar");
-  return ok({ id });
+  return ok({ id: result.id });
 }
 
 export async function updateTimeBlock(input: unknown): Promise<ActionResult<{ id: string }>> {
@@ -204,7 +239,7 @@ export async function updateTimeBlock(input: unknown): Promise<ActionResult<{ id
   const { supabase, user } = await requireUser();
   if (!user) return fail("unauthorized");
 
-  const { data: id, error } = await supabase.rpc("update_time_block_atomic", {
+  const { data, error } = await supabase.rpc("update_time_block_atomic_result", {
     p_id: parsed.data.id,
     p_title: parsed.data.title,
     p_start_at: parsed.data.startAt,
@@ -213,13 +248,22 @@ export async function updateTimeBlock(input: unknown): Promise<ActionResult<{ id
   });
   if (error) {
     console.error("[planning] updateTimeBlock failed", { code: error.code });
-    return fail("generic");
+    return fail(
+      error.code === "23P01"
+        ? error.message.includes("calendar_event_conflict")
+          ? "calendarEventConflict"
+          : "timeBlockConflict"
+        : "generic",
+    );
   }
-  if (!id) return fail("timeBlockConflict");
+  const result = parseTimeBlockMutation(data);
+  if (!result || result.status !== "ok" || !result.id) {
+    return fail(timeBlockMutationError(result?.status ?? "generic"));
+  }
 
   revalidatePath("/today");
   revalidatePath("/calendar");
-  return ok({ id });
+  return ok({ id: result.id });
 }
 
 export async function setTimeBlockStatus(input: unknown): Promise<ActionResult<{ id: string }>> {
@@ -229,20 +273,50 @@ export async function setTimeBlockStatus(input: unknown): Promise<ActionResult<{
   const { supabase, user } = await requireUser();
   if (!user) return fail("unauthorized");
 
-  const { data: id, error } = await supabase.rpc("set_time_block_status_atomic", {
+  const { data, error } = await supabase.rpc("set_time_block_status_atomic_result", {
     p_id: parsed.data.id,
     p_expected_version: parsed.data.expectedVersion,
     p_status: parsed.data.status,
   });
   if (error) {
     console.error("[planning] setTimeBlockStatus failed", { code: error.code });
-    return fail("generic");
+    return fail(
+      error.code === "23P01"
+        ? error.message.includes("calendar_event_conflict")
+          ? "calendarEventConflict"
+          : "timeBlockConflict"
+        : "generic",
+    );
   }
-  if (!id) return fail("timeBlockConflict");
+  const result = parseTimeBlockMutation(data);
+  if (!result || result.status !== "ok" || !result.id) {
+    return fail(timeBlockMutationError(result?.status ?? "generic"));
+  }
 
   revalidatePath("/today");
   revalidatePath("/calendar");
-  return ok({ id });
+  return ok({ id: result.id });
+}
+
+export async function getLatestUndoableRescueOperation(
+  input: unknown,
+): Promise<ActionResult<{ operationId: string } | null>> {
+  const parsed = latestUndoableRescueSchema.safeParse(input);
+  if (!parsed.success) return zodFail(parsed.error);
+
+  const { supabase, user } = await requireUser();
+  if (!user) return fail("unauthorized");
+
+  const { data, error } = await supabase.rpc("latest_undoable_rescue_operation", {
+    p_target_date: parsed.data.targetDate,
+  });
+  if (error) {
+    console.error("[planning] latestUndoableRescueOperation failed", { code: error.code });
+    return fail("generic");
+  }
+
+  const candidate = data?.[0];
+  return candidate ? ok({ operationId: candidate.operation_id }) : ok(null);
 }
 
 export async function confirmRescue(input: unknown): Promise<ActionResult<{ id: string }>> {
@@ -262,7 +336,7 @@ export async function confirmRescue(input: unknown): Promise<ActionResult<{ id: 
   });
   if (error) {
     console.error("[planning] confirmRescue failed", { code: error.code });
-    return fail(error.code === "40001" ? "rescueConflict" : "generic");
+    return fail(error.code === "40001" || error.code === "23P01" ? "rescueConflict" : "generic");
   }
   if (!id) return fail("rescueConflict");
 
@@ -284,7 +358,7 @@ export async function undoRescue(input: unknown): Promise<ActionResult<{ id: str
   });
   if (error) {
     console.error("[planning] undoRescue failed", { code: error.code });
-    return fail(error.code === "40001" ? "rescueConflict" : "generic");
+    return fail(error.code === "40001" || error.code === "23P01" ? "rescueConflict" : "generic");
   }
   if (!id) return fail("rescueConflict");
 

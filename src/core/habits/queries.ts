@@ -27,15 +27,15 @@ export async function getActiveHabits(date: string) {
 }
 
 export async function getHabitWeekStats(
-  from: string,
-  to: string,
+  from: ISODate,
+  to: ISODate,
 ): Promise<{ done: number; target: number; habits: number }> {
   const supabase = await createServerSupabase();
   const [{ data: habits, error: habitsError }, { data: completions, error: completionsError }] =
     await Promise.all([
       supabase
         .from("habits")
-        .select("id, target_per_week")
+        .select("id, target_per_week, created_at")
         .in("data_origin", [...COUNTED_DATA_ORIGINS])
         .is("archived_at", null),
       supabase
@@ -49,10 +49,23 @@ export async function getHabitWeekStats(
     throw new QueryError("habits.getHabitWeekStats", habitsError?.code ?? completionsError?.code);
   }
 
-  const activeIds = new Set((habits ?? []).map((habit) => habit.id));
-  const done = (completions ?? []).filter((row) => activeIds.has(row.habit_id)).length;
-  const target = (habits ?? []).reduce((sum, habit) => sum + habit.target_per_week, 0);
-  return { done, target, habits: habits?.length ?? 0 };
+  // The schema has no target/archive history; use current active targets and the
+  // Bangkok creation date as the earliest date the records prove the habit existed.
+  const eligibleHabits = (habits ?? [])
+    .map((habit) => ({ ...habit, createdOn: toBkkDate(habit.created_at) }))
+    .filter((habit) => habit.createdOn <= to);
+  const eligibleById = new Map(eligibleHabits.map((habit) => [habit.id, habit]));
+  const done = (completions ?? []).filter((row) => {
+    const habit = eligibleById.get(row.habit_id);
+    return habit !== undefined && row.completed_on >= habit.createdOn;
+  }).length;
+  const target = eligibleHabits.reduce((sum, habit) => {
+    const eligibleStart = habit.createdOn > from ? habit.createdOn : from;
+    const eligibleDays = eachDayISO(eligibleStart, to).length;
+    // First-week targets are prorated across eligible calendar days and rounded up.
+    return sum + Math.ceil((habit.target_per_week * eligibleDays) / 7);
+  }, 0);
+  return { done, target, habits: eligibleHabits.length };
 }
 
 export async function getHabitHistory(today: ISODate) {

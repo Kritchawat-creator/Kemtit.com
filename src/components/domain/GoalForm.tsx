@@ -7,7 +7,12 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { normalizePeriodStart, periodOf, type PeriodType } from "@/core/domain/periods";
+import {
+  normalizePeriodStart,
+  POC_PERIOD_TYPES,
+  periodOf,
+  type PeriodType,
+} from "@/core/domain/periods";
 import { createGoal, updateGoal } from "@/core/goals/actions";
 import { candidatesFor } from "@/core/goals/candidates";
 import { goalFormSchema, type GoalFormValues, type ParentCandidate } from "@/core/goals/schema";
@@ -80,6 +85,12 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
   const parentId = form.watch("parentId");
 
   const period = useMemo(() => periodOf(periodType, periodStart), [periodType, periodStart]);
+  const periodOptions: readonly PeriodType[] =
+    mode === "edit" &&
+    initial?.periodType &&
+    !POC_PERIOD_TYPES.some((option) => option === initial.periodType)
+      ? [...POC_PERIOD_TYPES, initial.periodType]
+      : POC_PERIOD_TYPES;
   const candidates = useMemo(
     () => candidatesFor(parentCandidates, periodType, period, goalId),
     [parentCandidates, periodType, period, goalId],
@@ -230,6 +241,7 @@ export function GoalForm({ mode, goalId, initial, parentCandidates, onDone }: Pr
               <FormControl>
                 <PeriodSwitcher
                   value={field.value}
+                  options={periodOptions}
                   onValueChange={(next: PeriodType) => {
                     field.onChange(next);
                     form.setValue(

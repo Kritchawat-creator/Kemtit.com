@@ -73,4 +73,48 @@ describe("DailyPlanForm settings", () => {
     rerender(<DailyPlanForm {...commonProps} defaultAvailableMinutes={450} />);
     expect(budgetInput).toHaveValue(600);
   });
+
+  it("loads the selected date's saved settings and submits them under that date", async () => {
+    const { rerender } = render(
+      <DailyPlanForm
+        planDate="2026-10-10"
+        initial={{ available_minutes: 420, notes: "October 10 plan" }}
+      />,
+    );
+
+    fireEvent.click(screen.getByText("planOptionsLabel"));
+    expect(screen.getByLabelText("plannedBudgetField")).toHaveValue(420);
+    expect(screen.getByLabelText("notesForDay")).toHaveValue("October 10 plan");
+
+    rerender(<DailyPlanForm planDate="2026-10-11" defaultAvailableMinutes={480} initial={null} />);
+    fireEvent.click(screen.getByText("planOptionsLabel"));
+    expect(screen.getByLabelText("plannedBudgetField")).toHaveValue(480);
+    expect(screen.getByLabelText("notesForDay")).toHaveValue("");
+
+    fireEvent.change(screen.getByLabelText("plannedBudgetField"), {
+      target: { value: "450" },
+    });
+    fireEvent.change(screen.getByLabelText("notesForDay"), {
+      target: { value: "October 11 plan" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "savePlan" }));
+
+    await waitFor(() =>
+      expect(mocks.saveDailyPlanSettings).toHaveBeenCalledWith({
+        planDate: "2026-10-11",
+        availableMinutes: 450,
+        notes: "October 11 plan",
+      }),
+    );
+
+    rerender(
+      <DailyPlanForm
+        planDate="2026-10-10"
+        initial={{ available_minutes: 420, notes: "October 10 plan" }}
+      />,
+    );
+    fireEvent.click(screen.getByText("planOptionsLabel"));
+    expect(screen.getByLabelText("plannedBudgetField")).toHaveValue(420);
+    expect(screen.getByLabelText("notesForDay")).toHaveValue("October 10 plan");
+  });
 });

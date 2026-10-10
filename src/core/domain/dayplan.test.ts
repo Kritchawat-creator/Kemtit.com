@@ -42,6 +42,20 @@ describe("buildDayPlan", () => {
     const later = buildDayPlan(tasks, [], "2026-09-12", today);
     expect(later.due.map((i) => i.task.id)).toEqual(["daily", "sat", "future"]);
   });
+
+  it("uses planned_date as the work date and falls back to legacy due_date", () => {
+    const current = task({
+      id: "planned-date",
+      due_date: "2026-09-04",
+      planned_date: "2026-09-05",
+    });
+    const legacy = task({ id: "legacy-date", due_date: "2026-09-05" });
+
+    expect(buildDayPlan([current, legacy], [], "2026-09-04", today).due).toEqual([]);
+    expect(
+      buildDayPlan([current, legacy], [], "2026-09-05", today).due.map((item) => item.task.id),
+    ).toEqual(["planned-date", "legacy-date"]);
+  });
 });
 
 describe("goalTaskItems", () => {
@@ -114,6 +128,59 @@ describe("task occurrences", () => {
 
     expect(weekly.done.map((item) => item.task.id)).toEqual([recurringWeekly.id]);
     expect(legacy.done.map((item) => item.task.id)).toEqual([recurringDaily.id]);
+  });
+
+  it("keeps skipped occurrences separate from completed work and suppresses archived cancellations", () => {
+    const skipped = buildDayPlan([recurringDaily], [], "2026-09-05", "2026-09-05", [
+      { task_id: recurringDaily.id, occurrence_date: "2026-09-05", status: "skipped" },
+    ]);
+    const completed = buildDayPlan([recurringDaily], [], "2026-09-06", "2026-09-05", [
+      { task_id: recurringDaily.id, occurrence_date: "2026-09-06", status: "completed" },
+    ]);
+    const cancelled = buildDayPlan([recurringDaily], [], "2026-09-07", "2026-09-05", [
+      { task_id: recurringDaily.id, occurrence_date: "2026-09-07", status: "archived" },
+    ]);
+
+    expect(skipped.due).toEqual([]);
+    expect(skipped.done).toEqual([]);
+    expect(skipped.skipped.map((item) => item.key)).toEqual(["daily-occurrence:2026-09-05"]);
+    expect(skipped.skipped[0]?.done).toBe(false);
+    expect(skipped.skipped[0]?.skipped).toBe(true);
+    expect(completed.done.map((item) => item.key)).toEqual(["daily-occurrence:2026-09-06"]);
+    expect(completed.skipped).toEqual([]);
+    expect(cancelled.due).toEqual([]);
+    expect(cancelled.done).toEqual([]);
+    expect(cancelled.skipped).toEqual([]);
+  });
+
+  it("keeps a moved occurrence source identity and suppresses its original slot", () => {
+    const moved: PlanOccurrence[] = [
+      {
+        task_id: recurringDaily.id,
+        occurrence_date: "2026-08-30",
+        scheduled_date: "2026-09-06",
+        status: "planned",
+      },
+      {
+        task_id: recurringDaily.id,
+        occurrence_date: "2026-09-07",
+        scheduled_date: "2026-09-13",
+        status: "planned",
+      },
+    ];
+
+    const movedIntoWeek = buildDayPlan([recurringDaily], [], "2026-09-06", "2026-09-05", moved);
+    const movedOutOfWeek = buildDayPlan([recurringDaily], [], "2026-09-07", "2026-09-05", moved);
+
+    expect(movedIntoWeek.due.map((item) => item.key).sort()).toEqual([
+      "daily-occurrence:2026-08-30",
+      "daily-occurrence:2026-09-06",
+    ]);
+    expect(movedIntoWeek.due.find((item) => item.occurrenceDate === "2026-08-30")).toMatchObject({
+      date: "2026-09-06",
+      occurrenceDate: "2026-08-30",
+    });
+    expect(movedOutOfWeek.due.map((item) => item.key)).toEqual([]);
   });
 
   it("moving one DAILY occurrence onto another series day keeps both occurrences", () => {

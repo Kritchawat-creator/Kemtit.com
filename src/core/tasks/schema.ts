@@ -61,6 +61,12 @@ export type TaskSpec = z.infer<typeof taskSpecSchema>;
 export const RECURRENCE_OPTIONS = ["none", "daily", "weekly"] as const;
 export type RecurrenceOption = (typeof RECURRENCE_OPTIONS)[number];
 
+const estimatedMinutesSchema = z
+  .number({ error: "estimatedMinutesRange" })
+  .int({ error: "estimatedMinutesRange" })
+  .min(1, { error: "estimatedMinutesRange" })
+  .max(1440, { error: "estimatedMinutesRange" });
+
 /** ฟอร์ม task (Design §8.2): ชื่อช่องเดียวก็บันทึกได้ */
 export const taskFormSchema = z
   .object({
@@ -74,7 +80,7 @@ export const taskFormSchema = z
     goalId: z.uuid({ error: "invalidGoal" }).nullable().optional(),
     projectId: z.uuid({ error: "invalidProject" }).nullable().optional(),
     priority: z.enum(TASK_PRIORITIES).default("normal"),
-    estimatedMinutes: z.number().int().min(1).max(1440).nullable().optional(),
+    estimatedMinutes: estimatedMinutesSchema.nullable().optional(),
     notes: z.string().trim().max(2000, { error: "tooLong" }).nullable().optional(),
   })
   .superRefine((value, ctx) => {
@@ -92,7 +98,7 @@ export const inboxTaskSchema = z.object({
   domain: z.enum(DOMAINS).default("work"),
   priority: z.enum(TASK_PRIORITIES).default("normal"),
   notes: z.string().trim().max(2000, { error: "tooLong" }).nullable().optional(),
-  estimatedMinutes: z.number().int().min(1).max(1440).nullable().optional(),
+  estimatedMinutes: estimatedMinutesSchema.nullable().optional(),
 });
 export type InboxTaskValues = z.infer<typeof inboxTaskSchema>;
 

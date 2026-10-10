@@ -171,6 +171,44 @@ describe("QuickCapture", () => {
     });
   });
 
+  it("requires a complete explicit timed schedule and confirms that intent", async () => {
+    mocks.confirmQuickCapture.mockResolvedValue({
+      ok: true,
+      data: { kind: "event", id: "event-1" },
+    });
+    const { onDone } = renderQuickCapture();
+    enterInput("Meeting tomorrow 14:00");
+
+    expect(screen.getByText("capture.eventEndRequired")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "capture.save" })).toBeDisabled();
+    openDetails();
+    fireEvent.change(screen.getByLabelText("capture.eventEndTime"), {
+      target: { value: "15:00" },
+    });
+    expect(screen.getByRole("button", { name: "capture.save" })).toBeEnabled();
+
+    clickSave();
+    await waitFor(() => expect(onDone).toHaveBeenCalledOnce());
+    expect(mocks.confirmQuickCapture).toHaveBeenCalledWith({
+      requestId: "capture-request",
+      kind: "event",
+      title: "Meeting tomorrow 14:00",
+      eventDate: "2026-09-27",
+      allDay: false,
+      startTime: "14:00",
+      endTime: "15:00",
+    });
+  });
+
+  it("does not silently convert an unsupported explicit time to all-day", () => {
+    renderQuickCapture();
+    enterInput("Meeting tomorrow 25:30");
+
+    expect(screen.getByRole("alert")).toHaveTextContent("capture.eventScheduleRequired");
+    expect(screen.getByRole("button", { name: "capture.save" })).toBeDisabled();
+    expect(mocks.confirmQuickCapture).not.toHaveBeenCalled();
+  });
+
   it("persists edited title, domain, and date while the source text stays unchanged", async () => {
     mocks.confirmQuickCapture.mockResolvedValue({
       ok: true,

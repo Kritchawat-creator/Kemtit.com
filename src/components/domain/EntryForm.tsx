@@ -175,8 +175,8 @@ export function EntryForm({ mode, entryId, goalOptions, initial, onDone, onDelet
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("entries.form.amount")}</FormLabel>
-              <FormControl>
-                <div className="relative">
+              <div className="relative">
+                <FormControl>
                   <Input
                     type="number"
                     inputMode="decimal"
@@ -192,13 +192,13 @@ export function EntryForm({ mode, entryId, goalOptions, initial, onDone, onDelet
                     name={field.name}
                     ref={field.ref}
                   />
-                  {unitLabel ? (
-                    <span className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-small font-medium text-text-secondary">
-                      {unitLabel}
-                    </span>
-                  ) : null}
-                </div>
-              </FormControl>
+                </FormControl>
+                {unitLabel ? (
+                  <span className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-small font-medium text-text-secondary">
+                    {unitLabel}
+                  </span>
+                ) : null}
+              </div>
               {isTHB ? (
                 <div className="flex gap-1.5 pt-1">
                   {CHIPS.map((chip) => (

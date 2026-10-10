@@ -50,6 +50,10 @@ export function TaskRow({
   const dateDisplay = getTaskDateDisplay(item, today);
   const checkboxId = `task-${item.key}`;
   const photos = task.photos ?? [];
+  const movedFrom =
+    item.recurring && item.occurrenceDate && item.occurrenceDate !== item.date
+      ? formatDate(item.occurrenceDate, "short", locale)
+      : null;
 
   return (
     <li className="flex min-h-14 items-center gap-2 py-1.5">
@@ -59,7 +63,11 @@ export function TaskRow({
           checked={item.done}
           disabled={item.actionable === false}
           onCheckedChange={(value) => onToggle(item, value === true)}
-          aria-label={t("a11y.toggleTask", { title: task.title })}
+          aria-label={
+            movedFrom
+              ? t("a11y.toggleMovedTask", { title: task.title, date: movedFrom })
+              : t("a11y.toggleTask", { title: task.title })
+          }
           className="size-6 rounded-full border-[1.5px] border-brand-200 transition-all duration-150 data-[state=checked]:border-success-500 data-[state=checked]:bg-success-500 data-[state=checked]:text-neutral-0"
         />
       </span>
@@ -67,7 +75,13 @@ export function TaskRow({
         type="button"
         onClick={onOpen ? () => onOpen(item) : undefined}
         disabled={!onOpen}
-        aria-label={onOpen ? t("a11y.openTask", { title: task.title }) : undefined}
+        aria-label={
+          onOpen
+            ? movedFrom
+              ? t("a11y.openMovedTask", { title: task.title, date: movedFrom })
+              : t("a11y.openTask", { title: task.title })
+            : undefined
+        }
         className="min-w-0 flex-1 rounded-md text-left focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none disabled:cursor-default"
       >
         <span
@@ -104,6 +118,7 @@ export function TaskRow({
           ) : item.date !== today ? (
             <span>{formatDate(item.date, "weekday", locale)}</span>
           ) : null}
+          {movedFrom ? <span>{t("tasks.meta.movedFrom", { date: movedFrom })}</span> : null}
           {showGoal && task.goal ? (
             <span className="truncate">{t("tasks.meta.goal", { title: task.goal.title })}</span>
           ) : null}

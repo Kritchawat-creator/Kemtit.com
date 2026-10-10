@@ -14,6 +14,8 @@ export type PlanTask = {
   title: string;
   domain: string;
   due_date: string | null;
+  /** Intended work date. Legacy rows fall back to due_date until interpreted. */
+  planned_date?: string | null;
   recurrence_rule: string | null;
   completed_at: string | null;
   goal_id: string | null;
@@ -54,7 +56,12 @@ export type DayPlan<T extends PlanTask = PlanTask> = {
   overdue: DayTaskItem<T>[];
   due: DayTaskItem<T>[];
   done: DayTaskItem<T>[];
+  skipped: DayTaskItem<T>[];
 };
+
+function plannedDate(task: PlanTask): ISODate | null {
+  return (task.planned_date ?? task.due_date) as ISODate | null;
+}
 
 function scheduledDate(occurrence: PlanOccurrence): ISODate {
   return (occurrence.scheduled_date ?? occurrence.occurrence_date) as ISODate;
@@ -68,7 +75,7 @@ function recurringItem<T extends PlanTask>(
   legacyCompleted: boolean,
 ): DayTaskItem<T> {
   const status = occurrence?.status;
-  const skipped = status === "skipped" || status === "archived";
+  const skipped = status === "skipped";
   return {
     key: `${task.id}:${sourceDate}`,
     task,
@@ -101,11 +108,12 @@ export function itemsForDate<T extends PlanTask>(
   const items: DayTaskItem<T>[] = [];
 
   for (const task of tasks) {
-    if (!task.due_date) continue;
+    const taskDate = plannedDate(task);
+    if (!taskDate) continue;
     const rule = parseRRule(task.recurrence_rule);
 
     if (!rule) {
-      if (task.due_date === date) {
+      if (taskDate === date) {
         items.push({
           key: task.id,
           task,
@@ -122,16 +130,14 @@ export function itemsForDate<T extends PlanTask>(
 
     // The natural series occurrence for this date. A source override can move it
     // away, complete it, or skip it without mutating the recurring definition.
-    if (occursOn(rule, task.due_date, date)) {
+    if (occursOn(rule, taskDate, date)) {
       const sourceOverride = taskOccurrences.find(
         (occurrence) => occurrence.occurrence_date === date,
       );
       if (!sourceOverride) {
         items.push(recurringItem(task, null, date, date, completedOn.has(task.id)));
-      } else if (scheduledDate(sourceOverride) === date) {
-        items.push(
-          recurringItem(task, sourceOverride, date, date, completedOn.has(task.id)),
-        );
+      } else if (sourceOverride.status !== "archived" && scheduledDate(sourceOverride) === date) {
+        items.push(recurringItem(task, sourceOverride, date, date, completedOn.has(task.id)));
       }
       // If scheduled_date differs, this source occurrence was moved elsewhere,
       // so the natural slot on this date is intentionally suppressed.
@@ -142,7 +148,13 @@ export function itemsForDate<T extends PlanTask>(
     // tomorrow must not erase tomorrow's own occurrence.
     for (const occurrence of taskOccurrences) {
       const sourceDate = occurrence.occurrence_date as ISODate;
-      if (sourceDate === date || scheduledDate(occurrence) !== date) continue;
+      if (
+        occurrence.status === "archived" ||
+        sourceDate === date ||
+        scheduledDate(occurrence) !== date
+      ) {
+        continue;
+      }
       items.push(recurringItem(task, occurrence, date, sourceDate, false));
     }
   }
@@ -156,15 +168,15 @@ export function overdueItems<T extends PlanTask>(tasks: T[], today: ISODate): Da
     .filter(
       (t) =>
         t.recurrence_rule === null &&
-        t.due_date !== null &&
+        plannedDate(t) !== null &&
         t.completed_at === null &&
-        isBeforeISO(t.due_date, today),
+        isBeforeISO(plannedDate(t)!, today),
     )
-    .sort((a, b) => a.due_date!.localeCompare(b.due_date!))
+    .sort((a, b) => plannedDate(a)!.localeCompare(plannedDate(b)!))
     .map((task) => ({
       key: task.id,
       task,
-      date: task.due_date!,
+      date: plannedDate(task)!,
       done: false,
       overdue: true,
       recurring: false,
@@ -183,7 +195,8 @@ export function buildDayPlan<T extends PlanTask>(
     date,
     overdue: date === today ? overdueItems(tasks, today) : [],
     due: items.filter((i) => !i.done && !i.skipped),
-    done: items.filter((i) => i.done || i.skipped),
+    done: items.filter((i) => i.done),
+    skipped: items.filter((i) => i.skipped),
   };
 }
 
@@ -206,11 +219,11 @@ export function goalTaskItems<T extends PlanTask>(
         result.push(...todayItems);
       } else {
         const sourceOverride = occurrences.find(
-          (occurrence) =>
-            occurrence.task_id === task.id && occurrence.occurrence_date === today,
+          (occurrence) => occurrence.task_id === task.id && occurrence.occurrence_date === today,
         );
         const movedAway =
-          sourceOverride != null && scheduledDate(sourceOverride) !== today;
+          sourceOverride != null &&
+          (sourceOverride.status === "archived" || scheduledDate(sourceOverride) !== today);
 
         // A moved source occurrence must stay absent from its old day. When today
         // is not an occurrence day at all, keep the historical series-definition
@@ -231,7 +244,7 @@ export function goalTaskItems<T extends PlanTask>(
       continue;
     }
 
-    const date = (task.due_date ?? today) as ISODate;
+    const date = (plannedDate(task) ?? today) as ISODate;
     const done = task.completed_at !== null;
     result.push({
       key: task.id,

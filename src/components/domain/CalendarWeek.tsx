@@ -59,6 +59,7 @@ export function CalendarWeek({
         <ol className="grid grid-cols-7 rounded-xl border border-border bg-bg-surface px-1 py-3 shadow-xs">
           {days.map((day) => {
             const items = byDay[day] ?? [];
+            const skippedCount = items.filter((item) => item.skipped).length;
             const context = contextByDay[day];
             const isToday = day === today;
             const isSelected = day === selected;
@@ -79,7 +80,7 @@ export function CalendarWeek({
               <li key={day}>
                 <Link
                   href={calendarHref("week", day, scope)}
-                  aria-label={`${formatDate(day, "long", locale)} · ${t("tasksCount", { count: items.length })}${contextLabels.length ? ` · ${contextLabels.join(" · ")}` : ""}`}
+                  aria-label={`${formatDate(day, "long", locale)} · ${t("tasksCount", { count: items.length })}${skippedCount ? ` · ${ta("tasks.meta.skipped")}: ${skippedCount}` : ""}${contextLabels.length ? ` · ${contextLabels.join(" · ")}` : ""}`}
                   aria-current={isSelected ? "date" : undefined}
                   className="flex flex-col items-center gap-1.5 rounded-md py-1 focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none"
                 >
@@ -216,12 +217,17 @@ export function CalendarWeek({
                       <span
                         title={item.task.title}
                         className={cn(
-                          "min-w-0 truncate",
+                          "min-w-0 flex-1 truncate",
                           item.done ? "text-text-muted line-through" : "text-text-primary",
                         )}
                       >
                         {item.task.title}
                       </span>
+                      {item.skipped ? (
+                        <span className="shrink-0 text-[11px] text-text-secondary">
+                          {ta("tasks.meta.skipped")}
+                        </span>
+                      ) : null}
                     </li>
                   ))}
                   {contextRows.slice(0, MAX_CONTEXT_ROWS).map((item) => {
