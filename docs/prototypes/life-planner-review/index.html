@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kemtit · ต้นแบบแผนชีวิต</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="demo">ต้นแบบสำหรับพิจารณา · ข้อมูลจำลอง · บันทึกเฉพาะเบราว์เซอร์นี้</div>
+    <div class="shell">
+      <aside>
+        <a class="brand" href="#today"><span class="mark">↗</span> Kemtit</a>
+        <p class="muted">พื้นที่สำหรับชีวิตที่คุณเลือก</p>
+        <nav aria-label="หน้าต้นแบบ"></nav>
+        <div class="aside-note">เริ่มจากสิ่งเล็ก ๆ<br />แล้วค่อยปรับแผนไปด้วยกัน</div>
+      </aside>
+      <main>
+        <header>
+          <div>
+            <p class="eyebrow" id="eyebrow"></p>
+            <h1 id="heading"></h1>
+          </div>
+          <button class="primary" id="add">＋ เพิ่มงาน</button>
+        </header>
+        <div class="controls">
+          <label>วันที่ <input id="date" type="date" value="2026-10-09" /></label
+          ><button id="backToday">กลับวันนี้</button>
+          <details class="qa-controls">
+            <summary>ข้อมูลทดสอบ</summary>
+            <label
+              >ข้อมูล
+              <select id="scenario">
+                <option value="normal">ทั่วไป</option>
+                <option value="empty">ว่าง</option>
+                <option value="busy">รายการมาก</option>
+              </select></label
+            ><label class="failure"
+              ><input id="fail" type="checkbox" /> จำลองบันทึกล้มเหลวครั้งถัดไป</label
+            >
+          </details>
+        </div>
+        <div id="screen"></div>
+        <footer>ออกแบบขึ้นสำหรับ Kemtit · ตัวอย่างนี้ไม่เชื่อมบัญชีหรือปฏิทินจริง</footer>
+      </main>
+    </div>
+    <dialog id="editor">
+      <form id="form">
+        <div class="dialog-head">
+          <h2 id="dialogTitle"></h2>
+          <button type="button" id="close" aria-label="ปิดรายละเอียด">×</button>
+        </div>
+        <div id="fields"></div>
+        <p id="formError" role="alert"></p>
+        <div class="actions">
+          <button type="button" id="previous" hidden>ย้อนขั้น</button
+          ><button class="primary" id="submit">บันทึก</button>
+        </div>
+      </form>
+    </dialog>
+    <div id="message" role="status" aria-live="polite"></div>
+    <div id="ghost" hidden></div>
+    <script src="app.js"></script>
+  </body>
+</html>
