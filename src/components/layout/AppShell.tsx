@@ -9,7 +9,7 @@ import { BottomNav } from "./BottomNav";
 import { ShellFrame } from "./ShellFrame";
 import { TopBar } from "./TopBar";
 
-type Props = { me: Me; children: React.ReactNode };
+type Props = { me: Me; children: React.ReactNode; hasUnreadReleaseNote: boolean };
 
 /**
  * Prototype-aligned application shell.
@@ -18,7 +18,7 @@ type Props = { me: Me; children: React.ReactNode };
  * the floating Today / Plan / Capture / Insights / More execution dock.
  * Shell data is calculated once here and reused by navigation utilities.
  */
-export async function AppShell({ me, children }: Props) {
+export async function AppShell({ me, children, hasUnreadReleaseNote }: Props) {
   const today = todayBkk();
   const plan = await getDayPlan(today);
   const openTasks = plan.overdue.length + plan.due.length;
@@ -44,6 +44,7 @@ export async function AppShell({ me, children }: Props) {
         avatarUrl={me.avatarUrl}
         overdue={overdue}
         lineLinked={lineLinked}
+        hasUnreadReleaseNote={hasUnreadReleaseNote}
       />
       <main className="w-full min-w-0 px-3 pt-3 pb-32 min-[381px]:px-4 min-[381px]:pt-4 min-[761px]:px-6 min-[761px]:pt-6 md:pb-10">
         {children}

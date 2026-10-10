@@ -1,13 +1,16 @@
 "use client";
 
-import { ChevronDown, LogOut } from "@/components/icons/ui-icons";
+import { ChevronDown, LogOut, MessageCircle, Sparkles } from "@/components/icons/ui-icons";
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 import { signOut } from "@/core/auth/actions";
 import type { WorkMode } from "@/core/profile/work-modes";
 import { avatarLetter } from "@/lib/format";
 import { LetterAvatar } from "@/components/domain/AvatarSlot";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { useFeedbackHost } from "@/components/feedback/FeedbackHost";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,10 +30,20 @@ type Props = {
   workMode?: WorkMode | null;
   /** avatar = ปุ่มวงกลม 40px · chip = แถบมีชื่อ+WorkMode บน desktop */
   variant?: "avatar" | "chip";
+  hasUnreadReleaseNote?: boolean;
 };
 
-export function UserMenu({ displayName, email, avatarUrl, workMode, variant = "avatar" }: Props) {
+export function UserMenu({
+  displayName,
+  email,
+  avatarUrl,
+  workMode,
+  variant = "avatar",
+  hasUnreadReleaseNote = false,
+}: Props) {
   const t = useTranslations();
+  const { openFeedback } = useFeedbackHost();
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const label = displayName?.trim() || email || "";
   const letter = avatarLetter(displayName, email);
 
@@ -39,6 +52,7 @@ export function UserMenu({ displayName, email, avatarUrl, workMode, variant = "a
       <DropdownMenuTrigger asChild>
         {variant === "chip" ? (
           <button
+            ref={menuTriggerRef}
             type="button"
             aria-label={t("a11y.userMenu")}
             className="flex h-11 items-center gap-2.5 rounded-lg border border-border bg-bg-surface py-1 pr-3.5 pl-1 shadow-xs transition-colors hover:bg-bg-subtle"
@@ -74,6 +88,7 @@ export function UserMenu({ displayName, email, avatarUrl, workMode, variant = "a
           </button>
         ) : (
           <Button
+            ref={menuTriggerRef}
             variant="ghost"
             size="icon"
             aria-label={t("a11y.userMenu")}
@@ -106,6 +121,25 @@ export function UserMenu({ displayName, email, avatarUrl, workMode, variant = "a
           </p>
           <LanguageSwitcher compact />
         </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => openFeedback(menuTriggerRef.current)}>
+          <MessageCircle aria-hidden="true" />
+          {t("feedback.open")}
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/updates" className="relative">
+            <Sparkles aria-hidden="true" />
+            {t("updates.title")}
+            {hasUnreadReleaseNote ? (
+              <span
+                data-testid="updates-unread-marker"
+                className="ml-auto size-2 rounded-full bg-accent-500 ring-2 ring-bg-surface"
+              >
+                <span className="sr-only">{t("updates.unreadMarker")}</span>
+              </span>
+            ) : null}
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <form action={signOut}>
           <DropdownMenuItem asChild>

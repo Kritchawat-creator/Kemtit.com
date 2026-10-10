@@ -9,9 +9,11 @@ import { nextRouteFor, ROUTES } from "@/core/profile/onboarding";
 import { domainForFocusArea } from "@/core/profile/roles";
 import { listProjects } from "@/core/projects/queries";
 import { getMe } from "@/core/profile/queries";
+import { hasUnreadPublishedReleaseNote } from "@/core/releases/queries";
 import { AppShell } from "@/components/layout/AppShell";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
 import { QuickAddHost } from "@/components/layout/QuickAddHost";
+import { FeedbackHost } from "@/components/feedback/FeedbackHost";
 
 /** ทุกหน้าในแอป: ต้อง login + จบ onboarding แล้ว (proxy.ts กันคนไม่ login ไว้ชั้นแรก) */
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -31,17 +33,21 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         "work");
   const preferredCaptureDomain = domainForFocusArea(preferredFocus);
 
-  const [parentCandidates, entryGoals, projects, captureSmartDefaults] = await Promise.all([
-    listParentCandidates(),
-    listEntryGoalOptions(),
-    listProjects(),
-    getCaptureSmartDefaults(preferredCaptureDomain),
-  ]);
+  const [parentCandidates, entryGoals, projects, captureSmartDefaults, hasUnreadReleaseNote] =
+    await Promise.all([
+      listParentCandidates(),
+      listEntryGoalOptions(),
+      listProjects(),
+      getCaptureSmartDefaults(preferredCaptureDomain),
+      hasUnreadPublishedReleaseNote(),
+    ]);
 
   return (
-    <AppShell me={me}>
-      <OfflineBanner />
-      {children}
+    <FeedbackHost key={me.userId} userId={me.userId}>
+      <AppShell me={me} hasUnreadReleaseNote={hasUnreadReleaseNote}>
+        <OfflineBanner />
+        {children}
+      </AppShell>
       <Suspense fallback={null}>
         <QuickAddHost
           parentCandidates={parentCandidates}
@@ -51,6 +57,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           projectOptions={projects.map((project) => ({ id: project.id, title: project.title }))}
         />
       </Suspense>
-    </AppShell>
+    </FeedbackHost>
   );
 }

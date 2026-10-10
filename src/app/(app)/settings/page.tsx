@@ -32,6 +32,7 @@ import { NotifySwitch } from "./notify-switch";
 import { ContextSettings } from "@/components/profile/ContextSettings";
 import { PlanningPreferencesForm } from "@/components/planning/PlanningPreferencesForm";
 import { LanguageRegionSettings } from "@/components/i18n/LanguageRegionSettings";
+import { FeedbackSettingsLinks } from "@/components/feedback/FeedbackSettingsLinks";
 import styles from "./settings.module.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -71,7 +72,8 @@ export default async function SettingsPage({
 
   const params = await searchParams;
   const calendarNotice =
-    typeof params.calendar === "string" && CALENDAR_NOTICES.includes(params.calendar as CalendarIntegrationNotice)
+    typeof params.calendar === "string" &&
+    CALENDAR_NOTICES.includes(params.calendar as CalendarIntegrationNotice)
       ? (params.calendar as CalendarIntegrationNotice)
       : null;
   const [t, tp, lineStatus, calendarConnections, planningPreferences] = await Promise.all([
@@ -110,10 +112,7 @@ export default async function SettingsPage({
               <DisplayNameForm initial={me.profile.display_name ?? ""} />
             </Section>
 
-            <Section
-              title={t("language.title")}
-              description={t("language.description")}
-            >
+            <Section title={t("language.title")} description={t("language.description")}>
               <LanguageRegionSettings />
             </Section>
 
@@ -191,6 +190,10 @@ export default async function SettingsPage({
               />
             </Section>
 
+            <Section title={t("feedback.title")} description={t("feedback.description")}>
+              <FeedbackSettingsLinks />
+            </Section>
+
             <Section title={t("account.title")}>
               <div className="mb-3">
                 <ArchiveSettingsLink />
@@ -221,7 +224,10 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section aria-label={title} className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs">
+    <section
+      aria-label={title}
+      className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+    >
       <div className="mb-3 flex items-start gap-3">
         {icon}
         <div className="min-w-0">
