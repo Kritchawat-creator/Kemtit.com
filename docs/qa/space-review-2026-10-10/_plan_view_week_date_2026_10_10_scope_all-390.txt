@@ -1,0 +1,266 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "แผน" [level=1]
+  - paragraph: วางภาพใหญ่จากปี → เดือน → สัปดาห์ แล้วพาไปสู่สิ่งที่ต้องทำในวันนี้
+  - navigation "มุมมองแผน":
+    - link "ปี":
+      - /url: /plan?view=year&date=2026-10-10&scope=all
+    - link "เดือน":
+      - /url: /plan?view=month&date=2026-10-10&scope=all
+    - link "สัปดาห์":
+      - /url: /plan?view=week&date=2026-10-10&scope=all
+  - navigation "ขอบเขตที่แสดง":
+    - link "ทั้งหมด":
+      - /url: /plan?view=week&date=2026-10-10&scope=all
+    - link "งาน":
+      - /url: /plan?view=week&date=2026-10-10&scope=work
+    - link "ชีวิต":
+      - /url: /plan?view=week&date=2026-10-10&scope=life
+  - link "เพิ่มเป้าหมาย":
+    - /url: /plan?view=week&date=2026-10-10&new=goal&periodType=week&periodStart=2026-10-04&scope=all
+    - text: เพิ่มเป้าหมาย
+  - region "ขั้นตอนการใช้งาน":
+    - heading "ขั้นตอนการใช้งาน" [level=2]
+    - generic: สัปดาห์
+    - paragraph: แนวทางสำหรับผู้ขายหรือร้านค้า · สัปดาห์
+    - group "เริ่มจากข้อนี้":
+      - paragraph: เริ่มจากข้อนี้
+      - paragraph: ตรวจวันส่งคำสั่งซื้อ รอบเปิดตัว และบิลที่ใกล้ครบกำหนด
+  - link "ช่วงก่อนหน้า":
+    - /url: /plan?view=week&date=2026-09-27&scope=all
+    - generic: ช่วงก่อนหน้า
+  - paragraph: 4 ต.ค. – 10 ต.ค. 2569
+  - link "กลับช่วงปัจจุบัน":
+    - /url: /plan?view=week&date=2026-10-10&scope=all
+  - link "ช่วงถัดไป":
+    - /url: /plan?view=week&date=2026-10-11&scope=all
+    - generic: ช่วงถัดไป
+  - region "ภาพรวมแผน":
+    - heading "ภาพรวมแผน" [level=2]
+    - article:
+      - heading "งาน" [level=3]
+      - generic: งาน
+      - generic: 2 เป้าหมายในด้านนี้
+      - list:
+        - link "ตุลาคม 2569 งาน QA 1010 — ยอดขายเดือนตุลาคม 2,001.75 / ฿5,000 ตามเส้นทาง 40":
+          - /url: /goals/0f83e832-a369-40da-92fe-b10440649918?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: งาน
+          - heading "QA 1010 — ยอดขายเดือนตุลาคม" [level=3]
+          - paragraph:
+            - text: 2,001.75
+            - generic: / ฿5,000
+          - generic: ตามเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: ยังไม่มีงานถัดไปที่ผูกกับเป้าหมายนี้
+        - link "ตุลาคม 2569 งาน QA 1010 — ยืนยันชุดเริ่มต้นด้านงาน 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/7151da18-b8ce-439d-932f-3b8ce0c84683?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: งาน
+          - heading "QA 1010 — ยืนยันชุดเริ่มต้นด้านงาน" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน
+        - paragraph: วางแผนไว้ 17 ต.ค.
+    - article:
+      - heading "สุขภาพ" [level=3]
+      - generic: สุขภาพ
+      - generic: 1 เป้าหมายในด้านนี้
+      - list:
+        - link "ตุลาคม 2569 สุขภาพ QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/377ebf2b-11fb-4a0a-a171-9b68523e517d?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: สุขภาพ
+          - heading "QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ
+        - paragraph: วางแผนไว้ 17 ต.ค.
+    - article:
+      - heading "การเงิน" [level=3]
+      - generic: การเงิน
+      - generic: 1 เป้าหมายในด้านนี้
+      - list:
+        - link "ตุลาคม 2569 การเงิน QA 1010 — เงินออมทดสอบ 3,000.25 / ฿10,000 ตามเส้นทาง 30":
+          - /url: /goals/a85f41cd-89f1-4dc0-8612-da119e696a7a?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: การเงิน
+          - heading "QA 1010 — เงินออมทดสอบ" [level=3]
+          - paragraph:
+            - text: 3,000.25
+            - generic: / ฿10,000
+          - generic: ตามเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: ยังไม่มีงานถัดไปที่ผูกกับเป้าหมายนี้
+    - article:
+      - heading "พัฒนาตัวเอง" [level=3]
+      - generic: พัฒนาตัวเอง
+      - generic: 4 เป้าหมายในด้านนี้
+      - list:
+        - link "1 ต.ค. – 31 ธ.ค. 2569 พัฒนาตัวเอง QA 1010 — Quarterly study goal 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/a27b2473-5388-4f7b-8758-121f638617fb?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: 1 ต.ค. – 31 ธ.ค. 2569
+          - generic: พัฒนาตัวเอง
+          - heading "QA 1010 — Quarterly study goal" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA 1010 — First study step for quarter
+        - paragraph: วางแผนไว้ 17 ต.ค.
+        - link "ตุลาคม 2569 พัฒนาตัวเอง QA Life — Read and reflect every week 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/8e3a4ccb-e1af-4669-ba90-714fd8906da3?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: พัฒนาตัวเอง
+          - heading "QA Life — Read and reflect every week" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA Life — Read 10 pages and write one takeaway
+        - paragraph: วางแผนไว้ 16 ต.ค.
+        - link "ตุลาคม 2569 พัฒนาตัวเอง QA 1010 — เป้าหมายแม่แก้ไข 100% / 1 เป้าย่อย ทำได้แล้ว 100":
+          - /url: /goals/5224636d-a8c0-4c49-9f18-c3f0cb084e2c?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: พัฒนาตัวเอง
+          - heading "QA 1010 — เป้าหมายแม่แก้ไข" [level=3]
+          - paragraph:
+            - text: 100%
+            - generic: / 1 เป้าย่อย
+          - generic: ทำได้แล้ว
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - link "4 ต.ค. – 10 ต.ค. พัฒนาตัวเอง QA 1010 — เป้าย่อยอ่านบทแรก 1 / 1 งาน ทำได้แล้ว 100":
+          - /url: /goals/37a64d03-6677-4487-a113-fb36ddc5eeb3?returnTo=%2Fplan%3Fview%3Dweek%26date%3D2026-10-10%26scope%3Dall
+          - generic: 4 ต.ค. – 10 ต.ค.
+          - generic: พัฒนาตัวเอง
+          - heading "QA 1010 — เป้าย่อยอ่านบทแรก" [level=3]
+          - paragraph:
+            - text: "1"
+            - generic: / 1 งาน
+          - generic: ทำได้แล้ว
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+    - group "เพิ่มเป้าหมาย":
+      - link "เพิ่มเป้าหมาย · ครอบครัว":
+        - /url: /plan?view=week&date=2026-10-04&new=goal&periodType=week&periodStart=2026-10-04&scope=all&domain=family
+        - generic: เพิ่มเป้าหมาย · ครอบครัว
+      - link "เพิ่มเป้าหมาย · ความสัมพันธ์":
+        - /url: /plan?view=week&date=2026-10-04&new=goal&periodType=week&periodStart=2026-10-04&scope=all&domain=relationships
+        - generic: เพิ่มเป้าหมาย · ความสัมพันธ์
+  - region "แผนรายวันของสัปดาห์":
+    - heading "แผนรายวันของสัปดาห์" [level=2]
+    - link "เปิดปฏิทินรายสัปดาห์":
+      - /url: /calendar?view=week&date=2026-10-04&scope=all
+      - text: เปิดปฏิทินรายสัปดาห์
+    - paragraph: อาทิตย์ 4 ต.ค.
+    - paragraph: 0 งาน
+    - link "เปิดวัน":
+      - /url: /calendar?view=day&date=2026-10-04&scope=all
+    - paragraph: วันนี้ยังไม่มีงาน
+    - paragraph: เพิ่มงานเมื่อคุณตัดสินใจว่าจะทำจริง
+    - link "เพิ่มงาน":
+      - /url: /plan?view=week&date=2026-10-04&new=task&scope=all
+    - paragraph: จันทร์ 5 ต.ค.
+    - paragraph: 0 งาน
+    - link "เปิดวัน":
+      - /url: /calendar?view=day&date=2026-10-05&scope=all
+    - paragraph: วันนี้ยังไม่มีงาน
+    - paragraph: เพิ่มงานเมื่อคุณตัดสินใจว่าจะทำจริง
+    - link "เพิ่มงาน":
+      - /url: /plan?view=week&date=2026-10-05&new=task&scope=all
+    - paragraph: อังคาร 6 ต.ค.
+    - paragraph: 0 งาน
+    - link "เปิดวัน":
+      - /url: /calendar?view=day&date=2026-10-06&scope=all
+    - paragraph: วันนี้ยังไม่มีงาน
+    - paragraph: เพิ่มงานเมื่อคุณตัดสินใจว่าจะทำจริง
+    - link "เพิ่มงาน":
+      - /url: /plan?view=week&date=2026-10-06&new=task&scope=all
+    - paragraph: พุธ 7 ต.ค.
+    - paragraph: 0 งาน
+    - link "เปิดวัน":
+      - /url: /calendar?view=day&date=2026-10-07&scope=all
+    - paragraph: วันนี้ยังไม่มีงาน
+    - paragraph: เพิ่มงานเมื่อคุณตัดสินใจว่าจะทำจริง
+    - link "เพิ่มงาน":
+      - /url: /plan?view=week&date=2026-10-07&new=task&scope=all
+    - paragraph: พฤหัส 8 ต.ค.
+    - paragraph: 0 งาน
+    - link "เปิดวัน":
+      - /url: /calendar?view=day&date=2026-10-08&scope=all
+    - paragraph: วันนี้ยังไม่มีงาน
+    - paragraph: เพิ่มงานเมื่อคุณตัดสินใจว่าจะทำจริง
+    - link "เพิ่มงาน":
+      - /url: /plan?view=week&date=2026-10-08&new=task&scope=all
+    - paragraph: ศุกร์ 9 ต.ค.
+    - paragraph: 1 งาน
+    - link "เปิดวัน":
+      - /url: /calendar?view=day&date=2026-10-09&scope=all
+    - list:
+      - 'checkbox "สถานะเสร็จของงาน: QA ชีวิต — เตรียมแผนสัปดาห์และทบทวนเป้าหมาย" [checked]':
+      - button "เปิดรายละเอียด QA ชีวิต — เตรียมแผนสัปดาห์และทบทวนเป้าหมาย":
+        - generic: QA ชีวิต — เตรียมแผนสัปดาห์และทบทวนเป้าหมาย
+        - generic: ศุกร์ 9 ต.ค.
+      - generic: งาน
+    - paragraph: เสาร์ 10 ต.ค.
+    - paragraph: 7 งาน
+    - link "เปิดวันนี้":
+      - /url: /today?date=2026-10-10&scope=all
+    - generic "QA 1010 — นัดตรวจแผนแก้ไข"
+    - generic "QA 1010 — บิลรายเดือน"
+    - text: ฿249.90
+    - list:
+      - 'checkbox "สถานะเสร็จของงาน: QA 1010 — งานในโปรเจกต์" [checked]':
+      - button "เปิดรายละเอียด QA 1010 — งานในโปรเจกต์":
+        - generic: QA 1010 — งานในโปรเจกต์
+      - generic: งาน
+      - 'checkbox "สถานะเสร็จของงาน: QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย" [checked]':
+      - button "เปิดรายละเอียด QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย":
+        - generic: QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย
+        - generic: "เป้า: QA 1010 — เป้าย่อยอ่านบทแรก"
+      - generic: พัฒนาตัวเอง
+      - 'checkbox "สถานะเสร็จของงาน: QA 1010 — ตรวจงานประจำวัน" [checked]':
+      - button "เปิดรายละเอียด QA 1010 — ตรวจงานประจำวัน":
+        - generic: QA 1010 — ตรวจงานประจำวัน
+        - text: ทุกวัน
+      - generic: งาน
+    - link "ดูงานวันที่ 10 ตุลาคม 2569":
+      - /url: /calendar?view=day&date=2026-10-10&scope=all
+      - text: "+4"
+- navigation "เมนูหลัก":
+  - list:
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - button "เปิดเมนูเพิ่ม":
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+    - button "เมนู":
+      - generic: เพิ่มเติม
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

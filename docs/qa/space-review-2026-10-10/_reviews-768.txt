@@ -1,0 +1,58 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "ทบทวนรายสัปดาห์" [level=1]
+  - paragraph: ปิดสัปดาห์ให้ชัด แล้วเลือกโฟกัสถัดไป
+  - navigation "เลือกสัปดาห์สำหรับทบทวน":
+    - link "สัปดาห์ก่อน":
+      - /url: /reviews?weekStart=2026-09-27
+    - generic: 4 ต.ค. – 10 ต.ค.
+    - link "สัปดาห์ถัดไป":
+      - /url: /reviews?weekStart=2026-10-11
+  - paragraph: มีการทบทวนจากสัปดาห์ก่อนหน้า ใช้เป็นข้อมูลอ้างอิงเท่านั้น
+  - region "ภาพรวมสัปดาห์":
+    - heading "ภาพรวมสัปดาห์" [level=2]
+    - paragraph: 4/8
+    - paragraph: ทำเสร็จ / วางแผนไว้สัปดาห์นี้
+    - paragraph: 1/3
+    - paragraph: กิจวัตรที่ทำได้เทียบเป้าสัปดาห์
+    - paragraph: สถิติกิจวัตรย้อนหลังใช้เฉพาะกิจวัตรที่ยังใช้งานและเป้าหมายปัจจุบัน โดยเริ่มนับจากวันที่สร้างตามเวลาไทย เป้าหมายสัปดาห์แรกคิดตามจำนวนวันที่มีสิทธิ์และปัดขึ้น ระบบไม่สามารถกู้ประวัติเป้าหมายหรือการเก็บถาวรในอดีตได้
+    - paragraph: 3 ชม.
+    - paragraph: เวลาที่จัดลงตารางสัปดาห์นี้
+    - paragraph: เริ่มสัปดาห์ 4 ต.ค. 2569
+  - region "บันทึกการทบทวน":
+    - heading "บันทึกการทบทวน" [level=2]
+    - generic: อะไรที่ไปได้ดี
+    - textbox "อะไรที่ไปได้ดี":
+      - /placeholder: ชัยชนะเล็ก ๆ หรือสิ่งที่อยากจำ
+      - text: QA — Captured three tasks and completed one habit.
+    - generic: อะไรที่ติดขัด
+    - textbox "อะไรที่ติดขัด":
+      - /placeholder: สิ่งที่ทำให้ช้าหรือควรแก้
+      - text: QA — Leave enough space between scheduled tasks.
+    - generic: โฟกัสถัดไป
+    - textbox "โฟกัสถัดไป":
+      - /placeholder: สิ่งสำคัญที่สุดของสัปดาห์หน้า
+      - text: QA — Schedule one realistic reading session.
+    - button "บันทึกการทบทวน"
+    - heading "เลือกงานค้างไปสัปดาห์หน้า" [level=3]
+    - paragraph: งานเดิมจะถูกวางในวันที่เริ่มสัปดาห์หน้า และไม่เปลี่ยนกำหนดส่ง
+    - checkbox "QA ชีวิต — ออกกำลังกาย 30 นาที"
+    - generic: QA ชีวิต — ออกกำลังกาย 30 นาที
+    - checkbox "QA ชีวิต — อ่านหนังสือและจดบันทึก"
+    - generic: QA ชีวิต — อ่านหนังสือและจดบันทึก
+    - checkbox "QA 1010 — ตรวจงานประจำวัน"
+    - generic: QA 1010 — ตรวจงานประจำวัน
+    - checkbox "QA 1010 — งานจากกล่องเข้า"
+    - generic: QA 1010 — งานจากกล่องเข้า
+    - checkbox "QA 1010 — โน้ตแก้ไขและเก็บคืน"
+    - generic: QA 1010 — โน้ตแก้ไขและเก็บคืน
+    - button "นำงานที่เลือกไปสัปดาห์หน้า" [disabled]
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":

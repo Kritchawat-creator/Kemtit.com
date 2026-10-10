@@ -1,0 +1,194 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "งาน" [level=1]
+  - paragraph: ค้นหาและทบทวนงานที่วางแผนไว้ โดยดูวันทำและกำหนดส่งแยกกัน
+  - link "การ์ดงาน":
+    - /url: /tasks?mode=cards&view=planned
+  - link "งาน":
+    - /url: /tasks?view=planned
+  - link "เพิ่มงาน":
+    - /url: /tasks?mode=cards&new=task
+  - generic: ค้นหาจากชื่องาน
+  - searchbox "ค้นหาจากชื่องาน"
+  - generic: แสดงงาน
+  - combobox "แสดงงาน":
+    - option "กำลังทำ" [selected]
+    - option "ทั้งหมด"
+    - option "เสร็จแล้ว"
+    - option "เลยกำหนดส่ง"
+  - button "ค้นหา"
+  - button "เพิ่มการ์ดงาน":
+    - text: เพิ่มการ์ดงาน
+  - button "จัดกลุ่มงาน":
+    - text: จัดกลุ่มงาน
+  - generic: "เลือกงาน: 0"
+  - region "เปิดกลุ่ม QA 1010 — กลุ่มตรวจการ์ด":
+    - button "ปิดกลุ่ม QA 1010 — กลุ่มตรวจการ์ด" [expanded]:
+      - generic: QA 1010 — กลุ่มตรวจการ์ด
+      - generic: 2 งาน
+    - button "เปลี่ยนชื่อกลุ่ม"
+    - button "ยุบกลุ่ม"
+    - article:
+      - checkbox "เลือกงาน QA 1010 — โน้ตแก้ไขและเก็บคืน"
+      - button "QA 1010 — โน้ตแก้ไขและเก็บคืน":
+        - heading "QA 1010 — โน้ตแก้ไขและเก็บคืน" [level=3]
+      - button "แก้ไข":
+      - generic: พัฒนาตัวเอง
+      - generic: ปกติ
+      - generic: "ช่วงเวลาที่จัดไว้: 10 ต.ค. 2569 · 10:00–10:30"
+      - text: 0/5
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA 1010 — งานจากกล่องเข้า"
+      - button "QA 1010 — งานจากกล่องเข้า":
+        - heading "QA 1010 — งานจากกล่องเข้า" [level=3]
+      - button "แก้ไข":
+      - generic: พัฒนาตัวเอง
+      - generic: ปกติ
+      - generic: "ช่วงเวลาที่จัดไว้: 10 ต.ค. 2569 · 11:00–11:30"
+      - text: 0/5
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+  - region "ไม่มีกลุ่ม":
+    - heading "ไม่มีกลุ่ม" [level=2]
+    - article:
+      - checkbox "เลือกงาน QA 1010 — ตรวจงานประจำวัน"
+      - button "QA 1010 — ตรวจงานประจำวัน":
+        - heading "QA 1010 — ตรวจงานประจำวัน" [level=3]
+      - button "แก้ไข":
+      - generic: งาน
+      - generic: ปกติ
+      - generic: "วันที่วางแผน: 10 ต.ค. 2569"
+      - generic: ทุกวัน
+      - text: 0/5
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - img "ภาพปก"
+      - checkbox "เลือกงาน QA ชีวิต — อ่านหนังสือและจดบันทึก"
+      - button "QA ชีวิต — อ่านหนังสือและจดบันทึก":
+        - heading "QA ชีวิต — อ่านหนังสือและจดบันทึก" [level=3]
+      - button "แก้ไข":
+      - generic: งาน
+      - generic: ปกติ
+      - generic "ช่วงเวลาที่จัดไว้ 2 ช่วง"
+      - text: 2/5
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+      - generic "จัดการรูปภาพ"
+    - article:
+      - checkbox "เลือกงาน QA ชีวิต — ออกกำลังกาย 30 นาที"
+      - button "QA ชีวิต — ออกกำลังกาย 30 นาที":
+        - heading "QA ชีวิต — ออกกำลังกาย 30 นาที" [level=3]
+      - button "แก้ไข":
+      - generic: งาน
+      - generic: ปกติ
+      - generic "ช่วงเวลาที่จัดไว้ 2 ช่วง"
+      - text: 0/5
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที"
+      - button "QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที":
+        - heading "QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที" [level=3]
+      - button "แก้ไข":
+      - generic: พัฒนาตัวเอง
+      - generic: ปกติ
+      - generic: "วันที่วางแผน: 11 ต.ค. 2569"
+      - text: 0/5
+      - paragraph: QA แก้รายละเอียดและตรวจวันทำแยกจากกำหนดส่ง
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม"
+      - button "QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม":
+        - heading "QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม" [level=3]
+      - button "แก้ไข":
+      - generic: งาน
+      - generic: ปกติ
+      - generic: "วันที่วางแผน: 11 ต.ค. 2569"
+      - text: 0/5
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA 1010 — กล่องเข้าสำคัญสูง"
+      - button "QA 1010 — กล่องเข้าสำคัญสูง":
+        - heading "QA 1010 — กล่องเข้าสำคัญสูง" [level=3]
+      - button "แก้ไข":
+      - generic: สุขภาพ
+      - generic: สูง
+      - generic: "วันที่วางแผน: 12 ต.ค. 2569"
+      - text: 0/5
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน"
+      - button "QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน":
+        - heading "QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน" [level=3]
+      - button "แก้ไข":
+      - generic: งาน
+      - generic: ปกติ
+      - generic: "วันที่วางแผน: 17 ต.ค. 2569"
+      - text: 0/5
+      - paragraph: "เป้า: QA 1010 — ยืนยันชุดเริ่มต้นด้านงาน"
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA 1010 — First study step for quarter"
+      - button "QA 1010 — First study step for quarter":
+        - heading "QA 1010 — First study step for quarter" [level=3]
+      - button "แก้ไข":
+      - generic: พัฒนาตัวเอง
+      - generic: ปกติ
+      - generic: "วันที่วางแผน: 17 ต.ค. 2569"
+      - text: 0/5
+      - paragraph: "เป้า: QA 1010 — Quarterly study goal"
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ"
+      - button "QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ":
+        - heading "QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ" [level=3]
+      - button "แก้ไข":
+      - generic: สุขภาพ
+      - generic: ปกติ
+      - generic: "วันที่วางแผน: 17 ต.ค. 2569"
+      - text: 0/5
+      - paragraph: "เป้า: QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น"
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+    - article:
+      - checkbox "เลือกงาน QA Life — Read 10 pages and write one takeaway"
+      - button "QA Life — Read 10 pages and write one takeaway":
+        - heading "QA Life — Read 10 pages and write one takeaway" [level=3]
+      - button "แก้ไข":
+      - generic: พัฒนาตัวเอง
+      - generic: ปกติ
+      - generic: "วันที่วางแผน: 16 ต.ค. 2569"
+      - text: 0/5
+      - paragraph: "เป้า: QA Life — Read and reflect every week"
+      - generic: เพิ่มรูป
+      - button "เพิ่มรูป"
+      - button "รายละเอียดงาน"
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

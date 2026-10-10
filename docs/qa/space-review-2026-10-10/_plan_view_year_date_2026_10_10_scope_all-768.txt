@@ -1,0 +1,225 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "แผน" [level=1]
+  - paragraph: วางภาพใหญ่จากปี → เดือน → สัปดาห์ แล้วพาไปสู่สิ่งที่ต้องทำในวันนี้
+  - navigation "มุมมองแผน":
+    - link "ปี":
+      - /url: /plan?view=year&date=2026-10-10&scope=all
+    - link "เดือน":
+      - /url: /plan?view=month&date=2026-10-10&scope=all
+    - link "สัปดาห์":
+      - /url: /plan?view=week&date=2026-10-10&scope=all
+  - navigation "ขอบเขตที่แสดง":
+    - link "ทั้งหมด":
+      - /url: /plan?view=year&date=2026-10-10&scope=all
+    - link "งาน":
+      - /url: /plan?view=year&date=2026-10-10&scope=work
+    - link "ชีวิต":
+      - /url: /plan?view=year&date=2026-10-10&scope=life
+  - link "เพิ่มเป้าหมาย":
+    - /url: /plan?view=year&date=2026-10-10&new=goal&periodType=year&periodStart=2026-01-01&scope=all
+    - text: เพิ่มเป้าหมาย
+  - region "ขั้นตอนการใช้งาน":
+    - heading "ขั้นตอนการใช้งาน" [level=2]
+    - generic: ปี
+    - paragraph: แนวทางสำหรับผู้ขายหรือร้านค้า · ปี
+    - group "เริ่มจากข้อนี้":
+      - paragraph: เริ่มจากข้อนี้
+      - paragraph: กำหนดผลลัพธ์ร้านจากรอบสินค้าและคำสั่งซื้อสำคัญ
+  - link "ช่วงก่อนหน้า":
+    - /url: /plan?view=year&date=2025-01-01&scope=all
+    - generic: ช่วงก่อนหน้า
+  - paragraph: พ.ศ. 2569
+  - link "กลับช่วงปัจจุบัน":
+    - /url: /plan?view=year&date=2026-10-10&scope=all
+  - link "ช่วงถัดไป":
+    - /url: /plan?view=year&date=2027-01-01&scope=all
+    - generic: ช่วงถัดไป
+  - region "ภาพรวมแผน":
+    - heading "ภาพรวมแผน" [level=2]
+    - article:
+      - heading "งาน" [level=3]
+      - generic: งาน
+      - generic: 2 เป้าหมายในด้านนี้
+      - list:
+        - link "ตุลาคม 2569 งาน QA 1010 — ยอดขายเดือนตุลาคม 2,001.75 / ฿5,000 ตามเส้นทาง 40":
+          - /url: /goals/0f83e832-a369-40da-92fe-b10440649918?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: งาน
+          - heading "QA 1010 — ยอดขายเดือนตุลาคม" [level=3]
+          - paragraph:
+            - text: 2,001.75
+            - generic: / ฿5,000
+          - generic: ตามเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: ยังไม่มีงานถัดไปที่ผูกกับเป้าหมายนี้
+        - link "ตุลาคม 2569 งาน QA 1010 — ยืนยันชุดเริ่มต้นด้านงาน 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/7151da18-b8ce-439d-932f-3b8ce0c84683?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: งาน
+          - heading "QA 1010 — ยืนยันชุดเริ่มต้นด้านงาน" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน
+        - paragraph: วางแผนไว้ 17 ต.ค.
+    - article:
+      - heading "สุขภาพ" [level=3]
+      - generic: สุขภาพ
+      - generic: 1 เป้าหมายในด้านนี้
+      - list:
+        - link "ตุลาคม 2569 สุขภาพ QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/377ebf2b-11fb-4a0a-a171-9b68523e517d?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: สุขภาพ
+          - heading "QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ
+        - paragraph: วางแผนไว้ 17 ต.ค.
+    - article:
+      - heading "การเงิน" [level=3]
+      - generic: การเงิน
+      - generic: 1 เป้าหมายในด้านนี้
+      - list:
+        - link "ตุลาคม 2569 การเงิน QA 1010 — เงินออมทดสอบ 3,000.25 / ฿10,000 ตามเส้นทาง 30":
+          - /url: /goals/a85f41cd-89f1-4dc0-8612-da119e696a7a?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: การเงิน
+          - heading "QA 1010 — เงินออมทดสอบ" [level=3]
+          - paragraph:
+            - text: 3,000.25
+            - generic: / ฿10,000
+          - generic: ตามเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: ยังไม่มีงานถัดไปที่ผูกกับเป้าหมายนี้
+    - article:
+      - heading "พัฒนาตัวเอง" [level=3]
+      - generic: พัฒนาตัวเอง
+      - generic: 4 เป้าหมายในด้านนี้
+      - list:
+        - link "1 ต.ค. – 31 ธ.ค. 2569 พัฒนาตัวเอง QA 1010 — Quarterly study goal 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/a27b2473-5388-4f7b-8758-121f638617fb?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: 1 ต.ค. – 31 ธ.ค. 2569
+          - generic: พัฒนาตัวเอง
+          - heading "QA 1010 — Quarterly study goal" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA 1010 — First study step for quarter
+        - paragraph: วางแผนไว้ 17 ต.ค.
+        - link "ตุลาคม 2569 พัฒนาตัวเอง QA Life — Read and reflect every week 0 / 1 งาน ออกนอกเส้นทาง 0":
+          - /url: /goals/8e3a4ccb-e1af-4669-ba90-714fd8906da3?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: พัฒนาตัวเอง
+          - heading "QA Life — Read and reflect every week" [level=3]
+          - paragraph:
+            - text: "0"
+            - generic: / 1 งาน
+          - generic: ออกนอกเส้นทาง
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - paragraph: QA Life — Read 10 pages and write one takeaway
+        - paragraph: วางแผนไว้ 16 ต.ค.
+        - link "ตุลาคม 2569 พัฒนาตัวเอง QA 1010 — เป้าหมายแม่แก้ไข 100% / 1 เป้าย่อย ทำได้แล้ว 100":
+          - /url: /goals/5224636d-a8c0-4c49-9f18-c3f0cb084e2c?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: ตุลาคม 2569
+          - generic: พัฒนาตัวเอง
+          - heading "QA 1010 — เป้าหมายแม่แก้ไข" [level=3]
+          - paragraph:
+            - text: 100%
+            - generic: / 1 เป้าย่อย
+          - generic: ทำได้แล้ว
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+        - link "4 ต.ค. – 10 ต.ค. พัฒนาตัวเอง QA 1010 — เป้าย่อยอ่านบทแรก 1 / 1 งาน ทำได้แล้ว 100":
+          - /url: /goals/37a64d03-6677-4487-a113-fb36ddc5eeb3?returnTo=%2Fplan%3Fview%3Dyear%26date%3D2026-10-10%26scope%3Dall
+          - generic: 4 ต.ค. – 10 ต.ค.
+          - generic: พัฒนาตัวเอง
+          - heading "QA 1010 — เป้าย่อยอ่านบทแรก" [level=3]
+          - paragraph:
+            - text: "1"
+            - generic: / 1 งาน
+          - generic: ทำได้แล้ว
+          - progressbar "ความคืบหน้า"
+        - paragraph: งานถัดไป
+    - group "เพิ่มเป้าหมาย":
+      - link "เพิ่มเป้าหมาย · ครอบครัว":
+        - /url: /plan?view=year&date=2026-01-01&new=goal&periodType=year&periodStart=2026-01-01&scope=all&domain=family
+        - generic: เพิ่มเป้าหมาย · ครอบครัว
+      - link "เพิ่มเป้าหมาย · ความสัมพันธ์":
+        - /url: /plan?view=year&date=2026-01-01&new=goal&periodType=year&periodStart=2026-01-01&scope=all&domain=relationships
+        - generic: เพิ่มเป้าหมาย · ความสัมพันธ์
+  - region "เดือน":
+    - heading "เดือน" [level=2]
+    - link "มกราคม 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-01-01&scope=all
+      - paragraph: มกราคม 2569
+      - paragraph: 0 เป้าหมาย
+    - link "กุมภาพันธ์ 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-02-01&scope=all
+      - paragraph: กุมภาพันธ์ 2569
+      - paragraph: 0 เป้าหมาย
+    - link "มีนาคม 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-03-01&scope=all
+      - paragraph: มีนาคม 2569
+      - paragraph: 0 เป้าหมาย
+    - link "เมษายน 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-04-01&scope=all
+      - paragraph: เมษายน 2569
+      - paragraph: 0 เป้าหมาย
+    - link "พฤษภาคม 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-05-01&scope=all
+      - paragraph: พฤษภาคม 2569
+      - paragraph: 0 เป้าหมาย
+    - link "มิถุนายน 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-06-01&scope=all
+      - paragraph: มิถุนายน 2569
+      - paragraph: 0 เป้าหมาย
+    - link "กรกฎาคม 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-07-01&scope=all
+      - paragraph: กรกฎาคม 2569
+      - paragraph: 0 เป้าหมาย
+    - link "สิงหาคม 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-08-01&scope=all
+      - paragraph: สิงหาคม 2569
+      - paragraph: 0 เป้าหมาย
+    - link "กันยายน 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-09-01&scope=all
+      - paragraph: กันยายน 2569
+      - paragraph: 0 เป้าหมาย
+    - link "ตุลาคม 2569 6 เป้าหมาย QA Life — Read and reflect every week QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น":
+      - /url: /plan?view=month&date=2026-10-01&scope=all
+      - paragraph: ตุลาคม 2569
+      - paragraph: 6 เป้าหมาย
+      - paragraph: QA Life — Read and reflect every week
+      - paragraph: QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น
+    - link "พฤศจิกายน 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-11-01&scope=all
+      - paragraph: พฤศจิกายน 2569
+      - paragraph: 0 เป้าหมาย
+    - link "ธันวาคม 2569 0 เป้าหมาย":
+      - /url: /plan?view=month&date=2026-12-01&scope=all
+      - paragraph: ธันวาคม 2569
+      - paragraph: 0 เป้าหมาย
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":

@@ -1,0 +1,114 @@
+- complementary:
+  - link "ไปหน้าวันนี้":
+    - /url: /today
+    - generic: เข็มทิศ
+    - generic: ระบบจัดการชีวิตส่วนตัว
+  - button "พับเมนู" [expanded]:
+  - region "ขอบเขต":
+    - text: ขอบเขต
+    - generic: ทั้งหมด
+    - link "ทั้งหมด":
+      - /url: /today
+      - text: ทั้งหมด
+    - link "งาน":
+      - /url: /today?scope=work
+      - text: งาน
+    - link "ชีวิต":
+      - /url: /today?scope=life
+      - text: ชีวิต
+  - generic: เมนูหลัก
+  - navigation "เมนูหลัก":
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "กล่องเข้า":
+      - /url: /inbox
+      - generic: กล่องเข้า
+    - link "งาน (4)":
+      - /url: /tasks
+      - generic: งาน
+      - generic: "4"
+    - link "ยอดขาย":
+      - /url: /work/sales
+      - generic: ยอดขาย
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - link "ปฏิทิน":
+      - /url: /calendar
+      - generic: ปฏิทิน
+    - link "เป้าหมาย":
+      - /url: /goals
+      - generic: เป้าหมาย
+    - link "การเงิน":
+      - /url: /finance
+      - generic: การเงิน
+    - link "ชีวิต":
+      - /url: /life
+      - generic: ชีวิต
+    - link "ทบทวน":
+      - /url: /reviews
+      - generic: ทบทวน
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+  - button "เปิดเมนูเพิ่ม":
+    - strong: บันทึกด่วน
+    - generic: พิมพ์สิ่งที่ต้องการเพิ่มครั้งเดียว แล้วตรวจสิ่งที่เข็มทิศเตรียมให้ก่อนบันทึก
+    - generic: ⌘K
+  - link "ตั้งค่า":
+    - /url: /settings
+    - generic: ตั้งค่า
+  - generic: บ
+  - paragraph: บัญชีทดสอบ Kemtit
+  - paragraph: ผู้ขาย / ร้านค้า
+  - generic "ใช้งานอยู่"
+- banner:
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+    - generic: บัญชีทดสอบ Kemtit
+    - generic: ผู้ขาย / ร้านค้า
+- main:
+  - heading "เพิ่มเติม" [level=1]
+  - paragraph: ฟีเจอร์และพื้นที่เพิ่มเติมของเข็มทิศยังใช้ข้อมูลชุดเดียวกับหน้า วันนี้ แผน และ วิเคราะห์
+  - navigation "เพิ่มเติม":
+    - list:
+      - link "กล่องเข้า เก็บงานและโน้ตที่ยังไม่ได้วางแผน":
+        - /url: /inbox
+        - generic: กล่องเข้า
+        - generic: เก็บงานและโน้ตที่ยังไม่ได้วางแผน
+      - link "ปฏิทิน ดูงาน นัดหมาย ช่วงเวลา และบิลตามวัน":
+        - /url: /calendar
+        - generic: ปฏิทิน
+        - generic: ดูงาน นัดหมาย ช่วงเวลา และบิลตามวัน
+      - link "เป้าหมาย จัดการเป้าหมายปี เดือน และสัปดาห์":
+        - /url: /goals
+        - generic: เป้าหมาย
+        - generic: จัดการเป้าหมายปี เดือน และสัปดาห์
+      - link "ทบทวน ทบทวนสัปดาห์และเลือกโฟกัสถัดไป":
+        - /url: /reviews
+        - generic: ทบทวน
+        - generic: ทบทวนสัปดาห์และเลือกโฟกัสถัดไป
+      - link "ชีวิต ดูกิจวัตรและชีวิตประจำวัน":
+        - /url: /life
+        - generic: ชีวิต
+        - generic: ดูกิจวัตรและชีวิตประจำวัน
+      - link "การเงิน รายรับ รายจ่าย งบประมาณ บิล และเป้าหมายการเงิน":
+        - /url: /finance
+        - generic: การเงิน
+        - generic: รายรับ รายจ่าย งบประมาณ บิล และเป้าหมายการเงิน
+      - link "ยอดขาย ติดตามยอดขายและเป้าหมายงานขาย":
+        - /url: /work/sales
+        - generic: ยอดขาย
+        - generic: ติดตามยอดขายและเป้าหมายงานขาย
+      - link "ตั้งค่า โปรไฟล์ บริบท และการแจ้งเตือน":
+        - /url: /settings
+        - generic: ตั้งค่า
+        - generic: โปรไฟล์ บริบท และการแจ้งเตือน
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

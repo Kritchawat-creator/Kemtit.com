@@ -1,0 +1,51 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "วิเคราะห์" [level=1]
+  - paragraph: ดูสิ่งที่เกิดขึ้นจากข้อมูลจริงของคุณ แยกจากการทบทวนรายสัปดาห์ที่ใช้สำหรับทบทวนและตัดสินใจ
+  - navigation "ประเภทรายงาน":
+    - link "ภาพรวม":
+      - /url: /insights
+    - link "ประสิทธิภาพ":
+      - /url: /insights?tab=productivity
+    - link "เวลา":
+      - /url: /insights?tab=time
+    - link "การเงิน":
+      - /url: /insights?tab=finance
+    - link "เป้าหมาย":
+      - /url: /insights?tab=goals
+    - link "กิจวัตร":
+      - /url: /insights?tab=routine
+    - link "สมดุลชีวิต":
+      - /url: /insights?tab=lifeBalance
+  - article:
+    - paragraph: งานที่เสร็จ
+    - paragraph: 4/8
+    - paragraph: สัปดาห์นี้
+  - article:
+    - paragraph: เวลาที่วางแผน
+    - paragraph: 3 ชม.
+    - paragraph: รวมช่วงเวลาที่จัดไว้ของสัปดาห์นี้
+  - article:
+    - paragraph: กิจวัตร
+    - paragraph: 1/3
+    - paragraph: จำนวนครั้งที่ทำได้เทียบเป้าสัปดาห์
+  - article:
+    - paragraph: การเงินสุทธิ
+    - paragraph: ฿582.60
+    - paragraph: รายรับลบรายจ่ายของเดือนนี้
+  - heading "ทิศทางจากข้อมูลปัจจุบัน" [level=2]
+  - paragraph: เป้าหมายที่กำลังทำ
+  - paragraph: "6"
+  - paragraph: ความคืบหน้าเฉลี่ยของเป้าที่กำลังทำ
+  - paragraph: 12%
+  - paragraph: ทำงานต่อเนื่อง
+  - paragraph: 1 วัน
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":

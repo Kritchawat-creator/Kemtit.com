@@ -1,0 +1,27 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "มีอะไรใหม่" [level=1]
+  - paragraph: ดูรายการที่เพิ่ม ปรับปรุง และแก้ไข
+  - paragraph: ยังไม่มีรายการอัปเดต
+- navigation "เมนูหลัก":
+  - list:
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - button "เปิดเมนูเพิ่ม":
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+    - button "เมนู":
+      - generic: เพิ่มเติม
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

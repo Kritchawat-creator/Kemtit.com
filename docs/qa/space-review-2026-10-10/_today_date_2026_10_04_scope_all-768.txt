@@ -1,0 +1,94 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - paragraph: วันที่เลือก
+  - heading "วันที่เลือก" [level=1]
+  - paragraph: วางแผนสำหรับวันที่เลือก หรือใช้ลูกศรเพื่อเลื่อนไปวันอื่น
+  - region "เลือกวันในสัปดาห์นี้":
+    - link "วันก่อนหน้า":
+      - /url: /today?date=2026-10-03&scope=all
+    - paragraph: วันที่เลือก
+    - paragraph: วันอาทิตย์ที่ 4 ตุลาคม 2569
+    - link "วันถัดไป":
+      - /url: /today?date=2026-10-05&scope=all
+    - link "วันนี้":
+      - /url: /today?date=2026-10-10&scope=all
+    - generic: เลือกวันที่
+    - textbox "เลือกวันที่": 2026-10-04
+    - button "ไปยังวันที่":
+      - text: ไปยังวันที่
+    - link "แผนรายวัน":
+      - /url: /today/print/daily?date=2026-10-04&scope=all
+      - text: แผนรายวัน
+    - link "แผนรายสัปดาห์":
+      - /url: /today/print/weekly?date=2026-10-04&scope=all
+      - text: แผนรายสัปดาห์
+    - navigation "เลือกวันในสัปดาห์นี้":
+      - link "อาทิตย์ 4 ตุลาคม 2569":
+        - /url: /today?date=2026-10-04&scope=all
+        - generic: อาทิตย์
+        - generic: "4"
+      - link "จันทร์ 5 ตุลาคม 2569":
+        - /url: /today?date=2026-10-05&scope=all
+        - generic: จันทร์
+        - generic: "5"
+      - link "อังคาร 6 ตุลาคม 2569":
+        - /url: /today?date=2026-10-06&scope=all
+        - generic: อังคาร
+        - generic: "6"
+      - link "พุธ 7 ตุลาคม 2569":
+        - /url: /today?date=2026-10-07&scope=all
+        - generic: พุธ
+        - generic: "7"
+      - link "พฤหัส 8 ตุลาคม 2569":
+        - /url: /today?date=2026-10-08&scope=all
+        - generic: พฤหัส
+        - generic: "8"
+      - link "ศุกร์ 9 ตุลาคม 2569":
+        - /url: /today?date=2026-10-09&scope=all
+        - generic: ศุกร์
+        - generic: "9"
+      - link "เสาร์ 10 ตุลาคม 2569 · วันนี้":
+        - /url: /today?date=2026-10-10&scope=all
+        - generic: เสาร์
+        - generic: "10"
+        - generic: วันนี้
+  - strong: 0/0
+  - generic: ทำแล้ว 0 จาก 0 งาน
+  - strong: —
+  - generic: ไม่มีรายการนัดหมายที่กำลังจะมาถึง
+  - region "งานของวันที่ 4 ต.ค. 2569":
+    - heading "งานของวันที่ 4 ต.ค. 2569" [level=2]
+    - paragraph: เลือกสิ่งที่พาไปข้างหน้า แล้วลงมือทีละอย่าง
+    - link "เปิดกล่องเข้า":
+      - /url: /inbox
+      - text: เปิดกล่องเข้า
+    - heading "วันที่นี้ไม่มีงานที่กำลังทำหรือทำเสร็จแล้ว" [level=3]
+    - textbox "เพิ่มงาน"
+    - combobox "ด้านของชีวิต":
+      - option "เลือกด้านชีวิต" [disabled]
+      - option "งาน" [selected]
+      - option "สุขภาพ"
+      - option "ครอบครัว"
+      - option "การเงิน"
+      - option "พัฒนาตัวเอง"
+      - option "ความสัมพันธ์"
+    - button "เพิ่มงาน" [disabled]
+  - region "ตารางเวลาวันที่ 4 ต.ค. 2569":
+    - heading "ตารางเวลาวันที่ 4 ต.ค. 2569" [level=2]
+    - paragraph: จองเวลาให้สิ่งที่สำคัญจริง
+    - link "เปิดปฏิทิน":
+      - /url: /calendar?view=day&date=2026-10-04
+    - paragraph: ยังไม่มีตารางเวลาสำหรับวันที่เลือก
+    - generic "จัดเวลา"
+    - option "ไม่ผูกกับงาน" [selected]
+  - generic "รายละเอียดเพิ่มเติม"
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

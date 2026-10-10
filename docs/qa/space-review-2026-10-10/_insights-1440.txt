@@ -1,0 +1,118 @@
+- complementary:
+  - link "ไปหน้าวันนี้":
+    - /url: /today
+    - generic: เข็มทิศ
+    - generic: ระบบจัดการชีวิตส่วนตัว
+  - button "พับเมนู" [expanded]:
+  - region "ขอบเขต":
+    - text: ขอบเขต
+    - generic: ทั้งหมด
+    - link "ทั้งหมด":
+      - /url: /today
+      - text: ทั้งหมด
+    - link "งาน":
+      - /url: /today?scope=work
+      - text: งาน
+    - link "ชีวิต":
+      - /url: /today?scope=life
+      - text: ชีวิต
+  - generic: เมนูหลัก
+  - navigation "เมนูหลัก":
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "กล่องเข้า":
+      - /url: /inbox
+      - generic: กล่องเข้า
+    - link "งาน (4)":
+      - /url: /tasks
+      - generic: งาน
+      - generic: "4"
+    - link "ยอดขาย":
+      - /url: /work/sales
+      - generic: ยอดขาย
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - link "ปฏิทิน":
+      - /url: /calendar
+      - generic: ปฏิทิน
+    - link "เป้าหมาย":
+      - /url: /goals
+      - generic: เป้าหมาย
+    - link "การเงิน":
+      - /url: /finance
+      - generic: การเงิน
+    - link "ชีวิต":
+      - /url: /life
+      - generic: ชีวิต
+    - link "ทบทวน":
+      - /url: /reviews
+      - generic: ทบทวน
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+  - button "เปิดเมนูเพิ่ม":
+    - strong: บันทึกด่วน
+    - generic: พิมพ์สิ่งที่ต้องการเพิ่มครั้งเดียว แล้วตรวจสิ่งที่เข็มทิศเตรียมให้ก่อนบันทึก
+    - generic: ⌘K
+  - link "ตั้งค่า":
+    - /url: /settings
+    - generic: ตั้งค่า
+  - generic: บ
+  - paragraph: บัญชีทดสอบ Kemtit
+  - paragraph: ผู้ขาย / ร้านค้า
+  - generic "ใช้งานอยู่"
+- banner:
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+    - generic: บัญชีทดสอบ Kemtit
+    - generic: ผู้ขาย / ร้านค้า
+- main:
+  - heading "วิเคราะห์" [level=1]
+  - paragraph: ดูสิ่งที่เกิดขึ้นจากข้อมูลจริงของคุณ แยกจากการทบทวนรายสัปดาห์ที่ใช้สำหรับทบทวนและตัดสินใจ
+  - paragraph: 4 ต.ค. 2569
+  - navigation "ประเภทรายงาน":
+    - link "ภาพรวม":
+      - /url: /insights
+    - link "ประสิทธิภาพ":
+      - /url: /insights?tab=productivity
+    - link "เวลา":
+      - /url: /insights?tab=time
+    - link "การเงิน":
+      - /url: /insights?tab=finance
+    - link "เป้าหมาย":
+      - /url: /insights?tab=goals
+    - link "กิจวัตร":
+      - /url: /insights?tab=routine
+    - link "สมดุลชีวิต":
+      - /url: /insights?tab=lifeBalance
+  - article:
+    - paragraph: งานที่เสร็จ
+    - paragraph: 4/8
+    - paragraph: สัปดาห์นี้
+  - article:
+    - paragraph: เวลาที่วางแผน
+    - paragraph: 3 ชม.
+    - paragraph: รวมช่วงเวลาที่จัดไว้ของสัปดาห์นี้
+  - article:
+    - paragraph: กิจวัตร
+    - paragraph: 1/3
+    - paragraph: จำนวนครั้งที่ทำได้เทียบเป้าสัปดาห์
+  - article:
+    - paragraph: การเงินสุทธิ
+    - paragraph: ฿582.60
+    - paragraph: รายรับลบรายจ่ายของเดือนนี้
+  - heading "ทิศทางจากข้อมูลปัจจุบัน" [level=2]
+  - paragraph: เป้าหมายที่กำลังทำ
+  - paragraph: "6"
+  - paragraph: ความคืบหน้าเฉลี่ยของเป้าที่กำลังทำ
+  - paragraph: 12%
+  - paragraph: ทำงานต่อเนื่อง
+  - paragraph: 1 วัน
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":

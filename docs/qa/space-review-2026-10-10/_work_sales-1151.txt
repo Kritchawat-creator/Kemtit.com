@@ -1,0 +1,155 @@
+- complementary:
+  - link "ไปหน้าวันนี้":
+    - /url: /today
+    - generic: เข็มทิศ
+    - generic: ระบบจัดการชีวิตส่วนตัว
+  - button "พับเมนู" [expanded]:
+  - region "ขอบเขต":
+    - text: ขอบเขต
+    - generic: ทั้งหมด
+    - link "ทั้งหมด":
+      - /url: /today
+      - text: ทั้งหมด
+    - link "งาน":
+      - /url: /today?scope=work
+      - text: งาน
+    - link "ชีวิต":
+      - /url: /today?scope=life
+      - text: ชีวิต
+  - generic: เมนูหลัก
+  - navigation "เมนูหลัก":
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "กล่องเข้า":
+      - /url: /inbox
+      - generic: กล่องเข้า
+    - link "งาน (4)":
+      - /url: /tasks
+      - generic: งาน
+      - generic: "4"
+    - link "ยอดขาย":
+      - /url: /work/sales
+      - generic: ยอดขาย
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - link "ปฏิทิน":
+      - /url: /calendar
+      - generic: ปฏิทิน
+    - link "เป้าหมาย":
+      - /url: /goals
+      - generic: เป้าหมาย
+    - link "การเงิน":
+      - /url: /finance
+      - generic: การเงิน
+    - link "ชีวิต":
+      - /url: /life
+      - generic: ชีวิต
+    - link "ทบทวน":
+      - /url: /reviews
+      - generic: ทบทวน
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+  - button "เปิดเมนูเพิ่ม":
+    - strong: บันทึกด่วน
+    - generic: พิมพ์สิ่งที่ต้องการเพิ่มครั้งเดียว แล้วตรวจสิ่งที่เข็มทิศเตรียมให้ก่อนบันทึก
+    - generic: ⌘K
+  - link "ตั้งค่า":
+    - /url: /settings
+    - generic: ตั้งค่า
+  - generic: บ
+  - paragraph: บัญชีทดสอบ Kemtit
+  - paragraph: ผู้ขาย / ร้านค้า
+  - generic "ใช้งานอยู่"
+- banner:
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+    - generic: บัญชีทดสอบ Kemtit
+    - generic: ผู้ขาย / ร้านค้า
+- main:
+  - heading "ยอดขาย" [level=1]
+  - paragraph: บันทึกยอดล่าสุด
+  - link "QA 1010 — ยอดขายเดือนตุลาคม":
+    - /url: /goals/0f83e832-a369-40da-92fe-b10440649918
+  - generic: เหลือ 22 วัน
+  - progressbar "ความคืบหน้า":
+    - generic: 40%
+  - paragraph: 2,001.75บาท
+  - paragraph:
+    - text: เป้า ฿5,000
+    - generic: · ตุลาคม 2569
+    - text: · อีก ฿2,998.25
+  - paragraph: วันละ ฿137
+  - generic: ตามเส้นทาง
+  - generic: เร็วกว่าแผน ฿389
+  - button "อัปเดตยอด":
+    - text: อัปเดตยอด
+  - link "ดูเป้าหมาย":
+    - /url: /goals/0f83e832-a369-40da-92fe-b10440649918
+  - generic: งาน
+  - region "บันทึกยอดล่าสุด":
+    - heading "บันทึกยอดล่าสุด" [level=2]
+    - link "บันทึกยอด":
+      - /url: "?new=entry&goal=0f83e832-a369-40da-92fe-b10440649918"
+    - table:
+      - rowgroup:
+        - row "รหัส วันที่ รายการ ช่องทาง จำนวน สถานะ จัดการ":
+          - columnheader "รหัส"
+          - columnheader "วันที่"
+          - columnheader "รายการ"
+          - columnheader "ช่องทาง"
+          - columnheader "จำนวน"
+          - columnheader "สถานะ"
+          - columnheader "จัดการ"
+      - rowgroup:
+        - row "#K0047 เสาร์ 10 ต.ค. QA 1010 — ทดสอบลบยอดขายเฉพาะรายการนี้ — 1.25 บาท วันนี้ แก้ไข ลบ":
+          - cell "#K0047"
+          - cell "เสาร์ 10 ต.ค."
+          - cell "QA 1010 — ทดสอบลบยอดขายเฉพาะรายการนี้":
+            - generic: QA 1010 — ทดสอบลบยอดขายเฉพาะรายการนี้
+          - cell "—"
+          - cell "1.25 บาท":
+            - text: "1.25"
+            - generic: บาท
+          - cell "วันนี้":
+            - generic: วันนี้
+          - cell "แก้ไข ลบ":
+            - button "แก้ไข":
+            - button "ลบ":
+        - row "#K0046 เสาร์ 10 ต.ค. ปรับยอด — +750.25 บาท วันนี้ แก้ไข ลบ":
+          - cell "#K0046"
+          - cell "เสาร์ 10 ต.ค."
+          - cell "ปรับยอด":
+            - generic: ปรับยอด
+          - cell "—"
+          - cell "+750.25 บาท":
+            - generic: "+750.25"
+            - generic: บาท
+          - cell "วันนี้":
+            - generic: วันนี้
+          - cell "แก้ไข ลบ":
+            - button "แก้ไข":
+            - button "ลบ":
+        - row "#K0045 เสาร์ 10 ต.ค. QA 1010 — แก้ยอดขายเป็นทศนิยม — 1,250.25 บาท วันนี้ แก้ไข ลบ":
+          - cell "#K0045"
+          - cell "เสาร์ 10 ต.ค."
+          - cell "QA 1010 — แก้ยอดขายเป็นทศนิยม":
+            - generic: QA 1010 — แก้ยอดขายเป็นทศนิยม
+          - cell "—"
+          - cell "1,250.25 บาท":
+            - text: 1,250.25
+            - generic: บาท
+          - cell "วันนี้":
+            - generic: วันนี้
+          - cell "แก้ไข ลบ":
+            - button "แก้ไข":
+            - button "ลบ":
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

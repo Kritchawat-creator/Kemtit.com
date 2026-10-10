@@ -1,0 +1,53 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "วิเคราะห์" [level=1]
+  - paragraph: ดูสิ่งที่เกิดขึ้นจากข้อมูลจริงของคุณ แยกจากการทบทวนรายสัปดาห์ที่ใช้สำหรับทบทวนและตัดสินใจ
+  - navigation "ประเภทรายงาน":
+    - link "ภาพรวม":
+      - /url: /insights
+    - link "ประสิทธิภาพ":
+      - /url: /insights?tab=productivity
+    - link "เวลา":
+      - /url: /insights?tab=time
+    - link "การเงิน":
+      - /url: /insights?tab=finance
+    - link "เป้าหมาย":
+      - /url: /insights?tab=goals
+    - link "กิจวัตร":
+      - /url: /insights?tab=routine
+    - link "สมดุลชีวิต":
+      - /url: /insights?tab=lifeBalance
+  - article:
+    - paragraph: กิจวัตรวันนี้
+    - paragraph: 0/2
+    - paragraph: ทำแล้วเทียบจำนวนกิจวัตรที่ใช้งานอยู่
+  - article:
+    - paragraph: กิจวัตรสัปดาห์นี้
+    - paragraph: 1/3
+    - paragraph: จำนวนครั้งที่ทำจริงเทียบเป้าสัปดาห์
+  - article:
+    - paragraph: กิจวัตรที่ใช้งานอยู่
+    - paragraph: "2"
+    - paragraph: ไม่นับกิจวัตรที่เก็บไว้ในคลังหรือข้อมูลแม่แบบ
+- navigation "เมนูหลัก":
+  - list:
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - button "เปิดเมนูเพิ่ม":
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+    - button "เมนู":
+      - generic: เพิ่มเติม
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

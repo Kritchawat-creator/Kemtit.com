@@ -1,0 +1,444 @@
+- complementary:
+  - link "ไปหน้าวันนี้":
+    - /url: /today
+    - generic: เข็มทิศ
+    - generic: ระบบจัดการชีวิตส่วนตัว
+  - button "พับเมนู" [expanded]:
+  - region "ขอบเขต":
+    - text: ขอบเขต
+    - generic: ทั้งหมด
+    - link "ทั้งหมด":
+      - /url: /today
+      - text: ทั้งหมด
+    - link "งาน":
+      - /url: /today?scope=work
+      - text: งาน
+    - link "ชีวิต":
+      - /url: /today?scope=life
+      - text: ชีวิต
+  - generic: เมนูหลัก
+  - navigation "เมนูหลัก":
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "กล่องเข้า":
+      - /url: /inbox
+      - generic: กล่องเข้า
+    - link "งาน (4)":
+      - /url: /tasks
+      - generic: งาน
+      - generic: "4"
+    - link "ยอดขาย":
+      - /url: /work/sales
+      - generic: ยอดขาย
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - link "ปฏิทิน":
+      - /url: /calendar
+      - generic: ปฏิทิน
+    - link "เป้าหมาย":
+      - /url: /goals
+      - generic: เป้าหมาย
+    - link "การเงิน":
+      - /url: /finance
+      - generic: การเงิน
+    - link "ชีวิต":
+      - /url: /life
+      - generic: ชีวิต
+    - link "ทบทวน":
+      - /url: /reviews
+      - generic: ทบทวน
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+  - button "เปิดเมนูเพิ่ม":
+    - strong: บันทึกด่วน
+    - generic: พิมพ์สิ่งที่ต้องการเพิ่มครั้งเดียว แล้วตรวจสิ่งที่เข็มทิศเตรียมให้ก่อนบันทึก
+    - generic: ⌘K
+  - link "ตั้งค่า":
+    - /url: /settings
+    - generic: ตั้งค่า
+  - generic: บ
+  - paragraph: บัญชีทดสอบ Kemtit
+  - paragraph: ผู้ขาย / ร้านค้า
+  - generic "ใช้งานอยู่"
+- banner:
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+    - generic: บัญชีทดสอบ Kemtit
+    - generic: ผู้ขาย / ร้านค้า
+- main:
+  - heading "ชีวิต" [level=1]
+  - paragraph: ตั้งเป้าหมายส่วนตัวและติดตามกิจวัตรในแต่ละวัน
+  - region "เป้าหมายชีวิต":
+    - heading "เป้าหมายชีวิต" [level=2]
+    - link "ดูเป้าหมายทั้งหมด":
+      - /url: /goals?domain=life
+    - link "1 ต.ค. – 31 ธ.ค. 2569 พัฒนาตัวเอง QA 1010 — Quarterly study goal 0 / 1 งาน ออกนอกเส้นทาง 0":
+      - /url: /goals/a27b2473-5388-4f7b-8758-121f638617fb
+      - generic: 1 ต.ค. – 31 ธ.ค. 2569
+      - generic: พัฒนาตัวเอง
+      - heading "QA 1010 — Quarterly study goal" [level=3]
+      - paragraph:
+        - text: "0"
+        - generic: / 1 งาน
+      - generic: ออกนอกเส้นทาง
+      - progressbar "ความคืบหน้า"
+    - link "ตุลาคม 2569 พัฒนาตัวเอง QA Life — Read and reflect every week 0 / 1 งาน ออกนอกเส้นทาง 0":
+      - /url: /goals/8e3a4ccb-e1af-4669-ba90-714fd8906da3
+      - generic: ตุลาคม 2569
+      - generic: พัฒนาตัวเอง
+      - heading "QA Life — Read and reflect every week" [level=3]
+      - paragraph:
+        - text: "0"
+        - generic: / 1 งาน
+      - generic: ออกนอกเส้นทาง
+      - progressbar "ความคืบหน้า"
+    - link "ตุลาคม 2569 สุขภาพ QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น 0 / 1 งาน ออกนอกเส้นทาง 0":
+      - /url: /goals/377ebf2b-11fb-4a0a-a171-9b68523e517d
+      - generic: ตุลาคม 2569
+      - generic: สุขภาพ
+      - heading "QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น" [level=3]
+      - paragraph:
+        - text: "0"
+        - generic: / 1 งาน
+      - generic: ออกนอกเส้นทาง
+      - progressbar "ความคืบหน้า"
+    - link "ตุลาคม 2569 การเงิน QA 1010 — เงินออมทดสอบ 3,000.25 / ฿10,000 ตามเส้นทาง 30":
+      - /url: /goals/a85f41cd-89f1-4dc0-8612-da119e696a7a
+      - generic: ตุลาคม 2569
+      - generic: การเงิน
+      - heading "QA 1010 — เงินออมทดสอบ" [level=3]
+      - paragraph:
+        - text: 3,000.25
+        - generic: / ฿10,000
+      - generic: ตามเส้นทาง
+      - progressbar "ความคืบหน้า"
+    - link "ตุลาคม 2569 พัฒนาตัวเอง QA 1010 — เป้าหมายแม่แก้ไข 100% / 1 เป้าย่อย ทำได้แล้ว 100":
+      - /url: /goals/5224636d-a8c0-4c49-9f18-c3f0cb084e2c
+      - generic: ตุลาคม 2569
+      - generic: พัฒนาตัวเอง
+      - heading "QA 1010 — เป้าหมายแม่แก้ไข" [level=3]
+      - paragraph:
+        - text: 100%
+        - generic: / 1 เป้าย่อย
+      - generic: ทำได้แล้ว
+      - progressbar "ความคืบหน้า"
+    - link "4 ต.ค. – 10 ต.ค. พัฒนาตัวเอง QA 1010 — เป้าย่อยอ่านบทแรก 1 / 1 งาน ทำได้แล้ว 100":
+      - /url: /goals/37a64d03-6677-4487-a113-fb36ddc5eeb3
+      - generic: 4 ต.ค. – 10 ต.ค.
+      - generic: พัฒนาตัวเอง
+      - heading "QA 1010 — เป้าย่อยอ่านบทแรก" [level=3]
+      - paragraph:
+        - text: "1"
+        - generic: / 1 งาน
+      - generic: ทำได้แล้ว
+      - progressbar "ความคืบหน้า"
+  - region "กิจวัตรวันนี้":
+    - heading "กิจวัตรวันนี้" [level=2]
+    - paragraph: ทำสิ่งเล็ก ๆ ซ้ำให้ชีวิตไปในทิศทางที่เลือก
+    - generic "ความคืบหน้ากิจวัตร":
+      - paragraph: ความคืบหน้ากิจวัตร
+      - paragraph: 1 / 3สัปดาห์นี้
+      - generic: 33%
+    - textbox "ชื่อกิจวัตร":
+      - /placeholder: เช่น เดิน 20 นาที
+    - paragraph: ด้านชีวิต
+    - radiogroup:
+      - radio "งาน": งาน
+      - radio "สุขภาพ" [checked]: สุขภาพ
+      - radio "ครอบครัว": ครอบครัว
+      - radio "การเงิน": การเงิน
+      - radio "พัฒนาตัวเอง": พัฒนาตัวเอง
+      - radio "ความสัมพันธ์": ความสัมพันธ์
+    - text: เป้าต่อสัปดาห์
+    - spinbutton "เป้าต่อสัปดาห์": "4"
+    - text: เวลาต่อครั้ง (นาที)
+    - spinbutton "เวลาต่อครั้ง (นาที)": "30"
+    - text: ผูกกับเป้าหมาย
+    - combobox "ผูกกับเป้าหมาย":
+      - option "ไม่ผูกเป้าหมาย" [selected]
+      - option "QA ชุดเริ่มต้น — สร้างกิจวัตรประจำวันที่สม่ำเสมอขึ้น"
+    - button "เพิ่มกิจวัตร" [disabled]
+    - list:
+      - paragraph: QA Life — Walk for 20 minutes
+      - paragraph: สุขภาพ
+      - button "ทำเครื่องหมาย QA Life — Walk for 20 minutes":
+      - paragraph: QA ดื่มน้ำทุกวัน
+      - paragraph: สุขภาพ
+      - button "ทำเครื่องหมาย QA ดื่มน้ำทุกวัน":
+  - region "ประวัติกิจวัตร · 30 วัน":
+    - heading "ประวัติกิจวัตร · 30 วัน" [level=2]
+    - paragraph: 11 ก.ย. ถึง 10 ต.ค.
+    - table:
+      - rowgroup:
+        - row "ประวัติกิจวัตร · 30 วัน 11 ก.ย. 12 ก.ย. 13 ก.ย. 14 ก.ย. 15 ก.ย. 16 ก.ย. 17 ก.ย. 18 ก.ย. 19 ก.ย. 20 ก.ย. 21 ก.ย. 22 ก.ย. 23 ก.ย. 24 ก.ย. 25 ก.ย. 26 ก.ย. 27 ก.ย. 28 ก.ย. 29 ก.ย. 30 ก.ย. 1 ต.ค. 2 ต.ค. 3 ต.ค. 4 ต.ค. 5 ต.ค. 6 ต.ค. 7 ต.ค. 8 ต.ค. 9 ต.ค. 10 ต.ค.":
+          - columnheader "ประวัติกิจวัตร · 30 วัน"
+          - columnheader "11 ก.ย.":
+            - time: 11 ก.ย.
+          - columnheader "12 ก.ย.":
+            - time: 12 ก.ย.
+          - columnheader "13 ก.ย.":
+            - time: 13 ก.ย.
+          - columnheader "14 ก.ย.":
+            - time: 14 ก.ย.
+          - columnheader "15 ก.ย.":
+            - time: 15 ก.ย.
+          - columnheader "16 ก.ย.":
+            - time: 16 ก.ย.
+          - columnheader "17 ก.ย.":
+            - time: 17 ก.ย.
+          - columnheader "18 ก.ย.":
+            - time: 18 ก.ย.
+          - columnheader "19 ก.ย.":
+            - time: 19 ก.ย.
+          - columnheader "20 ก.ย.":
+            - time: 20 ก.ย.
+          - columnheader "21 ก.ย.":
+            - time: 21 ก.ย.
+          - columnheader "22 ก.ย.":
+            - time: 22 ก.ย.
+          - columnheader "23 ก.ย.":
+            - time: 23 ก.ย.
+          - columnheader "24 ก.ย.":
+            - time: 24 ก.ย.
+          - columnheader "25 ก.ย.":
+            - time: 25 ก.ย.
+          - columnheader "26 ก.ย.":
+            - time: 26 ก.ย.
+          - columnheader "27 ก.ย.":
+            - time: 27 ก.ย.
+          - columnheader "28 ก.ย.":
+            - time: 28 ก.ย.
+          - columnheader "29 ก.ย.":
+            - time: 29 ก.ย.
+          - columnheader "30 ก.ย.":
+            - time: 30 ก.ย.
+          - columnheader "1 ต.ค.":
+            - time: 1 ต.ค.
+          - columnheader "2 ต.ค.":
+            - time: 2 ต.ค.
+          - columnheader "3 ต.ค.":
+            - time: 3 ต.ค.
+          - columnheader "4 ต.ค.":
+            - time: 4 ต.ค.
+          - columnheader "5 ต.ค.":
+            - time: 5 ต.ค.
+          - columnheader "6 ต.ค.":
+            - time: 6 ต.ค.
+          - columnheader "7 ต.ค.":
+            - time: 7 ต.ค.
+          - columnheader "8 ต.ค.":
+            - time: 8 ต.ค.
+          - columnheader "9 ต.ค.":
+            - time: 9 ต.ค.
+          - columnheader "10 ต.ค.":
+            - time: 10 ต.ค.
+      - rowgroup:
+        - row:
+          - rowheader "QA Life — Walk for 20 minutes เป้าหมาย 4 ครั้งต่อสัปดาห์":
+            - generic: QA Life — Walk for 20 minutes
+            - generic: เป้าหมาย 4 ครั้งต่อสัปดาห์
+          - 'cell "QA Life — Walk for 20 minutes, 11 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 11 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 12 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 12 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 13 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 13 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 14 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 14 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 15 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 15 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 16 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 16 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 17 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 17 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 18 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 18 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 19 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 19 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 20 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 20 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 21 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 21 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 22 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 22 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 23 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 23 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 24 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 24 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 25 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 25 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 26 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 26 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 27 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 27 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 28 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 28 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 29 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 29 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 30 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 30 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 1 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 1 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 2 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 2 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 3 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 3 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 4 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 4 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 5 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 5 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 6 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 6 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 7 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 7 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 8 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA Life — Walk for 20 minutes, 8 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA Life — Walk for 20 minutes, 9 ต.ค. 2569: มีบันทึกว่าทำแล้ว"':
+            - 'generic "QA Life — Walk for 20 minutes, 9 ต.ค. 2569: มีบันทึกว่าทำแล้ว"':
+              - generic: ✓
+          - 'cell "QA Life — Walk for 20 minutes, 10 ต.ค. 2569: ไม่มีบันทึกการทำ"':
+            - 'generic "QA Life — Walk for 20 minutes, 10 ต.ค. 2569: ไม่มีบันทึกการทำ"':
+              - generic: ·
+        - row:
+          - rowheader "QA ดื่มน้ำทุกวัน ความถี่รายวัน":
+            - generic: QA ดื่มน้ำทุกวัน
+            - generic: ความถี่รายวัน
+          - 'cell "QA ดื่มน้ำทุกวัน, 11 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 11 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 12 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 12 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 13 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 13 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 14 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 14 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 15 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 15 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 16 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 16 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 17 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 17 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 18 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 18 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 19 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 19 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 20 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 20 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 21 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 21 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 22 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 22 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 23 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 23 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 24 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 24 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 25 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 25 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 26 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 26 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 27 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 27 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 28 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 28 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 29 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 29 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 30 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 30 ก.ย. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 1 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 1 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 2 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 2 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 3 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 3 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 4 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 4 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 5 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 5 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 6 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 6 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 7 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 7 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 8 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 8 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 9 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 9 ต.ค. 2569: ก่อนเริ่มกิจวัตรนี้"':
+              - generic: —
+          - 'cell "QA ดื่มน้ำทุกวัน, 10 ต.ค. 2569: ไม่มีบันทึกการทำ"':
+            - 'generic "QA ดื่มน้ำทุกวัน, 10 ต.ค. 2569: ไม่มีบันทึกการทำ"':
+              - generic: ·
+    - generic: ✓
+    - text: มีบันทึกว่าทำแล้ว
+    - generic: ·
+    - text: ไม่มีบันทึกการทำ
+    - generic: —
+    - text: ก่อนเริ่มกิจวัตรนี้
+    - paragraph: วันที่ว่างหมายถึงไม่มีบันทึกการทำ ไม่ได้ตัดสินว่าพลาด เป้าหมายกิจวัตรรายสัปดาห์นับตามเป้าต่อสัปดาห์ ไม่ได้ตัดสินแยกเป็นรายวัน
+  - region "เริ่มจากตัวอย่างเล็ก ๆ":
+    - generic "ตัวอย่างที่เลือกใช้ได้ เริ่มจากตัวอย่างเล็ก ๆ":
+      - generic: ตัวอย่างที่เลือกใช้ได้
+      - generic: เริ่มจากตัวอย่างเล็ก ๆ
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

@@ -1,0 +1,67 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "กล่องเข้า" [level=1]
+  - paragraph: เก็บทุกอย่างไว้ก่อน แล้วค่อยตัดสินใจว่าจะทำเมื่อไร
+  - link "บันทึกด่วน":
+    - /url: "?capture=1"
+    - text: บันทึกด่วน
+  - region "เพิ่มงานในกล่องเข้า":
+    - heading "เพิ่มงานในกล่องเข้า" [level=2]
+    - textbox "งานใหม่ในกล่องเข้า":
+      - /placeholder: งานที่อยากทำหรือเรื่องที่ต้องตาม
+    - paragraph: ด้านชีวิต / บริบท
+    - radiogroup:
+      - radio "งาน" [checked]: งาน
+      - radio "สุขภาพ": สุขภาพ
+      - radio "ครอบครัว": ครอบครัว
+      - radio "การเงิน": การเงิน
+      - radio "พัฒนาตัวเอง": พัฒนาตัวเอง
+      - radio "ความสัมพันธ์": ความสัมพันธ์
+    - generic "ตัวเลือกเพิ่มเติม"
+    - option "สูง"
+    - option "ปกติ" [selected]
+    - option "ต่ำ"
+    - button "เก็บเข้ากล่องเข้า" [disabled]
+  - region "งานที่ยังไม่ได้วางแผน 0 รายการ":
+    - heading "งานที่ยังไม่ได้วางแผน 0 รายการ" [level=2]
+    - link "กลับวันนี้":
+      - /url: /today
+    - paragraph: กล่องเข้าว่างแล้ว งานใหม่จะมาอยู่ตรงนี้
+  - region "โน้ต":
+    - heading "โน้ต" [level=2]
+    - generic: 3 รายการ
+    - paragraph: โน้ตสำหรับวันนี้ 3 รายการ
+    - button "เพิ่มโน้ต":
+      - text: เพิ่มโน้ต
+    - list:
+      - paragraph: โน้ต QA 1010 — ยืนยันซ้ำสองครั้ง
+      - generic: 09:17
+      - generic "เมนูโน้ต โน้ต QA 1010 — ยืนยันซ้ำสองครั้ง":
+      - paragraph: QA 1010 — โน้ตจากมือถือ
+      - generic: 00:52
+      - generic "เมนูโน้ต QA 1010 — โน้ตจากมือถือ":
+      - paragraph: QA 1010 — โน้ตแก้ไขและเก็บคืน
+      - generic: 00:37
+      - text: แปลงเป็นงานแล้ว
+      - generic "เมนูโน้ต QA 1010 — โน้ตแก้ไขและเก็บคืน":
+- navigation "เมนูหลัก":
+  - list:
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - button "เปิดเมนูเพิ่ม":
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+    - button "เมนู":
+      - generic: เพิ่มเติม
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":

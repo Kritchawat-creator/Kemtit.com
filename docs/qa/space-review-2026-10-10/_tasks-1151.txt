@@ -1,0 +1,172 @@
+- complementary:
+  - link "ไปหน้าวันนี้":
+    - /url: /today
+    - generic: เข็มทิศ
+    - generic: ระบบจัดการชีวิตส่วนตัว
+  - button "พับเมนู" [expanded]:
+  - region "ขอบเขต":
+    - text: ขอบเขต
+    - generic: ทั้งหมด
+    - link "ทั้งหมด":
+      - /url: /today
+      - text: ทั้งหมด
+    - link "งาน":
+      - /url: /today?scope=work
+      - text: งาน
+    - link "ชีวิต":
+      - /url: /today?scope=life
+      - text: ชีวิต
+  - generic: เมนูหลัก
+  - navigation "เมนูหลัก":
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "กล่องเข้า":
+      - /url: /inbox
+      - generic: กล่องเข้า
+    - link "งาน (4)":
+      - /url: /tasks
+      - generic: งาน
+      - generic: "4"
+    - link "ยอดขาย":
+      - /url: /work/sales
+      - generic: ยอดขาย
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - link "ปฏิทิน":
+      - /url: /calendar
+      - generic: ปฏิทิน
+    - link "เป้าหมาย":
+      - /url: /goals
+      - generic: เป้าหมาย
+    - link "การเงิน":
+      - /url: /finance
+      - generic: การเงิน
+    - link "ชีวิต":
+      - /url: /life
+      - generic: ชีวิต
+    - link "ทบทวน":
+      - /url: /reviews
+      - generic: ทบทวน
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+  - button "เปิดเมนูเพิ่ม":
+    - strong: บันทึกด่วน
+    - generic: พิมพ์สิ่งที่ต้องการเพิ่มครั้งเดียว แล้วตรวจสิ่งที่เข็มทิศเตรียมให้ก่อนบันทึก
+    - generic: ⌘K
+  - link "ตั้งค่า":
+    - /url: /settings
+    - generic: ตั้งค่า
+  - generic: บ
+  - paragraph: บัญชีทดสอบ Kemtit
+  - paragraph: ผู้ขาย / ร้านค้า
+  - generic "ใช้งานอยู่"
+- banner:
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+    - generic: บัญชีทดสอบ Kemtit
+    - generic: ผู้ขาย / ร้านค้า
+- main:
+  - heading "งาน" [level=1]
+  - paragraph: ค้นหาและทบทวนงานที่วางแผนไว้ โดยดูวันทำและกำหนดส่งแยกกัน
+  - link "การ์ดงาน":
+    - /url: /tasks?mode=cards&view=planned
+  - link "งาน":
+    - /url: /tasks?view=planned
+  - link "เพิ่มงาน":
+    - /url: /tasks?new=task
+  - generic: ค้นหาจากชื่องาน
+  - searchbox "ค้นหาจากชื่องาน"
+  - generic: แสดงงาน
+  - combobox "แสดงงาน":
+    - option "กำลังทำ" [selected]
+    - option "ทั้งหมด"
+    - option "เสร็จแล้ว"
+    - option "เลยกำหนดส่ง"
+  - button "ค้นหา"
+  - region "วางแผนแล้ว · 12":
+    - heading "วางแผนแล้ว · 12" [level=2]:
+      - text: วางแผนแล้ว
+      - generic: · 12
+    - list:
+      - button "เปิดรายละเอียด QA 1010 — โน้ตแก้ไขและเก็บคืน":
+        - generic: QA 1010 — โน้ตแก้ไขและเก็บคืน
+        - generic: พัฒนาตัวเอง
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 10 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA 1010 — งานจากกล่องเข้า":
+        - generic: QA 1010 — งานจากกล่องเข้า
+        - generic: พัฒนาตัวเอง
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 10 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA 1010 — ตรวจงานประจำวัน":
+        - generic: QA 1010 — ตรวจงานประจำวัน
+        - generic: งาน
+        - generic: "ความสำคัญ: ปกติ"
+        - text: ทุกวัน
+      - generic: "วันที่ตั้งใจทำ: 10 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA ชีวิต — อ่านหนังสือและจดบันทึก":
+        - generic: QA ชีวิต — อ่านหนังสือและจดบันทึก
+        - generic: งาน
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 10 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA ชีวิต — ออกกำลังกาย 30 นาที":
+        - generic: QA ชีวิต — ออกกำลังกาย 30 นาที
+        - generic: งาน
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 10 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที":
+        - generic: QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที
+        - generic: พัฒนาตัวเอง
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 11 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม":
+        - generic: QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม
+        - generic: งาน
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 11 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA 1010 — กล่องเข้าสำคัญสูง":
+        - generic: QA 1010 — กล่องเข้าสำคัญสูง
+        - generic: สุขภาพ
+        - generic: "ความสำคัญ: สูง"
+      - generic: "วันที่ตั้งใจทำ: 12 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน":
+        - generic: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน
+        - generic: งาน
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 17 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA 1010 — First study step for quarter":
+        - generic: QA 1010 — First study step for quarter
+        - generic: พัฒนาตัวเอง
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 17 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ":
+        - generic: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ
+        - generic: สุขภาพ
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 17 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+      - button "เปิดรายละเอียด QA Life — Read 10 pages and write one takeaway":
+        - generic: QA Life — Read 10 pages and write one takeaway
+        - generic: พัฒนาตัวเอง
+        - generic: "ความสำคัญ: ปกติ"
+      - generic: "วันที่ตั้งใจทำ: 16 ต.ค. 2569"
+      - generic: "กำหนดส่ง: ไม่มีกำหนดส่ง"
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":

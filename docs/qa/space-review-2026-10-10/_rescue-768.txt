@@ -1,0 +1,37 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "จัดแผนใหม่" [level=1]
+  - link "เปิดปฏิทิน":
+    - /url: /calendar?view=day&date=2026-10-10
+    - text: เปิดปฏิทิน
+  - link "กลับไปวันนี้":
+    - /url: /today?date=2026-10-10
+    - text: กลับไปวันนี้
+  - region "สรุปเวลาของวัน":
+    - paragraph: เหลือเวลาว่าง 330 นาที · งานที่ยังต้องจัดเวลา 0 นาที
+  - region "ตัวอย่างแผนใหม่":
+    - heading "ตัวอย่างแผนใหม่" [level=2]
+    - paragraph: ตรวจรายการก่อนยืนยัน ระบบจะไม่ย้ายกำหนดส่ง และจะไม่ย้ายช่วงเวลาที่ล็อกไว้
+    - list "รายการแผนใหม่":
+      - paragraph: QA ชีวิต — อ่านหนังสือและจดบันทึก
+      - generic: คงเดิม
+      - paragraph: 09:30–10:00
+      - paragraph: QA 1010 — โน้ตแก้ไขและเก็บคืน
+      - generic: คงเดิม
+      - paragraph: 10:00–10:30
+      - paragraph: QA ชีวิต — ออกกำลังกาย 30 นาที
+      - generic: คงเดิม
+      - paragraph: 10:30–11:00
+      - paragraph: QA 1010 — งานจากกล่องเข้า
+      - generic: คงเดิม
+      - paragraph: 11:00–11:30
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

@@ -1,0 +1,69 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - link "เป้าหมายทั้งหมด":
+    - /url: /goals
+  - generic: เป้าหมาย
+  - heading "QA 1010 — ยอดขายเดือนตุลาคม" [level=1]
+  - generic: งาน
+  - generic "การกระทำกับเป้าหมาย":
+    - button "อัปเดตยอด":
+      - text: อัปเดตยอด
+    - button "แก้ไข":
+      - text: แก้ไข
+    - link "เพิ่มเป้าย่อย":
+      - /url: "?new=goal&parent=0f83e832-a369-40da-92fe-b10440649918"
+      - text: เพิ่มเป้าย่อย
+    - button "เก็บในคลัง":
+      - text: เก็บในคลัง
+  - region "QA 1010 — ยอดขายเดือนตุลาคม":
+    - generic: ตุลาคม 2569
+    - generic: เหลือ 22 วัน
+    - progressbar "ความคืบหน้า":
+      - generic: 40%
+    - paragraph: 2,001.75บาท
+    - paragraph: เป้า ฿5,000 · อีก ฿2,998.25
+    - paragraph: ต้องเพิ่มวันละ ฿137
+    - generic: ตามเส้นทาง
+  - generic "การกระทำกับเป้าหมาย":
+    - button "อัปเดตยอด":
+      - text: อัปเดตยอด
+    - button "แก้ไข":
+      - text: แก้ไข
+    - link "เพิ่มเป้าย่อย":
+      - /url: "?new=goal&parent=0f83e832-a369-40da-92fe-b10440649918"
+      - text: เพิ่มเป้าย่อย
+    - button "เก็บในคลัง":
+      - text: เก็บในคลัง
+  - region "เส้นทาง":
+    - heading "เส้นทาง" [level=2]
+    - paragraph: ยังไม่มีเป้าย่อย
+  - region "งานที่ผูก":
+    - heading "งานที่ผูก" [level=2]
+    - link "เพิ่มงาน":
+      - /url: "?new=task&goal=0f83e832-a369-40da-92fe-b10440649918"
+      - text: เพิ่มงาน
+    - heading "ยังไม่มีงานที่ผูกกับเป้านี้" [level=2]
+    - paragraph: งานคือก้าวเล็กสุดที่พาไปถึงเป้า
+    - link "เพิ่มงาน":
+      - /url: "?new=task&goal=0f83e832-a369-40da-92fe-b10440649918"
+- navigation "เมนูหลัก":
+  - list:
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - button "เปิดเมนูเพิ่ม":
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+    - button "เมนู":
+      - generic: เพิ่มเติม
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":

@@ -1,0 +1,42 @@
+- link "กลับไปหน้าแผนรายวัน":
+  - /url: /today?date=2026-10-10&scope=all
+- button "พิมพ์ / บันทึกเป็น PDF"
+- main:
+  - heading "แผนรายวัน" [level=1]
+  - paragraph: ภาพรวมสิ่งสำคัญและตารางเวลาของวัน
+  - paragraph:
+    - strong: "วันที่:"
+    - text: วันเสาร์ที่ 10 ตุลาคม 2569
+  - paragraph:
+    - strong: "เวลาที่ตั้งไว้สำหรับแผน:"
+    - text: 450 นาที
+  - heading "สิ่งสำคัญสูงสุด" [level=2]
+  - list:
+    - generic: □ QA ชีวิต — ออกกำลังกาย 30 นาที
+    - generic: □ QA ชีวิต — อ่านหนังสือและจดบันทึก
+    - generic: □ QA 1010 — งานจากกล่องเข้า
+  - heading "งาน" [level=2]
+  - list:
+    - generic: □ QA 1010 — โน้ตแก้ไขและเก็บคืน
+  - heading "เสร็จแล้ว" [level=2]
+  - list:
+    - generic: ✓ QA 1010 — ตรวจงานประจำวัน
+    - generic: 15 นาที
+    - generic: ✓ QA 1010 — งานในโปรเจกต์
+    - generic: 45 นาที
+    - generic: ✓ QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย
+  - heading "ตารางเวลา" [level=2]
+  - list:
+    - generic: QA 1010 — นัดตรวจแผนแก้ไข
+    - generic: 09:00–09:30 · นัดหมาย
+    - generic: QA ชีวิต — อ่านหนังสือและจดบันทึก
+    - generic: 09:30–10:00 · ช่วงเวลาที่จองไว้
+    - generic: QA 1010 — โน้ตแก้ไขและเก็บคืน
+    - generic: 10:00–10:30 · ช่วงเวลาที่จองไว้
+    - generic: QA ชีวิต — ออกกำลังกาย 30 นาที
+    - generic: 10:30–11:00 · ช่วงเวลาที่จองไว้
+    - generic: QA 1010 — งานจากกล่องเข้า
+    - generic: 11:00–11:30 · ช่วงเวลาที่จองไว้
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

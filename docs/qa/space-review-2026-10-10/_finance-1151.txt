@@ -1,0 +1,177 @@
+- complementary:
+  - link "ไปหน้าวันนี้":
+    - /url: /today
+    - generic: เข็มทิศ
+    - generic: ระบบจัดการชีวิตส่วนตัว
+  - button "พับเมนู" [expanded]:
+  - region "ขอบเขต":
+    - text: ขอบเขต
+    - generic: ทั้งหมด
+    - link "ทั้งหมด":
+      - /url: /today
+      - text: ทั้งหมด
+    - link "งาน":
+      - /url: /today?scope=work
+      - text: งาน
+    - link "ชีวิต":
+      - /url: /today?scope=life
+      - text: ชีวิต
+  - generic: เมนูหลัก
+  - navigation "เมนูหลัก":
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "กล่องเข้า":
+      - /url: /inbox
+      - generic: กล่องเข้า
+    - link "งาน (4)":
+      - /url: /tasks
+      - generic: งาน
+      - generic: "4"
+    - link "ยอดขาย":
+      - /url: /work/sales
+      - generic: ยอดขาย
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - link "ปฏิทิน":
+      - /url: /calendar
+      - generic: ปฏิทิน
+    - link "เป้าหมาย":
+      - /url: /goals
+      - generic: เป้าหมาย
+    - link "การเงิน":
+      - /url: /finance
+      - generic: การเงิน
+    - link "ชีวิต":
+      - /url: /life
+      - generic: ชีวิต
+    - link "ทบทวน":
+      - /url: /reviews
+      - generic: ทบทวน
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+  - button "เปิดเมนูเพิ่ม":
+    - strong: บันทึกด่วน
+    - generic: พิมพ์สิ่งที่ต้องการเพิ่มครั้งเดียว แล้วตรวจสิ่งที่เข็มทิศเตรียมให้ก่อนบันทึก
+    - generic: ⌘K
+  - link "ตั้งค่า":
+    - /url: /settings
+    - generic: ตั้งค่า
+  - generic: บ
+  - paragraph: บัญชีทดสอบ Kemtit
+  - paragraph: ผู้ขาย / ร้านค้า
+  - generic "ใช้งานอยู่"
+- banner:
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+    - generic: บัญชีทดสอบ Kemtit
+    - generic: ผู้ขาย / ร้านค้า
+- main:
+  - heading "การเงิน" [level=1]
+  - paragraph: ติดตามการออม การลงทุน และการชำระหนี้จากเป้าหมายเดียวกับชีวิตส่วนอื่น
+  - region "สรุปการเงินเดือนนี้":
+    - paragraph: รายรับ
+    - paragraph: ฿1,000.75
+    - paragraph: รายจ่าย
+    - paragraph: ฿418.15
+    - paragraph: คงเหลือสุทธิ
+    - paragraph: ฿582.60
+    - paragraph: งบที่เหลือ
+    - paragraph: ฿82.10
+  - region "บันทึกรายรับ / รายจ่าย":
+    - heading "บันทึกรายรับ / รายจ่าย" [level=2]
+    - paragraph: บันทึกเฉพาะรายการจริง ระบบจะนำไปสรุปใน การเงิน และ วิเคราะห์
+    - combobox "ประเภทรายการ":
+      - option "รายจ่าย" [selected]
+      - option "รายรับ"
+    - generic: วันที่รายการ
+    - button "วันที่รายการ":
+      - text: 10 ต.ค. 2569
+    - textbox "ชื่อรายการ":
+      - /placeholder: เช่น ค่าอาหาร หรือ รายรับจากงานลูกค้า
+    - spinbutton "จำนวนเงิน"
+    - button "บันทึกรายการ" [disabled]
+  - region "งบประมาณเดือนนี้":
+    - heading "งบประมาณเดือนนี้" [level=2]
+    - paragraph: กำหนดกรอบรายจ่ายจริงของเดือน โดยไม่สร้างยอดใช้จ่ายสมมติ
+    - spinbutton "งบประมาณเดือนนี้": "500.25"
+    - button "บันทึกงบประมาณ"
+  - region "บิลและวันครบกำหนด":
+    - heading "บิลและวันครบกำหนด" [level=2]
+    - paragraph: บิลเป็นรายการเดียวที่เชื่อม การเงิน และ ปฏิทิน โดยไม่สร้างงานซ้ำ
+    - textbox "ชื่อบิล":
+      - /placeholder: เช่น ค่าไฟ
+    - generic: วันครบกำหนด
+    - button "วันครบกำหนด":
+      - text: 10 ต.ค. 2569
+    - spinbutton "จำนวนเงินบิล"
+    - combobox "การเกิดซ้ำ":
+      - option "ครั้งเดียว" [selected]
+      - option "ทุกเดือน"
+    - button "เพิ่มบิล" [disabled]
+    - list:
+      - paragraph: QA 1010 — บิลรายเดือน
+      - paragraph: ครบกำหนด 10 ต.ค. 2569 · ทุกเดือน
+      - paragraph: ฿249.90
+      - paragraph: จ่ายแล้ว
+      - paragraph: บิล QA บันทึกด่วน 88.50 บาท พรุ่งนี้
+      - paragraph: ครบกำหนด 11 ต.ค. 2569
+      - paragraph: ฿88.50
+      - paragraph: รอจ่าย
+      - button "จ่ายแล้ว"
+      - paragraph: QA 1010 — บิลรายเดือน
+      - paragraph: ครบกำหนด 10 พ.ย. 2569 · ทุกเดือน
+      - paragraph: ฿249.90
+      - paragraph: รอจ่าย
+      - button "จ่ายแล้ว"
+  - region "รายการล่าสุดเดือนนี้":
+    - heading "รายการล่าสุดเดือนนี้" [level=2]
+    - generic: ตุลาคม 2569
+    - list:
+      - paragraph: จ่ายค่า QA ทดสอบบันทึกด่วน 42.75 บาท วันนี้
+      - paragraph: 10 ต.ค. 2569
+      - generic: −฿42.75
+      - paragraph: QA 1010 — บิลรายเดือน
+      - paragraph: 10 ต.ค. 2569
+      - generic: −฿249.90
+      - paragraph: QA 1010 — รายรับทดสอบ
+      - paragraph: 10 ต.ค. 2569
+      - generic: +฿1,000.75
+      - paragraph: QA 1010 — ค่าอุปกรณ์
+      - paragraph: 10 ต.ค. 2569
+      - generic: −฿125.50
+  - region "เป้าหมายการเงิน":
+    - heading "เป้าหมายการเงิน" [level=2]
+    - link "สร้างเป้าหมายการเงิน":
+      - /url: /goals?new=goal&domain=finance&goalKind=metric&unit=THB
+    - region "QA 1010 — เงินออมทดสอบ":
+      - link "ตุลาคม 2569 การเงิน QA 1010 — เงินออมทดสอบ 3,000.25 / ฿10,000 ตามเส้นทาง 30":
+        - /url: /goals/a85f41cd-89f1-4dc0-8612-da119e696a7a
+        - generic: ตุลาคม 2569
+        - generic: การเงิน
+        - heading "QA 1010 — เงินออมทดสอบ" [level=3]
+        - paragraph:
+          - text: 3,000.25
+          - generic: / ฿10,000
+        - generic: ตามเส้นทาง
+        - progressbar "ความคืบหน้า"
+      - paragraph: เดือนนี้
+      - paragraph: ฿3,000.25
+      - paragraph: ออมเงิน
+      - text: ประเภทเป้าหมาย
+      - combobox "ประเภทเป้าหมาย":
+        - option "ออมเงิน" [selected]
+        - option "ลงทุน"
+        - option "ชำระหนี้"
+      - text: เป้ารายเดือน
+      - spinbutton "เป้ารายเดือน"
+      - button "บันทึกแผน"
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

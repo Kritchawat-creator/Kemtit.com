@@ -1,0 +1,62 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "วิเคราะห์" [level=1]
+  - paragraph: ดูสิ่งที่เกิดขึ้นจากข้อมูลจริงของคุณ แยกจากการทบทวนรายสัปดาห์ที่ใช้สำหรับทบทวนและตัดสินใจ
+  - navigation "ประเภทรายงาน":
+    - link "ภาพรวม":
+      - /url: /insights
+    - link "ประสิทธิภาพ":
+      - /url: /insights?tab=productivity
+    - link "เวลา":
+      - /url: /insights?tab=time
+    - link "การเงิน":
+      - /url: /insights?tab=finance
+    - link "เป้าหมาย":
+      - /url: /insights?tab=goals
+    - link "กิจวัตร":
+      - /url: /insights?tab=routine
+    - link "สมดุลชีวิต":
+      - /url: /insights?tab=lifeBalance
+  - heading "การกระจายสิ่งที่คุณกำลังโฟกัส" [level=2]
+  - paragraph: นับเป้าหมายที่กำลังทำ งานในสัปดาห์นี้ และกิจวัตรจริง แยกตามด้านของชีวิต
+  - generic: งาน
+  - generic: 7 รายการ
+  - progressbar "งาน"
+  - generic: สุขภาพ
+  - generic: 3 รายการ
+  - progressbar "สุขภาพ"
+  - generic: ครอบครัว
+  - generic: 0 รายการ
+  - progressbar "ครอบครัว"
+  - generic: การเงิน
+  - generic: 1 รายการ
+  - progressbar "การเงิน"
+  - generic: พัฒนาตัวเอง
+  - generic: 5 รายการ
+  - progressbar "พัฒนาตัวเอง"
+  - generic: ความสัมพันธ์
+  - generic: 0 รายการ
+  - progressbar "ความสัมพันธ์"
+  - paragraph: กราฟนี้อธิบายการกระจายของข้อมูลที่มีอยู่เท่านั้น ไม่ใช่คะแนนคุณภาพชีวิตและไม่ได้บอกว่าสัดส่วนใดดีกว่าอีกสัดส่วนหนึ่ง
+- navigation "เมนูหลัก":
+  - list:
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - button "เปิดเมนูเพิ่ม":
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+    - button "เมนู":
+      - generic: เพิ่มเติม
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert
