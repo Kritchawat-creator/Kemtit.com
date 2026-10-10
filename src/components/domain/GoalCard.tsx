@@ -13,13 +13,13 @@ import { PaceBadge } from "./PaceBadge";
 import { PeriodLabel } from "./PeriodLabel";
 import { ProgressBar } from "./ProgressBar";
 
-type Props = { goal: GoalWithProgress; compact?: boolean; className?: string };
+type Props = { goal: GoalWithProgress; compact?: boolean; className?: string; href?: string };
 
 /**
  * การ์ด goal (Claude Design 3h): การ์ดขาวมุม 20px มีเงา · แถวบน = ช่วงเวลา + DomainTag · ชื่อ · ตัวเลข "ทำได้ / เป้า" + PaceBadge
  * แถบ progress มีจุดพีชปลายแถบ = จุดหมาย
  */
-export function GoalCard({ goal, compact = false, className }: Props) {
+export function GoalCard({ goal, compact = false, className, href }: Props) {
   const t = useTranslations();
   const locale = useLocale() as AppLocale;
   const { progress } = goal;
@@ -42,7 +42,7 @@ export function GoalCard({ goal, compact = false, className }: Props) {
 
   return (
     <Link
-      href={`/goals/${goal.id}`}
+      href={href ?? `/goals/${goal.id}`}
       className={cn(
         "block min-w-0 rounded-xl border border-border bg-bg-surface shadow-xs transition-[border-color,box-shadow] hover:border-border-strong hover:shadow-xs focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none",
         compact ? "px-4 py-3" : "px-5 py-4",

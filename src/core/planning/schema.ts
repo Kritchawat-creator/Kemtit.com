@@ -10,7 +10,7 @@ const timestamp = z.string().refine((value) => !Number.isNaN(Date.parse(value)),
 export const dailyPlanSchema = z.object({
   planDate: isoDate,
   availableMinutes: z.number().int().min(0).max(1440),
-  topPriorities: z.array(z.uuid()).max(3),
+  topPriorities: z.array(z.uuid()).max(3).optional(),
   notes: z.string().trim().max(2000).nullable().optional(),
 });
 export type DailyPlanInput = z.infer<typeof dailyPlanSchema>;
@@ -25,11 +25,13 @@ const timeBlockFields = z.object({
   source: z.enum(["manual", "kemtit"]).default("manual"),
 });
 
-export const timeBlockSchema = timeBlockFields
-  .refine((value) => new Date(value.endAt).getTime() > new Date(value.startAt).getTime(), {
+export const timeBlockSchema = timeBlockFields.refine(
+  (value) => new Date(value.endAt).getTime() > new Date(value.startAt).getTime(),
+  {
     path: ["endAt"],
     error: "invalidDate",
-  });
+  },
+);
 export type TimeBlockInput = z.infer<typeof timeBlockSchema>;
 
 export const updateTimeBlockSchema = timeBlockFields

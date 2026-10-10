@@ -2,10 +2,13 @@ import { Plus } from "@/components/icons/ui-icons";
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import type { DomainFilter } from "@/core/domain/domains";
 import { PERIOD_TYPES, type PeriodType } from "@/core/domain/periods";
+import { getMe } from "@/core/profile/queries";
 import { listGoalsWithProgress, type GoalWithProgress } from "@/core/goals/queries";
+import { isStarterPackId } from "@/core/goals/starter-packs";
 import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
 import { formatDate } from "@/lib/format";
@@ -14,6 +17,7 @@ import { GoalCard } from "@/components/domain/GoalCard";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { SegmentedNav } from "@/components/ui/segmented-nav";
+import { GoalWizard } from "@/components/goals/GoalWizard";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("goals");
@@ -30,7 +34,30 @@ function parseFilter(value: string | string[] | undefined): DomainFilter {
 
 /** หน้าเป้าหมาย (Design §8.2 + Claude Design 3h): pill เดือน → segmented filter → GoalCard เรียงตามชั้น ปี → เดือน → สัปดาห์ */
 export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
-  const { domain } = await searchParams;
+  const { domain, wizard, starter } = await searchParams;
+  if (wizard === "goal") {
+    const [t, me] = await Promise.all([getTranslations("goals"), getMe()]);
+    if (!me) redirect("/login");
+    return (
+      <>
+        <PageHeader
+          title={t("wizard.title")}
+          description={t("wizard.description")}
+          actions={
+            <Button asChild variant="outline">
+              <Link href="/goals">{t("wizard.backToGoals")}</Link>
+            </Button>
+          }
+        />
+        <GoalWizard
+          userId={me.userId}
+          today={todayBkk()}
+          starterPack={isStarterPackId(starter) ? starter : null}
+        />
+      </>
+    );
+  }
+
   const filter = parseFilter(domain);
   const [t, tf, goals] = await Promise.all([
     getTranslations("goals"),
@@ -66,12 +93,20 @@ export default async function GoalsPage({ searchParams }: PageProps<"/goals">) {
           />
         }
         toolbarEnd={
-          <Button asChild>
-            <Link href="?new=goal" scroll={false}>
-              <Plus aria-hidden="true" />
-              {t("newDesktop")}
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/goals?wizard=goal"
+              className="text-small font-medium text-brand-700 hover:underline"
+            >
+              {t("wizard.link")}
             </Link>
-          </Button>
+            <Button asChild>
+              <Link href="?new=goal" scroll={false}>
+                <Plus aria-hidden="true" />
+                {t("newDesktop")}
+              </Link>
+            </Button>
+          </div>
         }
       />
 

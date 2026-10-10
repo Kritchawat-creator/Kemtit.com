@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { cn } from "cn";
 
-import { getActiveHabits, getHabitWeekStats } from "@/core/habits/queries";
+import { getActiveHabits, getHabitHistory, getHabitWeekStats } from "@/core/habits/queries";
 import { listGoalsWithProgress } from "@/core/goals/queries";
 import { endOfWeekISO, startOfWeekISO, todayBkk } from "@/lib/date";
+import { formatDate } from "@/lib/format";
 import { GoalCard } from "@/components/domain/GoalCard";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { HabitCreateForm } from "@/components/habits/HabitCreateForm";
 import { HabitList } from "@/components/habits/HabitList";
+import { HabitHistoryGrid } from "@/components/habits/HabitHistoryGrid";
+import { StarterPackPreview } from "@/components/goals/StarterPackPreview";
+import type { AppLocale } from "@/i18n/config";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("life");
@@ -18,12 +22,17 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function LifePage() {
   const today = todayBkk();
-  const [t, goals, habits, habitStats] = await Promise.all([
+  const [t, goals, habits, habitStats, historyResult] = await Promise.all([
     getTranslations(),
     listGoalsWithProgress({ domainFilter: "life" }),
     getActiveHabits(today),
     getHabitWeekStats(startOfWeekISO(today), endOfWeekISO(today)),
+    getHabitHistory(today).then(
+      (history) => ({ history, error: false as const }),
+      () => ({ history: null, error: true as const }),
+    ),
   ]);
+  const locale = (await getLocale()) as AppLocale;
   const hasGoals = goals.length > 0;
 
   return (
@@ -82,7 +91,8 @@ export default async function LifePage() {
               <span className="text-h2 text-text-primary">
                 {habitStats.target > 0
                   ? Math.round((habitStats.done / habitStats.target) * 100)
-                  : 0}%
+                  : 0}
+                %
               </span>
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-bg-surface">
@@ -107,6 +117,48 @@ export default async function LifePage() {
             <HabitList habits={habits} date={today} />
           </div>
         </section>
+      </div>
+      <div className="mt-6">
+        {historyResult.error || !historyResult.history ? (
+          <section
+            className="rounded-xl border border-border bg-bg-surface p-5 shadow-xs"
+            aria-labelledby="habit-history-heading"
+          >
+            <h2 id="habit-history-heading" className="text-h2 text-text-primary">
+              {t("life.habitHistory.title")}
+            </h2>
+            <p
+              role="alert"
+              className="mt-3 rounded-lg bg-bg-subtle p-4 text-small text-text-secondary"
+            >
+              {t("life.habitHistory.error")}
+            </p>
+          </section>
+        ) : (
+          <HabitHistoryGrid
+            habits={historyResult.history.habits}
+            days={historyResult.history.days}
+            today={today}
+            locale={locale}
+            copy={{
+              title: t("life.habitHistory.title"),
+              range: t("life.habitHistory.range", {
+                from: formatDate(historyResult.history.from, "short", locale),
+                to: formatDate(historyResult.history.to, "short", locale),
+              }),
+              empty: t("life.habitHistory.empty"),
+              daily: t("life.habitHistory.daily"),
+              done: t("life.habitHistory.done"),
+              noRecord: t("life.habitHistory.noRecord"),
+              notStarted: t("life.habitHistory.notStarted"),
+              future: t("life.habitHistory.future"),
+              noRecordHint: t("life.habitHistory.noRecordHint"),
+            }}
+          />
+        )}
+      </div>
+      <div className="mt-6">
+        <StarterPackPreview />
       </div>
     </>
   );

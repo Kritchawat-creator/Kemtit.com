@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { expect, test, type Page } from "@playwright/test";
 
-import { signInWithOtp, uniqueEmail } from "./helpers";
+import { registerWithPassword, uniqueEmail } from "./helpers";
 
 type Persona = {
   key: string;
@@ -64,7 +64,7 @@ function escapeRegExp(value: string) {
 }
 
 async function onboardPersona(page: Page, persona: Persona) {
-  await signInWithOtp(page, uniqueEmail(`workflow-${persona.key}`));
+  await registerWithPassword(page, uniqueEmail(`workflow-${persona.key}`));
 
   await expect(page).toHaveURL(/\/onboarding\/persona/);
   await page.getByText(persona.role, { exact: true }).click();
@@ -165,6 +165,9 @@ async function saveTodayPriorityAndSchedule(page: Page, title: string) {
   ).toBeChecked();
 
   const schedule = page.getByRole("region", { name: "ตารางเวลาของวันนี้" }).first();
+  const today = currentDateBkk();
+  await schedule.getByLabel("เริ่ม").fill(`${today}T09:00`);
+  await schedule.getByLabel("จบ").fill(`${today}T09:30`);
   await schedule.getByRole("button", { name: "จัดช่วงเวลา" }).click();
   await expect(page.getByText("จัดช่วงเวลาแล้ว")).toBeVisible();
   await expect(schedule.locator("ul").getByText(title, { exact: true })).toBeVisible();

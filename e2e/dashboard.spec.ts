@@ -10,7 +10,7 @@ test("Today: เห็นแผนวันนี้ เพิ่มงานด
   const plan = page.getByRole("region", { name: "แผนวันนี้", exact: true });
   await expect(plan).toBeVisible();
   await plan.getByRole("textbox", { name: "เพิ่มงาน" }).fill("จัดแผนวันนี้");
-  await plan.getByRole("button", { name: "เพิ่ม", exact: true }).click();
+  await plan.getByRole("button", { name: "เพิ่มงาน", exact: true }).click();
   await expect(page.getByText("เพิ่มงานแล้ว")).toBeVisible();
 
   const box = plan.getByRole("checkbox", { name: /จัดแผนวันนี้/ });

@@ -19,6 +19,8 @@ const base: TaskWithGoal = {
   persona_data: {},
   created_at: "2026-09-05T00:00:00Z",
   updated_at: "2026-09-05T00:00:00Z",
+  task_group_id: null,
+  task_group_position: 0,
   goal: { id: "g1", title: "ยอดขาย กันยายน 2569" },
 };
 const items: DayTaskItem<TaskWithGoal>[] = [

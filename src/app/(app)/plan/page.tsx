@@ -12,18 +12,26 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { listCalendarEvents } from "@/core/calendar-events/queries";
 import { itemsByDay } from "@/core/domain/calendar";
+import { DOMAINS } from "@/core/domain/domains";
 import { overlaps, suggestChildPeriods } from "@/core/domain/periods";
 import { listFinanceBills } from "@/core/finance/queries";
 import { listGoalsWithProgress, listParentCandidates } from "@/core/goals/queries";
+import { getGoalNextActions } from "@/core/goals/overview-queries";
 import { parsePlannerView, plannerPeriod, shiftPlannerDate } from "@/core/planning/planner";
 import { buildPlannerGoalHref } from "@/core/planning/role-workflow";
+import {
+  buildGoalDetailHref,
+  buildPlanContextHref,
+  withPlanScope,
+} from "@/core/planning/plan-links";
 import { getMe } from "@/core/profile/queries";
+import { domainInScope, isScope, type Scope } from "@/core/profile/scope";
 import { getRangeTasks } from "@/core/tasks/queries";
 import type { AppLocale } from "@/i18n/config";
-import { addMonthsISO, eachDayISO, isISODate, todayBkk } from "@/lib/date";
+import { addMonthsISO, eachDayISO, isISODate, todayBkk, type ISODate } from "@/lib/date";
 import { formatDate, formatTHB, formatYear } from "@/lib/format";
-import { GoalCard } from "@/components/domain/GoalCard";
 import { WorkflowGuide } from "@/components/planning/WorkflowGuide";
+import { PlanGoalOverview } from "@/components/planning/PlanGoalOverview";
 import { PeriodSelector } from "@/components/domain/PeriodSelector";
 import { TaskList } from "@/components/domain/TaskList";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -40,14 +48,19 @@ export default async function PlannerPage({ searchParams }: PageProps<"/plan">) 
   const view = parsePlannerView(params.view);
   const date = typeof params.date === "string" && isISODate(params.date) ? params.date : today;
   const period = plannerPeriod(view, date);
-  const [t, goals, goalOptions, me] = await Promise.all([
+  const [t, goalOptions, me] = await Promise.all([
     getTranslations(),
-    listGoalsWithProgress(),
     listParentCandidates(),
     getMe(),
   ]);
   const locale = (await getLocale()) as AppLocale;
+  const scope: Scope = isScope(params.scope) ? params.scope : (me?.profile.default_scope ?? "all");
+  const goals = await listGoalsWithProgress({ domainFilter: scope });
   const periodGoals = goals.filter((goal) => overlaps(goal.period, period));
+  const overviewGoals = periodGoals;
+  const nextActions = await getGoalNextActions(overviewGoals);
+  const returnTo = buildPlanContextHref(view, date, scope);
+  const scopedGoalOptions = goalOptions.filter((goal) => domainInScope(goal.domain, scope));
   const currentPeriodGoal =
     goals.find((goal) => goal.period_type === view && goal.period_start === period.start) ?? null;
   const previous = shiftPlannerDate(view, date, -1);
@@ -66,25 +79,34 @@ export default async function PlannerPage({ searchParams }: PageProps<"/plan">) 
         description={t("planner.description")}
         meta={label}
         toolbarStart={
-          <PeriodSelector
-            label={t("planner.viewLabel")}
-            items={(["year", "month", "week"] as const).map((candidate) => ({
-              key: candidate,
-              href: `/plan?view=${candidate}&date=${date}`,
-              label: t(`planner.views.${candidate}`),
-              active: candidate === view,
-            }))}
-          />
+          <div className="space-y-2">
+            <PeriodSelector
+              label={t("planner.viewLabel")}
+              items={(["year", "month", "week"] as const).map((candidate) => ({
+                key: candidate,
+                href: withPlanScope(`/plan?view=${candidate}&date=${date}`, scope),
+                label: t(`planner.views.${candidate}`),
+                active: candidate === view,
+              }))}
+            />
+            <PeriodSelector
+              label={t("today.scopeLabel")}
+              items={(["all", "work", "life"] as const).map((candidate) => ({
+                key: candidate,
+                href: withPlanScope(`/plan?view=${view}&date=${date}`, candidate),
+                label: t(`scopes.${candidate}`),
+                active: candidate === scope,
+              }))}
+            />
+          </div>
         }
         toolbarEnd={
-          currentPeriodGoal ? (
-            <Button asChild variant="outline">
-              <Link href={buildPlannerGoalHref(view, date)} scroll={false}>
-                <Plus aria-hidden="true" />
-                {t("workflowGuide.addAnotherGoal")}
-              </Link>
-            </Button>
-          ) : null
+          <Button asChild variant="outline">
+            <Link href={withPlanScope(buildPlannerGoalHref(view, date), scope)} scroll={false}>
+              <Plus aria-hidden="true" />
+              {t("planner.addGoal")}
+            </Link>
+          </Button>
         }
       />
 
@@ -92,20 +114,21 @@ export default async function PlannerPage({ searchParams }: PageProps<"/plan">) 
         roleCode={me?.profile.role_code}
         horizon={view}
         selectedDate={date}
+        compact
         primaryAction={
           currentPeriodGoal
             ? {
                 kind: "goal",
-                href: "/goals/" + currentPeriodGoal.id,
+                href: buildGoalDetailHref(currentPeriodGoal.id, returnTo),
                 title: currentPeriodGoal.title,
               }
-            : { kind: "choose-goal", href: buildPlannerGoalHref(view, date) }
+            : { kind: "choose-goal", href: withPlanScope(buildPlannerGoalHref(view, date), scope) }
         }
       />
 
       <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-border bg-bg-surface p-3 shadow-xs">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={`/plan?view=${view}&date=${previous}`}>
+          <Link href={withPlanScope(`/plan?view=${view}&date=${previous}`, scope)}>
             <ArrowLeft aria-hidden="true" />
             <span className="sr-only">{t("planner.previous")}</span>
           </Link>
@@ -113,14 +136,14 @@ export default async function PlannerPage({ searchParams }: PageProps<"/plan">) 
         <div className="text-center">
           <p className="text-body font-semibold text-brand-800">{label}</p>
           <Link
-            href={`/plan?view=${view}&date=${today}`}
+            href={withPlanScope(`/plan?view=${view}&date=${today}`, scope)}
             className="text-caption text-brand-600 hover:underline"
           >
             {t("planner.today")}
           </Link>
         </div>
         <Button variant="ghost" size="sm" asChild>
-          <Link href={`/plan?view=${view}&date=${next}`}>
+          <Link href={withPlanScope(`/plan?view=${view}&date=${next}`, scope)}>
             <ArrowRight aria-hidden="true" />
             <span className="sr-only">{t("planner.next")}</span>
           </Link>
@@ -128,16 +151,33 @@ export default async function PlannerPage({ searchParams }: PageProps<"/plan">) 
       </div>
 
       {view === "year" ? (
-        <YearPlanner date={period.start} goals={periodGoals} />
+        <YearPlanner
+          date={period.start}
+          selectedDate={date}
+          goals={periodGoals}
+          overviewGoals={overviewGoals}
+          nextActions={nextActions}
+          scope={scope}
+        />
       ) : view === "month" ? (
-        <MonthPlanner date={period.start} goals={periodGoals} />
+        <MonthPlanner
+          date={period.start}
+          selectedDate={date}
+          goals={periodGoals}
+          overviewGoals={overviewGoals}
+          nextActions={nextActions}
+          scope={scope}
+        />
       ) : (
         <WeekPlanner
           from={period.start}
           to={period.end}
+          selectedDate={date}
           today={today}
-          goals={periodGoals}
-          goalOptions={goalOptions}
+          overviewGoals={overviewGoals}
+          nextActions={nextActions}
+          goalOptions={scopedGoalOptions}
+          scope={scope}
         />
       )}
     </>
@@ -146,30 +186,35 @@ export default async function PlannerPage({ searchParams }: PageProps<"/plan">) 
 
 async function YearPlanner({
   date,
+  selectedDate,
   goals,
+  overviewGoals,
+  nextActions,
+  scope,
 }: {
-  date: string;
+  date: ISODate;
+  selectedDate: ISODate;
   goals: Awaited<ReturnType<typeof listGoalsWithProgress>>;
+  overviewGoals: Awaited<ReturnType<typeof listGoalsWithProgress>>;
+  nextActions: Awaited<ReturnType<typeof getGoalNextActions>>;
+  scope: Scope;
 }) {
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
-  const yearGoals = goals.filter((goal) => goal.period_type === "year");
+  const domains = DOMAINS.filter((domain) => domainInScope(domain, scope));
   const months = Array.from({ length: 12 }, (_, index) => addMonthsISO(date, index));
 
   return (
     <div className="space-y-6">
-      {yearGoals.length > 0 ? (
-        <section aria-labelledby="planner-year-goals">
-          <h2 id="planner-year-goals" className="mb-2 text-h2 text-text-primary">
-            {t("planner.yearGoals")}
-          </h2>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {yearGoals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <PlanGoalOverview
+        goals={overviewGoals}
+        nextActions={nextActions}
+        domains={domains}
+        view="year"
+        date={date}
+        selectedDate={selectedDate}
+        scope={scope}
+      />
 
       <section aria-labelledby="planner-months">
         <h2 id="planner-months" className="mb-2 text-h2 text-text-primary">
@@ -183,7 +228,7 @@ async function YearPlanner({
             return (
               <Link
                 key={monthStart}
-                href={`/plan?view=month&date=${monthStart}`}
+                href={withPlanScope(`/plan?view=month&date=${monthStart}`, scope)}
                 className="rounded-xl border border-border bg-bg-surface p-4 shadow-xs transition-transform hover:-translate-y-0.5"
               >
                 <p className="text-body font-semibold text-brand-800">
@@ -208,33 +253,36 @@ async function YearPlanner({
 
 async function MonthPlanner({
   date,
+  selectedDate,
   goals,
+  overviewGoals,
+  nextActions,
+  scope,
 }: {
-  date: string;
+  date: ISODate;
+  selectedDate: ISODate;
   goals: Awaited<ReturnType<typeof listGoalsWithProgress>>;
+  overviewGoals: Awaited<ReturnType<typeof listGoalsWithProgress>>;
+  nextActions: Awaited<ReturnType<typeof getGoalNextActions>>;
+  scope: Scope;
 }) {
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
   const monthPeriod = plannerPeriod("month", date);
-  const monthGoals = goals.filter(
-    (goal) => goal.period_type === "month" && goal.period_start === monthPeriod.start,
-  );
+  const domains = DOMAINS.filter((domain) => domainInScope(domain, scope));
   const weeks = suggestChildPeriods(monthPeriod, "week");
 
   return (
     <div className="space-y-6">
-      {monthGoals.length > 0 ? (
-        <section aria-labelledby="planner-month-goals">
-          <h2 id="planner-month-goals" className="mb-2 text-h2 text-text-primary">
-            {t("planner.monthGoals")}
-          </h2>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {monthGoals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <PlanGoalOverview
+        goals={overviewGoals}
+        nextActions={nextActions}
+        domains={domains}
+        view="month"
+        date={date}
+        selectedDate={selectedDate}
+        scope={scope}
+      />
 
       <section aria-labelledby="planner-weeks">
         <h2 id="planner-weeks" className="mb-2 text-h2 text-text-primary">
@@ -248,7 +296,7 @@ async function MonthPlanner({
             return (
               <Link
                 key={week.start}
-                href={`/plan?view=week&date=${week.start}`}
+                href={withPlanScope(`/plan?view=week&date=${week.start}`, scope)}
                 className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
               >
                 <div className="flex items-center justify-between gap-3">
@@ -280,15 +328,21 @@ async function MonthPlanner({
 async function WeekPlanner({
   from,
   to,
+  selectedDate,
   today,
-  goals,
+  overviewGoals,
+  nextActions,
   goalOptions,
+  scope,
 }: {
-  from: string;
-  to: string;
-  today: string;
-  goals: Awaited<ReturnType<typeof listGoalsWithProgress>>;
+  from: ISODate;
+  to: ISODate;
+  selectedDate: ISODate;
+  today: ISODate;
+  overviewGoals: Awaited<ReturnType<typeof listGoalsWithProgress>>;
+  nextActions: Awaited<ReturnType<typeof getGoalNextActions>>;
   goalOptions: Awaited<ReturnType<typeof listParentCandidates>>;
+  scope: Scope;
 }) {
   const t = await getTranslations();
   const locale = (await getLocale()) as AppLocale;
@@ -297,36 +351,40 @@ async function WeekPlanner({
     listCalendarEvents(from, to),
     listFinanceBills(from, to),
   ]);
-  const byDay = itemsByDay(tasks, completions, from, to, occurrences);
-  const weekGoals = goals.filter(
-    (goal) => goal.period_type === "week" && overlaps(goal.period, plannerPeriod("week", from)),
-  );
+  const scopedTasks = tasks.filter((task) => domainInScope(task.domain, scope));
+  const byDay = itemsByDay(scopedTasks, completions, from, to, occurrences);
   const days = eachDayISO(from, to);
+  const domains = DOMAINS.filter((domain) => domainInScope(domain, scope));
 
   return (
     <div className="space-y-6">
-      {weekGoals.length > 0 ? (
-        <section aria-labelledby="planner-week-goals">
-          <h2 id="planner-week-goals" className="mb-2 text-h2 text-text-primary">
-            {t("planner.weekGoals")}
-          </h2>
-          <div className="grid gap-3 md:grid-cols-2">
-            {weekGoals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <PlanGoalOverview
+        goals={overviewGoals}
+        nextActions={nextActions}
+        domains={domains}
+        view="week"
+        date={from}
+        selectedDate={selectedDate}
+        scope={scope}
+      />
 
       <section aria-labelledby="planner-week-days">
-        <h2 id="planner-week-days" className="mb-2 text-h2 text-text-primary">
-          {t("planner.weekPlan")}
-        </h2>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+          <h2 id="planner-week-days" className="text-h2 text-text-primary">
+            {t("planner.weekPlan")}
+          </h2>
+          <Button variant="outline" size="sm" className="min-h-11" asChild>
+            <Link href={withPlanScope(`/calendar?view=week&date=${from}`, scope)}>
+              <CalendarDays aria-hidden="true" />
+              {t("planner.openWeekCalendar")}
+            </Link>
+          </Button>
+        </div>
         <div className="grid min-w-0 items-start gap-4 min-[761px]:grid-cols-2 min-[1200px]:grid-cols-3">
           {days.map((day) => {
             const items = byDay[day] ?? [];
             const dayEvents = events.filter((event) => event.event_date === day);
-            const dayBills = bills.filter((bill) => bill.due_date === day);
+            const dayBills = scope === "work" ? [] : bills.filter((bill) => bill.due_date === day);
             const previewEvents = dayEvents.slice(0, 5);
             const previewBills = dayBills.slice(0, 5 - previewEvents.length);
             const previewItems = items.slice(0, 5 - previewEvents.length - previewBills.length);
@@ -348,7 +406,12 @@ async function WeekPlanner({
                     </p>
                   </div>
                   <Button variant="ghost" size="sm" className="min-h-11" asChild>
-                    <Link href={day === today ? "/today" : `/calendar?view=day&date=${day}`}>
+                    <Link
+                      href={withPlanScope(
+                        day === today ? `/today?date=${day}` : `/calendar?view=day&date=${day}`,
+                        scope,
+                      )}
+                    >
                       {day === today ? t("planner.openToday") : t("planner.openDay")}
                     </Link>
                   </Button>
@@ -420,7 +483,10 @@ async function WeekPlanner({
                         </p>
                       </div>
                       <Button variant="outline" size="sm" className="min-h-11 shrink-0" asChild>
-                        <Link href={`/plan?view=week&date=${day}&new=task`} scroll={false}>
+                        <Link
+                          href={withPlanScope(`/plan?view=week&date=${day}&new=task`, scope)}
+                          scroll={false}
+                        >
                           {t("planner.addTask")}
                         </Link>
                       </Button>
@@ -430,7 +496,7 @@ async function WeekPlanner({
                 {remaining > 0 ? (
                   <div className="mt-3 flex min-h-11 items-center border-t border-border pt-2">
                     <Link
-                      href={`/calendar?view=day&date=${day}`}
+                      href={withPlanScope(`/calendar?view=day&date=${day}`, scope)}
                       aria-label={t("calendar.openDay", { date: formatDate(day, "long", locale) })}
                       className="inline-flex min-h-11 items-center rounded-md text-small font-medium text-brand-600 hover:underline focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none"
                     >

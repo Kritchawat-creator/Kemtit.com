@@ -56,7 +56,7 @@ export default async function ProjectDetailPage({ params }: PageProps<"/work/pro
     <>
       <PageHeader
         title={project.title}
-        titleId="project-title"
+        titleId="project-page-title"
         toolbarStart={
           <Button variant="outline" asChild>
             <Link href="/work/projects">

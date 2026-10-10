@@ -39,6 +39,24 @@ function renderGuide(locale: Locale, props: Partial<WorkflowGuideProps> = {}) {
 }
 
 describe("WorkflowGuide", () => {
+  it("offers compact, context-specific guidance without a second horizon control", () => {
+    const { container } = renderGuide("en", { compact: true });
+
+    const guide = screen.getByRole("region", { name: englishMessages.workflowGuide.title });
+    expect(
+      within(guide).getByText(englishMessages.workflowGuide.steps.employee.week["1"]),
+    ).toBeVisible();
+    expect(
+      within(guide).queryByRole("navigation", {
+        name: englishMessages.workflowGuide.horizonNavigation,
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(guide).queryByText(englishMessages.workflowGuide.showSteps),
+    ).not.toBeInTheDocument();
+    expect(container.textContent ?? "").not.toMatch(/[\u0E00-\u0E7F]/);
+  });
+
   it("shows the selected role, horizon, first step, and one contextual action in Thai", () => {
     const { container } = renderGuide("th");
 
@@ -106,10 +124,7 @@ describe("WorkflowGuide", () => {
     expect(within(guide).getByText(/General/)).toBeInTheDocument();
     expect(
       within(guide).getByRole("link", {
-        name: englishMessages.workflowGuide.actions.openGoal.replace(
-          "{title}",
-          "Client milestone",
-        ),
+        name: englishMessages.workflowGuide.actions.openGoal.replace("{title}", "Client milestone"),
       }),
     ).toHaveAttribute("href", "/goals/goal-id");
     expect(container.textContent ?? "").not.toMatch(/[\u0E00-\u0E7F]/);

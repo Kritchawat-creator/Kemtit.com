@@ -4,23 +4,24 @@ import Link from "next/link";
 import { cn } from "cn";
 
 import { CALENDAR_VIEWS, shiftCalendarDate, type CalendarView } from "@/core/domain/calendar";
+import type { Scope } from "@/core/profile/scope";
 import type { ISODate } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import { SegmentedNav } from "@/components/ui/segmented-nav";
 
-export function calendarHref(view: CalendarView, date: ISODate) {
-  return `/calendar?view=${view}&date=${date}`;
+export function calendarHref(view: CalendarView, date: ISODate, scope?: Scope) {
+  return `/calendar?view=${view}&date=${date}${scope ? `&scope=${scope}` : ""}`;
 }
 
 /** segmented control วัน/สัปดาห์/เดือน (Claude Design 3m/4d) — ใช้ลิงก์เพื่อให้ back/forward และ SSR ทำงาน */
-export function CalendarViewNav({ view, date }: { view: CalendarView; date: ISODate }) {
+export function CalendarViewNav({ view, date, scope }: { view: CalendarView; date: ISODate; scope?: Scope }) {
   const t = useTranslations("calendar");
   return (
     <SegmentedNav
       label={t("views.label")}
       items={CALENDAR_VIEWS.map((v) => ({
         key: v,
-        href: calendarHref(v, date),
+        href: calendarHref(v, date, scope),
         label: t(`views.${v}`),
         active: view === v,
       }))}
@@ -31,6 +32,7 @@ export function CalendarViewNav({ view, date }: { view: CalendarView; date: ISOD
 type RangeProps = {
   view: CalendarView;
   date: ISODate;
+  scope?: Scope;
   today: ISODate;
   label: string;
   /** desktop = แถวเดียวใน toolbar (‹ ป้าย › + ปุ่ม "วันนี้" แบบ outline) · mobile = ‹ ป้าย + ลิงก์วันนี้ใต้ป้าย › */
@@ -42,6 +44,7 @@ type RangeProps = {
 export function CalendarRangeNav({
   view,
   date,
+  scope,
   today,
   label,
   layout = "mobile",
@@ -50,14 +53,14 @@ export function CalendarRangeNav({
   const t = useTranslations("calendar");
   const prev = (
     <Button variant="ghost" size="icon" className="text-brand-800" asChild>
-      <Link href={calendarHref(view, shiftCalendarDate(view, date, -1))} aria-label={t("nav.prev")}>
+      <Link href={calendarHref(view, shiftCalendarDate(view, date, -1), scope)} aria-label={t("nav.prev")}>
         <ChevronLeft className="size-6" strokeWidth={1.5} aria-hidden="true" />
       </Link>
     </Button>
   );
   const next = (
     <Button variant="ghost" size="icon" className="text-brand-800" asChild>
-      <Link href={calendarHref(view, shiftCalendarDate(view, date, 1))} aria-label={t("nav.next")}>
+      <Link href={calendarHref(view, shiftCalendarDate(view, date, 1), scope)} aria-label={t("nav.next")}>
         <ChevronRight className="size-6" strokeWidth={1.5} aria-hidden="true" />
       </Link>
     </Button>
@@ -79,7 +82,7 @@ export function CalendarRangeNav({
           {next}
         </div>
         <Button variant="outline" asChild>
-          <Link href={calendarHref(view, today)}>{t("nav.today")}</Link>
+          <Link href={calendarHref(view, today, scope)}>{t("nav.today")}</Link>
         </Button>
       </div>
     );
@@ -91,7 +94,7 @@ export function CalendarRangeNav({
       <div className="flex min-w-0 flex-1 flex-col items-center">
         <span className="max-w-full truncate text-base font-medium text-brand-800">{label}</span>
         <Link
-          href={calendarHref(view, today)}
+          href={calendarHref(view, today, scope)}
           className={cn(
             "rounded-full px-2 text-caption font-medium focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none",
             date !== today ? "text-brand-600 hover:underline" : "text-text-secondary",

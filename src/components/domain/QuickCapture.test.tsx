@@ -296,6 +296,7 @@ describe("QuickCapture", () => {
     expect(onDone).not.toHaveBeenCalled();
     expect(mocks.refresh).not.toHaveBeenCalled();
 
+    await waitFor(() => expect(screen.getByRole("button", { name: "capture.save" })).toBeEnabled());
     clickSave();
     await waitFor(() => expect(onDone).toHaveBeenCalledOnce());
     expect(mocks.confirmQuickCapture).toHaveBeenCalledTimes(2);

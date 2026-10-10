@@ -35,6 +35,7 @@ export function WeeklyReviewForm({
   const [nextFocus, setNextFocus] = useState(initial?.next_focus ?? "");
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
   const [pending, startTransition] = useTransition();
+  const selectedTasks = carryoverTasks.filter((task) => selectedTaskIds.includes(task.id));
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -150,6 +151,41 @@ export function WeeklyReviewForm({
               </label>
             ))}
           </div>
+          {selectedTasks.length > 0 ? (
+            <section
+              className="mt-4 rounded-lg border border-brand-200 bg-brand-50 p-4"
+              aria-labelledby="review-carryover-preview-heading"
+              aria-live="polite"
+            >
+              <h4
+                id="review-carryover-preview-heading"
+                className="text-small font-semibold text-brand-900"
+              >
+                {t("reviews.carryoverPreview.title")}
+              </h4>
+              <p className="mt-1 text-caption text-brand-900">
+                {t("reviews.carryoverPreview.summary", {
+                  count: selectedTasks.length,
+                  date: nextWeekStart,
+                })}
+              </p>
+              <ul className="mt-2 space-y-1 text-caption text-brand-900">
+                {selectedTasks.map((task) => (
+                  <li key={task.id}>
+                    <span className="font-medium">{task.title}</span>
+                    {task.deadline ? (
+                      <span className="ml-1">
+                        · {t("reviews.deadlinePreserved", { date: task.deadline })}
+                      </span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-caption text-brand-900">
+                {t("reviews.carryoverPreview.description")}
+              </p>
+            </section>
+          ) : null}
           <Button
             type="button"
             className="mt-3"

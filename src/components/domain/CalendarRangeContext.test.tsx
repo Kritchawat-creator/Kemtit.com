@@ -81,6 +81,21 @@ describe("Calendar week and month context records", () => {
     expect(screen.getByText("QA26 time block")).toBeInTheDocument();
   });
 
+  it("renders the selected-day panel on desktop week view", () => {
+    render(
+      <CalendarWeek
+        days={[date]}
+        byDay={{ [date]: tasks }}
+        contextByDay={contextByDay}
+        today={date}
+        selected={date}
+        dayPanel={<div data-testid="selected-day-panel">TimelineBoard tray</div>}
+      />,
+    );
+
+    expect(screen.getByTestId("selected-day-panel")).toBeVisible();
+  });
+
   it("announces event, time-block, and bill markers for context-only dates in Month", () => {
     render(
       <CalendarMonth

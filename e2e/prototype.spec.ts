@@ -9,7 +9,7 @@ import {
   type Page,
 } from "@playwright/test";
 
-import { signInWithOtp, uniqueEmail } from "./helpers";
+import { registerWithPassword, uniqueEmail } from "./helpers";
 
 type StorageState = Awaited<ReturnType<BrowserContext["storageState"]>>;
 
@@ -24,8 +24,9 @@ function readLocalEnvValue(key: string): string | undefined {
     const match = envFile.match(new RegExp(`^(?:export\\s+)?${escapedKey}\\s*=\\s*(.*)$`, "m"));
     const value = match?.[1]?.trim();
     if (!value) return undefined;
-    return value.replace(/^(?:"([^"]*)"|'([^']*)').*$/, (_whole, doubleQuoted, singleQuoted) =>
-      doubleQuoted ?? singleQuoted ?? "",
+    return value.replace(
+      /^(?:"([^"]*)"|'([^']*)').*$/,
+      (_whole, doubleQuoted, singleQuoted) => doubleQuoted ?? singleQuoted ?? "",
     );
   } catch {
     return undefined;
@@ -58,7 +59,9 @@ function assertLocalAuthTargets(baseURL: unknown) {
   if (configuredSupabaseUrls.length === 0) {
     throw new Error("A loopback Supabase URL is required before running prototype auth E2E.");
   }
-  configuredSupabaseUrls.forEach((url, index) => assertLoopbackUrl(`Supabase URL ${index + 1}`, url));
+  configuredSupabaseUrls.forEach((url, index) =>
+    assertLoopbackUrl(`Supabase URL ${index + 1}`, url),
+  );
 }
 
 const test = base.extend<Record<never, never>, PrototypeWorkerFixtures>({
@@ -77,7 +80,7 @@ const test = base.extend<Record<never, never>, PrototypeWorkerFixtures>({
       let storageState: StorageState | undefined;
       try {
         const authPage = await authContext.newPage();
-        await signInWithOtp(authPage, uniqueEmail("prototype-qa"));
+        await registerWithPassword(authPage, uniqueEmail("prototype-qa"));
         storageState = await authContext.storageState();
       } finally {
         await authContext.close();
@@ -216,7 +219,10 @@ function captureField(page: Page, name: string) {
 
 async function openPrototypeNavigation(page: Page) {
   const menuButton = page.getByTestId("mobile-menu-button");
-  if (await menuButton.isVisible() && (await menuButton.getAttribute("aria-expanded")) !== "true") {
+  if (
+    (await menuButton.isVisible()) &&
+    (await menuButton.getAttribute("aria-expanded")) !== "true"
+  ) {
     await menuButton.click();
   }
   return page.getByRole("navigation", { name: "Prototype navigation" });
@@ -303,9 +309,7 @@ test("all five design directions keep Today and Quick Capture usable at every vi
     `[prototype evidence] ${testInfo.project.name}: ${browserEvidence.browserType} channel=${browserEvidence.channel} version=${browserEvidence.version}`,
   );
 
-  const task = page
-    .getByTestId("task-row")
-    .filter({ hasText: "Finish Kemtit redesign" });
+  const task = page.getByTestId("task-row").filter({ hasText: "Finish Kemtit redesign" });
   await expect(task).toHaveCount(1);
   const taskId = await task.getAttribute("data-record-id");
   expect(taskId).toBeTruthy();
@@ -331,7 +335,9 @@ test("all five design directions keep Today and Quick Capture usable at every vi
     const quickCaptureFrame = quickCaptureInput.locator("xpath=..");
     await expect(quickCaptureInput).toHaveCSS("outline-style", "none");
     await expect(quickCaptureFrame).toHaveCSS("border-top-width", "1px");
-    const focusShadow = await quickCaptureFrame.evaluate((element) => getComputedStyle(element).boxShadow);
+    const focusShadow = await quickCaptureFrame.evaluate(
+      (element) => getComputedStyle(element).boxShadow,
+    );
     expect(focusShadow).not.toBe("none");
     await page.screenshot({
       path: join(EVIDENCE_DIR, `${testInfo.project.name}-${direction.key}-capture-open.png`),
@@ -352,7 +358,9 @@ test("each supported navigation destination opens its declared screen", async ({
   const supportedDestinations = navigation.locator(
     '[data-testid="prototype-nav-destination"][data-supported="true"]',
   );
-  await expect(supportedDestinations).toHaveCount(Object.keys(SUPPORTED_DESTINATION_HEADINGS).length);
+  await expect(supportedDestinations).toHaveCount(
+    Object.keys(SUPPORTED_DESTINATION_HEADINGS).length,
+  );
   for (const [destinationId, screenHeading] of Object.entries(SUPPORTED_DESTINATION_HEADINGS)) {
     navigation = await openPrototypeNavigation(page);
     const parentKey = ["planner", "calendar", "goals", "finance", "routine", "insights"].find(
@@ -455,7 +463,9 @@ test("each supported navigation destination opens its declared screen", async ({
   }
 });
 
-test("remaining unsupported concept actions stay disabled with a visible explanation", async ({ page }, testInfo) => {
+test("remaining unsupported concept actions stay disabled with a visible explanation", async ({
+  page,
+}, testInfo) => {
   test.skip(testInfo.project.name !== "prototype-1440", "Action inventory is sampled on desktop.");
   await openPrototype(page);
 
@@ -500,7 +510,10 @@ test("Habits can be created with recurrence and reminder settings", async ({ pag
   await captureField(page, "Reminder minutes").fill("15");
   await page.getByTestId("capture-confirm").click();
 
-  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-destination-id", "routine-habits");
+  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute(
+    "data-destination-id",
+    "routine-habits",
+  );
   const created = page.getByTestId("task-row").filter({ hasText: "Read for 20 minutes" });
   await expect(created).toBeVisible();
   await expect(created).toContainText("Every day");
@@ -517,9 +530,13 @@ test("shared empty states are flat, bounded, and expose one clear CTA", async ({
   const todaySchedule = page
     .getByRole("heading", { name: "Today’s schedule", exact: true })
     .locator("xpath=ancestor::section[1]");
-  await expect(todayFocus.getByRole("button", { name: "Capture an item", exact: true })).toHaveCount(1);
+  await expect(
+    todayFocus.getByRole("button", { name: "Capture an item", exact: true }),
+  ).toHaveCount(1);
   await expect(todayFocus.getByRole("button", { name: "Add item", exact: true })).toHaveCount(0);
-  await expect(todaySchedule.getByRole("button", { name: "Add event", exact: true })).toHaveCount(1);
+  await expect(todaySchedule.getByRole("button", { name: "Add event", exact: true })).toHaveCount(
+    1,
+  );
 
   const navigation = await openPrototypeNavigation(page);
   await ensureNavigationGroupExpanded(navigation, "Workspace");
@@ -537,7 +554,9 @@ test("shared empty states are flat, bounded, and expose one clear CTA", async ({
   const action = emptyState.getByRole("button", { name: "Capture an item", exact: true });
 
   await expect(emptyState).toBeVisible();
-  await expect(surface.getByText("Capture first. Organize when you are ready.", { exact: true })).toBeVisible();
+  await expect(
+    surface.getByText("Capture first. Organize when you are ready.", { exact: true }),
+  ).toBeVisible();
   await expect(action).toHaveCount(1);
 
   const emptyStyles = await emptyState.evaluate((element) => {
@@ -597,23 +616,36 @@ test("Starter Workspace previews suggestions before creating local user data", a
   await expect(page.getByText("Capture next content idea", { exact: true })).toBeVisible();
 });
 
-test("mobile execution navigation keeps Today, Planner, Capture, and Insights one tap away", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "prototype-390", "Mobile execution navigation is sampled at 390px.");
+test("mobile execution navigation keeps Today, Planner, Capture, and Insights one tap away", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "prototype-390",
+    "Mobile execution navigation is sampled at 390px.",
+  );
   await openPrototype(page);
 
   const mobileNav = page.getByRole("navigation", { name: "Mobile prototype navigation" });
   await expect(mobileNav).toBeVisible();
   await mobileNav.getByRole("button", { name: "Planner", exact: true }).click();
-  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-destination-id", "planner");
+  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute(
+    "data-destination-id",
+    "planner",
+  );
 
   await mobileNav.getByRole("button", { name: "Insights", exact: true }).click();
-  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-destination-id", "insights");
+  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute(
+    "data-destination-id",
+    "insights",
+  );
 
   await mobileNav.getByRole("button", { name: "Quick capture", exact: true }).click();
   await expect(page.getByRole("combobox", { name: "Quick capture", exact: true })).toBeFocused();
 });
 
-test("Quick Capture proposes structured details and can park an item in Inbox", async ({ page }) => {
+test("Quick Capture proposes structured details and can park an item in Inbox", async ({
+  page,
+}) => {
   await openPrototype(page);
   const input = await openQuickCapture(page);
   await input.fill("Prepare listing images tomorrow 45m work");
@@ -628,8 +660,12 @@ test("Quick Capture proposes structured details and can park an item in Inbox", 
   await proposal.getByRole("button", { name: "Add to Inbox", exact: true }).click();
   const surface = page.getByTestId("prototype-view-surface");
   await expect(surface).toHaveAttribute("data-destination-id", "inbox");
-  await expect(surface.getByRole("heading", { name: "Unplanned items", exact: true })).toBeVisible();
-  const inboxItem = surface.locator('[data-record-id^="prototype-created-"]').filter({ hasText: "Prepare listing images" });
+  await expect(
+    surface.getByRole("heading", { name: "Unplanned items", exact: true }),
+  ).toBeVisible();
+  const inboxItem = surface
+    .locator('[data-record-id^="prototype-created-"]')
+    .filter({ hasText: "Prepare listing images" });
   await expect(inboxItem).toHaveCount(1);
   await expect(inboxItem).toContainText("due Sep 25");
   await expect(inboxItem).toContainText("45m");
@@ -649,7 +685,9 @@ test("a note can be captured to Inbox before an Area is chosen", async ({ page }
 
   const surface = page.getByTestId("prototype-view-surface");
   await expect(surface).toHaveAttribute("data-destination-id", "inbox");
-  const note = surface.locator('[data-record-id^="prototype-created-"]').filter({ hasText: "research a new product" });
+  const note = surface
+    .locator('[data-record-id^="prototype-created-"]')
+    .filter({ hasText: "research a new product" });
   await expect(note).toBeVisible();
   await expect(note).toContainText("Area not set");
 });
@@ -678,7 +716,9 @@ test("Plan my day turns an Inbox task into a scheduled time block", async ({ pag
   await expect(schedulePanel.getByText("09:30", { exact: true })).toBeVisible();
 });
 
-test("capacity keeps hidden-area commitments when the visible Area filter changes", async ({ page }) => {
+test("capacity keeps hidden-area commitments when the visible Area filter changes", async ({
+  page,
+}) => {
   await openPrototype(page);
   const freeCapacity = page
     .getByText("Free capacity", { exact: true })
@@ -713,13 +753,13 @@ test("Finance keeps a bill obligation separate from the recorded payment", async
     .locator('[data-testid="prototype-nav-destination"][data-destination-id="finance-bills"]')
     .click();
 
-  const bill = page
-    .getByTestId("prototype-record-row")
-    .filter({ hasText: "Pay electricity bill" });
+  const bill = page.getByTestId("prototype-record-row").filter({ hasText: "Pay electricity bill" });
   await expect(bill).toBeVisible();
   await bill.click();
 
-  const detail = page.locator('[data-testid="prototype-record-detail"][data-record-id="bill-electricity"]');
+  const detail = page.locator(
+    '[data-testid="prototype-record-detail"][data-record-id="bill-electricity"]',
+  );
   await expect(detail).toBeVisible();
   await expect(detail.getByRole("button", { name: "Mark as paid", exact: true })).toBeVisible();
   await detail.getByRole("button", { name: "Mark as paid", exact: true }).click();
@@ -729,11 +769,15 @@ test("Finance keeps a bill obligation separate from the recorded payment", async
   await navigationAfterPayment
     .locator('[data-testid="prototype-nav-destination"][data-destination-id="finance-overview"]')
     .click();
-  const balanceCard = page.getByText("Monthly balance", { exact: true }).locator("xpath=ancestor::section[1]");
+  const balanceCard = page
+    .getByText("Monthly balance", { exact: true })
+    .locator("xpath=ancestor::section[1]");
   await expect(balanceCard).toContainText("11,250");
 });
 
-test("Insights overview exposes a review workflow instead of only summary cards", async ({ page }) => {
+test("Insights overview exposes a review workflow instead of only summary cards", async ({
+  page,
+}) => {
   await openPrototype(page);
   const navigation = await openPrototypeNavigation(page);
   await ensureNavigationGroupExpanded(navigation, "Insights");
@@ -758,7 +802,9 @@ test("Upcoming and Workspace cards keep complete internal layout", async ({ page
 
   const upcomingCards = page.getByTestId("upcoming-card");
   await expect(upcomingCards).toHaveCount(5);
-  const firstUpcomingAction = upcomingCards.first().getByRole("button", { name: "Open item", exact: true });
+  const firstUpcomingAction = upcomingCards
+    .first()
+    .getByRole("button", { name: "Open item", exact: true });
   await expect(firstUpcomingAction).toHaveCSS("display", "inline-flex");
 
   const navigation = await openPrototypeNavigation(page);
@@ -782,24 +828,34 @@ test("planned-time chart preserves every proportional bar height", async ({ page
   const samples = await chart.getByTestId("planned-time-bar").evaluateAll((elements) =>
     elements.map((element) => ({
       minutes: Number(element.getAttribute("data-minutes")),
-      height: element.querySelector<HTMLElement>('[data-testid="planned-time-bar-fill"]')?.getBoundingClientRect().height ?? 0,
+      height:
+        element
+          .querySelector<HTMLElement>('[data-testid="planned-time-bar-fill"]')
+          ?.getBoundingClientRect().height ?? 0,
     })),
   );
-  const positive = samples.filter((sample) => sample.minutes > 0).sort((a, b) => b.minutes - a.minutes);
+  const positive = samples
+    .filter((sample) => sample.minutes > 0)
+    .sort((a, b) => b.minutes - a.minutes);
   expect(positive.length).toBeGreaterThanOrEqual(2);
   for (const sample of positive) {
-    const expectedHeight = positive[0].height * sample.minutes / positive[0].minutes;
+    const expectedHeight = (positive[0].height * sample.minutes) / positive[0].minutes;
     expect(Math.abs(sample.height - expectedHeight)).toBeLessThanOrEqual(0.15);
   }
   for (const zero of samples.filter((sample) => sample.minutes === 0)) expect(zero.height).toBe(0);
 });
 
-test("chart card stays intrinsic when an adjacent card grows in every theme", async ({ page }, testInfo) => {
+test("chart card stays intrinsic when an adjacent card grows in every theme", async ({
+  page,
+}, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openPrototype(page);
   const chart = page.locator('[data-chart-title="Weekly rhythm"]');
   for (const theme of DESIGN_DIRECTIONS) {
-    await page.getByRole("group", { name: "Design direction" }).getByRole("button", { name: new RegExp(theme.label) }).click();
+    await page
+      .getByRole("group", { name: "Design direction" })
+      .getByRole("button", { name: new RegExp(theme.label) })
+      .click();
     const before = await chart.boundingBox();
     expect(before).not.toBeNull();
     await chart.evaluate((element) => {
@@ -815,7 +871,10 @@ test("chart card stays intrinsic when an adjacent card grows in every theme", as
       const style = getComputedStyle(element);
       const footer = element.querySelector<HTMLElement>('[data-testid="chart-footer"]')!;
       return {
-        remainder: element.getBoundingClientRect().bottom - footer.getBoundingClientRect().bottom - parseFloat(style.borderBottomWidth),
+        remainder:
+          element.getBoundingClientRect().bottom -
+          footer.getBoundingClientRect().bottom -
+          parseFloat(style.borderBottomWidth),
         padding: parseFloat(style.paddingBottom),
         overflow: element.scrollWidth - element.clientWidth,
       };
@@ -829,10 +888,15 @@ test("chart card stays intrinsic when an adjacent card grows in every theme", as
       delete sibling.dataset.previousMinHeight;
     });
   }
-  await testInfo.attach("chart-row-after", { body: await chart.locator("..").screenshot(), contentType: "image/png" });
+  await testInfo.attach("chart-row-after", {
+    body: await chart.locator("..").screenshot(),
+    contentType: "image/png",
+  });
 });
 
-test("chart selection is local, keyboard accessible, and drill-down preserves scope", async ({ page }) => {
+test("chart selection is local, keyboard accessible, and drill-down preserves scope", async ({
+  page,
+}) => {
   await openPrototype(page);
   await chooseScope(page, "work");
   const chart = page.locator('[data-chart-title="Weekly rhythm"]');
@@ -847,7 +911,10 @@ test("chart selection is local, keyboard accessible, and drill-down preserves sc
   await expect(chart.getByRole("table")).toBeVisible();
   await expect(chart.getByRole("table").locator("tbody tr")).toHaveCount(7);
   await chart.getByRole("button", { name: /Open day’s plan/ }).click();
-  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-destination-id", "planner-day");
+  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute(
+    "data-destination-id",
+    "planner-day",
+  );
   await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-scope", "work");
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", "2026-09-26");
 });
@@ -856,7 +923,10 @@ test("a five-minute workload stays proportional beside a ten-hour workload", asy
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openPrototype(page);
   await page.getByTestId("demo-mode-toggle").click();
-  for (const item of [{ title: "Large estimate", date: "2026-09-24", minutes: "600" }, { title: "Tiny estimate", date: "2026-09-25", minutes: "5" }]) {
+  for (const item of [
+    { title: "Large estimate", date: "2026-09-24", minutes: "600" },
+    { title: "Tiny estimate", date: "2026-09-25", minutes: "5" },
+  ]) {
     const input = await openQuickCapture(page);
     await input.fill(item.title);
     await input.press("Enter");
@@ -867,25 +937,39 @@ test("a five-minute workload stays proportional beside a ten-hour workload", asy
     await page.getByTestId("capture-confirm").click();
   }
   const navigation = await openPrototypeNavigation(page);
-  await navigation.locator('[data-testid="prototype-nav-destination"][data-destination-id="today"]').click();
+  await navigation
+    .locator('[data-testid="prototype-nav-destination"][data-destination-id="today"]')
+    .click();
   const chart = page.locator('[data-chart-title="Weekly rhythm"]');
-  const large = await chart.locator('[data-minutes="600"] [data-testid="planned-time-bar-fill"]').boundingBox();
-  const tiny = await chart.locator('[data-minutes="5"] [data-testid="planned-time-bar-fill"]').boundingBox();
+  const large = await chart
+    .locator('[data-minutes="600"] [data-testid="planned-time-bar-fill"]')
+    .boundingBox();
+  const tiny = await chart
+    .locator('[data-minutes="5"] [data-testid="planned-time-bar-fill"]')
+    .boundingBox();
   expect(large).not.toBeNull();
   expect(tiny).not.toBeNull();
   expect(tiny!.height).toBeGreaterThan(0);
-  expect(Math.abs(tiny!.height - large!.height * 5 / 600)).toBeLessThanOrEqual(0.15);
+  expect(Math.abs(tiny!.height - (large!.height * 5) / 600)).toBeLessThanOrEqual(0.15);
 });
 
 test("Today and Insights exclude the same Inbox task from completion", async ({ page }) => {
   await openPrototype(page);
   await page.getByTestId("task-row").filter({ hasText: "Finish Kemtit redesign" }).click();
-  const metric = page.getByText("Tasks complete", { exact: true }).locator("xpath=ancestor::article[1]");
+  const metric = page
+    .getByText("Tasks complete", { exact: true })
+    .locator("xpath=ancestor::article[1]");
   await expect(metric.locator("strong")).toHaveText("1/1");
   const navigation = await openPrototypeNavigation(page);
   await ensureNavigationGroupExpanded(navigation, "Insights");
-  await navigation.locator('[data-testid="prototype-nav-destination"][data-destination-id="insights-productivity"]').click();
-  const panel = page.getByRole("heading", { name: "Task completion", exact: true }).locator("xpath=ancestor::section[1]");
+  await navigation
+    .locator(
+      '[data-testid="prototype-nav-destination"][data-destination-id="insights-productivity"]',
+    )
+    .click();
+  const panel = page
+    .getByRole("heading", { name: "Task completion", exact: true })
+    .locator("xpath=ancestor::section[1]");
   await expect(panel).toContainText("1 of 1 visible tasks completed");
 });
 
@@ -899,13 +983,22 @@ test("over-budget labels keep 130 percent while the track stops at 100", async (
   await captureField(page, "Date").fill("2026-09-24");
   await captureField(page, "Amount (THB)").fill("8450");
   await page.getByTestId("capture-confirm").click();
-  await page.getByTestId("prototype-record-detail").getByRole("button", { name: "Mark as paid", exact: true }).click();
+  await page
+    .getByTestId("prototype-record-detail")
+    .getByRole("button", { name: "Mark as paid", exact: true })
+    .click();
   const navigation = await openPrototypeNavigation(page);
   await ensureNavigationGroupExpanded(navigation, "Finance");
-  await navigation.locator('[data-testid="prototype-nav-destination"][data-destination-id="finance-budget"]').click();
+  await navigation
+    .locator('[data-testid="prototype-nav-destination"][data-destination-id="finance-budget"]')
+    .click();
   await expect(page.getByTestId("budget-percent")).toHaveText("130%");
   await expect(page.getByTestId("budget-overspend")).toContainText("6,000");
-  expect(await page.getByTestId("budget-fill").evaluate((element) => (element as HTMLElement).style.width)).toBe("100%");
+  expect(
+    await page
+      .getByTestId("budget-fill")
+      .evaluate((element) => (element as HTMLElement).style.width),
+  ).toBe("100%");
 });
 
 test("task hover does not shift row content", async ({ page }) => {
@@ -957,7 +1050,9 @@ test("All, Work, and Life change the shared demo task projection", async ({ page
   await expect(rows).toHaveCount(allIds.length);
 });
 
-test("Today, Week, Month, and Year keep view, heading, and destination synchronized", async ({ page }) => {
+test("Today, Week, Month, and Year keep view, heading, and destination synchronized", async ({
+  page,
+}) => {
   await openPrototype(page);
 
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", "2026-09-24");
@@ -974,12 +1069,18 @@ test("Today, Week, Month, and Year keep view, heading, and destination synchroni
     await expect(surface).toHaveAttribute("data-view", view);
     await expect(surface).toHaveAttribute("data-destination-id", expected[view].destination);
     await expect(page.locator("[data-screen-heading]")).toHaveText(expected[view].heading);
-    const screenHeader = page.locator("[data-screen-heading]").locator("xpath=ancestor::section[1]");
-    await expect(screenHeader.getByText("Thursday, September 24, 2026", { exact: false })).toBeVisible();
+    const screenHeader = page
+      .locator("[data-screen-heading]")
+      .locator("xpath=ancestor::section[1]");
+    await expect(
+      screenHeader.getByText("Thursday, September 24, 2026", { exact: false }),
+    ).toBeVisible();
   }
 });
 
-test("Week completion gives immediate visual feedback and stays synchronized with Today", async ({ page }) => {
+test("Week completion gives immediate visual feedback and stays synchronized with Today", async ({
+  page,
+}) => {
   await openPrototype(page);
   await selectView(page, "week");
 
@@ -990,7 +1091,10 @@ test("Week completion gives immediate visual feedback and stays synchronized wit
   await expect(weekTask).toHaveAttribute("aria-pressed", "false");
   await weekTask.click();
   await expect(weekTask).toHaveAttribute("aria-pressed", "true");
-  await expect(weekTask.getByTestId("week-item-title")).toHaveCSS("text-decoration-line", "line-through");
+  await expect(weekTask.getByTestId("week-item-title")).toHaveCSS(
+    "text-decoration-line",
+    "line-through",
+  );
 
   const navigation = await openPrototypeNavigation(page);
   await navigation
@@ -1000,7 +1104,9 @@ test("Week completion gives immediate visual feedback and stays synchronized wit
   await expect(todayTask).toHaveAttribute("data-completed", "true");
 });
 
-test("Week view caps dense days and opens every item without stretching the week", async ({ page }) => {
+test("Week view caps dense days and opens every item without stretching the week", async ({
+  page,
+}) => {
   test.setTimeout(120_000);
   await openPrototype(page);
   for (let index = 0; index < 6; index += 1) {
@@ -1017,7 +1123,9 @@ test("Week view caps dense days and opens every item without stretching the week
     await expect(page.getByTestId("capture-draft")).toHaveCount(0);
   }
   const navigation = await openPrototypeNavigation(page);
-  await navigation.locator('[data-testid="prototype-nav-destination"][data-destination-id="today"]').click();
+  await navigation
+    .locator('[data-testid="prototype-nav-destination"][data-destination-id="today"]')
+    .click();
   await chooseScope(page, "all");
   await selectView(page, "week");
   const card = page.locator('[data-testid="week-day-card"][data-week-date="2026-09-24"]');
@@ -1026,7 +1134,9 @@ test("Week view caps dense days and opens every item without stretching the week
   await expect(card.getByTestId("week-preview-row")).toHaveCount(5);
   const trigger = card.getByTestId("week-day-more");
   await expect(trigger).toContainText(`+${total - 5} more`);
-  const heights = await page.getByTestId("week-day-card").evaluateAll((cards) => cards.map((element) => element.getBoundingClientRect().height));
+  const heights = await page
+    .getByTestId("week-day-card")
+    .evaluateAll((cards) => cards.map((element) => element.getBoundingClientRect().height));
   expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(1);
 
   await trigger.click();
@@ -1035,10 +1145,14 @@ test("Week view caps dense days and opens every item without stretching the week
   await expect(dialog.getByTestId("week-detail-row")).toHaveCount(total);
   await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
   const scroller = dialog.getByTestId("week-day-scroll");
-  expect(await scroller.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+  expect(await scroller.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(
+    true,
+  );
   const calendarAction = dialog.getByRole("button", { name: "View in Calendar" });
   const footerBefore = await calendarAction.boundingBox();
-  await scroller.evaluate((element) => { element.scrollTop = element.scrollHeight; });
+  await scroller.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
   const footerAfter = await calendarAction.boundingBox();
   expect(Math.abs(footerBefore!.y - footerAfter!.y)).toBeLessThanOrEqual(1);
   const search = dialog.getByRole("searchbox");
@@ -1051,12 +1165,20 @@ test("Week view caps dense days and opens every item without stretching the week
   await expect(trigger).toBeFocused();
   await trigger.click();
   await calendarAction.click();
-  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-destination-id", "calendar-schedule");
+  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute(
+    "data-destination-id",
+    "calendar-schedule",
+  );
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", "2026-09-24");
 });
 
-test("mobile Week navigation changes the inspected column without changing the selected date", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "prototype-390", "Mobile day navigation is checked at 390px.");
+test("mobile Week navigation changes the inspected column without changing the selected date", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "prototype-390",
+    "Mobile day navigation is checked at 390px.",
+  );
   await openPrototype(page);
   await selectView(page, "week");
   const originalDate = await page.getByTestId("prototype-date").getAttribute("data-date");
@@ -1065,7 +1187,9 @@ test("mobile Week navigation changes the inspected column without changing the s
   await page.getByRole("button", { name: "Show next day", exact: true }).click();
   await expect.poll(() => grid.evaluate((element) => element.scrollLeft)).toBeGreaterThan(before);
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", originalDate!);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1),
+  ).toBe(true);
 });
 
 test("month view uses two intentional surfaces and one empty-state CTA", async ({ page }) => {
@@ -1081,7 +1205,9 @@ test("month view uses two intentional surfaces and one empty-state CTA", async (
   const firstBox = await cards.nth(0).boundingBox();
   const secondBox = await cards.nth(1).boundingBox();
   const cardPadding = await Promise.all(
-    [cards.nth(0), cards.nth(1)].map((card) => card.evaluate((element) => getComputedStyle(element).paddingTop)),
+    [cards.nth(0), cards.nth(1)].map((card) =>
+      card.evaluate((element) => getComputedStyle(element).paddingTop),
+    ),
   );
   expect(gridBox).not.toBeNull();
   expect(firstBox).not.toBeNull();
@@ -1101,11 +1227,17 @@ test("month view uses two intentional surfaces and one empty-state CTA", async (
   }
 
   await page.getByRole("button", { name: /September 22, 2026/ }).click();
-  const selectedDay = page.getByRole("heading", { name: "Selected day", exact: true }).locator("xpath=ancestor::section[1]");
-  const selectedDayEmpty = selectedDay.getByText("Nothing planned yet", { exact: true }).locator("xpath=ancestor::div[1]");
+  const selectedDay = page
+    .getByRole("heading", { name: "Selected day", exact: true })
+    .locator("xpath=ancestor::section[1]");
+  const selectedDayEmpty = selectedDay
+    .getByText("Nothing planned yet", { exact: true })
+    .locator("xpath=ancestor::div[1]");
   await expect(selectedDayEmpty).toBeVisible();
   await expect(selectedDay.getByRole("button", { name: "Add item", exact: true })).toHaveCount(1);
-  await expect(selectedDay.getByText("No items are planned for this selected day.", { exact: true })).toBeVisible();
+  await expect(
+    selectedDay.getByText("No items are planned for this selected day.", { exact: true }),
+  ).toBeVisible();
   const selectedDayStyles = await selectedDayEmpty.evaluate((element) => {
     const style = getComputedStyle(element);
     return {
@@ -1188,7 +1320,9 @@ test("view menu supports keyboard navigation without scrolling the page", async 
   const scrollYBeforeTab = await page.evaluate(() => window.scrollY);
   await page.keyboard.press("Tab");
   await expect(viewMenu).toBeHidden();
-  await expect(page.getByRole("button", { name: "Previous month", exact: true }).first()).toBeFocused();
+  await expect(
+    page.getByRole("button", { name: "Previous month", exact: true }).first(),
+  ).toBeFocused();
   expect(await page.evaluate(() => window.scrollY)).toBe(scrollYBeforeTab);
 });
 
@@ -1207,12 +1341,16 @@ test("selected date, scope, and view survive reload and browser history", async 
   await page.reload();
   await expectScope(page, "work");
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", "2026-09-25");
-  await expect(page.getByRole("button", { name: "Choose view", exact: true })).toContainText("Week");
+  await expect(page.getByRole("button", { name: "Choose view", exact: true })).toContainText(
+    "Week",
+  );
   await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-view", "week");
 
   await page.goBack();
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", "2026-09-25");
-  await expect(page.getByRole("button", { name: "Choose view", exact: true })).toContainText("Today");
+  await expect(page.getByRole("button", { name: "Choose view", exact: true })).toContainText(
+    "Today",
+  );
   await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-view", "today");
   await page.goBack();
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", "2026-09-24");
@@ -1226,8 +1364,13 @@ test("selected date, scope, and view survive reload and browser history", async 
   await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-view", "week");
 });
 
-test("calendar navigation crosses years and selects leap day with the derived weekday", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "prototype-1440", "Calendar edge dates are sampled on desktop.");
+test("calendar navigation crosses years and selects leap day with the derived weekday", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "prototype-1440",
+    "Calendar edge dates are sampled on desktop.",
+  );
   await openPrototype(page);
   const nextMonth = page.getByRole("button", { name: "Next month" });
 
@@ -1249,8 +1392,13 @@ test("calendar navigation crosses years and selects leap day with the derived we
   await expect(selectedDate).toContainText(weekday);
 });
 
-test("invalid and inherited hash values fall back to the safe Today route", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "prototype-1440", "Malformed hash fallback is sampled on desktop.");
+test("invalid and inherited hash values fall back to the safe Today route", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "prototype-1440",
+    "Malformed hash fallback is sampled on desktop.",
+  );
   await page.goto("/prototype#screen=constructor&date=2026-02-30");
   await expect(page.getByText("Kemtit Visual Prototype · Demo data only")).toBeVisible();
   await expect(page.locator("[data-screen-heading]")).toHaveText("Today");
@@ -1261,14 +1409,18 @@ test("invalid and inherited hash values fall back to the safe Today route", asyn
   await expect(page.getByTestId("prototype-date")).toHaveAttribute("data-date", "2026-09-24");
 });
 
-test("empty mode can create one confirmed local item without a server mutation", async ({ page }) => {
+test("empty mode can create one confirmed local item without a server mutation", async ({
+  page,
+}) => {
   await openPrototype(page);
   const mutations = trackMutatingRequests(page);
 
   await page.getByTestId("demo-mode-toggle").click();
   await expect(page.getByText("Empty workspace mode", { exact: true })).toBeVisible();
   await expect(page.getByText("Nothing here yet", { exact: true })).toBeVisible();
-  const tasksMetric = page.getByText("Tasks complete", { exact: true }).locator("xpath=ancestor::article[1]");
+  const tasksMetric = page
+    .getByText("Tasks complete", { exact: true })
+    .locator("xpath=ancestor::article[1]");
   await expect(tasksMetric.locator("strong")).toHaveText("No data");
   await expect(page.getByTestId("task-row")).toHaveCount(0);
 
@@ -1277,7 +1429,9 @@ test("empty mode can create one confirmed local item without a server mutation",
   await input.fill(title);
   await input.press("Enter");
   await expect(page.getByTestId("capture-draft")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Review new demo item", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Review new demo item", exact: true }),
+  ).toBeVisible();
   await page.getByTestId("capture-cancel").click();
   await expect(page.getByTestId("capture-draft")).toBeHidden();
   await expect(page.getByTestId("task-row")).toHaveCount(0);
@@ -1292,10 +1446,14 @@ test("empty mode can create one confirmed local item without a server mutation",
   const confirmBox = await confirm.boundingBox();
   expect(confirmBox).not.toBeNull();
   if (confirmBox) {
-    await page.mouse.click(confirmBox.x + confirmBox.width / 2, confirmBox.y + confirmBox.height / 2, {
-      clickCount: 2,
-      delay: 30,
-    });
+    await page.mouse.click(
+      confirmBox.x + confirmBox.width / 2,
+      confirmBox.y + confirmBox.height / 2,
+      {
+        clickCount: 2,
+        delay: 30,
+      },
+    );
   }
 
   const createdTask = page.getByTestId("task-row").filter({ hasText: title });
@@ -1319,7 +1477,9 @@ test("empty mode can create one confirmed local item without a server mutation",
   expect(mutations).toEqual([]);
 });
 
-test("capture dialog keeps internal padding clicks, spacing, and error styling stable", async ({ page }) => {
+test("capture dialog keeps internal padding clicks, spacing, and error styling stable", async ({
+  page,
+}) => {
   await openPrototype(page);
   const input = await openQuickCapture(page);
   await input.fill("Dialog padding regression");
@@ -1337,7 +1497,10 @@ test("capture dialog keeps internal padding clicks, spacing, and error styling s
 
   const description = draft.locator("#capture-description");
   const form = draft.locator("form");
-  const [descriptionBox, formBox] = await Promise.all([description.boundingBox(), form.boundingBox()]);
+  const [descriptionBox, formBox] = await Promise.all([
+    description.boundingBox(),
+    form.boundingBox(),
+  ]);
   expect(descriptionBox).not.toBeNull();
   expect(formBox).not.toBeNull();
   if (descriptionBox && formBox) {
@@ -1362,7 +1525,9 @@ test("capture requires scope and rejects an invalid bill amount", async ({ page 
   await captureField(page, "Type").selectOption({ label: "Task" });
   await page.getByTestId("capture-confirm").click();
   await expect(page.getByTestId("capture-draft")).toBeVisible();
-  await expect(page.getByTestId("capture-draft").getByRole("alert")).toHaveText("Choose Work or Life area before planning this item.");
+  await expect(page.getByTestId("capture-draft").getByRole("alert")).toHaveText(
+    "Choose Work or Life area before planning this item.",
+  );
   await expect(
     page.getByTestId("task-row").filter({ hasText: "Missing scope validation item" }),
   ).toHaveCount(0);
@@ -1388,7 +1553,9 @@ test("capture requires scope and rejects an invalid bill amount", async ({ page 
   await page.getByTestId("capture-cancel").click();
 });
 
-test("correcting a bill title clears its stale error while the amount is invalid", async ({ page }) => {
+test("correcting a bill title clears its stale error while the amount is invalid", async ({
+  page,
+}) => {
   await openPrototype(page);
 
   const input = await openQuickCapture(page);
@@ -1403,14 +1570,12 @@ test("correcting a bill title clears its stale error while the amount is invalid
   await title.fill("");
   await amount.fill("0.50");
   await page.getByTestId("capture-confirm").click();
-  await expect(draft.getByRole("alert")).toHaveText(
-    "Enter a title before adding this demo item.",
-  );
+  await expect(draft.getByRole("alert")).toHaveText("Enter a title before adding this demo item.");
 
   await amount.fill("199.501");
-  expect(
-    await amount.evaluate((element) => (element as HTMLInputElement).checkValidity()),
-  ).toBe(false);
+  expect(await amount.evaluate((element) => (element as HTMLInputElement).checkValidity())).toBe(
+    false,
+  );
   await title.fill("Corrected bill title");
   await page.getByTestId("capture-confirm").click();
   await expect(draft.getByRole("alert")).toHaveCount(0);
@@ -1434,9 +1599,9 @@ test("fractional bill amounts preserve cents in their details", async ({ page })
     await captureField(page, "Scope").selectOption({ label: "Life" });
     const amount = captureField(page, "Amount (THB)");
     await amount.fill(amountText);
-    expect(
-      await amount.evaluate((element) => (element as HTMLInputElement).checkValidity()),
-    ).toBe(true);
+    expect(await amount.evaluate((element) => (element as HTMLInputElement).checkValidity())).toBe(
+      true,
+    );
     await page.getByTestId("capture-confirm").click();
     await expect(page.getByTestId("capture-draft")).toHaveCount(0);
 
@@ -1456,7 +1621,9 @@ test("fractional bill amounts preserve cents in their details", async ({ page })
   expect(mutations).toEqual([]);
 });
 
-test("a confirmed bill remains a bill and does not change the monthly balance", async ({ page }) => {
+test("a confirmed bill remains a bill and does not change the monthly balance", async ({
+  page,
+}) => {
   await openPrototype(page);
   const mutations = trackMutatingRequests(page);
   const balanceMetric = page.locator("article").filter({ hasText: "Monthly balance" });
@@ -1505,7 +1672,9 @@ test("a confirmed bill remains a bill and does not change the monthly balance", 
     "data-destination-id",
     "finance-overview",
   );
-  const balanceSection = page.getByText("Monthly balance", { exact: true }).locator("xpath=ancestor::section[1]");
+  const balanceSection = page
+    .getByText("Monthly balance", { exact: true })
+    .locator("xpath=ancestor::section[1]");
   await expect(balanceSection).toContainText(originalBalance!);
   expect(mutations).toEqual([]);
 });
@@ -1573,7 +1742,9 @@ test("long event titles wrap inside the timeline without horizontal overflow", a
   await expectNoHorizontalOverflow(page);
 });
 
-test("selecting an existing result does not duplicate it; same-title tasks complete by ID", async ({ page }) => {
+test("selecting an existing result does not duplicate it; same-title tasks complete by ID", async ({
+  page,
+}) => {
   await openPrototype(page);
 
   const title = "Finish Kemtit redesign";
@@ -1608,18 +1779,16 @@ test("selecting an existing result does not duplicate it; same-title tasks compl
   const createdId = recordIds.find((id) => id !== originalId);
   expect(createdId).toBeTruthy();
 
-  const createdRow = page.locator(
-    `[data-testid="task-row"][data-record-id="${createdId}"]`,
-  );
-  const originalRow = page.locator(
-    `[data-testid="task-row"][data-record-id="${originalId}"]`,
-  );
+  const createdRow = page.locator(`[data-testid="task-row"][data-record-id="${createdId}"]`);
+  const originalRow = page.locator(`[data-testid="task-row"][data-record-id="${originalId}"]`);
   await createdRow.click();
   await expect(createdRow).toHaveAttribute("data-completed", "true");
   await expect(originalRow).toHaveAttribute("data-completed", "false");
 });
 
-test("keyboard shortcut, suggestion navigation, and IME composition guard work", async ({ page }) => {
+test("keyboard shortcut, suggestion navigation, and IME composition guard work", async ({
+  page,
+}) => {
   await openPrototype(page);
   const shortcut = process.platform === "darwin" ? "Meta+k" : "Control+k";
   await page.keyboard.press(shortcut);
@@ -1662,8 +1831,13 @@ test("keyboard shortcut, suggestion navigation, and IME composition guard work",
   await page.getByTestId("capture-cancel").click();
 });
 
-test("view and search popovers stay anchored without moving content across themes and widths", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "prototype-390", "Run the explicit four-width geometry sweep once.");
+test("view and search popovers stay anchored without moving content across themes and widths", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "prototype-390",
+    "Run the explicit four-width geometry sweep once.",
+  );
   test.setTimeout(90_000);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openPrototype(page);
@@ -1698,7 +1872,9 @@ test("view and search popovers stay anchored without moving content across theme
       if (triggerBox && viewBox && closedHeading && openHeading) {
         expect(viewBox.y).toBeGreaterThanOrEqual(triggerBox.y + triggerBox.height - 1);
         expect(viewBox.y - (triggerBox.y + triggerBox.height)).toBeLessThanOrEqual(10);
-        expect(Math.abs(viewBox.x + viewBox.width - (triggerBox.x + triggerBox.width))).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(viewBox.x + viewBox.width - (triggerBox.x + triggerBox.width)),
+        ).toBeLessThanOrEqual(1);
         expect(viewBox.x).toBeGreaterThanOrEqual(0);
         expect(viewBox.x + viewBox.width).toBeLessThanOrEqual(width);
         expect(viewBox.height).toBeLessThanOrEqual(280);
@@ -1711,10 +1887,13 @@ test("view and search popovers stay anchored without moving content across theme
       const weekBox = await weekOption.boundingBox();
       expect(weekBox).not.toBeNull();
       if (weekBox) {
-        const hitLabel = await page.evaluate(({ x, y }) => {
-          const hit = document.elementFromPoint(x, y)?.closest('[role="menuitemradio"]');
-          return hit?.querySelector("strong")?.textContent?.trim() ?? null;
-        }, { x: weekBox.x + weekBox.width / 2, y: weekBox.y + weekBox.height / 2 });
+        const hitLabel = await page.evaluate(
+          ({ x, y }) => {
+            const hit = document.elementFromPoint(x, y)?.closest('[role="menuitemradio"]');
+            return hit?.querySelector("strong")?.textContent?.trim() ?? null;
+          },
+          { x: weekBox.x + weekBox.width / 2, y: weekBox.y + weekBox.height / 2 },
+        );
         expect(hitLabel).toBe("Week");
       }
       if (width === 390 && direction.key === "minimal") {
@@ -1788,7 +1967,9 @@ test("view and search popovers stay anchored without moving content across theme
   const suggestionList = page.getByRole("listbox", { name: "Quick capture suggestions" });
   await input.press("ArrowUp");
   await expect(page.locator('[role="option"][aria-selected="true"]')).toBeVisible();
-  await expect.poll(() => suggestionList.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  await expect
+    .poll(() => suggestionList.evaluate((element) => element.scrollTop))
+    .toBeGreaterThan(0);
   await expect(suggestionPopover).toHaveCSS("transform", /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
   const activeSuggestionBounds = await page.evaluate(() => {
     const list = document.querySelector<HTMLElement>('[role="listbox"]');
@@ -1806,8 +1987,12 @@ test("view and search popovers stay anchored without moving content across theme
   });
   expect(activeSuggestionBounds).not.toBeNull();
   if (activeSuggestionBounds) {
-    expect(activeSuggestionBounds.optionTop).toBeGreaterThanOrEqual(activeSuggestionBounds.listTop - 1);
-    expect(activeSuggestionBounds.optionBottom).toBeLessThanOrEqual(activeSuggestionBounds.listBottom + 1);
+    expect(activeSuggestionBounds.optionTop).toBeGreaterThanOrEqual(
+      activeSuggestionBounds.listTop - 1,
+    );
+    expect(activeSuggestionBounds.optionBottom).toBeLessThanOrEqual(
+      activeSuggestionBounds.listBottom + 1,
+    );
     expect(activeSuggestionBounds.scrollY).toBe(scrollYBeforeArrow);
   }
   await input.press("Escape");
@@ -1842,7 +2027,9 @@ test("view and search popovers stay anchored without moving content across theme
   expect(shortSearchBox).not.toBeNull();
   if (shortSearchBox) expect(shortSearchBox.y + shortSearchBox.height).toBeLessThanOrEqual(500);
   await input.press("ArrowUp");
-  await expect.poll(() => suggestionList.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  await expect
+    .poll(() => suggestionList.evaluate((element) => element.scrollTop))
+    .toBeGreaterThan(0);
   await expect(page.locator('[role="option"][aria-selected="true"]')).toBeVisible();
   await input.press("Escape");
   await expect(suggestionPopover).toBeHidden();
@@ -1851,12 +2038,22 @@ test("view and search popovers stay anchored without moving content across theme
   await expect(page.getByRole("option", { name: /Client meeting/ })).toBeVisible();
   await page.getByRole("option", { name: /Client meeting/ }).click();
   await expect(suggestionPopover).toBeHidden();
-  await expect(page.locator('[data-testid="prototype-record-detail"][data-record-id="event-client-meeting"]')).toHaveCount(1);
-  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute("data-destination-id", "calendar-schedule");
+  await expect(
+    page.locator('[data-testid="prototype-record-detail"][data-record-id="event-client-meeting"]'),
+  ).toHaveCount(1);
+  await expect(page.getByTestId("prototype-view-surface")).toHaveAttribute(
+    "data-destination-id",
+    "calendar-schedule",
+  );
 });
 
-test("mobile drawer opens with keyboard and Escape returns focus; resize closes it", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "prototype-390", "The drawer is tested at its compact breakpoint.");
+test("mobile drawer opens with keyboard and Escape returns focus; resize closes it", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "prototype-390",
+    "The drawer is tested at its compact breakpoint.",
+  );
   await openPrototype(page);
   const openButton = page.getByTestId("mobile-menu-button");
   await expect(openButton).toBeVisible();
@@ -1885,7 +2082,9 @@ test("mobile drawer opens with keyboard and Escape returns focus; resize closes 
   await expectNoHorizontalOverflow(page);
 });
 
-test("prototype keeps the page within mobile and breakpoint boundary widths", async ({ page }, testInfo) => {
+test("prototype keeps the page within mobile and breakpoint boundary widths", async ({
+  page,
+}, testInfo) => {
   test.skip(testInfo.project.name !== "prototype-390", "The responsive width sweep runs once.");
   await openPrototype(page);
 
@@ -1906,8 +2105,13 @@ test("prototype keeps the page within mobile and breakpoint boundary widths", as
   }
 });
 
-test("reduced motion removes nonessential transition while selection still responds", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "prototype-1440", "Reduced-motion behavior is sampled on desktop.");
+test("reduced motion removes nonessential transition while selection still responds", async ({
+  page,
+}, testInfo) => {
+  test.skip(
+    testInfo.project.name !== "prototype-1440",
+    "Reduced-motion behavior is sampled on desktop.",
+  );
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openPrototype(page);
 

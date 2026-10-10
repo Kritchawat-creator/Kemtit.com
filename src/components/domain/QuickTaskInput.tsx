@@ -12,13 +12,18 @@ import { createTask } from "@/core/tasks/actions";
 import type { ISODate } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 
-type Props = { today: ISODate; className?: string; defaultDomain?: Domain | null };
+type Props = {
+  today: ISODate;
+  className?: string;
+  defaultDomain?: Domain | null;
+  placeholder?: string;
+};
 
 /**
  * Quick inline task capture for Today. The area is explicit so Work/Life tasks
  * cannot silently fall into the Work domain.
  */
-export function QuickTaskInput({ today, className, defaultDomain = "work" }: Props) {
+export function QuickTaskInput({ today, className, defaultDomain = "work", placeholder }: Props) {
   const t = useTranslations();
   const td = useTranslations("domains");
   const router = useRouter();
@@ -71,7 +76,7 @@ export function QuickTaskInput({ today, className, defaultDomain = "work" }: Pro
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             aria-label={t("widgets.todayTasks.add")}
-            placeholder={t("widgets.todayTasks.quickPlaceholder")}
+            placeholder={placeholder ?? t("widgets.todayTasks.quickPlaceholder")}
             className="h-11 min-w-0 flex-1 rounded-sm bg-transparent text-base text-text-primary outline-none placeholder:text-text-muted focus-visible:ring-[3px] focus-visible:ring-brand-500/15"
           />
         </div>
@@ -81,7 +86,7 @@ export function QuickTaskInput({ today, className, defaultDomain = "work" }: Pro
           onChange={(event) => setDomain(event.target.value as Domain)}
           aria-label={t("tasks.form.domain")}
           disabled={pending}
-          className="h-11 w-full min-w-0 max-w-full rounded-sm border border-border bg-bg-surface px-2.5 text-small text-text-primary outline-none focus-visible:ring-[3px] focus-visible:ring-brand-500/15"
+          className="h-11 w-full max-w-full min-w-0 rounded-sm border border-border bg-bg-surface px-2.5 text-small text-text-primary outline-none focus-visible:ring-[3px] focus-visible:ring-brand-500/15"
         >
           <option value="" disabled>
             {t("tasks.form.pickDomain")}

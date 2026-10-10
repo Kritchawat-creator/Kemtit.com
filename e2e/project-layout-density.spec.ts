@@ -1,11 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { signInWithOtp, uniqueEmail } from "./helpers";
+import { registerWithPassword, uniqueEmail } from "./helpers";
 
 const VIEWPORTS = [360, 390, 768, 1024, 1151, 1440, 1800] as const;
 
 async function onboardEmployee(page: Page) {
-  await signInWithOtp(page, uniqueEmail("project-layout-density"));
+  await registerWithPassword(page, uniqueEmail("project-layout-density"));
   await expect(page).toHaveURL(/\/onboarding\/persona/);
   await page.getByText("พนักงาน", { exact: true }).click();
   await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();
@@ -19,19 +19,20 @@ async function onboardEmployee(page: Page) {
 
 async function readGeometry(page: Page, kind: "list" | "detail") {
   return page.evaluate((pageKind) => {
-    const selectors = pageKind === "list"
-      ? [
-          'main section[aria-labelledby="projects-create-heading"]',
-          'main section[aria-labelledby="projects-list-heading"]',
-          'main section[aria-labelledby="projects-create-heading"] form',
-          'main section[aria-labelledby="projects-list-heading"] > ul > li:first-child',
-        ]
-      : [
-          'main aside',
-          'main section[aria-labelledby="project-tasks-heading"]',
-          'main aside > section[aria-labelledby="project-summary"]',
-          'main section[aria-labelledby="project-tasks-heading"] > [data-variant="standalone"]',
-        ];
+    const selectors =
+      pageKind === "list"
+        ? [
+            'main section[aria-labelledby="projects-create-heading"]',
+            'main section[aria-labelledby="projects-list-heading"]',
+            'main section[aria-labelledby="projects-create-heading"] form',
+            'main section[aria-labelledby="projects-list-heading"] > ul > li:first-child',
+          ]
+        : [
+            "main aside",
+            'main section[aria-labelledby="project-tasks-heading"]',
+            'main aside > section[aria-labelledby="project-summary"]',
+            'main section[aria-labelledby="project-tasks-heading"] > [data-variant="standalone"]',
+          ];
     const elements = selectors.map((selector) => document.querySelector(selector));
     if (elements.some((element) => !(element instanceof HTMLElement))) {
       throw new Error(`Incomplete project ${pageKind} layout`);
@@ -77,30 +78,38 @@ async function checkGeometry(page: Page, kind: "list" | "detail", width: number)
     );
 
     if (kind === "list" && width >= 1024) {
-      expect(geometry.right.left - geometry.left.right, `${kind}: column gap`).toBeGreaterThanOrEqual(
-        20,
-      );
+      expect(
+        geometry.right.left - geometry.left.right,
+        `${kind}: column gap`,
+      ).toBeGreaterThanOrEqual(20);
       expect(geometry.right.left - geometry.left.right, `${kind}: column gap`).toBeLessThanOrEqual(
         28,
       );
-      expect(Math.abs(geometry.left.top - geometry.right.top), `${kind}: column alignment`).toBeLessThanOrEqual(
-        1,
+      expect(
+        Math.abs(geometry.left.top - geometry.right.top),
+        `${kind}: column alignment`,
+      ).toBeLessThanOrEqual(1);
+      expect(geometry.unusedTail, `${kind}: no large empty tail below the right card`).toBeLessThan(
+        400,
       );
-      expect(geometry.unusedTail, `${kind}: no large empty tail below the right card`).toBeLessThan(400);
     } else {
-      expect(Math.abs(geometry.left.left - geometry.right.left), `${kind}: stacked left edge`).toBeLessThanOrEqual(
-        1,
-      );
-      expect(Math.abs(geometry.left.width - geometry.right.width), `${kind}: stacked width`).toBeLessThanOrEqual(
-        1,
-      );
+      expect(
+        Math.abs(geometry.left.left - geometry.right.left),
+        `${kind}: stacked left edge`,
+      ).toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(geometry.left.width - geometry.right.width),
+        `${kind}: stacked width`,
+      ).toBeLessThanOrEqual(1);
       expect(geometry.right.top - geometry.left.bottom, `${kind}: vertical gap`).toBe(16);
     }
   }).toPass({ timeout: 2_000, intervals: [50, 100, 200] });
   return geometry;
 }
 
-test("project list and detail cards stay readable across viewport widths", async ({ page }, testInfo) => {
+test("project list and detail cards stay readable across viewport widths", async ({
+  page,
+}, testInfo) => {
   test.setTimeout(180_000);
   await onboardEmployee(page);
   await page.goto("/work/projects");
@@ -126,14 +135,19 @@ test("project list and detail cards stay readable across viewport widths", async
   await page.goto(projectUrl!);
   await expect(page.getByRole("heading", { name: projectTitle, exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "งานในโปรเจกต์", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "ยังไม่มีงานในโปรเจกต์", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "ยังไม่มีงานในโปรเจกต์", exact: true }),
+  ).toBeVisible();
 
   for (const width of VIEWPORTS) {
     await page.setViewportSize({ width, height: 1000 });
     const geometry = await checkGeometry(page, "detail", width);
     if (width === 1800) {
       console.info("PROJECT_DETAIL_DENSITY_1800", JSON.stringify(geometry));
-      await page.screenshot({ path: testInfo.outputPath("project-detail-1800.png"), fullPage: true });
+      await page.screenshot({
+        path: testInfo.outputPath("project-detail-1800.png"),
+        fullPage: true,
+      });
     }
   }
 });

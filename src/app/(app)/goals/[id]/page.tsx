@@ -8,6 +8,7 @@ import { cn } from "cn";
 import { childPeriodType, daysLeft } from "@/core/domain/periods";
 import { getGoalDetail, listParentCandidates } from "@/core/goals/queries";
 import { goalUnit } from "@/core/goals/schema";
+import { safePlanReturnHref } from "@/core/planning/plan-links";
 import { getGoalTaskItems } from "@/core/tasks/queries";
 import type { AppLocale } from "@/i18n/config";
 import { todayBkk } from "@/lib/date";
@@ -36,8 +37,8 @@ export async function generateMetadata({ params }: PageProps<"/goals/[id]">): Pr
  * มือถือ: แถว ‹ ชื่อแม่ → ชื่อ + DomainTag → hero brand-100 (ภาพเป้าหมาย + หน้าปัด) → ปุ่ม → รูปความคืบหน้า → เส้นทาง → งานที่ผูก
  * desktop: header + toolbar (กลับ | แก้ไข/อัปเดตยอด) → hero 4 คอลัมน์ | gallery + เส้นทาง + งาน 8 คอลัมน์
  */
-export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]">) {
-  const { id } = await params;
+export default async function GoalDetailPage({ params, searchParams }: PageProps<"/goals/[id]">) {
+  const [{ id }, query] = await Promise.all([params, searchParams]);
   const [detail, candidates, taskItems, t, tp] = await Promise.all([
     getGoalDetail(id),
     listParentCandidates(),
@@ -65,10 +66,13 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
       };
   const childType = childPeriodType(goal.period_type);
   const tasksDone = taskItems.filter((i) => i.done).length;
-  const backHref = parent ? `/goals/${parent.id}` : "/goals";
+  const planReturnHref = safePlanReturnHref(query.returnTo);
+  const backHref = parent ? `/goals/${parent.id}` : (planReturnHref ?? "/goals");
   const backLabel = parent
     ? t("goals.parentLabel", { title: parent.title })
-    : t("goals.backToList");
+    : planReturnHref
+      ? t("planner.title")
+      : t("goals.backToList");
 
   return (
     <>
@@ -128,7 +132,7 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
             <div className="flex justify-center py-1">
               <CompassDial
                 value={goal.progress.percent}
-                className="h-auto w-full max-w-[196px] aspect-square drop-shadow-dial lg:max-w-56"
+                className="aspect-square h-auto w-full max-w-[196px] drop-shadow-dial lg:max-w-56"
               />
             </div>
 
@@ -168,7 +172,11 @@ export default async function GoalDetailPage({ params }: PageProps<"/goals/[id]"
                 {isMetric && !reached && remaining > 0 && remainingDays > 0 ? (
                   <p className="text-caption text-text-secondary">
                     {t("progress.perDayNeeded", {
-                      amount: formatValueWithUnit(Math.ceil(remaining / remainingDays), unit, locale),
+                      amount: formatValueWithUnit(
+                        Math.ceil(remaining / remainingDays),
+                        unit,
+                        locale,
+                      ),
                     })}
                   </p>
                 ) : null}

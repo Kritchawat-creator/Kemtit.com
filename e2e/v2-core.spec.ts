@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { onboardNewUser, signInWithOtp, uniqueEmail } from "./helpers";
+import { onboardNewUser, registerWithPassword, uniqueEmail } from "./helpers";
 
 async function onboardProfessional(page: import("@playwright/test").Page) {
   const email = uniqueEmail("professional-v2");
-  await signInWithOtp(page, email);
+  await registerWithPassword(page, email);
   await expect(page).toHaveURL(/\/onboarding\/persona/);
   await page.getByText("พนักงาน", { exact: true }).click();
   await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();
@@ -154,7 +154,9 @@ test("V2 Finance → ตั้งค่า investment goal และบันท
     await goalSelector.click();
     await page.getByRole("option", { name: "กองทุนลงทุนระยะยาว", exact: true }).click();
   } else {
-    await expect(entryDialog.getByText("เป้าหมาย · กองทุนลงทุนระยะยาว", { exact: true })).toBeVisible();
+    await expect(
+      entryDialog.getByText("เป้าหมาย · กองทุนลงทุนระยะยาว", { exact: true }),
+    ).toBeVisible();
   }
   const refreshedEntryDialog = page.getByRole("dialog");
   await expect(refreshedEntryDialog).toBeVisible();

@@ -10,6 +10,9 @@ import {
   parsePlanningPreferences,
   type PlanningPreferences,
 } from "./preferences";
+import { getDailyPriorityOrder } from "./priority-queries";
+
+export { getDailyPriorityOrder } from "./priority-queries";
 
 export async function getPlanningPreferences(): Promise<PlanningPreferences> {
   const supabase = await createServerSupabase();
@@ -40,7 +43,12 @@ export async function getDailyPlan(planDate: ISODate) {
     console.error("[planning] getDailyPlan failed", { code: error.code });
     throw new QueryError("planning.getDailyPlan", error.code);
   }
-  return data;
+  if (!data) return data;
+
+  // The priority-order table is canonical; keep this legacy read shape for
+  // callers that still consume daily_plans while leaving budget and notes here.
+  const priorityOrder = await getDailyPriorityOrder(planDate);
+  return priorityOrder ? { ...data, top_priorities: priorityOrder.priority_task_ids } : data;
 }
 
 export async function getTimeBlocksForDate(date: ISODate) {

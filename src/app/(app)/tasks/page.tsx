@@ -1,16 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { listParentCandidates } from "@/core/goals/queries";
 import { listProjectOptions } from "@/core/projects/actions";
 import { QueryError } from "@/core/shared/query-error";
+import { getTaskCardData } from "@/core/tasks/card-queries";
 import { getTaskLibrary, type TaskLibraryView } from "@/core/tasks/queries";
+import { getMe } from "@/core/profile/queries";
+import { ROUTES } from "@/core/profile/onboarding";
 import { todayBkk } from "@/lib/date";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { TaskLibrary } from "@/components/tasks/TaskLibrary";
+import { TaskCardBoard } from "@/components/tasks/TaskCardBoard";
 
 const TASK_VIEWS = ["planned", "all", "done", "overdue"] as const;
 
@@ -28,9 +33,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TasksPage({ searchParams }: PageProps<"/tasks">) {
+  const me = await getMe();
+  if (!me) redirect(ROUTES.login);
   const params = await searchParams;
   const viewValue = firstSearchValue(params.view);
   const view: TaskLibraryView = isTaskLibraryView(viewValue) ? viewValue : "planned";
+  const cardMode = firstSearchValue(params.mode) === "cards";
   const search = firstSearchValue(params.q).slice(0, 100);
   const today = todayBkk();
   const [t, result, goalOptions, projectResult] = await Promise.all([
@@ -41,15 +49,26 @@ export default async function TasksPage({ searchParams }: PageProps<"/tasks">) {
   ]);
 
   if (!projectResult.ok) throw new QueryError("tasks.listProjectOptions");
+  const cards = cardMode ? await getTaskCardData(result.tasks) : null;
+  const cardHref = `/tasks?${new URLSearchParams({ mode: "cards", view, ...(search ? { q: search } : {}) })}`;
+  const listHref = `/tasks?${new URLSearchParams({ view, ...(search ? { q: search } : {}) })}`;
 
   return (
     <>
       <PageHeader title={t("tasks.title")} description={t("tasks.library.description")} />
 
       <div className="mb-4">
-        <Button asChild className="w-full sm:w-auto">
-          <Link href="/tasks?new=task">{t("tasks.new")}</Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant={cardMode ? "default" : "outline"}>
+            <Link href={cardHref}>{t("taskCards.title")}</Link>
+          </Button>
+          <Button asChild variant={cardMode ? "outline" : "default"}>
+            <Link href={listHref}>{t("tasks.title")}</Link>
+          </Button>
+          <Button asChild className="w-full sm:w-auto">
+            <Link href={cardMode ? "/tasks?mode=cards&new=task" : "/tasks?new=task"}>{t("tasks.new")}</Link>
+          </Button>
+        </div>
       </div>
 
       <form
@@ -57,6 +76,7 @@ export default async function TasksPage({ searchParams }: PageProps<"/tasks">) {
         method="get"
         className="mb-5 grid min-w-0 grid-cols-1 gap-3 rounded-xl border border-border bg-bg-surface p-4 shadow-sm sm:grid-cols-[minmax(0,1fr)_minmax(0,220px)_auto] sm:items-end"
       >
+        {cardMode ? <input type="hidden" name="mode" value="cards" /> : null}
         <label className="block min-w-0">
           <span className="mb-1 block text-caption font-medium text-text-secondary">
             {t("tasks.library.searchLabel")}
@@ -92,14 +112,27 @@ export default async function TasksPage({ searchParams }: PageProps<"/tasks">) {
         </Button>
       </form>
 
-      <TaskLibrary
-        tasks={result.tasks}
-        today={today}
-        view={view}
-        hasMore={result.hasMore}
-        goalOptions={goalOptions}
-        projectOptions={projectResult.data}
-      />
+      {cards ? (
+        <TaskCardBoard
+          userId={me.userId}
+          tasks={cards.tasks}
+          groups={cards.groups}
+          groupMembers={cards.groupMembers}
+          pendingPhotos={cards.pendingPhotos}
+          today={today}
+          goalOptions={goalOptions}
+          projectOptions={projectResult.data}
+        />
+      ) : (
+        <TaskLibrary
+          tasks={result.tasks}
+          today={today}
+          view={view}
+          hasMore={result.hasMore}
+          goalOptions={goalOptions}
+          projectOptions={projectResult.data}
+        />
+      )}
     </>
   );
 }

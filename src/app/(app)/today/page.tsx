@@ -20,11 +20,15 @@ import { redirect } from "next/navigation";
 import { listCalendarEvents } from "@/core/calendar-events/queries";
 import { listFinanceBills } from "@/core/finance/queries";
 import { listNotes } from "@/core/notes/queries";
-import { calculateCapacity, calculateEffectiveAvailableMinutes } from "@/core/planning/capacity";
 import { calculateDayAvailability } from "@/core/planning/availability";
-import { defaultDailyPlanBudget, orderTasksByPriority } from "@/core/planning/workflow-suggestions";
+import {
+  defaultDailyPlanBudget,
+  orderTasksByPriority,
+  suggestTopPriorityTaskIds,
+} from "@/core/planning/workflow-suggestions";
 import {
   getDailyPlan,
+  getDailyPriorityOrder,
   getPlanningPreferences,
   getTimeBlocksForDate,
 } from "@/core/planning/queries";
@@ -36,15 +40,17 @@ import type { Domain } from "@/core/domain/domains";
 import type { TaskWithGoal } from "@/core/tasks/schema";
 import { ROUTES } from "@/core/profile/onboarding";
 import { APP_TIME_ZONE, type AppLocale } from "@/i18n/config";
-import { startOfMonthISO, todayBkk } from "@/lib/date";
+import { isISODate, startOfMonthISO, todayBkk, type ISODate } from "@/lib/date";
 import { formatDate, formatTHB } from "@/lib/format";
 import { QuickTaskInput } from "@/components/domain/QuickTaskInput";
 import { NotesList } from "@/components/inbox/NotesList";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { TaskList } from "@/components/domain/TaskList";
 import { DailyPlanForm } from "@/components/planning/DailyPlanForm";
+import { DailyPriorityList } from "@/components/planning/DailyPriorityList";
 import { TimeBlockForm } from "@/components/planning/TimeBlockForm";
 import { WorkflowGuide } from "@/components/planning/WorkflowGuide";
+import { TodayDateNavigation } from "@/components/planning/TodayDateNavigation";
 import { listGoalsWithProgress, listParentCandidates } from "@/core/goals/queries";
 import { getActiveHabits } from "@/core/habits/queries";
 import { GoalProgressPanel } from "@/components/widgets/GoalProgressPanel";
@@ -66,14 +72,18 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
   if (!me) redirect(ROUTES.login);
 
   const params = await searchParams;
-  const serverNow = new Date();
-  const nowAt = serverNow.getTime();
-  const today = todayBkk(serverNow);
+  const now = new Date();
+  const nowAt = now.getTime();
+  const today = todayBkk(now);
+  const selectedDate: ISODate =
+    typeof params.date === "string" && isISODate(params.date) ? params.date : today;
   const scope: Scope = isScope(params.scope) ? params.scope : me.profile.default_scope;
   const [
     t,
+    daily,
     plan,
     dailyPlan,
+    priorityOrder,
     planningPreferences,
     timeBlocks,
     goalOptions,
@@ -84,23 +94,43 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
     notes,
   ] = await Promise.all([
     getTranslations(),
-    getDayPlan(today),
-    getDailyPlan(today),
+    getTranslations("lifePlannerDaily"),
+    getDayPlan(selectedDate),
+    getDailyPlan(selectedDate),
+    getDailyPriorityOrder(selectedDate),
     getPlanningPreferences(),
-    getTimeBlocksForDate(today),
+    getTimeBlocksForDate(selectedDate),
     listParentCandidates(),
     listGoalsWithProgress({ domainFilter: scope }),
-    getActiveHabits(today),
-    listCalendarEvents(today, today),
-    listFinanceBills(today, today),
-    listNotes(today),
+    getActiveHabits(selectedDate),
+    listCalendarEvents(selectedDate, selectedDate),
+    listFinanceBills(selectedDate, selectedDate),
+    listNotes(selectedDate),
   ]);
   const locale = (await getLocale()) as AppLocale;
   const scopedPlan = filterPlan(plan, scope);
   const scopedHabits = habits.filter((habit) => domainInScope(habit.domain as Domain, scope));
-  const eligibleTopPriorityTaskIds = [
+  const eligiblePriorityTaskIds = [
     ...new Set([...plan.overdue, ...plan.due].map((item) => item.task.id)),
   ];
+  const savedPriorityTaskIds =
+    priorityOrder?.priority_task_ids ??
+    (dailyPlan?.top_priorities.length ? dailyPlan.top_priorities : null);
+  const priorityIsSaved = priorityOrder !== null || (dailyPlan?.top_priorities.length ?? 0) > 0;
+  const selectedPriorityTaskIds = (
+    savedPriorityTaskIds ??
+    suggestTopPriorityTaskIds(
+      [...scopedPlan.overdue, ...scopedPlan.due].map((item) => ({
+        id: item.task.id,
+        deadline: item.task.deadline,
+        overdue: item.overdue,
+        priority: item.task.priority,
+        goalId: item.task.goal_id,
+        projectId: item.task.project_id,
+      })),
+      selectedDate,
+    )
+  ).filter((id) => eligiblePriorityTaskIds.includes(id));
   const openItems = orderTasksByPriority(
     [...scopedPlan.overdue, ...scopedPlan.due].map((item) => ({
       id: item.task.id,
@@ -111,10 +141,10 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
       goalId: item.task.goal_id,
       projectId: item.task.project_id,
     })),
-    today,
-    dailyPlan?.top_priorities ?? [],
+    selectedDate,
+    selectedPriorityTaskIds,
   ).map(({ item }) => item);
-  const monthStart = startOfMonthISO(today);
+  const monthStart = startOfMonthISO(selectedDate);
   const monthGoals = goals.filter(
     (goal) => goal.period_type === "month" && goal.period_start === monthStart,
   );
@@ -128,14 +158,8 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
   const routineDone = scopedHabits.filter((habit) => habit.done).length;
   const dueBills = bills.filter((bill) => bill.status === "due");
   const showLifeContext = scope !== "work";
-  const hasSuggestions =
-    openItems.length === 0 ||
-    goals.length === 0 ||
-    (timeBlocks.length === 0 && events.length === 0) ||
-    (showLifeContext && scopedHabits.length === 0) ||
-    (showLifeContext && financeGoals.length === 0 && dueBills.length === 0);
   const availability = calculateDayAvailability({
-    date: today,
+    date: selectedDate,
     timezone: planningPreferences.timezone,
     workingWindows: planningPreferences.workingWindows,
     breakWindows: planningPreferences.breakWindows,
@@ -153,378 +177,241 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
       taskId: block.task_id,
     })),
     tasks: [...new Map(openItems.map((item) => [item.task.id, item.task])).values()].map(
-      (task) => ({
-        id: task.id,
-        estimatedMinutes: task.estimated_minutes,
-      }),
+      (task) => ({ id: task.id, estimatedMinutes: task.estimated_minutes }),
     ),
   });
-  const availableMinutes = calculateEffectiveAvailableMinutes(
-    dailyPlan?.available_minutes,
-    availability.availableMinutes,
-    availability.plannedBlockMinutes,
-  );
-  const capacity = calculateCapacity(
-    availableMinutes,
-    openItems.map((item) => item.task),
-    { linkedTaskMinutes: availability.linkedTaskMinutes },
-  );
-  const capacityUsagePercent = Math.min(
-    100,
-    capacity.availableMinutes > 0
-      ? (capacity.unscheduledTaskMinutes / capacity.availableMinutes) * 100
-      : capacity.unscheduledTaskMinutes > 0
-        ? 100
-        : 0,
-  );
-  const hasCapacityInputs =
-    capacity.estimatedTaskCount > 0 ||
-    availability.busyMinutes > 0 ||
-    availability.plannedBlockMinutes > 0;
-  const greeting = me.profile.display_name?.trim()
-    ? t("today.greeting", { name: me.profile.display_name.trim() })
-    : t("today.greetingNoName");
   const timelineItems = [
     ...events.map((event) => {
-      const time =
-        event.all_day || !event.start_time
-          ? t("today.allDay")
-          : [event.start_time.slice(0, 5), event.end_time?.slice(0, 5)].filter(Boolean).join("–");
+      const startMinutes = event.all_day || !event.start_time ? -1 : clockMinutes(event.start_time);
+      const endClockMinutes = event.end_time ? clockMinutes(event.end_time) : startMinutes;
+      const endMinutes =
+        startMinutes >= 0 && endClockMinutes <= startMinutes
+          ? endClockMinutes + 24 * 60
+          : endClockMinutes;
       return {
-        id: "event:" + event.id,
+        id: `event:${event.id}`,
         title: event.title,
-        time,
+        time:
+          startMinutes < 0
+            ? t("today.allDay")
+            : [event.start_time?.slice(0, 5), event.end_time?.slice(0, 5)]
+                .filter(Boolean)
+                .join("–"),
         kind: "event" as const,
-        sortMinutes: event.all_day || !event.start_time ? -1 : clockMinutes(event.start_time),
+        startMinutes,
+        endMinutes,
       };
     }),
     ...timeBlocks.map((block) => ({
-      id: "block:" + block.id,
+      id: `block:${block.id}`,
       title: block.title,
-      time: formatTime(block.start_at, locale) + "–" + formatTime(block.end_at, locale),
+      time: `${formatTime(block.start_at, locale)}–${formatTime(block.end_at, locale)}`,
       kind: "block" as const,
-      sortMinutes: timestampClockMinutes(block.start_at),
+      startMinutes: dateClockMinutes(block.start_at, selectedDate),
+      endMinutes: dateClockMinutes(block.end_at, selectedDate),
     })),
-  ].sort((left, right) => left.sortMinutes - right.sortMinutes);
-  const showContextUtility = showLifeContext || hasSuggestions;
+  ].sort((left, right) => left.startMinutes - right.startMinutes);
+  const selectedDateIsToday = selectedDate === today;
+  const formattedSelectedDate = formatDate(selectedDate, "medium", locale);
+  const planHeading = selectedDateIsToday
+    ? t("today.planHeading")
+    : daily("tasksForDay", { date: formattedSelectedDate });
+  const scheduleHeading = selectedDateIsToday
+    ? t("today.scheduleHeading")
+    : daily("scheduleForDay", { date: formattedSelectedDate });
+  const emptySelectedTitle = selectedDateIsToday
+    ? t("today.emptyTitle")
+    : daily("noTasksSelectedDay");
+  const emptySelectedDescription = selectedDateIsToday ? t("today.emptyDescription") : "";
+  const selectedDateStart = Date.parse(`${selectedDate}T00:00:00+07:00`);
+  const nowTime = Math.floor((nowAt - selectedDateStart) / 60_000);
+  const scheduledNow = selectedDateIsToday
+    ? timelineItems.find(
+        (item) =>
+          item.startMinutes >= 0 && item.startMinutes <= nowTime && item.endMinutes > nowTime,
+      )
+    : undefined;
+  const nextScheduled = selectedDateIsToday
+    ? (scheduledNow ??
+      timelineItems.find((item) => item.startMinutes >= 0 && item.startMinutes >= nowTime))
+    : (timelineItems.find((item) => item.startMinutes >= 0) ?? timelineItems[0]);
+  const currentMarkerIndex = selectedDateIsToday
+    ? timelineItems.findIndex((item) => item.startMinutes >= 0 && item.endMinutes > nowTime)
+    : -1;
+  const allTasks = [...scopedPlan.overdue, ...scopedPlan.due, ...scopedPlan.done];
+  const hasCapacityInputs =
+    openItems.some((item) => item.task.estimated_minutes != null) ||
+    availability.busyMinutes > 0 ||
+    availability.plannedBlockMinutes > 0;
+  const greeting = selectedDateIsToday
+    ? me.profile.display_name?.trim()
+      ? t("today.greeting", { name: me.profile.display_name.trim() })
+      : t("today.greetingNoName")
+    : daily("selectedDay");
 
   return (
     <>
       <PageHeader
         eyebrow={greeting}
-        title={t("today.title")}
-        description={t("today.daySummary")}
-        meta={formatDate(today, "longWeekday", locale)}
-        actions={
-          <span className="inline-flex h-7 items-center rounded-md border border-border bg-bg-surface px-2.5 text-caption font-medium text-text-secondary shadow-xs">
-            {formatDate(today, "weekday", locale)}
-          </span>
-        }
+        title={selectedDateIsToday ? t("today.title") : daily("selectedDay")}
+        description={daily("selectedDayDescription")}
+        meta={formatDate(selectedDate, "longWeekday", locale)}
       />
 
-      <div className="mb-6 grid min-w-0 grid-cols-2 gap-3 min-[1151px]:grid-cols-4">
+      <TodayDateNavigation
+        selectedDate={selectedDate}
+        today={today}
+        scope={scope}
+        locale={locale}
+      />
+
+      <div className="mb-4 grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3">
         <TodayMetric
           icon={ListTodo}
-          value={`${scopedPlan.done.length}/${openItems.length + scopedPlan.done.length}`}
-          label={t("widgets.todayTasks.title")}
+          value={`${scopedPlan.done.length}/${allTasks.length}`}
+          label={daily("taskProgress", { done: scopedPlan.done.length, total: allTasks.length })}
         />
         <TodayMetric
           icon={Clock3}
-          value={timelineItems.length > 0 ? String(timelineItems.length) : "—"}
-          label={t("today.scheduleHeading")}
+          value={nextScheduled ? nextScheduled.time : "—"}
+          label={nextScheduled ? `${daily("nextUp")}: ${nextScheduled.title}` : daily("noUpcoming")}
         />
-        <TodayMetric
-          icon={Target}
-          value={mainGoal ? `${Math.round(mainGoal.progress.percent)}%` : "—"}
-          label={t("widgets.goalProgress.title")}
-        />
-        <TodayMetric
-          icon={Gauge}
-          value={`${Math.max(0, capacity.remainingMinutes)} ${t("today.minutes")}`}
-          label={t("today.capacityHeading")}
-        />
+        {dailyPlan ? (
+          <TodayMetric
+            icon={Gauge}
+            value={`${dailyPlan.available_minutes} ${t("today.minutes")}`}
+            label={daily("plannedBudget")}
+          />
+        ) : null}
       </div>
 
-      <div
-        data-testid="today-card-layout"
-        className="grid min-w-0 gap-0 min-[1151px]:block min-[1151px]:columns-2 min-[1151px]:gap-x-4 min-[1440px]:columns-3"
-      >
-        <div className="contents">
-          <section
-            data-testid="today-layout-card"
-            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
-            aria-labelledby="today-plan-heading"
-          >
-            <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex min-w-0 items-start gap-2">
-                <ListTodo className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden="true" />
-                <div className="min-w-0">
-                  <h2 id="today-plan-heading" className="text-h3 font-semibold text-text-primary">
-                    {t("today.planHeading")}
-                  </h2>
-                  <p className="text-small text-text-secondary">{t("today.planDescription")}</p>
-                </div>
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(19rem,0.8fr)]">
+        <section
+          className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs sm:p-5"
+          aria-labelledby="today-plan-heading"
+        >
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+            <div className="flex min-w-0 items-start gap-2">
+              <ListTodo className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden="true" />
+              <div className="min-w-0">
+                <h2 id="today-plan-heading" className="text-h3 font-semibold text-text-primary">
+                  {planHeading}
+                </h2>
+                <p className="text-small text-text-secondary">{t("today.planDescription")}</p>
               </div>
-              <Link
-                href="/inbox"
-                className="inline-flex items-center gap-1 text-small font-medium text-brand-600 hover:underline"
-              >
-                <Inbox className="size-4" aria-hidden="true" />
-                {t("today.openInbox")}
-              </Link>
             </div>
+            <Link
+              href="/inbox"
+              className="inline-flex items-center gap-1 text-small font-medium text-brand-600 hover:underline"
+            >
+              <Inbox className="size-4" aria-hidden="true" />
+              {t("today.openInbox")}
+            </Link>
+          </div>
 
-            <TaskList
-              items={openItems.concat(scopedPlan.done)}
-              today={today}
-              goalOptions={goalOptions}
-              showGoal
-              groupByStatus={false}
-              variant="plain"
-              emptyState={
-                <div className="flex min-w-0 items-start gap-3 rounded-lg bg-brand-50 p-4">
-                  <Target className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden="true" />
-                  <div className="min-w-0">
-                    <h3 className="text-small font-semibold text-text-primary">
-                      {t("today.emptyTitle")}
-                    </h3>
-                    <p className="mt-1 text-small break-words text-text-secondary">
-                      {t("today.emptyDescription")}
-                    </p>
-                  </div>
-                </div>
-              }
-            />
-            <QuickTaskInput today={today} defaultDomain={scope === "life" ? null : "work"} />
-          </section>
-        </div>
+          <DailyPriorityList
+            key={`${me.userId}:${selectedDate}`}
+            userId={me.userId}
+            planDate={selectedDate}
+            items={openItems}
+            eligiblePriorityTaskIds={eligiblePriorityTaskIds}
+            priorityTaskIds={selectedPriorityTaskIds}
+            version={priorityOrder?.version ?? 0}
+            priorityIsSaved={priorityIsSaved}
+            goalOptions={goalOptions}
+            emptyState={emptyTaskState(emptySelectedTitle, emptySelectedDescription)}
+          />
 
-        <div className="contents">
-          <section
-            data-testid="today-layout-card"
-            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
-            aria-labelledby="today-schedule-heading"
-          >
-            <div className="mb-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex min-w-0 items-start gap-2">
-                <Clock3 className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden="true" />
-                <div className="min-w-0">
-                  <h2
-                    id="today-schedule-heading"
-                    className="text-h3 font-semibold text-text-primary"
-                  >
-                    {t("today.scheduleHeading")}
-                  </h2>
-                  <p className="text-small text-text-secondary">{t("today.scheduleDescription")}</p>
-                </div>
+          <QuickTaskInput
+            today={selectedDate}
+            defaultDomain={scope === "life" ? null : "work"}
+            placeholder={daily("quickTaskPlaceholder")}
+          />
+        </section>
+
+        <section
+          className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs sm:p-5"
+          aria-labelledby="today-schedule-heading"
+        >
+          <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+            <div className="flex min-w-0 items-start gap-2">
+              <Clock3 className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden="true" />
+              <div className="min-w-0">
+                <h2 id="today-schedule-heading" className="text-h3 font-semibold text-text-primary">
+                  {scheduleHeading}
+                </h2>
+                <p className="text-small text-text-secondary">{t("today.scheduleDescription")}</p>
               </div>
-              <Link
-                href="/calendar?view=day"
-                className="text-small font-medium text-brand-600 hover:underline"
-              >
-                {t("today.openCalendar")}
-              </Link>
             </div>
-            {timelineItems.length > 0 ? (
-              <div className="relative mb-4">
-                <span
-                  aria-hidden="true"
-                  className="absolute top-3 bottom-3 left-[6rem] w-px bg-border"
-                />
-                <ul className="max-h-[36rem] space-y-0 overflow-y-auto overscroll-contain pr-1">
-                  {timelineItems.map((item) => (
-                    <li
-                      key={item.id}
-                      className="grid min-w-0 grid-cols-[5.25rem_minmax(0,1fr)] gap-3 py-3"
-                    >
-                      <span className="pt-0.5 text-right text-caption text-text-secondary">
-                        {item.time}
-                      </span>
-                      <div className="relative min-w-0 py-0.5 pl-4">
-                        <span
-                          aria-hidden="true"
-                          className="absolute top-1.5 left-[-0.3125rem] size-2.5 rounded-full border border-border bg-bg-surface"
-                        />
-                        <p className="text-small font-medium break-words text-text-primary">
-                          {item.title}
-                        </p>
-                        <p className="mt-0.5 text-caption text-text-secondary">
-                          {item.kind === "event" ? t("today.calendarEvent") : t("today.timeBlock")}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : (
-              <p className="mb-5 text-small text-text-secondary">{t("today.noTimeBlocks")}</p>
-            )}
+            <Link
+              href={`/calendar?view=day&date=${selectedDate}`}
+              className="text-small font-medium text-brand-600 hover:underline"
+            >
+              {t("today.openCalendar")}
+            </Link>
+          </div>
+
+          {timelineItems.length > 0 ? (
+            <ol className="relative space-y-0" aria-label={scheduleHeading}>
+              {timelineItems.map((item, index) => (
+                <li key={item.id}>
+                  {selectedDateIsToday && currentMarkerIndex === index ? (
+                    <CurrentTimeMarker
+                      label={daily("nowAt", { time: SCHEDULE_TIME_FORMATTER.format(now) })}
+                    />
+                  ) : null}
+                  <TimelineRow
+                    item={item}
+                    eventLabel={t("today.calendarEvent")}
+                    blockLabel={t("today.timeBlock")}
+                  />
+                </li>
+              ))}
+              {selectedDateIsToday && currentMarkerIndex < 0 ? (
+                <li>
+                  <CurrentTimeMarker
+                    label={daily("nowAt", { time: SCHEDULE_TIME_FORMATTER.format(now) })}
+                  />
+                </li>
+              ) : null}
+            </ol>
+          ) : (
+            <p className="mb-4 rounded-lg bg-bg-subtle px-3 py-4 text-small text-text-secondary">
+              {selectedDateIsToday ? t("today.noTimeBlocks") : daily("noScheduleForDate")}
+            </p>
+          )}
+
+          {scheduledNow ? (
+            <p className="mt-3 rounded-lg border border-border bg-bg-subtle px-3 py-2 text-small text-text-secondary">
+              {daily("currentBlock", { title: scheduledNow.title })}
+            </p>
+          ) : null}
+          <details className="mt-4 border-t border-border pt-3">
+            <summary className="min-h-11 cursor-pointer py-2 text-small font-semibold text-brand-700 focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none">
+              {daily("addTimeBlock")}
+            </summary>
             <TimeBlockForm
-              date={today}
+              date={selectedDate}
               tasks={openItems}
               freeIntervals={availability.freeIntervals}
               suggestionNow={nowAt}
             />
-          </section>
-          <div className="contents">
-            {showLifeContext ? (
-              <section
-                data-testid="today-layout-card"
-                className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
-                aria-labelledby="today-routine-heading"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <HeartPulse className="size-5 text-brand-500" aria-hidden="true" />
-                    <h2
-                      id="today-routine-heading"
-                      className="text-h3 font-semibold text-text-primary"
-                    >
-                      {t("today.routineHeading")}
-                    </h2>
-                  </div>
-                  <Link
-                    href="/life"
-                    className="text-small font-medium text-brand-600 hover:underline"
-                  >
-                    {t("today.openRoutine")}
-                  </Link>
-                </div>
-                {scopedHabits.length > 0 ? (
-                  <>
-                    <p className="mt-2 text-small text-text-secondary">
-                      {t("today.routineProgress", {
-                        done: routineDone,
-                        total: scopedHabits.length,
-                      })}
-                    </p>
-                    <ul className="mt-3 space-y-2">
-                      {scopedHabits.slice(0, 3).map((habit) => (
-                        <li
-                          key={habit.id}
-                          className="flex min-w-0 items-start gap-2 text-small text-text-primary"
-                        >
-                          <CheckCircle2
-                            className={`size-4 shrink-0 ${
-                              habit.done ? "text-brand-600" : "text-text-muted"
-                            }`}
-                            aria-hidden="true"
-                          />
-                          <span
-                            className={
-                              habit.done
-                                ? "min-w-0 break-words text-text-secondary line-through"
-                                : "min-w-0 break-words"
-                            }
-                          >
-                            {habit.title}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : (
-                  <p className="mt-2 text-small text-text-secondary">{t("today.routineEmpty")}</p>
-                )}
-              </section>
-            ) : null}
+          </details>
+        </section>
+      </div>
 
-            <section
-              data-testid="today-layout-card"
-              className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
-              aria-labelledby="today-capacity-heading"
-            >
-              <div className="mb-3 flex items-center gap-2">
-                <Gauge className="size-5 shrink-0 text-brand-500" aria-hidden="true" />
-                <h2 id="today-capacity-heading" className="text-h3 font-semibold text-text-primary">
-                  {t("today.capacityHeading")}
-                </h2>
-              </div>
-              {hasCapacityInputs ? (
-                <>
-                  <p className="mt-1 text-small text-text-secondary">
-                    {capacity.overCapacityMinutes > 0
-                      ? t("today.overCapacity", { minutes: capacity.overCapacityMinutes })
-                      : t("today.capacityRemaining", { minutes: capacity.remainingMinutes })}
-                  </p>
-                  <div
-                    role="progressbar"
-                    aria-label={t("today.capacityBar")}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={Math.round(capacityUsagePercent)}
-                    className="mt-4 h-2 overflow-hidden rounded-full bg-brand-50"
-                  >
-                    <div
-                      className={
-                        capacity.overCapacityMinutes > 0
-                          ? "h-full rounded-full bg-danger-500"
-                          : "h-full rounded-full bg-brand-500"
-                      }
-                      style={{ width: capacityUsagePercent + "%" }}
-                    />
-                  </div>
-                  <p className="mt-2 text-caption text-text-secondary">
-                    {t("today.estimateHint", { count: capacity.estimatedTaskCount })}
-                  </p>
-                  <p className="mt-1 text-caption text-text-secondary">
-                    {t("today.capacityBreakdown", {
-                      busy: availability.busyMinutes,
-                      blocks: availability.plannedBlockMinutes,
-                    })}
-                  </p>
-                  <Link
-                    href={"/rescue?date=" + today}
-                    className="mt-3 inline-flex text-small font-medium text-brand-600 hover:underline"
-                  >
-                    {t("today.openRescue")}
-                  </Link>
-                </>
-              ) : (
-                <p className="mt-2 text-small break-words text-text-secondary">
-                  {t("today.capacityNeedsData")}
-                </p>
-              )}
-            </section>
-          </div>
-
-          {mainGoal ? (
-            <section
-              data-testid="today-layout-card"
-              className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
-              aria-label={mainGoal.title}
-            >
-              <GoalProgressPanel
-                goal={mainGoal}
-                others={monthGoals.filter((goal) => goal.id !== mainGoal.id)}
-                waypoints={waypoints}
-                today={today}
-                compact
-              />
-            </section>
-          ) : null}
-        </div>
-
-        <div className="contents">
-          <div
-            data-testid="today-layout-card"
-            className="mb-4 min-w-0 break-inside-avoid-column [&>section]:mb-0"
-          >
-            <WorkflowGuide
-              roleCode={me.profile.role_code}
-              horizon="day"
-              selectedDate={today}
-              primaryAction={{ kind: "today-priorities", href: "#today-plan-heading" }}
-            />
-          </div>
+      <details className="mt-4 rounded-xl border border-border bg-bg-surface shadow-xs">
+        <summary className="min-h-12 cursor-pointer px-4 py-3 text-small font-semibold text-brand-700 focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none">
+          {daily("moreDetails")}
+        </summary>
+        <div className="grid gap-4 border-t border-border p-4 lg:grid-cols-2">
           <section
-            data-testid="today-layout-card"
-            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+            className="min-w-0 rounded-lg border border-border p-4"
             aria-labelledby="today-plan-settings-heading"
           >
             <div className="mb-3 flex items-start gap-2">
               <Sparkles className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden="true" />
-              <div className="min-w-0">
+              <div>
                 <h2
                   id="today-plan-settings-heading"
                   className="text-h3 font-semibold text-text-primary"
@@ -537,139 +424,212 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
               </div>
             </div>
             <DailyPlanForm
-              planDate={today}
+              planDate={selectedDate}
               initial={dailyPlan}
-              eligibleTopPriorityTaskIds={eligibleTopPriorityTaskIds}
               defaultAvailableMinutes={defaultDailyPlanBudget(
                 availability.availableMinutes,
                 availability.plannedBlockMinutes,
               )}
-              tasks={openItems.map((item) => ({
-                id: item.task.id,
-                title: item.task.title,
-                estimatedMinutes: item.task.estimated_minutes,
-                deadline: item.task.deadline,
-                overdue: item.overdue,
-                priority: item.task.priority,
-                goalId: item.task.goal_id,
-                projectId: item.task.project_id,
-              }))}
             />
           </section>
-          {showContextUtility ? (
-            <div className="contents">
-              {showLifeContext ? (
-                <section
-                  data-testid="today-layout-card"
-                  className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
-                  aria-labelledby="today-finance-heading"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <WalletCards className="size-5 text-brand-500" aria-hidden="true" />
-                      <h2
-                        id="today-finance-heading"
-                        className="text-h3 font-semibold text-text-primary"
-                      >
-                        {t("today.financeHeading")}
-                      </h2>
-                    </div>
-                    <Link
-                      href="/finance"
-                      className="text-small font-medium text-brand-600 hover:underline"
-                    >
-                      {t("today.openFinance")}
-                    </Link>
-                  </div>
-                  {dueBills.length > 0 ? (
-                    <ul className="mt-3 space-y-2">
-                      {dueBills.slice(0, 3).map((bill) => (
-                        <li
-                          key={bill.id}
-                          className="flex items-start gap-2 rounded-lg bg-bg-subtle p-3"
-                        >
-                          <ReceiptText
-                            className="mt-0.5 size-4 shrink-0 text-brand-600"
-                            aria-hidden="true"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-small font-medium break-words text-text-primary">
-                              {bill.title}
-                            </p>
-                            <p className="text-caption text-text-secondary">
-                              {bill.amount == null
-                                ? t("today.billDue")
-                                : t("today.billDueAmount", {
-                                    amount: formatTHB(Number(bill.amount), locale),
-                                  })}
-                            </p>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  {financeGoal ? (
-                    <div
-                      className={dueBills.length > 0 ? "mt-3 border-t border-border pt-3" : "mt-3"}
-                    >
-                      <p className="text-body font-medium text-text-primary">{financeGoal.title}</p>
-                      <p className="mt-1 text-small text-text-secondary">
-                        {t("today.financeGoalProgress", {
-                          percent: Math.round(financeGoal.progress.percent),
-                        })}
-                      </p>
-                    </div>
-                  ) : dueBills.length === 0 ? (
-                    <p className="mt-2 text-small text-text-secondary">{t("today.financeEmpty")}</p>
-                  ) : null}
-                </section>
-              ) : null}
 
-              {hasSuggestions ? (
-                <section
-                  data-testid="today-layout-card"
-                  className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
-                  aria-labelledby="today-suggestions-heading"
-                >
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="size-5 text-brand-500" aria-hidden="true" />
-                    <h2
-                      id="today-suggestions-heading"
-                      className="text-h3 font-semibold text-text-primary"
-                    >
-                      {t("today.suggestionsHeading")}
-                    </h2>
-                  </div>
-                  <p className="mt-1 text-small text-text-secondary">
-                    {t("today.suggestionsDescription")}
-                  </p>
-                  <div className="mt-3 space-y-2">
-                    {openItems.length === 0 ? (
-                      <TodaySuggestion href="?new=task" label={t("today.suggestAddPriority")} />
-                    ) : null}
-                    {timeBlocks.length === 0 ? (
-                      <TodaySuggestion
-                        href="/calendar?view=day"
-                        label={t("today.suggestPlanTime")}
-                      />
-                    ) : null}
-                    {showLifeContext && scopedHabits.length === 0 ? (
-                      <TodaySuggestion href="/life" label={t("today.suggestRoutine")} />
-                    ) : null}
-                    {showLifeContext && financeGoals.length === 0 ? (
-                      <TodaySuggestion href="/finance" label={t("today.suggestFinance")} />
-                    ) : null}
-                    {goals.length === 0 ? (
-                      <TodaySuggestion href="/goals?new=goal" label={t("today.startGoal")} />
-                    ) : null}
-                  </div>
-                </section>
-              ) : null}
-            </div>
+          {scopedPlan.done.length > 0 ? (
+            <section
+              className="min-w-0 rounded-lg border border-border p-4"
+              aria-labelledby="today-completed-heading"
+            >
+              <h2
+                id="today-completed-heading"
+                className="mb-2 text-h3 font-semibold text-text-primary"
+              >
+                {t("plannerPrint.completed")}
+              </h2>
+              <TaskList
+                items={scopedPlan.done}
+                today={selectedDate}
+                goalOptions={goalOptions}
+                showGoal
+                groupByStatus={false}
+                variant="plain"
+              />
+            </section>
           ) : null}
+
+          {showLifeContext ? (
+            <section
+              className="min-w-0 rounded-lg border border-border p-4"
+              aria-labelledby="today-routine-heading"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <HeartPulse className="size-5 text-brand-500" aria-hidden="true" />
+                  <h2
+                    id="today-routine-heading"
+                    className="text-h3 font-semibold text-text-primary"
+                  >
+                    {t("today.routineHeading")}
+                  </h2>
+                </div>
+                <Link
+                  href="/life"
+                  className="text-small font-medium text-brand-600 hover:underline"
+                >
+                  {t("today.openRoutine")}
+                </Link>
+              </div>
+              {scopedHabits.length > 0 ? (
+                <>
+                  <p className="mt-2 text-small text-text-secondary">
+                    {t("today.routineProgress", { done: routineDone, total: scopedHabits.length })}
+                  </p>
+                  <ul className="mt-3 space-y-2">
+                    {scopedHabits.slice(0, 3).map((habit) => (
+                      <li
+                        key={habit.id}
+                        className="flex min-w-0 items-start gap-2 text-small text-text-primary"
+                      >
+                        <CheckCircle2
+                          className={`size-4 shrink-0 ${habit.done ? "text-brand-600" : "text-text-muted"}`}
+                          aria-hidden="true"
+                        />
+                        <span
+                          className={
+                            habit.done
+                              ? "min-w-0 break-words text-text-secondary line-through"
+                              : "min-w-0 break-words"
+                          }
+                        >
+                          {habit.title}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p className="mt-2 text-small text-text-secondary">{t("today.routineEmpty")}</p>
+              )}
+            </section>
+          ) : null}
+
+          {mainGoal ? (
+            <section
+              className="min-w-0 rounded-lg border border-border p-4"
+              aria-label={mainGoal.title}
+            >
+              <GoalProgressPanel
+                goal={mainGoal}
+                others={monthGoals.filter((goal) => goal.id !== mainGoal.id)}
+                waypoints={waypoints}
+                today={selectedDate}
+                compact
+              />
+            </section>
+          ) : null}
+
           <section
-            data-testid="today-layout-card"
-            className="mb-4 min-w-0 break-inside-avoid-column rounded-xl border border-border bg-bg-surface p-4 shadow-xs"
+            className="min-w-0 rounded-lg border border-border p-4"
+            aria-labelledby="today-capacity-heading"
+          >
+            <div className="mb-2 flex items-center gap-2">
+              <Gauge className="size-5 shrink-0 text-brand-500" aria-hidden="true" />
+              <h2 id="today-capacity-heading" className="text-h3 font-semibold text-text-primary">
+                {t("today.capacityHeading")}
+              </h2>
+            </div>
+            {hasCapacityInputs ? (
+              <>
+                <p className="text-small text-text-secondary">{daily("freeWindowNote")}</p>
+                {dailyPlan ? (
+                  <p className="mt-2 text-small text-text-secondary">
+                    {daily("plannedBudget")}: {dailyPlan.available_minutes} {t("today.minutes")}
+                  </p>
+                ) : null}
+                <p className="mt-1 text-caption text-text-secondary">
+                  {t("today.capacityBreakdown", {
+                    busy: availability.busyMinutes,
+                    blocks: availability.plannedBlockMinutes,
+                  })}
+                </p>
+                <Link
+                  href={`/rescue?date=${selectedDate}`}
+                  className="mt-3 inline-flex text-small font-medium text-brand-600 hover:underline"
+                >
+                  {t("today.openRescue")}
+                </Link>
+              </>
+            ) : (
+              <p className="mt-2 text-small break-words text-text-secondary">
+                {t("today.capacityNeedsData")}
+              </p>
+            )}
+          </section>
+
+          {showLifeContext ? (
+            <section
+              className="min-w-0 rounded-lg border border-border p-4"
+              aria-labelledby="today-finance-heading"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <WalletCards className="size-5 text-brand-500" aria-hidden="true" />
+                  <h2
+                    id="today-finance-heading"
+                    className="text-h3 font-semibold text-text-primary"
+                  >
+                    {t("today.financeHeading")}
+                  </h2>
+                </div>
+                <Link
+                  href="/finance"
+                  className="text-small font-medium text-brand-600 hover:underline"
+                >
+                  {t("today.openFinance")}
+                </Link>
+              </div>
+              {dueBills.length > 0 ? (
+                <ul className="mt-3 space-y-2">
+                  {dueBills.slice(0, 3).map((bill) => (
+                    <li
+                      key={bill.id}
+                      className="flex items-start gap-2 rounded-lg bg-bg-subtle p-3"
+                    >
+                      <ReceiptText
+                        className="mt-0.5 size-4 shrink-0 text-brand-600"
+                        aria-hidden="true"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-small font-medium break-words text-text-primary">
+                          {bill.title}
+                        </p>
+                        <p className="text-caption text-text-secondary">
+                          {bill.amount == null
+                            ? t("today.billDue")
+                            : t("today.billDueAmount", {
+                                amount: formatTHB(Number(bill.amount), locale),
+                              })}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+              {financeGoal ? (
+                <div className={dueBills.length > 0 ? "mt-3 border-t border-border pt-3" : "mt-3"}>
+                  <p className="text-body font-medium text-text-primary">{financeGoal.title}</p>
+                  <p className="mt-1 text-small text-text-secondary">
+                    {t("today.financeGoalProgress", {
+                      percent: Math.round(financeGoal.progress.percent),
+                    })}
+                  </p>
+                </div>
+              ) : dueBills.length === 0 ? (
+                <p className="mt-2 text-small text-text-secondary">{t("today.financeEmpty")}</p>
+              ) : null}
+            </section>
+          ) : null}
+
+          <section
+            className="min-w-0 rounded-lg border border-border p-4"
             aria-labelledby="today-notes-heading"
           >
             <div className="mb-3 flex min-w-0 items-center gap-2">
@@ -683,10 +643,19 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
                 </span>
               ) : null}
             </div>
-            <NotesList notes={notes} date={today} />
+            <NotesList notes={notes} date={selectedDate} />
+          </section>
+
+          <section className="min-w-0 rounded-lg border border-border p-4">
+            <WorkflowGuide
+              roleCode={me.profile.role_code}
+              horizon="day"
+              selectedDate={selectedDate}
+              primaryAction={{ kind: "today-priorities", href: "#today-plan-heading" }}
+            />
           </section>
         </div>
-      </div>
+      </details>
     </>
   );
 }
@@ -701,21 +670,73 @@ function TodayMetric({
   label: string;
 }) {
   return (
-    <section className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs">
-      <div className="flex items-center gap-3">
+    <section className="min-w-0 rounded-xl border border-border bg-bg-surface px-3 py-3 shadow-xs sm:p-4">
+      <div className="flex min-w-0 items-center gap-3">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
           <Icon className="size-[18px]" strokeWidth={1.8} aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <strong className="block text-xl font-semibold tracking-[-0.02em] break-words text-text-primary">
+          <strong className="block text-lg font-semibold tracking-[-0.02em] break-words text-text-primary sm:text-xl">
             {value}
           </strong>
-          <span className="mt-0.5 block min-h-8 text-caption leading-4 break-words text-text-secondary">
+          <span className="mt-0.5 block text-caption leading-4 break-words text-text-secondary">
             {label}
           </span>
         </div>
       </div>
     </section>
+  );
+}
+
+function TimelineRow({
+  item,
+  eventLabel,
+  blockLabel,
+}: {
+  item: { id: string; title: string; time: string; kind: "event" | "block" };
+  eventLabel: string;
+  blockLabel: string;
+}) {
+  return (
+    <div className="grid min-w-0 grid-cols-[4.5rem_minmax(0,1fr)] gap-3 border-b border-border/70 py-3 last:border-b-0 sm:grid-cols-[5rem_minmax(0,1fr)]">
+      <span className="pt-0.5 text-right text-caption text-text-secondary">{item.time}</span>
+      <div className="relative min-w-0 border-l border-border pl-4">
+        <span
+          aria-hidden="true"
+          className="absolute top-1 left-[-0.3125rem] size-2.5 rounded-full border border-border bg-bg-surface"
+        />
+        <p className="text-small font-medium break-words text-text-primary">{item.title}</p>
+        <p className="mt-0.5 text-caption text-text-secondary">
+          {item.kind === "event" ? eventLabel : blockLabel}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CurrentTimeMarker({ label }: { label: string }) {
+  return (
+    <div className="grid min-w-0 grid-cols-[4.5rem_minmax(0,1fr)] gap-3 py-1 text-caption font-semibold text-brand-700 sm:grid-cols-[5rem_minmax(0,1fr)]">
+      <span aria-hidden="true" />
+      <div className="flex min-w-0 items-center gap-2 border-l-2 border-brand-600 pl-3">
+        <span className="size-2 shrink-0 rounded-full bg-brand-600" aria-hidden="true" />
+        <span className="break-words">{label}</span>
+      </div>
+    </div>
+  );
+}
+
+function emptyTaskState(title: string, description: string) {
+  return (
+    <div className="flex min-w-0 items-start gap-3 rounded-lg bg-brand-50 p-4">
+      <Target className="mt-0.5 size-5 shrink-0 text-brand-600" aria-hidden="true" />
+      <div className="min-w-0">
+        <h3 className="text-small font-semibold text-text-primary">{title}</h3>
+        {description ? (
+          <p className="mt-1 text-small break-words text-text-secondary">{description}</p>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -728,19 +749,6 @@ function filterPlan(plan: DayPlan<TaskWithGoal>, scope: Scope): DayPlan<TaskWith
     due: filter(plan.due),
     done: filter(plan.done),
   };
-}
-
-function TodaySuggestion({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      scroll={false}
-      className="flex items-center gap-2 rounded-lg bg-brand-50 px-3 py-2 text-small font-medium text-brand-800 transition-colors hover:bg-brand-100"
-    >
-      <Sparkles className="size-4 shrink-0 text-brand-500" aria-hidden="true" />
-      <span className="min-w-0 break-words">{label}</span>
-    </Link>
-  );
 }
 
 function formatTime(timestamp: string, locale: AppLocale) {
@@ -757,9 +765,7 @@ function clockMinutes(value: string) {
   return hour * 60 + minute;
 }
 
-function timestampClockMinutes(value: string) {
-  const parts = SCHEDULE_TIME_FORMATTER.formatToParts(new Date(value));
-  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? 0);
-  const minute = Number(parts.find((part) => part.type === "minute")?.value ?? 0);
-  return hour * 60 + minute;
+function dateClockMinutes(value: string, date: ISODate) {
+  const dateStart = Date.parse(`${date}T00:00:00+07:00`);
+  return Math.floor((Date.parse(value) - dateStart) / 60_000);
 }

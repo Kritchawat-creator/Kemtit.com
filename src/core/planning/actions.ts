@@ -55,6 +55,7 @@ export async function savePlanningPreferences(input: unknown): Promise<ActionRes
 export async function saveDailyPlan(input: unknown): Promise<ActionResult> {
   const parsed = dailyPlanSchema.safeParse(input);
   if (!parsed.success) return zodFail(parsed.error);
+  if (parsed.data.topPriorities !== undefined) return fail("priorityActionRequired");
 
   const { supabase, user } = await requireUser();
   if (!user) return fail("unauthorized");
@@ -64,7 +65,6 @@ export async function saveDailyPlan(input: unknown): Promise<ActionResult> {
       user_id: user.id,
       plan_date: parsed.data.planDate,
       available_minutes: parsed.data.availableMinutes,
-      top_priorities: parsed.data.topPriorities,
       notes: parsed.data.notes ?? null,
     },
     { onConflict: "user_id,plan_date" },

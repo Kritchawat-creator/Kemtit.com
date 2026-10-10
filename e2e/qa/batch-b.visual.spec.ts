@@ -91,7 +91,17 @@ test("capture Batch B Today and Quick Capture at the approved viewports", async 
   });
   await expect(preview).toBeVisible();
   await expect(preview.getByText("ส่งรายงานพรุ่งนี้", { exact: true })).toBeVisible();
-  await expect(preview.getByText("งาน", { exact: true })).toBeVisible();
+  const previewHeading = preview.getByRole("heading", {
+    name: "ตัวอย่างจะอัปเดตตามข้อความที่พิมพ์",
+    exact: true,
+  });
+  await expect(previewHeading.locator("..").getByText("งาน", { exact: true })).toBeVisible();
+  const previewScope = preview
+    .locator("dt")
+    .filter({ hasText: /^ด้านของชีวิต \/ บริบท$/ })
+    .locator("..")
+    .getByRole("definition");
+  await expect(previewScope).toHaveText("งาน");
 
   if (projectName === "mobile-chrome") await expectAvailableWidth(preview);
 

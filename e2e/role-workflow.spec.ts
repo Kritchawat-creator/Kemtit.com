@@ -1,6 +1,6 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 
-import { signInWithOtp, uniqueEmail } from "./helpers";
+import { registerWithPassword, uniqueEmail } from "./helpers";
 
 const ROLE_OPTIONS = [
   { code: "employee", pickerName: "พนักงาน", guideName: "พนักงาน" },
@@ -43,11 +43,8 @@ function todayInBangkok(): string {
   return dateParts.year + "-" + dateParts.month + "-" + dateParts.day;
 }
 
-async function onboardAsRole(
-  page: Page,
-  role: (typeof ROLE_OPTIONS)[number],
-): Promise<void> {
-  await signInWithOtp(page, uniqueEmail("workflow-" + role.code));
+async function onboardAsRole(page: Page, role: (typeof ROLE_OPTIONS)[number]): Promise<void> {
+  await registerWithPassword(page, uniqueEmail("workflow-" + role.code));
   await expect(page).toHaveURL(/\/onboarding\/persona/);
 
   await page.getByText(role.pickerName, { exact: true }).click();
@@ -69,10 +66,7 @@ async function assertGuideAndCapture(
   viewport: (typeof VIEWPORTS)[number],
 ): Promise<void> {
   await page.setViewportSize(viewport);
-  const path =
-    horizon === "day"
-      ? "/today"
-      : "/plan?view=" + horizon + "&date=" + selectedDate;
+  const path = horizon === "day" ? "/today" : "/plan?view=" + horizon + "&date=" + selectedDate;
   await page.goto(path);
 
   const guide = page.getByRole("region", { name: "ขั้นตอนการใช้งาน" });
@@ -90,9 +84,10 @@ async function assertGuideAndCapture(
           ? "/today"
           : "/calendar?view=day&date=" + selectedDate
         : "/plan?view=" + target + "&date=" + selectedDate;
-    await expect(
-      navigation.getByRole("link", { name: PERIOD_NAMES[target] }),
-    ).toHaveAttribute("href", expectedHref);
+    await expect(navigation.getByRole("link", { name: PERIOD_NAMES[target] })).toHaveAttribute(
+      "href",
+      expectedHref,
+    );
   }
 
   const nextAction = guide.getByRole("group", { name: "เริ่มจากข้อนี้" });
@@ -117,8 +112,8 @@ async function assertGuideAndCapture(
 
   const details = guide.locator("details");
   expect(await details.evaluate((element) => (element as HTMLDetailsElement).open)).toBe(false);
-  const scrollWidth = await page.evaluate(
-    () => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+  const scrollWidth = await page.evaluate(() =>
+    Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
   );
   expect(scrollWidth).toBeLessThanOrEqual(viewport.width + 1);
 
@@ -222,38 +217,37 @@ test.describe("Role and planning horizon workflow guide", () => {
   test.describe.configure({ mode: "serial" });
 
   for (const role of ROLE_OPTIONS) {
-    test(role.code + " sees workflow guidance for every planning horizon", async ({ page }, testInfo) => {
-      test.skip(
-        testInfo.project.name !== "desktop-chrome",
-        "This test captures the four requested viewport sizes directly.",
-      );
-      test.setTimeout(180_000);
-      await onboardAsRole(page, role);
+    test(
+      role.code + " sees workflow guidance for every planning horizon",
+      async ({ page }, testInfo) => {
+        test.skip(
+          testInfo.project.name !== "desktop-chrome",
+          "This test captures the four requested viewport sizes directly.",
+        );
+        test.setTimeout(180_000);
+        await onboardAsRole(page, role);
 
-      const selectedDate = todayInBangkok();
-      for (const viewport of VIEWPORTS) {
-        for (const horizon of ["year", "month", "week", "day"] as const) {
-          await assertGuideAndCapture(page, testInfo, role, horizon, selectedDate, viewport);
+        const selectedDate = todayInBangkok();
+        for (const viewport of VIEWPORTS) {
+          for (const horizon of ["year", "month", "week", "day"] as const) {
+            await assertGuideAndCapture(page, testInfo, role, horizon, selectedDate, viewport);
+          }
         }
-      }
 
-      await page.setViewportSize(VIEWPORTS[0]);
-      await page.goto("/plan?view=year&date=" + selectedDate);
-      await page
-        .getByRole("navigation", { name: "ช่วงเวลาในแผน" })
-        .getByRole("link", { name: PERIOD_NAMES.month })
-        .click();
-      await expect(page).toHaveURL(
-        "/plan?view=month&date=" + selectedDate,
-      );
-      await page
-        .getByRole("navigation", { name: "ช่วงเวลาในแผน" })
-        .getByRole("link", { name: PERIOD_NAMES.week })
-        .click();
-      await expect(page).toHaveURL(
-        "/plan?view=week&date=" + selectedDate,
-      );
-    });
+        await page.setViewportSize(VIEWPORTS[0]);
+        await page.goto("/plan?view=year&date=" + selectedDate);
+        await page
+          .getByRole("navigation", { name: "ช่วงเวลาในแผน" })
+          .getByRole("link", { name: PERIOD_NAMES.month })
+          .click();
+        await expect(page).toHaveURL("/plan?view=month&date=" + selectedDate);
+        await page
+          .getByRole("navigation", { name: "ช่วงเวลาในแผน" })
+          .getByRole("link", { name: PERIOD_NAMES.week })
+          .click();
+        await expect(page).toHaveURL("/plan?view=week&date=" + selectedDate);
+      },
+    );
   }
 
   test("Today workflow guide stays readable across narrow content widths", async ({

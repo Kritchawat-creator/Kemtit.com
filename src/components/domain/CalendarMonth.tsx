@@ -8,6 +8,7 @@ import { cn } from "cn";
 import type { DayTaskItem, PlanTask } from "@/core/domain/dayplan";
 import type { CalendarContextByDay } from "@/core/domain/calendar-context";
 import type { Domain } from "@/core/domain/domains";
+import type { Scope } from "@/core/profile/scope";
 import type { AppLocale } from "@/i18n/config";
 import { type ISODate, startOfMonthISO } from "@/lib/date";
 import { formatDate, formatWeekdayNarrow } from "@/lib/format";
@@ -25,9 +26,10 @@ type Props = {
   contextByDay?: CalendarContextByDay;
   today: ISODate;
   selected?: ISODate;
+  scope?: Scope;
 };
 
-export function CalendarMonth({ date, weeks, byDay, contextByDay = {}, today, selected }: Props) {
+export function CalendarMonth({ date, weeks, byDay, contextByDay = {}, today, selected, scope }: Props) {
   const t = useTranslations("calendar");
   const ta = useTranslations();
   const locale = useLocale() as AppLocale;
@@ -77,7 +79,7 @@ export function CalendarMonth({ date, weeks, byDay, contextByDay = {}, today, se
           return (
             <li key={day} className="min-w-0">
               <Link
-                href={calendarHref(isMobile ? "day" : "month", day)}
+                href={calendarHref(isMobile ? "day" : "month", day, scope)}
                 aria-label={`${formatDate(day, "long", locale)} · ${t("tasksCount", { count: items.length })}${contextLabels.length ? ` · ${contextLabels.join(" · ")}` : ""}`}
                 aria-current={isSelected ? "date" : undefined}
                 className={cn(

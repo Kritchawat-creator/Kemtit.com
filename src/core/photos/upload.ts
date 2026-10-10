@@ -29,7 +29,7 @@ const DEFINITE_ATTACH_FAILURES = new Set([
 ]);
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-type PreparedPhoto = { ok: true; blob: Blob } | { ok: false; error: string };
+export type PreparedPhoto = { ok: true; blob: Blob } | { ok: false; error: string };
 
 function extensionOf(type: string): "jpg" | "png" | "webp" {
   if (type === "image/png") return "png";
@@ -53,7 +53,7 @@ async function encodeResizedPhoto(canvas: HTMLCanvasElement, sourceType: string)
   return null;
 }
 
-async function preparePhoto(file: File): Promise<PreparedPhoto> {
+export async function preparePhoto(file: File): Promise<PreparedPhoto> {
   if (!isAllowedPhotoType(file.type)) return { ok: false, error: "photoType" };
   if (file.size <= 0) return { ok: false, error: "photoInvalid" };
   if (file.size > PHOTO_MAX_BYTES) return { ok: false, error: "photoTooLarge" };

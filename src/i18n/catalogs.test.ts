@@ -75,6 +75,8 @@ const THAI_ALLOWED_LATIN_TOKENS_BY_PATH: Record<string, readonly string[]> = {
   "line.notCode": ["LINE"],
   "pwa.install.iosSteps": ["iPhone", "iPad"],
   "photos.attachHint": ["JPG", "PNG", "WebP", "MB"],
+  "taskCards.keyboardInstructions": ["Escape"],
+  "plannerPrint.saveAsPdf": ["PDF"],
 };
 
 describe("i18n catalogs", () => {
