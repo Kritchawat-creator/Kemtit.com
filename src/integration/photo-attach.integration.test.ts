@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
 
 import { PHOTO_BUCKET } from "@/lib/supabase/storage";
+import { signInAndApproveFixtureSession } from "@/integration/support/auth";
 import type { Database } from "@/types/database";
 
 type DbClient = SupabaseClient<Database>;
@@ -61,11 +62,11 @@ describe.skipIf(!integrationEnabled)("atomic task photo attachment on local Supa
       userIds.push(other.id);
 
       const client = userClient();
-      const { error: signInError } = await client.auth.signInWithPassword({
+      await signInAndApproveFixtureSession(client, admin, {
         email: owner.email,
         password: owner.password,
+        userId: owner.id,
       });
-      expect(signInError).toBeNull();
 
       async function createTask(userId: string, title: string) {
         const { data, error } = await admin

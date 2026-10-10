@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-import { completeOnboarding, latestOtpFor, uniqueEmail } from "./helpers";
+import { completeOnboarding, E2E_TEST_PASSWORD, latestOtpFor, uniqueEmail } from "./helpers";
 
 async function expectNoHorizontalOverflow(page: Page) {
   await expect
@@ -8,7 +8,9 @@ async function expectNoHorizontalOverflow(page: Page) {
     .toBe(true);
 }
 
-test("new user can register with email OTP and reach onboarding", async ({ page }, testInfo) => {
+test("new user can register with a password, verify email, and reach onboarding", async ({
+  page,
+}, testInfo) => {
   if (testInfo.project.name === "mobile-chrome") {
     await page.setViewportSize({ width: 320, height: 844 });
   }
@@ -20,7 +22,7 @@ test("new user can register with email OTP and reach onboarding", async ({ page 
 
   await page.goto(`/register?next=${encodedNext}`);
   await expect(page.getByRole("heading", { name: "สร้างบัญชี" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "รับรหัสยืนยัน" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "ไปยืนยันอีเมล" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
   const signInLink = page.getByRole("link", { name: "เข้าสู่ระบบ" });
@@ -40,10 +42,14 @@ test("new user can register with email OTP and reach onboarding", async ({ page 
 
   await page.getByLabel("ชื่อที่แสดง").fill(displayName);
   await page.getByLabel("อีเมล").fill(email);
-  await page.getByRole("button", { name: "รับรหัสยืนยัน" }).click();
+  await page.getByLabel("รหัสผ่าน", { exact: true }).fill(E2E_TEST_PASSWORD);
+  await page.getByLabel("ยืนยันรหัสผ่าน", { exact: true }).fill(E2E_TEST_PASSWORD);
+  await page.getByRole("button", { name: "ไปยืนยันอีเมล" }).click();
   await expect(page.getByRole("heading", { name: "ยืนยันอีเมล" })).toBeVisible();
   await expect(page.getByText(email, { exact: true })).toBeVisible();
-  await expect(page.getByText("กรอกรหัส 6 หลัก ระบบจะยืนยันให้อัตโนมัติ")).toBeVisible();
+  await expect(
+    page.getByText("กรอกรหัส 6 หลักเพื่อยืนยันอีเมลและสร้างบัญชีให้เสร็จ"),
+  ).toBeVisible();
   await expect(page.getByText("ผู้ใช้ใหม่จะไปตั้งค่าเริ่มต้นหลังยืนยัน")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 

@@ -11,10 +11,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { BrandLogo } from "@/components/BrandLogo";
-import { requestOtp, startGoogleSignIn, verifyOtp } from "@/core/auth/actions";
-import { requestOtpSchema } from "@/core/auth/schema";
-import { updateDisplayName } from "@/core/profile/actions";
-import { updateDisplayNameSchema } from "@/core/profile/schema";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,25 +23,39 @@ import {
 import { FormMessageI18n } from "@/components/ui/form-i18n";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  completeRegistrationOtp,
+  resendEmailOtp,
+  requestRegistrationOtp,
+  startGoogleSignIn,
+} from "@/core/auth/actions";
+import { emailSchema, newPasswordSchema } from "@/core/auth/schema";
+import { updateDisplayName } from "@/core/profile/actions";
+import { updateDisplayNameSchema } from "@/core/profile/schema";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 const OTP_LENGTH = 6;
 
-const registrationDetailsSchema = z.object({
-  displayName: updateDisplayNameSchema.shape.displayName,
-  email: requestOtpSchema.shape.email,
-});
+const registrationDetailsSchema = z
+  .object({
+    displayName: updateDisplayNameSchema.shape.displayName,
+    email: emailSchema.shape.email,
+    password: newPasswordSchema,
+    confirmPassword: z.string(),
+  })
+  .refine((details) => details.password === details.confirmPassword, {
+    path: ["confirmPassword"],
+    error: "passwordMismatch",
+  });
 
 type RegistrationDetails = z.infer<typeof registrationDetailsSchema>;
 type ErrorKey = Parameters<ReturnType<typeof useTranslations<"errors">>>[0];
 type RegisterStep = "details" | "code" | "save";
-type PendingAction = "sendOtp" | "verifyOtp" | "google" | "saveName" | null;
+type PendingAction = "sendOtp" | "verifyOtp" | "resend" | "google" | "saveName" | null;
 
-/** สมัครสมาชิกด้วยชื่อที่แสดงและอีเมล จากนั้นยืนยัน OTP ก่อนบันทึกโปรไฟล์ */
 export function RegisterForm({ next, error: initialError }: { next?: string; error?: string }) {
   const t = useTranslations("auth");
   const ta = useTranslations("app");
-  const tc = useTranslations("common");
   const te = useTranslations("errors");
   const router = useRouter();
   const signInHref = next ? `/login?next=${encodeURIComponent(next)}` : "/login";
@@ -56,10 +66,12 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
   const [code, setCode] = useState("");
   const [serverError, setServerError] = useState<string | null>(initialError ?? null);
   const [cooldown, setCooldown] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
   const [pending, startTransition] = useTransition();
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const otpRef = useRef<HTMLInputElement>(null);
   const isSendingOtp = pending && pendingAction === "sendOtp";
+  const isResendingOtp = pending && pendingAction === "resend";
   const isVerifyingOtp = pending && pendingAction === "verifyOtp";
   const isGooglePending = pending && pendingAction === "google";
   const isSavingName = pending && pendingAction === "saveName";
@@ -67,7 +79,7 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
 
   const form = useForm<RegistrationDetails>({
     resolver: zodResolver(registrationDetailsSchema),
-    defaultValues: { displayName: "", email: "" },
+    defaultValues: { displayName: "", email: "", password: "", confirmPassword: "" },
   });
 
   useEffect(() => {
@@ -85,10 +97,19 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
 
   function sendCode(values: RegistrationDetails) {
     setServerError(null);
+    if (registration?.email === values.email) {
+      // Keep the original signup-eligible challenge. A new challenge after the
+      // first OTP creates the Auth user and is no longer eligible for signup.
+      setRegistration(values);
+      setCode("");
+      setStep("code");
+      return;
+    }
+
     setPendingAction("sendOtp");
     startTransition(async () => {
       try {
-        const result = await requestOtp({ email: values.email });
+        const result = await requestRegistrationOtp({ email: values.email });
         if (!result.ok) {
           setServerError(result.error);
           return;
@@ -97,6 +118,8 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
         setCode("");
         setStep("code");
         setCooldown(RESEND_COOLDOWN_SECONDS);
+      } catch {
+        setServerError("generic");
       } finally {
         setPendingAction(null);
       }
@@ -126,7 +149,13 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
     setPendingAction("verifyOtp");
     startTransition(async () => {
       try {
-        const result = await verifyOtp({ email: registration.email, token: value, next });
+        const result = await completeRegistrationOtp({
+          email: registration.email,
+          token: value,
+          password: registration.password,
+          confirmPassword: registration.confirmPassword,
+          next,
+        });
         if (!result.ok) {
           setServerError(result.error);
           setCode("");
@@ -134,15 +163,11 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
           return;
         }
 
-        if (result.data.onboardingRequired) {
-          setVerifiedNext(result.data.next);
-          setStep("save");
-          await saveVerifiedName(result.data.next, registration.displayName);
-          return;
-        }
-
-        router.replace(result.data.next);
-        router.refresh();
+        setVerifiedNext(result.data.next);
+        setStep("save");
+        await saveVerifiedName(result.data.next, registration.displayName);
+      } catch {
+        setServerError("generic");
       } finally {
         setPendingAction(null);
       }
@@ -165,6 +190,27 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
     setStep("details");
   }
 
+  function resendCode() {
+    if (pending || cooldown > 0 || !registration) return;
+    setServerError(null);
+    setPendingAction("resend");
+    startTransition(async () => {
+      try {
+        const result = await resendEmailOtp({ email: registration.email, purpose: "signup" });
+        if (!result.ok) {
+          setServerError(result.error);
+          return;
+        }
+        setCode("");
+        setCooldown(RESEND_COOLDOWN_SECONDS);
+      } catch {
+        setServerError("generic");
+      } finally {
+        setPendingAction(null);
+      }
+    });
+  }
+
   function signInWithGoogle() {
     setServerError(null);
     setPendingAction("google");
@@ -176,6 +222,8 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
           return;
         }
         window.location.assign(result.data.url);
+      } catch {
+        setServerError("generic");
       } finally {
         setPendingAction(null);
       }
@@ -196,7 +244,6 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
                 <FormLabel>{t("registerNameLabel")}</FormLabel>
                 <FormControl>
                   <Input
-                    type="text"
                     autoComplete="nickname"
                     placeholder={t("registerNamePlaceholder")}
                     {...field}
@@ -210,7 +257,6 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="email"
@@ -234,13 +280,57 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
               </FormItem>
             )}
           />
-
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("passwordLabel")}</FormLabel>
+                <FormControl>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    maxLength={72}
+                    {...field}
+                    disabled={pending}
+                  />
+                </FormControl>
+                <FormMessageI18n />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("confirmPasswordLabel")}</FormLabel>
+                <FormControl>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    maxLength={72}
+                    {...field}
+                    disabled={pending}
+                  />
+                </FormControl>
+                <FormMessageI18n />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="button"
+            variant="link"
+            className="min-h-11 px-0"
+            onClick={() => setShowPassword((visible) => !visible)}
+          >
+            {showPassword ? t("hidePassword") : t("showPassword")}
+          </Button>
           {serverError ? (
             <p role="alert" aria-live="polite" className="text-small text-danger-800">
               {translateError(serverError)}
             </p>
           ) : null}
-
           <Button type="submit" size="lg" className="w-full" disabled={pending}>
             {isSendingOtp ? t("sending") : t("registerSendCode")}
           </Button>
@@ -278,7 +368,7 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
           variant="ghost"
           size="icon"
           className="-ml-3 text-brand-800"
-          aria-label={tc("back")}
+          aria-label={t("changeEmail")}
           onClick={returnToDetails}
           disabled={pending}
         >
@@ -289,7 +379,9 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
         </h2>
         <p className="mt-1 text-body text-text-secondary">{t("registerCodeRecipient")}</p>
         <p className="text-h3 break-all text-text-secondary">{registration?.email}</p>
-        <p className="mt-1 text-body text-text-secondary">{t("registerCodeHint")}</p>
+        <p id="register-code-hint" className="mt-1 text-body text-text-secondary">
+          {t("registerCodeHint")}
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -301,7 +393,11 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
           onComplete={submitCode}
           pattern={REGEXP_ONLY_DIGITS}
           inputMode="numeric"
+          pushPasswordManagerStrategy="none"
           aria-label={t("codeLabel")}
+          aria-describedby={
+            serverError ? "register-code-hint register-code-error" : "register-code-hint"
+          }
           aria-invalid={serverError ? true : undefined}
           disabled={pending}
           containerClassName="justify-center"
@@ -313,7 +409,12 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
           </InputOTPGroup>
         </InputOTP>
         {serverError ? (
-          <p role="alert" aria-live="polite" className="text-center text-small text-danger-800">
+          <p
+            id="register-code-error"
+            role="alert"
+            aria-live="polite"
+            className="text-center text-small text-danger-800"
+          >
             {translateError(serverError)}
           </p>
         ) : null}
@@ -327,19 +428,13 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
           variant="ghost"
           className="w-full disabled:text-text-secondary disabled:opacity-100"
           disabled={cooldown > 0 || pending}
-          onClick={() => registration && sendCode(registration)}
+          onClick={resendCode}
         >
-          {isSendingOtp
+          {isResendingOtp
             ? t("sending")
             : cooldown > 0
               ? t("resendIn", { seconds: cooldown })
               : t("resend")}
-        </Button>
-      </div>
-
-      <div className="flex justify-center">
-        <Button type="button" variant="link" onClick={returnToDetails} disabled={pending}>
-          {t("changeEmail")}
         </Button>
       </div>
       <p className="text-center text-small text-text-muted">{t("registerOnboardingHint")}</p>
@@ -398,27 +493,19 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
                 <div className="flex min-h-10 items-center gap-1.5 sm:gap-2">
                   <span
                     aria-hidden="true"
-                    className={`flex size-6 shrink-0 items-center justify-center rounded-full text-caption font-semibold ${
-                      activeStep >= index
-                        ? "bg-brand-500 text-neutral-0"
-                        : "bg-brand-100 text-brand-700"
-                    }`}
+                    className={`flex size-6 shrink-0 items-center justify-center rounded-full text-caption font-semibold ${activeStep >= index ? "bg-brand-500 text-neutral-0" : "bg-brand-100 text-brand-700"}`}
                   >
                     {index + 1}
                   </span>
                   <span
-                    className={`min-w-0 text-caption leading-snug ${
-                      activeStep === index ? "font-semibold text-text-primary" : "text-text-muted"
-                    }`}
+                    className={`min-w-0 text-caption leading-snug ${activeStep === index ? "font-semibold text-text-primary" : "text-text-muted"}`}
                   >
                     {label}
                   </span>
                 </div>
                 <span
                   aria-hidden="true"
-                  className={`mt-1 block h-1 rounded-full ${
-                    activeStep >= index ? "bg-brand-400" : "bg-neutral-200"
-                  }`}
+                  className={`mt-1 block h-1 rounded-full ${activeStep >= index ? "bg-brand-400" : "bg-neutral-200"}`}
                 />
               </li>
             ))}
@@ -429,23 +516,15 @@ export function RegisterForm({ next, error: initialError }: { next?: string; err
           {step === "details" ? detailsContent : step === "code" ? codeContent : saveContent}
         </div>
 
-        {step === "details" ? (
-          <footer className="border-t border-border px-4 py-4 text-center text-caption text-text-secondary sm:px-8">
-            <span>{t("haveAccount")} </span>
-            {pending ? (
-              <span aria-disabled="true" className="font-medium text-text-muted">
-                {t("signInLink")}
-              </span>
-            ) : (
-              <Link
-                href={signInHref}
-                className="font-medium text-brand-700 underline underline-offset-4"
-              >
-                {t("signInLink")}
-              </Link>
-            )}
-          </footer>
-        ) : null}
+        <footer className="border-t border-border px-4 py-5 text-center text-small text-text-secondary sm:px-8">
+          <span>{t("haveAccount")} </span>
+          <Link
+            href={signInHref}
+            className="font-medium text-brand-700 underline underline-offset-4"
+          >
+            {t("signInLink")}
+          </Link>
+        </footer>
       </section>
     </div>
   );

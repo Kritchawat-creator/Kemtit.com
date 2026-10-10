@@ -107,7 +107,10 @@ describe("proxy auth failure handling", () => {
   });
 
   it("keeps the normal redirect from login for a validated user", async () => {
-    configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
+    configureGetClaims(async () => ({
+      data: { claims: { sub: "user-1", role: "authenticated" } },
+      error: null,
+    }));
 
     const response = await proxy(request("/login"));
 
@@ -116,7 +119,10 @@ describe("proxy auth failure handling", () => {
   });
 
   it("redirects a validated user away from registration", async () => {
-    configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
+    configureGetClaims(async () => ({
+      data: { claims: { sub: "user-1", role: "authenticated" } },
+      error: null,
+    }));
 
     const response = await proxy(request("/register"));
 
@@ -125,7 +131,10 @@ describe("proxy auth failure handling", () => {
   });
 
   it("allows an authenticated registration Server Action to save the verified user's name", async () => {
-    configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
+    configureGetClaims(async () => ({
+      data: { claims: { sub: "user-1", role: "authenticated" } },
+      error: null,
+    }));
 
     const response = await proxy(
       request("/register", { method: "POST", headers: { "Next-Action": "save-profile" } }),
@@ -136,7 +145,10 @@ describe("proxy auth failure handling", () => {
   });
 
   it("keeps redirecting an authenticated plain POST from registration", async () => {
-    configureGetClaims(async () => ({ data: { claims: { sub: "user-1" } }, error: null }));
+    configureGetClaims(async () => ({
+      data: { claims: { sub: "user-1", role: "authenticated" } },
+      error: null,
+    }));
 
     const response = await proxy(request("/register", { method: "POST" }));
 
@@ -156,5 +168,20 @@ describe("proxy auth failure handling", () => {
 
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toContain("/login?next=%2Ftoday");
+  });
+
+  it("keeps a pending session on login and redirects it away from protected pages", async () => {
+    configureGetClaims(async () => ({
+      data: { claims: { sub: "00000000-0000-0000-0000-000000000000", role: "kemtit_pending" } },
+      error: null,
+    }));
+
+    const loginResponse = await proxy(request("/login"));
+    expect(loginResponse.headers.get("x-middleware-next")).toBe("1");
+    expect(loginResponse.headers.get("location")).toBeNull();
+
+    const protectedResponse = await proxy(request("/today"));
+    expect(protectedResponse.status).toBe(307);
+    expect(protectedResponse.headers.get("location")).toContain("/login?next=%2Ftoday");
   });
 });

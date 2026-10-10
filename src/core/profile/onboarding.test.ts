@@ -57,4 +57,17 @@ describe("safeInternalPath", () => {
     expect(safeInternalPath("/api/cron/x")).toBeNull();
     expect(safeInternalPath(null)).toBeNull();
   });
+
+  it.each(["/\\evil.example", "/\n/evil.example", "/\t/evil.example", "/\r/evil.example"])(
+    "rejects path characters that can normalize into an external URL (%p)",
+    (path) => {
+      expect(safeInternalPath(path)).toBeNull();
+    },
+  );
+
+  it("preserves an internal path and its query string", () => {
+    expect(safeInternalPath("/today?view=focus&next=%2Fgoals")).toBe(
+      "/today?view=focus&next=%2Fgoals",
+    );
+  });
 });

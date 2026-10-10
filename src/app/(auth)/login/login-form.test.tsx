@@ -1,25 +1,34 @@
 // @vitest-environment jsdom
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  requestOtp: vi.fn(),
+  signInWithPassword: vi.fn(),
+  verifyLoginOtp: vi.fn(),
+  requestRecoveryOtp: vi.fn(),
+  completeRecoveryOtp: vi.fn(),
+  resendEmailOtp: vi.fn(),
   startGoogleSignIn: vi.fn(),
-  verifyOtp: vi.fn(),
   replace: vi.fn(),
   refresh: vi.fn(),
   toastSuccess: vi.fn(),
 }));
 
 vi.mock("@/core/auth/actions", () => ({
-  requestOtp: mocks.requestOtp,
+  signInWithPassword: mocks.signInWithPassword,
+  verifyLoginOtp: mocks.verifyLoginOtp,
+  requestRecoveryOtp: mocks.requestRecoveryOtp,
+  completeRecoveryOtp: mocks.completeRecoveryOtp,
+  resendEmailOtp: mocks.resendEmailOtp,
   startGoogleSignIn: mocks.startGoogleSignIn,
-  verifyOtp: mocks.verifyOtp,
 }));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mocks.replace, refresh: mocks.refresh }),
 }));
+
+vi.mock("@/components/i18n/LanguageSwitcher", () => ({ LanguageSwitcher: () => null }));
 
 vi.mock("next-intl", () => {
   const translate = Object.assign((key: string) => key, { has: () => true });
@@ -38,34 +47,20 @@ Object.defineProperty(document, "elementFromPoint", {
   value: () => document.querySelector("[data-input-otp-container]"),
 });
 
-function fillEmail(email: string) {
+function fillCredentials(email: string, password: string) {
   fireEvent.change(screen.getByLabelText("emailLabel"), { target: { value: email } });
+  fireEvent.change(screen.getByLabelText("passwordLabel"), { target: { value: password } });
 }
 
-function clickSendCode() {
-  fireEvent.click(screen.getByRole("button", { name: "sendCode" }));
-}
-
-function deferred<T>() {
-  let resolve!: (value: T) => void;
-  const promise = new Promise<T>((resolvePromise) => {
-    resolve = resolvePromise;
-  });
-  return { promise, resolve };
+function clickSignIn() {
+  fireEvent.click(screen.getByRole("button", { name: "signIn" }));
 }
 
 beforeEach(() => {
-  mocks.requestOtp.mockReset();
-  mocks.startGoogleSignIn.mockReset();
-  mocks.verifyOtp.mockReset();
-  mocks.replace.mockReset();
-  mocks.refresh.mockReset();
-  mocks.toastSuccess.mockReset();
+  Object.values(mocks).forEach((mock) => mock.mockReset());
 });
 
-afterEach(() => {
-  vi.restoreAllMocks();
-});
+afterEach(() => vi.restoreAllMocks());
 
 afterAll(() => {
   if (elementFromPointDescriptor) {
@@ -76,154 +71,145 @@ afterAll(() => {
 });
 
 describe("LoginForm", () => {
-  it("does not ask returning members for a display name", () => {
-    render(<LoginForm />);
-
-    expect(screen.queryByLabelText("registerNameLabel")).not.toBeInTheDocument();
-  });
-
-  it("validates the email before requesting a code", async () => {
+  it("renders the email-as-username password form and keeps the requested next route", () => {
     const next = "/goals?filter=week&sort=desc";
     render(<LoginForm next={next} />);
+
+    expect(screen.getByRole("heading", { name: "title" })).toBeInTheDocument();
+    expect(screen.getByLabelText("emailLabel")).toHaveAttribute("autocomplete", "username");
+    expect(screen.getByLabelText("passwordLabel")).toHaveAttribute(
+      "autocomplete",
+      "current-password",
+    );
+    expect(screen.getByRole("button", { name: "forgotPassword" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "registerLink" })).toHaveAttribute(
       "href",
       `/register?next=${encodeURIComponent(next)}`,
     );
-    fillEmail("not-an-email");
-    clickSendCode();
-
-    expect(await screen.findByRole("alert", {}, { timeout: ASYNC_TIMEOUT_MS })).toHaveTextContent(
-      "invalidEmail",
-    );
-    expect(mocks.requestOtp).not.toHaveBeenCalled();
   });
 
-  it("shows the send status, not verification status, while resending a code", async () => {
-    const initialRequest = deferred<{ ok: true; data: null }>();
-    const resendRequest = deferred<{ ok: true; data: null }>();
-    mocks.requestOtp
-      .mockReturnValueOnce(initialRequest.promise)
-      .mockReturnValueOnce(resendRequest.promise);
-    const { unmount } = render(<LoginForm />);
+  it("normalizes email before validation and allows existing short passwords", async () => {
+    mocks.signInWithPassword.mockResolvedValue({ ok: false, error: "invalidCredentials" });
+    render(<LoginForm />);
+    fillCredentials("  MAY@EXAMPLE.COM  ", "old");
+    clickSignIn();
 
-    fillEmail("person@example.com");
-    clickSendCode();
-    await waitFor(
-      () => expect(mocks.requestOtp).toHaveBeenCalledWith({ email: "person@example.com" }),
-      { timeout: ASYNC_TIMEOUT_MS },
+    await waitFor(() =>
+      expect(mocks.signInWithPassword).toHaveBeenCalledWith({
+        email: "may@example.com",
+        password: "old",
+        next: undefined,
+      }),
     );
-
-    vi.useFakeTimers();
-    try {
-      await act(async () => {
-        initialRequest.resolve({ ok: true, data: null });
-        await initialRequest.promise;
-      });
-
-      const otpInput = screen.getByLabelText("codeLabel");
-      for (let second = 0; second < 60; second += 1) {
-        await act(async () => {
-          await vi.advanceTimersByTimeAsync(1000);
-        });
-      }
-
-      const resendButton = screen.getByRole("button", { name: "resend" });
-      expect(resendButton).toBeEnabled();
-      fireEvent.click(resendButton);
-
-      expect(mocks.requestOtp).toHaveBeenCalledTimes(2);
-      expect(screen.getByRole("button", { name: "sending" })).toBeDisabled();
-      expect(screen.queryByText("verifying")).not.toBeInTheDocument();
-      expect(otpInput).toBeDisabled();
-
-      await act(async () => {
-        resendRequest.resolve({ ok: true, data: null });
-        await resendRequest.promise;
-      });
-    } finally {
-      await act(async () => {
-        initialRequest.resolve({ ok: true, data: null });
-        resendRequest.resolve({ ok: true, data: null });
-      });
-      unmount();
-      vi.useRealTimers();
-    }
+    expect(await screen.findByRole("alert")).toHaveTextContent("invalidCredentials");
+    expect(mocks.verifyLoginOtp).not.toHaveBeenCalled();
   });
 
-  it("shows the code step and recovers from an invalid OTP", async () => {
-    mocks.requestOtp.mockResolvedValue({ ok: true, data: null });
-    const verifyRequest = deferred<{ ok: false; error: "otpInvalid" }>();
-    mocks.verifyOtp.mockReturnValue(verifyRequest.promise);
-    render(<LoginForm next="/today" />);
+  it("does not start email OTP after a failed password check", async () => {
+    mocks.signInWithPassword.mockResolvedValue({ ok: false, error: "invalidCredentials" });
+    render(<LoginForm />);
+    fillCredentials("person@example.com", "wrong-pass");
+    clickSignIn();
 
-    fillEmail("person@example.com");
-    clickSendCode();
+    expect(await screen.findByRole("alert")).toHaveTextContent("invalidCredentials");
+    expect(screen.queryByLabelText("codeLabel")).not.toBeInTheDocument();
+    expect(mocks.verifyLoginOtp).not.toHaveBeenCalled();
+  });
+
+  it("moves to the OTP step only after password success and redirects after verification", async () => {
+    const user = userEvent.setup();
+    const next = "/today?source=login";
+    mocks.signInWithPassword.mockResolvedValue({ ok: true, data: { mode: "challenge" } });
+    mocks.verifyLoginOtp.mockResolvedValue({
+      ok: true,
+      data: { next: "/today", onboardingRequired: false },
+    });
+    render(<LoginForm next={next} />);
+    fillCredentials("person@example.com", "correct-password");
+    clickSignIn();
 
     const otpInput = await screen.findByLabelText("codeLabel", {}, { timeout: ASYNC_TIMEOUT_MS });
-    expect(
-      await screen.findByRole("heading", { name: /codeTitleShort/ }, { timeout: ASYNC_TIMEOUT_MS }),
-    ).toBeInTheDocument();
-    expect(mocks.requestOtp).toHaveBeenCalledWith({ email: "person@example.com" });
-    await waitFor(
-      () => {
-        expect(otpInput).toBeEnabled();
-        expect(otpInput).toHaveFocus();
-      },
-      { timeout: ASYNC_TIMEOUT_MS },
-    );
-
-    fireEvent.change(otpInput, { target: { value: "123456" } });
-
-    await waitFor(
-      () =>
-        expect(mocks.verifyOtp).toHaveBeenCalledWith({
-          email: "person@example.com",
-          token: "123456",
-          next: "/today",
-        }),
-      { timeout: ASYNC_TIMEOUT_MS },
-    );
-    expect(screen.getByText("verifying")).toBeInTheDocument();
-    expect(otpInput).toBeDisabled();
-
-    await act(async () => {
-      verifyRequest.resolve({ ok: false, error: "otpInvalid" });
-      await verifyRequest.promise;
+    await waitFor(() => expect(otpInput).toBeEnabled());
+    expect(mocks.signInWithPassword).toHaveBeenCalledWith({
+      email: "person@example.com",
+      password: "correct-password",
+      next,
     });
+    await user.type(otpInput, "123456");
 
-    expect(await screen.findByRole("alert", {}, { timeout: ASYNC_TIMEOUT_MS })).toHaveTextContent(
-      "otpInvalid",
+    await waitFor(() =>
+      expect(mocks.verifyLoginOtp).toHaveBeenCalledWith({
+        email: "person@example.com",
+        token: "123456",
+        next,
+      }),
     );
-    await waitFor(
-      () => {
-        expect(otpInput).toHaveValue("");
-        expect(otpInput).toBeEnabled();
-        expect(otpInput).toHaveFocus();
-      },
-      { timeout: ASYNC_TIMEOUT_MS },
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "changeEmail" }));
-    expect(screen.getByLabelText("emailLabel")).toHaveValue("person@example.com");
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    await waitFor(() => expect(mocks.replace).toHaveBeenCalledWith("/today"));
+    expect(mocks.refresh).toHaveBeenCalledOnce();
   });
 
-  it("lets the user return to the email step after a code was sent", async () => {
-    mocks.requestOtp.mockResolvedValue({ ok: true, data: null });
-    render(<LoginForm />);
-
-    fillEmail("person@example.com");
-    clickSendCode();
-    await screen.findByLabelText("codeLabel", {}, { timeout: ASYNC_TIMEOUT_MS });
-
-    const changeEmailButton = screen.getByRole("button", { name: "changeEmail" });
-    await waitFor(() => expect(changeEmailButton).toBeEnabled(), {
-      timeout: ASYNC_TIMEOUT_MS,
+  it("uses a trusted-device password result without asking for OTP", async () => {
+    mocks.signInWithPassword.mockResolvedValue({
+      ok: true,
+      data: { mode: "authenticated", next: "/today", onboardingRequired: false },
     });
-    fireEvent.click(changeEmailButton);
+    render(<LoginForm />);
+    fillCredentials("person@example.com", "correct-password");
+    clickSignIn();
 
-    expect(screen.getByLabelText("emailLabel")).toHaveValue("person@example.com");
-    expect(screen.getByRole("button", { name: "sendCode" })).toBeInTheDocument();
-    expect(mocks.verifyOtp).not.toHaveBeenCalled();
+    await waitFor(() => expect(mocks.replace).toHaveBeenCalledWith("/today"));
+    expect(screen.queryByLabelText("codeLabel")).not.toBeInTheDocument();
+    expect(mocks.verifyLoginOtp).not.toHaveBeenCalled();
+  });
+
+  it("allows a password reset without revealing whether the email is registered", async () => {
+    mocks.requestRecoveryOtp.mockResolvedValue({ ok: true, data: { sent: true } });
+    mocks.completeRecoveryOtp.mockResolvedValue({
+      ok: true,
+      data: { next: "/onboarding/persona", onboardingRequired: true },
+    });
+    render(<LoginForm />);
+    fireEvent.click(screen.getByRole("button", { name: "forgotPassword" }));
+    fireEvent.change(screen.getByLabelText("emailLabel"), {
+      target: { value: "old-member@example.com" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "recoverySendCode" }));
+
+    const otpInput = await screen.findByLabelText("codeLabel", {}, { timeout: ASYNC_TIMEOUT_MS });
+    expect(mocks.toastSuccess).toHaveBeenCalledWith("recoveryCodeSent");
+    expect(mocks.requestRecoveryOtp).toHaveBeenCalledWith({ email: "old-member@example.com" });
+
+    fireEvent.change(otpInput, { target: { value: "123456" } });
+    fireEvent.change(screen.getByLabelText("newPasswordLabel"), {
+      target: { value: "a-strong-password" },
+    });
+    fireEvent.change(screen.getByLabelText("confirmPasswordLabel"), {
+      target: { value: "a-different-password" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "passwordSetupSubmit" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("passwordMismatch");
+    expect(mocks.completeRecoveryOtp).not.toHaveBeenCalled();
+
+    fireEvent.change(screen.getByLabelText("confirmPasswordLabel"), {
+      target: { value: "a-strong-password" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "passwordSetupSubmit" }));
+    await waitFor(() =>
+      expect(mocks.completeRecoveryOtp).toHaveBeenCalledWith({
+        email: "old-member@example.com",
+        token: "123456",
+        password: "a-strong-password",
+        confirmPassword: "a-strong-password",
+        next: undefined,
+      }),
+    );
+    await waitFor(() => expect(mocks.replace).toHaveBeenCalledWith("/onboarding/persona"));
+  });
+
+  it("recovers cleanly from Google and network errors", async () => {
+    mocks.startGoogleSignIn.mockRejectedValueOnce(new Error("network down"));
+    render(<LoginForm />);
+    fireEvent.click(screen.getByRole("button", { name: "googleSignIn" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("generic");
   });
 });

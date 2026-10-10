@@ -1,0 +1,601 @@
+.page {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(26.25rem, 30rem);
+  align-items: center;
+  gap: clamp(1.5rem, 3.2vw, 3rem);
+  width: 100%;
+  max-width: 80rem;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.introduction {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: clamp(43rem, calc(100dvh - 5rem), 52rem);
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--radius-2xl);
+  background:
+    radial-gradient(
+      circle at 86% 9%,
+      color-mix(in srgb, var(--color-accent-100) 48%, transparent),
+      transparent 19rem
+    ),
+    color-mix(in srgb, var(--color-brand-50) 58%, var(--color-bg-page));
+}
+
+.introductionContent {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: clamp(2rem, 3.3vw, 3.5rem);
+  padding-bottom: 15rem;
+}
+
+.brandHeader {
+  display: flex;
+  min-width: 0;
+  min-height: 3.25rem;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.brandLogo {
+  width: 3.25rem;
+  height: 3.25rem;
+  flex: 0 0 auto;
+}
+
+.brandName {
+  color: var(--color-brand-800);
+  font-size: clamp(1.75rem, 2.2vw, 2rem);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.brandTagline {
+  max-width: 36rem;
+  margin-top: 0.5rem;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.languageControl {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  width: 10rem;
+}
+
+.hero {
+  max-width: 36rem;
+  margin-top: clamp(2rem, 3.5vw, 3rem);
+}
+
+.heroEyebrow {
+  color: var(--color-brand-700);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.heroTitle {
+  display: grid;
+  gap: 0.125rem;
+  margin-top: 0.75rem;
+  color: var(--color-text-primary);
+  font-size: clamp(2.5rem, 3.2vw, 3rem);
+  font-weight: 600;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.heroTitleAccent {
+  color: var(--color-brand-600);
+  font-size: clamp(2.75rem, 3.5vw, 3.25rem);
+}
+
+.heroSupport {
+  display: none;
+}
+
+.heroDescription {
+  max-width: 29rem;
+  margin-top: 1.25rem;
+  color: var(--color-text-secondary);
+  font-size: var(--text-body);
+  line-height: 1.8;
+}
+
+.benefitList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem 1rem;
+  max-width: 35rem;
+  margin-top: clamp(2rem, 3.2vw, 2.75rem);
+}
+
+.benefit {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--color-text-secondary);
+  font-size: var(--text-small);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.benefitIcon {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--color-brand-200) 62%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-bg-surface) 68%, transparent);
+  color: var(--color-brand-700);
+}
+
+.benefitIcon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.artwork {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 13rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.artworkSun {
+  position: absolute;
+  top: 1.5rem;
+  right: 12%;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent-100) 62%, transparent);
+}
+
+.artworkHillBack,
+.artworkHillFront {
+  position: absolute;
+  border-radius: 50% 50% 0 0 / 38% 38% 0 0;
+}
+
+.artworkHillBack {
+  right: -8%;
+  bottom: -4.5rem;
+  width: 78%;
+  height: 11rem;
+  transform: rotate(-8deg);
+  background: color-mix(in srgb, var(--color-brand-200) 35%, transparent);
+}
+
+.artworkHillFront {
+  bottom: -6rem;
+  left: -12%;
+  width: 84%;
+  height: 12rem;
+  transform: rotate(7deg);
+  background: color-mix(in srgb, var(--color-brand-300) 25%, transparent);
+}
+
+.formPanel {
+  display: flex;
+  align-self: center;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.formPanel > section {
+  width: 100%;
+  max-width: 28rem;
+  min-width: 0;
+}
+
+.loginTitle {
+  color: var(--color-text-primary);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.loginSubtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--text-body);
+  line-height: 1.7;
+}
+
+.emailInput {
+  height: 3rem;
+}
+
+.primaryButton {
+  height: 3rem;
+  min-height: 3rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+}
+
+.backButton,
+.secondaryButton {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
+
+.passwordToggle {
+  min-height: 2.75rem;
+  padding-inline: 0;
+  font-weight: 500;
+}
+
+.registerPrompt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 0.25rem;
+  text-align: center;
+}
+
+.registerLink {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding-inline: 0.25rem;
+}
+
+.metadata {
+  font-size: 0.8125rem;
+  line-height: 1.65;
+}
+
+.googleButton {
+  height: auto;
+  min-height: 3rem;
+  padding-block: 0.75rem;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+@media (max-width: 71.9375rem) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    max-width: 54rem;
+    padding-block: 2rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2xl);
+    background: var(--color-bg-surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .introduction {
+    display: block;
+    min-height: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .introductionContent {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+    padding: 0 2rem;
+  }
+
+  .brandHeader {
+    min-height: 3.25rem;
+  }
+
+  .brandLogo {
+    width: 2.875rem;
+    height: 2.875rem;
+  }
+
+  .brandName {
+    font-size: 1.5rem;
+  }
+
+  .brandTagline {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .languageControl {
+    top: 2rem;
+    right: calc(max(0px, (100% - 44rem) / 2) + 2rem);
+    width: 10rem;
+  }
+
+  .hero {
+    max-width: none;
+    margin-top: 1.5rem;
+  }
+
+  .heroEyebrow,
+  .heroDescription,
+  .benefitList {
+    display: none;
+  }
+
+  .heroTitle {
+    margin-top: 0;
+    font-size: clamp(2.125rem, 3.3vw, 2.375rem);
+    line-height: 1.3;
+  }
+
+  .heroTitleAccent {
+    font-size: clamp(2.25rem, 3.5vw, 2.5rem);
+  }
+
+  .heroSupport {
+    display: block;
+    max-width: 42rem;
+    margin-top: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .artwork {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 9rem;
+    margin-top: 0.25rem;
+    -webkit-mask-image: linear-gradient(to bottom, black 58%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 58%, transparent 100%);
+  }
+
+  .artworkSun {
+    top: 1.25rem;
+    right: 23%;
+    width: 4.75rem;
+    height: 4.75rem;
+  }
+
+  .artworkHillBack {
+    bottom: -5rem;
+    height: 10rem;
+  }
+
+  .artworkHillFront {
+    bottom: -6rem;
+    height: 10rem;
+  }
+
+  .formPanel {
+    display: flex;
+    box-sizing: border-box;
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .formPanel > section {
+    max-width: none;
+  }
+
+  .loginTitle {
+    font-size: 1.5rem;
+    line-height: 1.35;
+  }
+
+  .loginTitle > span {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .loginSubtitle {
+    font-size: 0.875rem;
+    line-height: 1.65;
+  }
+
+  .formPanel .emailInput {
+    font-size: 1rem;
+  }
+
+  .formPanel [data-login-email-label] {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .metadata,
+  .registerPrompt {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .page {
+    display: block;
+    max-width: none;
+    padding-block: 1.5rem;
+    border-radius: 1.25rem;
+  }
+
+  .introductionContent {
+    max-width: none;
+    padding: 0 1.5rem;
+  }
+
+  .brand {
+    gap: 0.625rem;
+  }
+
+  .languageControl {
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 9.5rem;
+  }
+
+  .brandLogo {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .brandName {
+    font-size: 1.5rem;
+  }
+
+  .brandTagline {
+    margin-top: 0.375rem;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+  }
+
+  .languageControl button {
+    padding-inline: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .hero {
+    margin-top: 1.125rem;
+  }
+
+  .heroTitle {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-size: 2rem;
+    line-height: 1.28;
+  }
+
+  .heroTitleAccent {
+    font-size: 2rem;
+  }
+
+  .heroSupport {
+    margin-top: 0.375rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .artwork {
+    height: 5rem;
+    margin-top: 0.125rem;
+  }
+
+  .artworkSun {
+    top: 0.625rem;
+    right: 18%;
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+
+  .artworkHillBack {
+    bottom: -5.75rem;
+    height: 8rem;
+  }
+
+  .artworkHillFront {
+    bottom: -6.5rem;
+    height: 8rem;
+  }
+
+  .formPanel {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    padding: 0 1.5rem;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .formPanel > section {
+    max-width: none;
+  }
+}
+
+@media (max-width: 24.375rem) {
+  .introductionContent {
+    padding-inline: 1.125rem;
+  }
+
+  .page {
+    padding-block: 1.125rem;
+  }
+
+  .brandLogo {
+    width: 2.375rem;
+    height: 2.375rem;
+  }
+
+  .brandName {
+    font-size: 1.3125rem;
+  }
+
+  .languageControl {
+    top: 1.125rem;
+    right: 1.125rem;
+    width: 9rem;
+  }
+
+  .hero {
+    margin-top: 1rem;
+  }
+
+  .heroTitle,
+  .heroTitleAccent {
+    font-size: 1.75rem;
+  }
+
+  .artwork {
+    height: 4.25rem;
+  }
+
+  .formPanel {
+    padding-inline: 1.125rem;
+  }
+}
+
+@media (max-height: 43.75rem) and (max-width: 71.9375rem) {
+  .artwork {
+    height: 2.5rem;
+  }
+
+  .artworkSun {
+    top: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}

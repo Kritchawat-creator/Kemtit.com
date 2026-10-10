@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
 
 import type { Database, Json } from "@/types/database";
+import { signInAndApproveFixtureSession } from "@/integration/support/auth";
 
 type DbClient = SupabaseClient<Database>;
 const integrationEnabled = process.env.V2_INTEGRATION === "1";
@@ -37,9 +38,8 @@ describe.skipIf(!integrationEnabled)("planner rescue local Supabase", () => {
     expect(createError).toBeNull();
     expect(created.user).not.toBeNull();
     const client = userClient();
-    const { error: signInError } = await client.auth.signInWithPassword({ email, password });
-    expect(signInError).toBeNull();
     const userId = created.user!.id;
+    await signInAndApproveFixtureSession(client, admin, { email, password, userId });
 
     try {
       const { data: task, error: taskError } = await client

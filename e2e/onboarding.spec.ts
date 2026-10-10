@@ -1,10 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-import { signInWithOtp, uniqueEmail } from "./helpers";
+import { registerWithPassword, uniqueEmail } from "./helpers";
 
-test("Starter Workspace ไม่ persist suggestion จนกว่าจะ Add และรองรับ Edit/Skip", async ({ page }) => {
+test("Starter Workspace ไม่ persist suggestion จนกว่าจะ Add และรองรับ Edit/Skip", async ({
+  page,
+}) => {
   const email = uniqueEmail("starter-semantics");
-  await signInWithOtp(page, email);
+  await registerWithPassword(page, email);
 
   await expect(page).toHaveURL(/\/onboarding\/persona/);
   await expect(page.getByText("พนักงาน", { exact: true })).toBeVisible();
@@ -55,7 +57,7 @@ test("Accepted Habit จาก Starter Workspace กลายเป็นข้�
   page,
 }) => {
   const email = uniqueEmail("starter-habit");
-  await signInWithOtp(page, email);
+  await registerWithPassword(page, email);
 
   await page.getByText("พนักงาน", { exact: true }).click();
   await page.getByRole("button", { name: "เลือกบทบาทนี้" }).click();

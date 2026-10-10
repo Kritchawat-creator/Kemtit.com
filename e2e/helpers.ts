@@ -7,6 +7,8 @@ export function uniqueEmail(prefix = "e2e") {
   return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@kemtit.test`;
 }
 
+export const E2E_TEST_PASSWORD = "E2E-test-password-1!";
+
 export async function latestOtpFor(email: string, attempts = 30): Promise<string> {
   for (let i = 0; i < attempts; i++) {
     const search = await fetch(
@@ -31,15 +33,20 @@ export async function latestOtpFor(email: string, attempts = 30): Promise<string
   throw new Error(`ไม่พบรหัส OTP สำหรับ ${email} ใน Mailpit (${MAILPIT_URL})`);
 }
 
-/** อีเมล → OTP → ออกจากหน้า login */
-export async function signInWithOtp(page: Page, email: string) {
-  await page.goto("/login");
+/** Create a real password account through registration and email verification. */
+export async function registerWithPassword(page: Page, email: string) {
+  await page.goto("/register");
+  await page.getByLabel("ชื่อที่แสดง").fill("Kemtit E2E Member");
   await page.getByLabel("อีเมล").fill(email);
-  await page.getByRole("button", { name: "ส่งรหัสยืนยัน" }).click();
-  await expect(page.getByRole("heading", { name: /ใส่รหัสที่ส่งไปที่/ })).toBeVisible();
+  await page.getByLabel("รหัสผ่าน", { exact: true }).fill(E2E_TEST_PASSWORD);
+  await page.getByLabel("ยืนยันรหัสผ่าน", { exact: true }).fill(E2E_TEST_PASSWORD);
+  await page.getByRole("button", { name: "ไปยืนยันอีเมล" }).click();
+  await expect(page.getByRole("heading", { name: "ยืนยันอีเมล" })).toBeVisible();
+
   const code = await latestOtpFor(email);
   await page.getByLabel("รหัสยืนยัน 6 หลัก").fill(code);
-  await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
+  await expect(page).toHaveURL(/\/onboarding\/persona/, { timeout: 15_000 });
+  return { email, password: E2E_TEST_PASSWORD };
 }
 
 /** Redesigned onboarding: Role → Focus → Starter Workspace → Today. */
@@ -60,7 +67,7 @@ export async function completeOnboarding(page: Page) {
 /** user ใหม่ที่จบ onboarding แล้ว — ใช้เป็นจุดเริ่มของ flow อื่น */
 export async function onboardNewUser(page: Page, prefix = "user") {
   const email = uniqueEmail(prefix);
-  await signInWithOtp(page, email);
+  await registerWithPassword(page, email);
   await completeOnboarding(page);
   return email;
 }

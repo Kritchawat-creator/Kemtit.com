@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
 
 import type { Database } from "@/types/database";
+import { signInAndApproveFixtureSession } from "@/integration/support/auth";
 
 type DbClient = SupabaseClient<Database>;
 type DomainEvent = Database["public"]["Tables"]["domain_events"]["Row"];
@@ -42,8 +43,11 @@ async function createTestUser(admin: DbClient) {
   if (error || !data.user) throw error ?? new Error("test user was not created");
 
   const client = createUserClient();
-  const { error: signInError } = await client.auth.signInWithPassword({ email, password });
-  if (signInError) throw signInError;
+  await signInAndApproveFixtureSession(client, admin, {
+    email,
+    password,
+    userId: data.user.id,
+  });
 
   return { client, id: data.user.id };
 }
@@ -331,15 +335,13 @@ describe.skipIf(!integrationEnabled)("V2 local Supabase reliability", () => {
       expect(rescheduleError).toBeNull();
       expect(rescheduledOccurrence).not.toBeNull();
 
-      const { error: naturalOccurrenceError } = await user.client
-        .from("task_occurrences")
-        .insert({
-          task_id: recurringTask!.id,
-          user_id: user.id,
-          occurrence_date: "2030-03-04",
-          scheduled_date: "2030-03-04",
-          status: "planned",
-        });
+      const { error: naturalOccurrenceError } = await user.client.from("task_occurrences").insert({
+        task_id: recurringTask!.id,
+        user_id: user.id,
+        occurrence_date: "2030-03-04",
+        scheduled_date: "2030-03-04",
+        status: "planned",
+      });
       expect(naturalOccurrenceError).toBeNull();
 
       const { data: occurrenceRows, error: occurrenceError } = await admin
@@ -377,36 +379,32 @@ describe.skipIf(!integrationEnabled)("V2 local Supabase reliability", () => {
       expect(preservedHistoryError).toBeNull();
       expect(preservedHistory).toEqual([{ completed_on: "2030-03-01" }]);
 
-      const { error: completedOccurrenceError } = await user.client
-        .from("task_occurrences")
-        .upsert(
-          {
-            task_id: recurringTask!.id,
-            user_id: user.id,
-            occurrence_date: "2030-03-05",
-            scheduled_date: "2030-03-05",
-            status: "completed",
-            completed_at: "2030-03-05T02:00:00.000Z",
-            skipped_at: null,
-          },
-          { onConflict: "task_id,occurrence_date" },
-        );
+      const { error: completedOccurrenceError } = await user.client.from("task_occurrences").upsert(
+        {
+          task_id: recurringTask!.id,
+          user_id: user.id,
+          occurrence_date: "2030-03-05",
+          scheduled_date: "2030-03-05",
+          status: "completed",
+          completed_at: "2030-03-05T02:00:00.000Z",
+          skipped_at: null,
+        },
+        { onConflict: "task_id,occurrence_date" },
+      );
       expect(completedOccurrenceError).toBeNull();
 
-      const { error: skippedOccurrenceError } = await user.client
-        .from("task_occurrences")
-        .upsert(
-          {
-            task_id: recurringTask!.id,
-            user_id: user.id,
-            occurrence_date: "2030-03-06",
-            scheduled_date: "2030-03-06",
-            status: "skipped",
-            completed_at: null,
-            skipped_at: "2030-03-06T02:00:00.000Z",
-          },
-          { onConflict: "task_id,occurrence_date" },
-        );
+      const { error: skippedOccurrenceError } = await user.client.from("task_occurrences").upsert(
+        {
+          task_id: recurringTask!.id,
+          user_id: user.id,
+          occurrence_date: "2030-03-06",
+          scheduled_date: "2030-03-06",
+          status: "skipped",
+          completed_at: null,
+          skipped_at: "2030-03-06T02:00:00.000Z",
+        },
+        { onConflict: "task_id,occurrence_date" },
+      );
       expect(skippedOccurrenceError).toBeNull();
 
       const explicitFailureSourceId = await insertSourceEvent(admin, user.id);

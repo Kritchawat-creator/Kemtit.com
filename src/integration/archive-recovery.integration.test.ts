@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
 
 import type { Database } from "@/types/database";
+import { signInAndApproveFixtureSession } from "@/integration/support/auth";
 
 type DbClient = SupabaseClient<Database>;
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -33,12 +34,21 @@ function userClient(): DbClient {
 async function createTestUser(admin: DbClient) {
   const email = `kemtit-archive-${crypto.randomUUID()}@example.test`;
   const password = `Kemtit-${crypto.randomUUID()}-Aa1!`;
-  const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
   if (error || !data.user) throw error ?? new Error("archive integration user was not created");
 
   const client = userClient();
-  const { error: signInError } = await client.auth.signInWithPassword({ email, password });
-  if (signInError) {
+  try {
+    await signInAndApproveFixtureSession(client, admin, {
+      email,
+      password,
+      userId: data.user.id,
+    });
+  } catch (signInError) {
     await admin.auth.admin.deleteUser(data.user.id);
     throw signInError;
   }
@@ -63,7 +73,12 @@ async function insertTask(client: DbClient, userId: string, title: string) {
   return data.id;
 }
 
-async function insertGoal(client: DbClient, userId: string, status: "active" | "completed", title: string) {
+async function insertGoal(
+  client: DbClient,
+  userId: string,
+  status: "active" | "completed",
+  title: string,
+) {
   const { data, error } = await client
     .from("goals")
     .insert({
@@ -179,7 +194,11 @@ describe.skipIf(!integrationEnabled)("recoverable archive on local Supabase", ()
         .eq("id", block!.id);
       expect(attemptedReactivation.error?.message).toContain("time_block_task_archived");
 
-      const occurrenceTaskId = await insertTask(owner.client, owner.id, "Active task with archived occurrence");
+      const occurrenceTaskId = await insertTask(
+        owner.client,
+        owner.id,
+        "Active task with archived occurrence",
+      );
       const { data: occurrence, error: occurrenceError } = await owner.client
         .from("task_occurrences")
         .insert({

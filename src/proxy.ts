@@ -57,7 +57,7 @@ export async function proxy(request: NextRequest) {
         return response;
       }
     } else {
-      isAuthenticated = Boolean(result.data?.claims);
+      isAuthenticated = result.data?.claims?.role === "authenticated";
     }
   } catch (error) {
     if (isUnauthenticatedAuthError(error)) {

@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
 
 import type { Database } from "@/types/database";
+import { signInAndApproveFixtureSession } from "@/integration/support/auth";
 
 type DbClient = SupabaseClient<Database>;
 const integrationEnabled = process.env.V2_INTEGRATION === "1";
@@ -32,8 +33,13 @@ async function createTestUser(admin: DbClient) {
   if (error || !data.user) throw error ?? new Error("integration user was not created");
 
   const client = userClient();
-  const { error: signInError } = await client.auth.signInWithPassword({ email, password });
-  if (signInError) {
+  try {
+    await signInAndApproveFixtureSession(client, admin, {
+      email,
+      password,
+      userId: data.user.id,
+    });
+  } catch (signInError) {
     await admin.auth.admin.deleteUser(data.user.id);
     throw signInError;
   }

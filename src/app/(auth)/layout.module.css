@@ -1,5 +1,7 @@
 .main:has([data-login-page]) {
-  max-width: 64rem;
+  max-width: 84rem;
+  padding-right: clamp(1rem, 4vw, 3rem);
+  padding-left: clamp(1rem, 4vw, 3rem);
   padding-top: clamp(1.25rem, 4vw, 3rem);
   padding-bottom: clamp(1.25rem, 4vw, 3rem);
 }
@@ -11,6 +13,21 @@
 @media (min-width: 48rem) and (min-height: 42rem) {
   .main:has([data-login-page]) {
     justify-content: center;
+  }
+}
+
+@media (max-width: 71.9375rem) {
+  .main:has([data-login-page]) {
+    justify-content: flex-start;
+    padding-top: clamp(1.5rem, 3vw, 2rem);
+    padding-bottom: clamp(1.5rem, 3vw, 2rem);
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .main:has([data-login-page]) {
+    padding-right: clamp(1rem, 4vw, 1.25rem);
+    padding-left: clamp(1rem, 4vw, 1.25rem);
   }
 }
 

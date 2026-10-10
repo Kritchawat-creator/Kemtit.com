@@ -1,0 +1,17 @@
+<!-- Supabase Auth Email Templates -> Recovery. The six-digit token is needed
+     for the app's server-verified password setup flow; do not replace it with
+     a magic-link-only template. Hosted Supabase must use the same content. -->
+<div style="font-family: system-ui, sans-serif; line-height: 1.7; color: #1a1822; max-width: 480px">
+  <h2 style="font-size: 20px; font-weight: 600; margin: 0 0 12px">
+    ตั้งหรือเปลี่ยนรหัสผ่าน Kemtit / Set or reset your Kemtit password
+  </h2>
+  <p style="margin: 0 0 16px">
+    ใช้รหัสนี้ในแอปภายใน 10 นาที / Enter this code in the app within 10 minutes.
+  </p>
+  <p style="font-size: 32px; font-weight: 600; letter-spacing: 6px; margin: 0 0 24px; font-variant-numeric: tabular-nums">
+    {{ .Token }}
+  </p>
+  <p style="font-size: 13px; color: #5b566e; margin: 0">
+    หากคุณไม่ได้ขอรหัสนี้ ไม่ต้องทำอะไร / If you did not request this code, you can ignore this email.
+  </p>
+</div>
