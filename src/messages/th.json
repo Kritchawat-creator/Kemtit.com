@@ -192,6 +192,7 @@
     "guidanceTitle": "ก้าวถัดไปเล็ก ๆ",
     "guidanceDescription": "ทบทวนช่วงเวลาที่เลือก แล้วเลือกงานหนึ่งอย่างเพื่อไปต่อ",
     "domainGoalCount": "{count} เป้าหมายในด้านนี้",
+    "showAdditionalGoals": "ดูเป้าหมายที่เหลือ {count} รายการ",
     "taskCount": "{count} งาน",
     "openToday": "เปิดวันนี้",
     "openDay": "เปิดวัน",

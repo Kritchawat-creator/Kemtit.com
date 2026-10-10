@@ -269,7 +269,7 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
         locale={locale}
       />
 
-      <div className="mb-4 grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3">
+      <div className={`mb-4 grid min-w-0 grid-cols-2 gap-3 ${dailyPlan ? "lg:grid-cols-3" : ""}`}>
         <TodayMetric
           icon={ListTodo}
           value={`${scopedPlan.done.length}/${allTasks.length}`}
@@ -285,11 +285,12 @@ export default async function TodayPage({ searchParams }: PageProps<"/today">) {
             icon={Gauge}
             value={`${dailyPlan.available_minutes} ${t("today.minutes")}`}
             label={daily("plannedBudget")}
+            className="col-span-full lg:col-span-1"
           />
         ) : null}
       </div>
 
-      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(19rem,0.8fr)]">
+      <div className="grid min-w-0 items-start gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(19rem,0.8fr)]">
         <section
           className="min-w-0 rounded-xl border border-border bg-bg-surface p-4 shadow-xs sm:p-5"
           aria-labelledby="today-plan-heading"
@@ -690,13 +691,17 @@ function TodayMetric({
   icon: Icon,
   value,
   label,
+  className,
 }: {
   icon: LucideIcon;
   value: string;
   label: string;
+  className?: string;
 }) {
   return (
-    <section className="min-w-0 rounded-xl border border-border bg-bg-surface px-3 py-3 shadow-xs sm:p-4">
+    <section
+      className={`min-w-0 rounded-xl border border-border bg-bg-surface px-3 py-3 shadow-xs sm:p-4 ${className ?? ""}`}
+    >
       <div className="flex min-w-0 items-center gap-3">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
           <Icon className="size-[18px]" strokeWidth={1.8} aria-hidden="true" />

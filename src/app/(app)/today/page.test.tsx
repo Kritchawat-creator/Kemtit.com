@@ -196,4 +196,26 @@ describe("Today skipped tasks", () => {
 
     expect(screen.getByText("1 of 2 tasks completed")).toBeInTheDocument();
   });
+
+  it.each([
+    { dailyPlan: null, metricCount: 2 },
+    { dailyPlan: { available_minutes: 90, top_priorities: [] }, metricCount: 3 },
+  ])(
+    "renders $metricCount Today metrics and planned budget only when available",
+    async ({ dailyPlan, metricCount }) => {
+      mocks.getDailyPlan.mockResolvedValue(dailyPlan);
+      await renderToday([]);
+
+      const metricGrid = screen.getByText("0/0").closest("section")?.parentElement;
+      expect(metricGrid).not.toBeNull();
+      expect(metricGrid?.children).toHaveLength(metricCount);
+      if (dailyPlan) {
+        expect(screen.getByText("90 today.minutes")).toBeInTheDocument();
+        expect(screen.getByText("lifePlannerDaily.plannedBudget")).toBeInTheDocument();
+      } else {
+        expect(screen.queryByText(/today.minutes/)).not.toBeInTheDocument();
+        expect(screen.queryByText("lifePlannerDaily.plannedBudget")).not.toBeInTheDocument();
+      }
+    },
+  );
 });

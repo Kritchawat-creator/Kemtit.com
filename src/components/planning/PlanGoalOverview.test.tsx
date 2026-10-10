@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it, vi } from "vitest";
 
@@ -17,6 +17,7 @@ vi.mock("next-intl/server", () => ({
       "planner.noNextAction": "No open task yet",
       "planner.nextActionPlanned": "Planned for {date}",
       "planner.nextActionDue": "Due {date}",
+      "planner.showAdditionalGoals": "Show {count} more goals",
       "goalKinds.execution": "Complete",
       "periods.month": "Month",
       "domains.work": "Work",
@@ -139,5 +140,36 @@ describe("PlanGoalOverview", () => {
 
     expect(screen.getByText("Planned for 16 Oct")).toBeInTheDocument();
     expect(screen.queryByText("Due 16 Oct")).not.toBeInTheDocument();
+  });
+
+  it("keeps one goal per life area visible and exposes the rest with native disclosure", async () => {
+    const goals = [
+      { ...goal("month", "2026-10-01"), id: "goal-1", title: "First goal" },
+      { ...goal("month", "2026-10-01"), id: "goal-2", title: "Second goal" },
+      { ...goal("month", "2026-10-01"), id: "goal-3", title: "Third goal" },
+    ];
+    await renderOverview({
+      goals,
+      view: "month",
+      date: "2026-10-01",
+      selectedDate: "2026-10-09",
+    });
+
+    const workDomain = screen.getByRole("heading", { name: "Work" }).closest("article");
+    expect(workDomain).not.toBeNull();
+    const visibleGoals = workDomain!.querySelector("ul");
+    expect(visibleGoals).not.toBeNull();
+    expect(within(visibleGoals!).getByRole("link", { name: /First goal/ })).toBeInTheDocument();
+    expect(within(visibleGoals!).queryByRole("link", { name: /Second goal/ })).not.toBeInTheDocument();
+    const summary = within(workDomain!).getByText("Show 2 more goals");
+    const details = summary.closest("details");
+    expect(details).not.toBeNull();
+    expect(details).not.toHaveAttribute("open");
+
+    fireEvent.click(summary);
+
+    expect(details).toHaveAttribute("open");
+    expect(within(details!).getByRole("link", { name: /Second goal/ })).toBeInTheDocument();
+    expect(within(details!).getByRole("link", { name: /Third goal/ })).toBeInTheDocument();
   });
 });

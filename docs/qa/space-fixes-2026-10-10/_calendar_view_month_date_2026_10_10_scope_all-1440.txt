@@ -1,0 +1,396 @@
+- complementary:
+  - link "ไปหน้าวันนี้":
+    - /url: /today
+    - generic: เข็มทิศ
+    - generic: ระบบจัดการชีวิตส่วนตัว
+  - button "พับเมนู" [expanded]:
+  - region "ขอบเขต":
+    - text: ขอบเขต
+    - generic: ทั้งหมด
+    - link "ทั้งหมด":
+      - /url: /today
+      - text: ทั้งหมด
+    - link "งาน":
+      - /url: /today?scope=work
+      - text: งาน
+    - link "ชีวิต":
+      - /url: /today?scope=life
+      - text: ชีวิต
+  - generic: เมนูหลัก
+  - navigation "เมนูหลัก":
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "กล่องเข้า":
+      - /url: /inbox
+      - generic: กล่องเข้า
+    - link "งาน (4)":
+      - /url: /tasks
+      - generic: งาน
+      - generic: "4"
+    - link "ยอดขาย":
+      - /url: /work/sales
+      - generic: ยอดขาย
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - link "ปฏิทิน":
+      - /url: /calendar
+      - generic: ปฏิทิน
+    - link "เป้าหมาย":
+      - /url: /goals
+      - generic: เป้าหมาย
+    - link "การเงิน":
+      - /url: /finance
+      - generic: การเงิน
+    - link "ชีวิต":
+      - /url: /life
+      - generic: ชีวิต
+    - link "ทบทวน":
+      - /url: /reviews
+      - generic: ทบทวน
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+  - button "เปิดเมนูเพิ่ม":
+    - strong: บันทึกด่วน
+    - generic: พิมพ์สิ่งที่ต้องการเพิ่มครั้งเดียว แล้วตรวจสิ่งที่เข็มทิศเตรียมให้ก่อนบันทึก
+    - generic: ⌘K
+  - link "ตั้งค่า":
+    - /url: /settings
+    - generic: ตั้งค่า
+  - generic: บ
+  - paragraph: บัญชีทดสอบ Kemtit
+  - paragraph: ผู้ขาย / ร้านค้า
+  - generic "ใช้งานอยู่"
+- banner:
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+    - text: K
+  - button "การแจ้งเตือน":
+  - button "เมนูผู้ใช้":
+    - generic: บ
+    - generic: บัญชีทดสอบ Kemtit
+    - generic: ผู้ขาย / ร้านค้า
+- main:
+  - heading "ปฏิทิน" [level=1]
+  - paragraph: วันนี้ · เสาร์ 10 ต.ค.
+  - navigation "มุมมอง":
+    - link "วัน":
+      - /url: /calendar?view=day&date=2026-10-10&scope=all
+    - link "สัปดาห์":
+      - /url: /calendar?view=week&date=2026-10-10&scope=all
+    - link "เดือน":
+      - /url: /calendar?view=month&date=2026-10-10&scope=all
+  - link "ก่อนหน้า":
+    - /url: /calendar?view=month&date=2026-09-01&scope=all
+  - generic: ตุลาคม 2569
+  - link "ถัดไป":
+    - /url: /calendar?view=month&date=2026-11-01&scope=all
+  - link "วันนี้":
+    - /url: /calendar?view=month&date=2026-10-10&scope=all
+  - link "นัดหมายในปฏิทิน":
+    - /url: /calendar/events?date=2026-10-10&scope=all
+  - link "เพิ่มงาน":
+    - /url: /calendar?view=month&date=2026-10-10&scope=all&new=task
+    - text: เพิ่มงาน
+  - region "ตุลาคม 2569":
+    - heading "ตุลาคม 2569" [level=2]
+    - generic: อา
+    - generic: จ
+    - generic: อ
+    - generic: พ
+    - generic: พฤ
+    - generic: ศ
+    - generic: ส
+    - list:
+      - link "27 กันยายน 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-09-27&scope=all
+        - generic: "27"
+      - link "28 กันยายน 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-09-28&scope=all
+        - generic: "28"
+      - link "29 กันยายน 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-09-29&scope=all
+        - generic: "29"
+      - link "30 กันยายน 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-09-30&scope=all
+        - generic: "30"
+      - link "1 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-01&scope=all
+        - generic: "1"
+      - link "2 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-02&scope=all
+        - generic: "2"
+      - link "3 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-03&scope=all
+        - generic: "3"
+      - link "4 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-04&scope=all
+        - generic: "4"
+      - link "5 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-05&scope=all
+        - generic: "5"
+      - link "6 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-06&scope=all
+        - generic: "6"
+      - link "7 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-07&scope=all
+        - generic: "7"
+      - link "8 ตุลาคม 2569 · 0 งาน":
+        - /url: /calendar?view=month&date=2026-10-08&scope=all
+        - generic: "8"
+      - link "9 ตุลาคม 2569 · 1 งาน · ช่วงเวลาที่จองไว้":
+        - /url: /calendar?view=month&date=2026-10-09&scope=all
+        - generic: "9"
+      - link "10 ตุลาคม 2569 · 7 งาน · นัดหมาย · ช่วงเวลาที่จองไว้ · บิล":
+        - /url: /calendar?view=month&date=2026-10-10&scope=all
+        - generic: "10"
+      - link "11 ตุลาคม 2569 · 3 งาน · นัดหมาย · บิล":
+        - /url: /calendar?view=month&date=2026-10-11&scope=all
+        - generic: "11"
+      - link "12 ตุลาคม 2569 · 2 งาน":
+        - /url: /calendar?view=month&date=2026-10-12&scope=all
+        - generic: "12"
+      - link "13 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-13&scope=all
+        - generic: "13"
+      - link "14 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-14&scope=all
+        - generic: "14"
+      - link "15 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-15&scope=all
+        - generic: "15"
+      - link "16 ตุลาคม 2569 · 2 งาน":
+        - /url: /calendar?view=month&date=2026-10-16&scope=all
+        - generic: "16"
+      - link "17 ตุลาคม 2569 · 4 งาน":
+        - /url: /calendar?view=month&date=2026-10-17&scope=all
+        - generic: "17"
+      - link "18 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-18&scope=all
+        - generic: "18"
+      - link "19 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-19&scope=all
+        - generic: "19"
+      - link "20 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-20&scope=all
+        - generic: "20"
+      - link "21 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-21&scope=all
+        - generic: "21"
+      - link "22 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-22&scope=all
+        - generic: "22"
+      - link "23 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-23&scope=all
+        - generic: "23"
+      - link "24 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-24&scope=all
+        - generic: "24"
+      - link "25 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-25&scope=all
+        - generic: "25"
+      - link "26 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-26&scope=all
+        - generic: "26"
+      - link "27 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-27&scope=all
+        - generic: "27"
+      - link "28 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-28&scope=all
+        - generic: "28"
+      - link "29 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-29&scope=all
+        - generic: "29"
+      - link "30 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-30&scope=all
+        - generic: "30"
+      - link "31 ตุลาคม 2569 · 1 งาน":
+        - /url: /calendar?view=month&date=2026-10-31&scope=all
+        - generic: "31"
+    - list "ตารางเวลาของวันนี้":
+      - text: นัดหมาย
+      - text: ช่วงเวลาที่จองไว้
+      - text: บิล
+  - complementary "เสาร์ 10 ต.ค.":
+    - heading "เสาร์ 10 ต.ค." [level=2]
+    - generic: 7 งาน
+    - paragraph: QA 1010 — นัดตรวจแผนแก้ไข
+    - paragraph: 09:00–09:30
+    - paragraph: QA 1010 — บิลรายเดือน
+    - paragraph: จ่ายแล้ว · ฿249.90
+    - region "จัดงานตามเวลาจริงในวันนั้น เห็นช่องว่างและสิ่งที่ยังไม่ได้จองเวลา":
+      - paragraph: จัดงานตามเวลาจริงในวันนั้น เห็นช่องว่างและสิ่งที่ยังไม่ได้จองเวลา
+      - paragraph
+      - region "งานที่ยังไม่จัดเวลา":
+        - heading "งานที่ยังไม่จัดเวลา" [level=2]
+        - group "งานทั้งหมด":
+          - button "งานที่ยังไม่จัดเวลา" [pressed]
+          - button "งานทั้งหมด"
+        - region "ไม่มีกลุ่ม":
+          - heading "ไม่มีกลุ่ม" [level=3]
+          - list:
+            - article:
+              - 'button "ลากงาน: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน"': ⋮⋮
+              - paragraph: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน
+              - paragraph: "ระยะเวลา: 30 นาที"
+              - paragraph: "วันที่วางแผน: 17 ต.ค. 2569"
+              - 'button "จัดเวลา: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน"': จัดเวลา
+            - article:
+              - 'button "ลากงาน: QA 1010 — First study step for quarter"': ⋮⋮
+              - paragraph: QA 1010 — First study step for quarter
+              - paragraph: "ระยะเวลา: 30 นาที"
+              - paragraph: "วันที่วางแผน: 17 ต.ค. 2569"
+              - 'button "จัดเวลา: QA 1010 — First study step for quarter"': จัดเวลา
+            - article:
+              - 'button "ลากงาน: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ"': ⋮⋮
+              - paragraph: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ
+              - paragraph: "ระยะเวลา: 30 นาที"
+              - paragraph: "วันที่วางแผน: 17 ต.ค. 2569"
+              - 'button "จัดเวลา: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ"': จัดเวลา
+            - article:
+              - 'button "ลากงาน: QA Life — Read 10 pages and write one takeaway"': ⋮⋮
+              - paragraph: QA Life — Read 10 pages and write one takeaway
+              - paragraph: "ระยะเวลา: 30 นาที"
+              - paragraph: "วันที่วางแผน: 16 ต.ค. 2569"
+              - 'button "จัดเวลา: QA Life — Read 10 pages and write one takeaway"': จัดเวลา
+            - article:
+              - 'button "ลากงาน: QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที"': ⋮⋮
+              - paragraph: QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที
+              - paragraph: "ระยะเวลา: 15 นาที"
+              - paragraph: "วันที่วางแผน: 11 ต.ค. 2569"
+              - 'button "จัดเวลา: QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที"': จัดเวลา
+            - article:
+              - 'button "ลากงาน: QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม"': ⋮⋮
+              - paragraph: QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม
+              - paragraph: "ระยะเวลา: 30 นาที"
+              - paragraph: "วันที่วางแผน: 11 ต.ค. 2569"
+              - 'button "จัดเวลา: QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม"': จัดเวลา
+            - article:
+              - 'button "ลากงาน: QA 1010 — กล่องเข้าสำคัญสูง"': ⋮⋮
+              - paragraph: QA 1010 — กล่องเข้าสำคัญสูง
+              - paragraph: "ระยะเวลา: 30 นาที"
+              - paragraph: "วันที่วางแผน: 12 ต.ค. 2569"
+              - 'button "จัดเวลา: QA 1010 — กล่องเข้าสำคัญสูง"': จัดเวลา
+      - region "10 ต.ค. 2569":
+        - heading "10 ต.ค. 2569" [level=2]
+        - paragraph: เลือกงาน เลือกวันที่และเวลา แล้วกดยืนยัน กด Escape เพื่อยกเลิก
+        - group "ปฏิทิน":
+          - button "วันอาทิตย์ที่ 4 ตุลาคม 2569":
+            - generic: อา
+            - generic: "4"
+          - button "วันจันทร์ที่ 5 ตุลาคม 2569":
+            - generic: จ
+            - generic: "5"
+          - button "วันอังคารที่ 6 ตุลาคม 2569":
+            - generic: อ
+            - generic: "6"
+          - button "วันพุธที่ 7 ตุลาคม 2569":
+            - generic: พ
+            - generic: "7"
+          - button "วันพฤหัสบดีที่ 8 ตุลาคม 2569":
+            - generic: พฤ
+            - generic: "8"
+          - button "วันศุกร์ที่ 9 ตุลาคม 2569":
+            - generic: ศ
+            - generic: "9"
+          - button "วันเสาร์ที่ 10 ตุลาคม 2569":
+            - generic: ส
+            - generic: "10"
+        - generic "จัดงานตามเวลาจริงในวันนั้น เห็นช่องว่างและสิ่งที่ยังไม่ได้จองเวลา":
+          - generic: 00:00
+          - generic: 01:00
+          - generic: 02:00
+          - generic: 03:00
+          - generic: 04:00
+          - generic: 05:00
+          - generic: 06:00
+          - generic: 07:00
+          - generic: 08:00
+          - generic: 09:00
+          - generic: 10:00
+          - generic: 11:00
+          - generic: 12:00
+          - generic: 13:00
+          - generic: 14:00
+          - generic: 15:00
+          - generic: 16:00
+          - generic: 17:00
+          - generic: 18:00
+          - generic: 19:00
+          - generic: 20:00
+          - generic: 21:00
+          - generic: 22:00
+          - generic: 23:00
+          - generic: 00:00
+          - generic "QA 1010 — นัดตรวจแผนแก้ไข"
+          - 'button "ลากงาน: QA ชีวิต — อ่านหนังสือและจดบันทึก"': ⋮⋮
+          - 'button "ย้ายงาน: QA ชีวิต — อ่านหนังสือและจดบันทึก, 09:30–10:00"':
+            - generic: QA ชีวิต — อ่านหนังสือและจดบันทึก
+            - generic: 09:30–10:00
+          - 'button "ปรับระยะเวลาช่วงเวลา: QA ชีวิต — อ่านหนังสือและจดบันทึก"': ↕
+          - 'button "ลากงาน: QA 1010 — โน้ตแก้ไขและเก็บคืน"': ⋮⋮
+          - 'button "ย้ายงาน: QA 1010 — โน้ตแก้ไขและเก็บคืน, 10:00–10:30"':
+            - generic: QA 1010 — โน้ตแก้ไขและเก็บคืน
+            - generic: 10:00–10:30
+          - 'button "ปรับระยะเวลาช่วงเวลา: QA 1010 — โน้ตแก้ไขและเก็บคืน"': ↕
+          - 'button "ลากงาน: QA ชีวิต — ออกกำลังกาย 30 นาที"': ⋮⋮
+          - 'button "ย้ายงาน: QA ชีวิต — ออกกำลังกาย 30 นาที, 10:30–11:00"':
+            - generic: QA ชีวิต — ออกกำลังกาย 30 นาที
+            - generic: 10:30–11:00
+          - 'button "ปรับระยะเวลาช่วงเวลา: QA ชีวิต — ออกกำลังกาย 30 นาที"': ↕
+          - 'button "ลากงาน: QA 1010 — งานจากกล่องเข้า"': ⋮⋮
+          - 'button "ย้ายงาน: QA 1010 — งานจากกล่องเข้า, 11:00–11:30"':
+            - generic: QA 1010 — งานจากกล่องเข้า
+            - generic: 11:00–11:30
+          - 'button "ปรับระยะเวลาช่วงเวลา: QA 1010 — งานจากกล่องเข้า"': ↕
+    - list:
+      - generic: QA ชีวิต — อ่านหนังสือและจดบันทึก
+      - generic: 09:30–10:00
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+      - generic: QA 1010 — โน้ตแก้ไขและเก็บคืน
+      - generic: 10:00–10:30
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+      - generic: QA ชีวิต — ออกกำลังกาย 30 นาที
+      - generic: 10:30–11:00
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+      - generic: QA 1010 — งานจากกล่องเข้า
+      - generic: 11:00–11:30
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+    - region "เสร็จแล้ว":
+      - heading "เสร็จแล้ว · 3" [level=3]
+      - list:
+        - 'checkbox "สถานะเสร็จของงาน: QA 1010 — ตรวจงานประจำวัน" [checked]':
+        - button "เปิดรายละเอียด QA 1010 — ตรวจงานประจำวัน":
+          - generic: QA 1010 — ตรวจงานประจำวัน
+          - text: ทุกวัน
+        - generic: งาน
+        - 'checkbox "สถานะเสร็จของงาน: QA 1010 — งานในโปรเจกต์" [checked]':
+        - button "เปิดรายละเอียด QA 1010 — งานในโปรเจกต์":
+          - generic: QA 1010 — งานในโปรเจกต์
+        - generic: งาน
+        - 'checkbox "สถานะเสร็จของงาน: QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย" [checked]':
+        - button "เปิดรายละเอียด QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย":
+          - generic: QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย
+          - generic: "เป้า: QA 1010 — เป้าย่อยอ่านบทแรก"
+        - generic: พัฒนาตัวเอง
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

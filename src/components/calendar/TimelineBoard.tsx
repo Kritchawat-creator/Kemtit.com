@@ -950,7 +950,7 @@ export function TimelineBoard({
   function renderTrayItem(item: TimelineBoardItem) {
     return (
       <li key={item.key}>
-        <article className="flex min-w-0 items-center gap-3 rounded-lg border border-border p-3">
+        <article className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-lg border border-border p-3">
           <button
             type="button"
             draggable={!busy && !activePendingMutation}
@@ -960,65 +960,75 @@ export function TimelineBoard({
             onDragStart={(event) => startTaskDrag(event, item.key)}
             onDragEnd={endTaskDrag}
             onPointerDown={(event) => beginTouchDrag(event, item.key, null, "move")}
-            className="min-h-11 min-w-11 shrink-0 touch-none rounded-md border border-border px-2 text-small text-text-secondary focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none disabled:opacity-50"
+            className="min-h-11 min-w-11 shrink-0 self-start touch-none rounded-md border border-border px-2 text-small text-text-secondary focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none disabled:opacity-50"
           >
             ⋮⋮
           </button>
-          {item.task.photos[0]?.url ? (
-            <Image
-              src={item.task.photos[0].url}
-              alt=""
-              width={48}
-              height={48}
-              unoptimized
-              className="size-12 shrink-0 rounded-md object-cover"
-            />
-          ) : null}
-          <div className="min-w-0 flex-1">
-            <p className="text-small font-medium break-words text-text-primary">
-              {item.task.title}
-            </p>
-            <p className="mt-1 text-caption text-text-secondary">
-              {cards("duration")}: {cards("minutes", { count: item.task.estimated_minutes ?? 30 })}
-            </p>
-            {item.linkedBlocks.length === 1 ? (
-              <p className="mt-1 text-caption text-text-secondary">
-                {formatDate(blockDate(item.linkedBlocks[0]), "medium", locale)} ·{" "}
-                {formatTimeRange(item.linkedBlocks[0].startAt, item.linkedBlocks[0].endAt, locale)}
-              </p>
-            ) : item.linkedBlocks.length > 1 ? (
-              <details className="mt-1 text-caption text-text-secondary">
-                <summary className="cursor-pointer py-1">
-                  {cards("multipleScheduledBlocks", { count: item.linkedBlocks.length })}
-                </summary>
-                <ul className="mt-1 space-y-1">
-                  {item.linkedBlocks.map((block) => (
-                    <li key={block.id}>
-                      {formatDate(blockDate(block), "medium", locale)} ·{" "}
-                      {formatTimeRange(block.startAt, block.endAt, locale)}
-                    </li>
-                  ))}
-                </ul>
-              </details>
-            ) : (item.scheduledDate ?? item.task.planned_date ?? item.task.due_date) ? (
-              <p className="mt-1 text-caption text-text-secondary">
-                {cards("plannedDate")}:{" "}
-                {formatDate(
-                  (item.scheduledDate ?? item.task.planned_date ?? item.task.due_date) as ISODate,
-                  "medium",
-                  locale,
+          <div className="min-w-0 @container/tray-item">
+            <div
+              className={
+                item.task.photos[0]?.url
+                  ? "grid min-w-0 gap-3 @min-[26rem]/tray-item:grid-cols-[auto_minmax(0,1fr)]"
+                  : "min-w-0"
+              }
+            >
+              {item.task.photos[0]?.url ? (
+                <Image
+                  src={item.task.photos[0].url}
+                  alt=""
+                  width={48}
+                  height={48}
+                  unoptimized
+                  className="size-12 shrink-0 rounded-md object-cover"
+                />
+              ) : null}
+              <div className="min-w-0">
+                <p className="text-small font-medium break-words text-text-primary">
+                  {item.task.title}
+                </p>
+                <p className="mt-1 text-caption text-text-secondary">
+                  {cards("duration")}: {cards("minutes", { count: item.task.estimated_minutes ?? 30 })}
+                </p>
+                {item.linkedBlocks.length === 1 ? (
+                  <p className="mt-1 text-caption text-text-secondary">
+                    {formatDate(blockDate(item.linkedBlocks[0]), "medium", locale)} ·{" "}
+                    {formatTimeRange(item.linkedBlocks[0].startAt, item.linkedBlocks[0].endAt, locale)}
+                  </p>
+                ) : item.linkedBlocks.length > 1 ? (
+                  <details className="mt-1 text-caption text-text-secondary">
+                    <summary className="cursor-pointer py-1">
+                      {cards("multipleScheduledBlocks", { count: item.linkedBlocks.length })}
+                    </summary>
+                    <ul className="mt-1 space-y-1">
+                      {item.linkedBlocks.map((block) => (
+                        <li key={block.id}>
+                          {formatDate(blockDate(block), "medium", locale)} ·{" "}
+                          {formatTimeRange(block.startAt, block.endAt, locale)}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                ) : (item.scheduledDate ?? item.task.planned_date ?? item.task.due_date) ? (
+                  <p className="mt-1 text-caption text-text-secondary">
+                    {cards("plannedDate")}:{" "}
+                    {formatDate(
+                      (item.scheduledDate ?? item.task.planned_date ?? item.task.due_date) as ISODate,
+                      "medium",
+                      locale,
+                    )}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-caption text-text-secondary">{cards("undated")}</p>
                 )}
-              </p>
-            ) : (
-              <p className="mt-1 text-caption text-text-secondary">{cards("undated")}</p>
-            )}
+              </div>
+            </div>
           </div>
           <button
             type="button"
             disabled={busy || Boolean(activePendingMutation)}
             aria-label={`${cards("schedule")}: ${item.task.title}`}
             onClick={() => openTaskComposer(item)}
-            className="min-h-11 shrink-0 rounded-md border border-border px-3 text-small font-medium text-brand-700 hover:bg-bg-subtle focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none disabled:opacity-50"
+            className="col-start-2 min-h-11 shrink-0 justify-self-end rounded-md border border-border px-3 text-small font-medium text-brand-700 hover:bg-bg-subtle focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none disabled:opacity-50"
           >
             {cards("schedule")}
           </button>
@@ -1028,12 +1038,12 @@ export function TimelineBoard({
   }
 
   return (
-    <section className="space-y-4" aria-label={calendar("timelineHint")}>
+    <section className="@container/timeline space-y-4" aria-label={calendar("timelineHint")}>
       <p className="text-small text-text-secondary">{calendar("timelineHint")}</p>
       <p className="sr-only" aria-live="polite">
         {statusMessage}
       </p>
-      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(16rem,0.82fr)_minmax(0,1.6fr)]">
+      <div className="grid min-w-0 grid-cols-1 items-start gap-4 @min-[44rem]/timeline:grid-cols-[minmax(20rem,1fr)_minmax(0,1.25fr)]">
         <section
           className="min-w-0 rounded-xl border border-border bg-bg-surface p-3"
           aria-labelledby="timeline-unscheduled-heading"
@@ -1080,7 +1090,7 @@ export function TimelineBoard({
               {cards(trayFilter === "all" ? "noTasks" : "noUnscheduledTasks")}
             </p>
           ) : (
-            <div className="max-h-[40vh] space-y-3 overflow-y-auto lg:max-h-[32rem]">
+            <div className="space-y-3 @min-[44rem]/timeline:max-h-[32rem] @min-[44rem]/timeline:overflow-y-auto @min-[44rem]/timeline:overscroll-contain @min-[44rem]/timeline:pr-1">
               {visibleGroups.map((group) => (
                 <details key={group.id} className="rounded-lg border border-border p-2">
                   <summary className="cursor-pointer px-1 py-2 text-small font-semibold text-text-primary">

@@ -1,0 +1,15 @@
+$ next typegen && tsc --noEmit
+[@serwist/next] WARNING: You are using '@serwist/next' with `next dev --turbopack`, but it doesn't support Turbopack. Do one of the following:
+
+- Set `disable` to `process.env.NODE_ENV !== "production"`.
+
+- Use webpack by running `next dev --webpack` instead of `next dev --turbopack`.
+
+- Migrate to '@serwist/turbopack' which has experimental support for Turbopack. See https://serwist.pages.dev/docs/next/turbo for more information.
+
+- Migrate to configurator mode which has support for Turbopack. See https://serwist.pages.dev/docs/next/config for more information. 
+
+Follow https://github.com/serwist/serwist/issues/54 for progress on Serwist + Turbopack. You can also suppress this warning by setting SERWIST_SUPPRESS_TURBOPACK_WARNING=1.
+
+Generating route types...
+✓ Types generated successfully

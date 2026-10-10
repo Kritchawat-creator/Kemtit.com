@@ -206,16 +206,6 @@ async function YearPlanner({
 
   return (
     <div className="space-y-6">
-      <PlanGoalOverview
-        goals={overviewGoals}
-        nextActions={nextActions}
-        domains={domains}
-        view="year"
-        date={date}
-        selectedDate={selectedDate}
-        scope={scope}
-      />
-
       <section aria-labelledby="planner-months">
         <h2 id="planner-months" className="mb-2 text-h2 text-text-primary">
           {t("planner.months")}
@@ -247,6 +237,15 @@ async function YearPlanner({
           })}
         </div>
       </section>
+      <PlanGoalOverview
+        goals={overviewGoals}
+        nextActions={nextActions}
+        domains={domains}
+        view="year"
+        date={date}
+        selectedDate={selectedDate}
+        scope={scope}
+      />
     </div>
   );
 }
@@ -274,16 +273,6 @@ async function MonthPlanner({
 
   return (
     <div className="space-y-6">
-      <PlanGoalOverview
-        goals={overviewGoals}
-        nextActions={nextActions}
-        domains={domains}
-        view="month"
-        date={date}
-        selectedDate={selectedDate}
-        scope={scope}
-      />
-
       <section aria-labelledby="planner-weeks">
         <h2 id="planner-weeks" className="mb-2 text-h2 text-text-primary">
           {t("planner.weeks")}
@@ -321,6 +310,15 @@ async function MonthPlanner({
           })}
         </div>
       </section>
+      <PlanGoalOverview
+        goals={overviewGoals}
+        nextActions={nextActions}
+        domains={domains}
+        view="month"
+        date={date}
+        selectedDate={selectedDate}
+        scope={scope}
+      />
     </div>
   );
 }
@@ -358,16 +356,6 @@ async function WeekPlanner({
 
   return (
     <div className="space-y-6">
-      <PlanGoalOverview
-        goals={overviewGoals}
-        nextActions={nextActions}
-        domains={domains}
-        view="week"
-        date={from}
-        selectedDate={selectedDate}
-        scope={scope}
-      />
-
       <section aria-labelledby="planner-week-days">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <h2 id="planner-week-days" className="text-h2 text-text-primary">
@@ -509,6 +497,15 @@ async function WeekPlanner({
           })}
         </div>
       </section>
+      <PlanGoalOverview
+        goals={overviewGoals}
+        nextActions={nextActions}
+        domains={domains}
+        view="week"
+        date={from}
+        selectedDate={selectedDate}
+        scope={scope}
+      />
     </div>
   );
 }

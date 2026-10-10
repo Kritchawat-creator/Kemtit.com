@@ -1,0 +1,929 @@
+{
+  "summary": {
+    "changed_count": 15,
+    "affected_count": 66,
+    "changed_files": 11,
+    "risk_level": "critical"
+  },
+  "changed_symbols": [
+    {
+      "id": "Function:src/app/(app)/calendar/page.tsx:RangeView",
+      "name": "RangeView",
+      "type": "Function",
+      "filePath": "src/app/(app)/calendar/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/calendar/page.tsx:CalendarContextItems",
+      "name": "CalendarContextItems",
+      "type": "Function",
+      "filePath": "src/app/(app)/calendar/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/calendar/page.tsx:CalendarRangeTimeBlocks",
+      "name": "CalendarRangeTimeBlocks",
+      "type": "Function",
+      "filePath": "src/app/(app)/calendar/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/plan/page.tsx:YearPlanner",
+      "name": "YearPlanner",
+      "type": "Function",
+      "filePath": "src/app/(app)/plan/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/plan/page.tsx:MonthPlanner",
+      "name": "MonthPlanner",
+      "type": "Function",
+      "filePath": "src/app/(app)/plan/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/plan/page.tsx:WeekPlanner",
+      "name": "WeekPlanner",
+      "type": "Function",
+      "filePath": "src/app/(app)/plan/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/rescue/page.tsx:RescuePage",
+      "name": "RescuePage",
+      "type": "Function",
+      "filePath": "src/app/(app)/rescue/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/today/page.tsx:TodayPage",
+      "name": "TodayPage",
+      "type": "Function",
+      "filePath": "src/app/(app)/today/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/app/(app)/today/page.tsx:TodayMetric",
+      "name": "TodayMetric",
+      "type": "Function",
+      "filePath": "src/app/(app)/today/page.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/calendar/TimelineBoard.tsx:TimelineBoard",
+      "name": "TimelineBoard",
+      "type": "Function",
+      "filePath": "src/components/calendar/TimelineBoard.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/calendar/TimelineBoard.tsx:TimelineBoard.renderTrayItem@949:2",
+      "name": "renderTrayItem",
+      "type": "Function",
+      "filePath": "src/components/calendar/TimelineBoard.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/planning/PlanGoalOverview.test.tsx:fn@5:28.getTranslations@7:2",
+      "name": "getTranslations",
+      "type": "Function",
+      "filePath": "src/components/planning/PlanGoalOverview.test.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/planning/PlanGoalOverview.tsx:PlanGoalOverview",
+      "name": "PlanGoalOverview",
+      "type": "Function",
+      "filePath": "src/components/planning/PlanGoalOverview.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/tasks/TaskCardBoard.tsx:TaskCardBoard",
+      "name": "TaskCardBoard",
+      "type": "Function",
+      "filePath": "src/components/tasks/TaskCardBoard.tsx",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:src/components/tasks/TaskCardBoard.tsx:TaskCardBoard.renderGroup@829:2",
+      "name": "renderGroup",
+      "type": "Function",
+      "filePath": "src/components/tasks/TaskCardBoard.tsx",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_11_rendergroup",
+      "name": "RenderGroup → Fail",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_13_rangeview",
+      "name": "RangeView → Sweep",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "RangeView",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_14_rangeview",
+      "name": "RangeView → SignedUrlWindow",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "RangeView",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_16_yearplanner",
+      "name": "YearPlanner → NumberLocale",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "PlanGoalOverview",
+          "step": 2
+        },
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_17_rescuepage",
+      "name": "RescuePage → PlannedDate",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_18_rescuepage",
+      "name": "RescuePage → ParseRRule",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_23_rendergroup",
+      "name": "RenderGroup → GroupMutationError",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_40_rendergroup",
+      "name": "RenderGroup → GoalFormSchema",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_41_rendergroup",
+      "name": "RenderGroup → TaskFormSchema",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_42_rendergroup",
+      "name": "RenderGroup → ClearGroupOperation",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_43_rendergroup",
+      "name": "RenderGroup → PersistGroupOperation",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_44_rendergroup",
+      "name": "RenderGroup → ErrorLabel",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_50_yearplanner",
+      "name": "YearPlanner → GoalUnit",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "PlanGoalOverview",
+          "step": 2
+        },
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_51_yearplanner",
+      "name": "YearPlanner → WithPlanScope",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "PlanGoalOverview",
+          "step": 2
+        },
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_82_yearplanner",
+      "name": "YearPlanner → DomainTag",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "PlanGoalOverview",
+          "step": 2
+        },
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_83_yearplanner",
+      "name": "YearPlanner → HasMeasuredGoalProgress",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "PlanGoalOverview",
+          "step": 2
+        },
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_84_yearplanner",
+      "name": "YearPlanner → IsLifeDomain",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_110_rendertrayitem",
+      "name": "RenderTrayItem → ClearTouchCandidate",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "renderTrayItem",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_111_rendertrayitem",
+      "name": "RenderTrayItem → HasCurrentPendingMutation",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "renderTrayItem",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_129_rendergroup",
+      "name": "RenderGroup → ShouldSkipEnvValidation",
+      "process_type": "cross_community",
+      "step_count": 9,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_133_weekplanner",
+      "name": "WeekPlanner → IsPhotoFileName",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_142_weekplanner",
+      "name": "WeekPlanner → CacheKey",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_171_rendergroup",
+      "name": "RenderGroup → GenerateRequestId",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "renderGroup",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_209_weekplanner",
+      "name": "WeekPlanner → Sweep",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_210_weekplanner",
+      "name": "WeekPlanner → SignedUrlWindow",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_216_taskcardboard",
+      "name": "TaskCardBoard → GroupMutationError",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "TaskCardBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_226_taskcardboard",
+      "name": "TaskCardBoard → ClearGroupOperation",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "TaskCardBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_227_taskcardboard",
+      "name": "TaskCardBoard → PersistGroupOperation",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "TaskCardBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_228_taskcardboard",
+      "name": "TaskCardBoard → ErrorLabel",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "TaskCardBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_230_rescuepage",
+      "name": "RescuePage → TodayBkk",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_234_yearplanner",
+      "name": "YearPlanner → DateOnly",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_235_yearplanner",
+      "name": "YearPlanner → DateOptions",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_271_rescuepage",
+      "name": "RescuePage → QueryError",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_277_yearplanner",
+      "name": "YearPlanner → IntlLocale",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "YearPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_279_timelineboard",
+      "name": "TimelineBoard → DateOnly",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "TimelineBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_280_timelineboard",
+      "name": "TimelineBoard → DateOptions",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "TimelineBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_299_taskcardboard",
+      "name": "TaskCardBoard → Fail",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "TaskCardBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_316_rendertrayitem",
+      "name": "RenderTrayItem → DateOnly",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "renderTrayItem",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_317_rendertrayitem",
+      "name": "RenderTrayItem → DateOptions",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "renderTrayItem",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_358_monthplanner",
+      "name": "MonthPlanner → ToISO",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "MonthPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_400_timelineboard",
+      "name": "TimelineBoard → IntlLocale",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "TimelineBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_415_rangeview",
+      "name": "RangeView → QueryError",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "RangeView",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_421_rendertrayitem",
+      "name": "RenderTrayItem → IntlLocale",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "renderTrayItem",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_423_monthplanner",
+      "name": "MonthPlanner → FromISO",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "MonthPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_425_rescuepage",
+      "name": "RescuePage → IsPhotoFileName",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_432_rescuepage",
+      "name": "RescuePage → CacheKey",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_442_taskcardboard",
+      "name": "TaskCardBoard → ShouldSkipEnvValidation",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "TaskCardBoard",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_450_rescuepage",
+      "name": "RescuePage → Sweep",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_451_rescuepage",
+      "name": "RescuePage → SignedUrlWindow",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_476_rescuepage",
+      "name": "RescuePage → AuthFailureContext",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_477_rescuepage",
+      "name": "RescuePage → IsUnauthenticatedAuthError",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_485_todaypage",
+      "name": "TodayPage → IsPhotoFileName",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "TodayPage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_492_todaypage",
+      "name": "TodayPage → CacheKey",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "TodayPage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_495_weekplanner",
+      "name": "WeekPlanner → QueryError",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_507_todaypage",
+      "name": "TodayPage → Sweep",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "TodayPage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_508_todaypage",
+      "name": "TodayPage → SignedUrlWindow",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "TodayPage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_517_rescuepage",
+      "name": "RescuePage → ShouldSkipEnvValidation",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "RescuePage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_519_rangeview",
+      "name": "RangeView → ToISO",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "RangeView",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_528_todaypage",
+      "name": "TodayPage → AuthFailureContext",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "TodayPage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_529_todaypage",
+      "name": "TodayPage → IsUnauthenticatedAuthError",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "TodayPage",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_546_rangeview",
+      "name": "RangeView → FromISO",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "RangeView",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_590_weekplanner",
+      "name": "WeekPlanner → QueryResult",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_608_weekplanner",
+      "name": "WeekPlanner → From",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_688_rangeview",
+      "name": "RangeView → ShouldSkipEnvValidation",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "RangeView",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_714_weekplanner",
+      "name": "WeekPlanner → ShouldSkipEnvValidation",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "WeekPlanner",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_720_todaypage",
+      "name": "TodayPage → ShouldSkipEnvValidation",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "TodayPage",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}

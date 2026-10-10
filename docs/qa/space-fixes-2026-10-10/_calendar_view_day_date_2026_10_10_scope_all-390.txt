@@ -1,0 +1,241 @@
+- banner:
+  - button "เมนู":
+  - button "เปิดเมนูเพิ่ม":
+    - generic: เช่น ส่งรายงานพรุ่งนี้ หรือ ออกกำลังกายทุกสัปดาห์
+  - button "เมนูผู้ใช้":
+    - generic: บ
+- main:
+  - heading "ปฏิทิน" [level=1]
+  - navigation "มุมมอง":
+    - link "วัน":
+      - /url: /calendar?view=day&date=2026-10-10&scope=all
+    - link "สัปดาห์":
+      - /url: /calendar?view=week&date=2026-10-10&scope=all
+    - link "เดือน":
+      - /url: /calendar?view=month&date=2026-10-10&scope=all
+  - link "ก่อนหน้า":
+    - /url: /calendar?view=day&date=2026-10-09&scope=all
+  - generic: 10 ตุลาคม 2569
+  - link "ถัดไป":
+    - /url: /calendar?view=day&date=2026-10-11&scope=all
+  - link "วันนี้":
+    - /url: /calendar?view=day&date=2026-10-10&scope=all
+  - link "นัดหมายในปฏิทิน":
+    - /url: /calendar/events?date=2026-10-10&scope=all
+  - link "เพิ่มงาน":
+    - /url: /calendar?view=day&date=2026-10-10&scope=all&new=task
+    - text: เพิ่มงาน
+  - paragraph: เวลาว่างตามตาราง ว่าง 330 นาที · นัดหมาย 30 นาที · ช่วงเวลาที่จัดไว้ 120 นาที
+  - paragraph: QA 1010 — นัดตรวจแผนแก้ไข
+  - paragraph: 09:00–09:30
+  - paragraph: QA 1010 — บิลรายเดือน
+  - paragraph: จ่ายแล้ว · ฿249.90
+  - region "จัดงานตามเวลาจริงในวันนั้น เห็นช่องว่างและสิ่งที่ยังไม่ได้จองเวลา":
+    - paragraph: จัดงานตามเวลาจริงในวันนั้น เห็นช่องว่างและสิ่งที่ยังไม่ได้จองเวลา
+    - paragraph
+    - region "งานที่ยังไม่จัดเวลา":
+      - heading "งานที่ยังไม่จัดเวลา" [level=2]
+      - group "งานทั้งหมด":
+        - button "งานที่ยังไม่จัดเวลา" [pressed]
+        - button "งานทั้งหมด"
+      - region "ไม่มีกลุ่ม":
+        - heading "ไม่มีกลุ่ม" [level=3]
+        - list:
+          - article:
+            - 'button "ลากงาน: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน"': ⋮⋮
+            - paragraph: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน
+            - paragraph: "ระยะเวลา: 30 นาที"
+            - paragraph: "วันที่วางแผน: 17 ต.ค. 2569"
+            - 'button "จัดเวลา: QA 1010 — งานแรกจากชุดเริ่มต้นด้านงาน"': จัดเวลา
+          - article:
+            - 'button "ลากงาน: QA 1010 — First study step for quarter"': ⋮⋮
+            - paragraph: QA 1010 — First study step for quarter
+            - paragraph: "ระยะเวลา: 30 นาที"
+            - paragraph: "วันที่วางแผน: 17 ต.ค. 2569"
+            - 'button "จัดเวลา: QA 1010 — First study step for quarter"': จัดเวลา
+          - article:
+            - 'button "ลากงาน: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ"': ⋮⋮
+            - paragraph: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ
+            - paragraph: "ระยะเวลา: 30 นาที"
+            - paragraph: "วันที่วางแผน: 17 ต.ค. 2569"
+            - 'button "จัดเวลา: QA ชุดเริ่มต้น — เลือกกิจวัตรหนึ่งอย่างที่จะลองทำ"': จัดเวลา
+          - article:
+            - 'button "ลากงาน: QA Life — Read 10 pages and write one takeaway"': ⋮⋮
+            - paragraph: QA Life — Read 10 pages and write one takeaway
+            - paragraph: "ระยะเวลา: 30 นาที"
+            - paragraph: "วันที่วางแผน: 16 ต.ค. 2569"
+            - 'button "จัดเวลา: QA Life — Read 10 pages and write one takeaway"': จัดเวลา
+          - article:
+            - 'button "ลากงาน: QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที"': ⋮⋮
+            - paragraph: QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที
+            - paragraph: "ระยะเวลา: 15 นาที"
+            - paragraph: "วันที่วางแผน: 11 ต.ค. 2569"
+            - 'button "จัดเวลา: QA 1010 ทดสอบย้อนกลับ วันนี้ 15 นาที"': จัดเวลา
+          - article:
+            - 'button "ลากงาน: QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม"': ⋮⋮
+            - paragraph: QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม
+            - paragraph: "ระยะเวลา: 30 นาที"
+            - paragraph: "วันที่วางแผน: 11 ต.ค. 2569"
+            - 'button "จัดเวลา: QA long title — ทบทวนเป้าหมายชีวิตและแผนสัปดาห์ พร้อมตรวจรายละเอียดงานที่มีชื่อยาวเพื่อให้แสดงครบในปฏิทินและเอกสารพิมพ์ โดยรักษาวันเวลาและข้อมูลเดิม"': จัดเวลา
+          - article:
+            - 'button "ลากงาน: QA 1010 — กล่องเข้าสำคัญสูง"': ⋮⋮
+            - paragraph: QA 1010 — กล่องเข้าสำคัญสูง
+            - paragraph: "ระยะเวลา: 30 นาที"
+            - paragraph: "วันที่วางแผน: 12 ต.ค. 2569"
+            - 'button "จัดเวลา: QA 1010 — กล่องเข้าสำคัญสูง"': จัดเวลา
+    - region "10 ต.ค. 2569":
+      - heading "10 ต.ค. 2569" [level=2]
+      - paragraph: เลือกงาน เลือกวันที่และเวลา แล้วกดยืนยัน กด Escape เพื่อยกเลิก
+      - group "ปฏิทิน":
+        - button "วันอาทิตย์ที่ 4 ตุลาคม 2569":
+          - generic: อา
+          - generic: "4"
+        - button "วันจันทร์ที่ 5 ตุลาคม 2569":
+          - generic: จ
+          - generic: "5"
+        - button "วันอังคารที่ 6 ตุลาคม 2569":
+          - generic: อ
+          - generic: "6"
+        - button "วันพุธที่ 7 ตุลาคม 2569":
+          - generic: พ
+          - generic: "7"
+        - button "วันพฤหัสบดีที่ 8 ตุลาคม 2569":
+          - generic: พฤ
+          - generic: "8"
+        - button "วันศุกร์ที่ 9 ตุลาคม 2569":
+          - generic: ศ
+          - generic: "9"
+        - button "วันเสาร์ที่ 10 ตุลาคม 2569":
+          - generic: ส
+          - generic: "10"
+      - generic "จัดงานตามเวลาจริงในวันนั้น เห็นช่องว่างและสิ่งที่ยังไม่ได้จองเวลา":
+        - generic: 00:00
+        - generic: 01:00
+        - generic: 02:00
+        - generic: 03:00
+        - generic: 04:00
+        - generic: 05:00
+        - generic: 06:00
+        - generic: 07:00
+        - generic: 08:00
+        - generic: 09:00
+        - generic: 10:00
+        - generic: 11:00
+        - generic: 12:00
+        - generic: 13:00
+        - generic: 14:00
+        - generic: 15:00
+        - generic: 16:00
+        - generic: 17:00
+        - generic: 18:00
+        - generic: 19:00
+        - generic: 20:00
+        - generic: 21:00
+        - generic: 22:00
+        - generic: 23:00
+        - generic: 00:00
+        - note "ตอนนี้ · 18:05":
+          - generic: ตอนนี้ · 18:05
+        - generic "QA 1010 — นัดตรวจแผนแก้ไข"
+        - 'button "ลากงาน: QA ชีวิต — อ่านหนังสือและจดบันทึก"': ⋮⋮
+        - 'button "ย้ายงาน: QA ชีวิต — อ่านหนังสือและจดบันทึก, 09:30–10:00"':
+          - generic: QA ชีวิต — อ่านหนังสือและจดบันทึก
+          - generic: 09:30–10:00
+        - 'button "ปรับระยะเวลาช่วงเวลา: QA ชีวิต — อ่านหนังสือและจดบันทึก"': ↕
+        - 'button "ลากงาน: QA 1010 — โน้ตแก้ไขและเก็บคืน"': ⋮⋮
+        - 'button "ย้ายงาน: QA 1010 — โน้ตแก้ไขและเก็บคืน, 10:00–10:30"':
+          - generic: QA 1010 — โน้ตแก้ไขและเก็บคืน
+          - generic: 10:00–10:30
+        - 'button "ปรับระยะเวลาช่วงเวลา: QA 1010 — โน้ตแก้ไขและเก็บคืน"': ↕
+        - 'button "ลากงาน: QA ชีวิต — ออกกำลังกาย 30 นาที"': ⋮⋮
+        - 'button "ย้ายงาน: QA ชีวิต — ออกกำลังกาย 30 นาที, 10:30–11:00"':
+          - generic: QA ชีวิต — ออกกำลังกาย 30 นาที
+          - generic: 10:30–11:00
+        - 'button "ปรับระยะเวลาช่วงเวลา: QA ชีวิต — ออกกำลังกาย 30 นาที"': ↕
+        - 'button "ลากงาน: QA 1010 — งานจากกล่องเข้า"': ⋮⋮
+        - 'button "ย้ายงาน: QA 1010 — งานจากกล่องเข้า, 11:00–11:30"':
+          - generic: QA 1010 — งานจากกล่องเข้า
+          - generic: 11:00–11:30
+        - 'button "ปรับระยะเวลาช่วงเวลา: QA 1010 — งานจากกล่องเข้า"': ↕
+  - region "ตารางเวลาของวันนี้":
+    - heading "ตารางเวลาของวันนี้" [level=2]
+    - list:
+      - generic: QA ชีวิต — อ่านหนังสือและจดบันทึก
+      - generic: 09:30–10:00
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+      - generic: QA 1010 — โน้ตแก้ไขและเก็บคืน
+      - generic: 10:00–10:30
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+      - generic: QA ชีวิต — ออกกำลังกาย 30 นาที
+      - generic: 10:30–11:00
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+      - generic: QA 1010 — งานจากกล่องเข้า
+      - generic: 11:00–11:30
+      - button "แก้เวลา":
+        - text: แก้เวลา
+      - button "ยกเลิก":
+        - text: ยกเลิก
+      - generic: ช่วงเวลาที่จองไว้
+  - region "เสร็จแล้ว":
+    - heading "เสร็จแล้ว · 3" [level=3]
+    - list:
+      - 'checkbox "สถานะเสร็จของงาน: QA 1010 — ตรวจงานประจำวัน" [checked]':
+      - button "เปิดรายละเอียด QA 1010 — ตรวจงานประจำวัน":
+        - generic: QA 1010 — ตรวจงานประจำวัน
+        - text: ทุกวัน
+      - generic: งาน
+      - 'checkbox "สถานะเสร็จของงาน: QA 1010 — งานในโปรเจกต์" [checked]':
+      - button "เปิดรายละเอียด QA 1010 — งานในโปรเจกต์":
+        - generic: QA 1010 — งานในโปรเจกต์
+      - generic: งาน
+      - 'checkbox "สถานะเสร็จของงาน: QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย" [checked]':
+      - button "เปิดรายละเอียด QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย":
+        - generic: QA 1010 — อ่านหนึ่งบทเชื่อมเป้าย่อย
+        - generic: "เป้า: QA 1010 — เป้าย่อยอ่านบทแรก"
+      - generic: พัฒนาตัวเอง
+  - region "โน้ต":
+    - heading "โน้ต" [level=2]
+    - generic: 3 รายการ
+    - paragraph: โน้ตสำหรับวันนี้ 3 รายการ
+    - button "เพิ่มโน้ต":
+      - text: เพิ่มโน้ต
+    - list:
+      - paragraph: โน้ต QA 1010 — ยืนยันซ้ำสองครั้ง
+      - generic: 09:17
+      - generic "เมนูโน้ต โน้ต QA 1010 — ยืนยันซ้ำสองครั้ง":
+      - paragraph: QA 1010 — โน้ตจากมือถือ
+      - generic: 00:52
+      - generic "เมนูโน้ต QA 1010 — โน้ตจากมือถือ":
+      - paragraph: QA 1010 — โน้ตแก้ไขและเก็บคืน
+      - generic: 00:37
+      - text: แปลงเป็นงานแล้ว
+      - generic "เมนูโน้ต QA 1010 — โน้ตแก้ไขและเก็บคืน":
+- navigation "เมนูหลัก":
+  - list:
+    - link "วันนี้":
+      - /url: /today
+      - generic: วันนี้
+    - link "แผน":
+      - /url: /plan
+      - generic: แผน
+    - button "เปิดเมนูเพิ่ม":
+    - link "วิเคราะห์":
+      - /url: /insights
+      - generic: วิเคราะห์
+    - button "เมนู":
+      - generic: เพิ่มเติม
+- region "การแจ้งเตือน alt+T"
+- button "Open Next.js Dev Tools":
+- alert

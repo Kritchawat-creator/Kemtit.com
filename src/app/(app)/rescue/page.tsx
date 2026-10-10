@@ -29,7 +29,7 @@ export default async function RescuePage({
   const [t, result] = await Promise.all([getTranslations("rescue"), getRescueProposal(date)]);
 
   return (
-    <>
+    <div className="mx-auto max-w-3xl">
       <PageHeader
         title={t("title")}
         meta={t("dateLabel", { date })}
@@ -43,12 +43,15 @@ export default async function RescuePage({
         }
       />
       <div className="mb-4">
-        <Link href={`/today?date=${date}`} className="inline-flex items-center gap-1 text-small text-brand-600 hover:underline">
+        <Link
+          href={`/today?date=${date}`}
+          className="inline-flex items-center gap-1 text-small text-brand-600 hover:underline"
+        >
           <ArrowLeft className="size-4" aria-hidden="true" />
           {t("backToToday")}
         </Link>
       </div>
-      <div className="max-w-3xl space-y-4">
+      <div className="space-y-4">
         <section className="rounded-xl bg-brand-50 p-5" aria-label={t("capacityLabel")}>
           <p className="text-small text-brand-800">
             {t("capacitySummary", {
@@ -59,6 +62,6 @@ export default async function RescuePage({
         </section>
         <RescueReview proposal={result.proposal} />
       </div>
-    </>
+    </div>
   );
 }

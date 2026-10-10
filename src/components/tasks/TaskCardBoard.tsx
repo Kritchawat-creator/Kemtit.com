@@ -924,7 +924,7 @@ export function TaskCardBoard({
           </Button>
         </div>
         {!collapsed ? (
-          <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid min-w-0 grid-cols-1 items-start gap-3 md:grid-cols-2 xl:grid-cols-3">
             {members.map(renderTask)}
           </div>
         ) : null}
@@ -1087,7 +1087,7 @@ export function TaskCardBoard({
       {ungroupedTasks.length ? (
         <section aria-label={t("taskCards.ungrouped")}>
           <h2 className="mb-2 text-h2 text-text-primary">{t("taskCards.ungrouped")}</h2>
-          <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid min-w-0 grid-cols-1 items-start gap-3 md:grid-cols-2 xl:grid-cols-3">
             {ungroupedTasks.map(renderTask)}
           </div>
         </section>

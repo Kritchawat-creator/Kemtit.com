@@ -110,6 +110,7 @@
     "guidanceTitle": "A small next step",
     "guidanceDescription": "Review the selected period, then choose one task to move forward.",
     "domainGoalCount": "{count, plural, one {# goal in this life area} other {# goals in this life area}}",
+    "showAdditionalGoals": "Show {count} more goals",
     "taskCount": "{count} tasks",
     "openToday": "Open Today",
     "openDay": "Open day",

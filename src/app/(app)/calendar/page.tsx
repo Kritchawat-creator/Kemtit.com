@@ -286,35 +286,37 @@ async function RangeView({
   }
 
   return (
-    <div className="grid min-w-0 items-start gap-4 min-[761px]:grid-cols-2">
-      <CalendarMonth
-        date={date}
-        weeks={monthGrid(date)}
-        byDay={byDay}
-        contextByDay={contextByDay}
-        today={today}
-        selected={date}
-        scope={scope}
-      />
-      <aside
-        aria-label={formatDate(date, "weekday", locale)}
-        className="flex min-w-0 flex-col rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[761px]:p-6"
-      >
-        <div className="mb-3 flex min-w-0 flex-wrap items-baseline justify-between gap-3">
-          <h2 className="text-h2 break-words text-text-primary">{formatDate(date, "weekday", locale)}</h2>
-          <span className="text-small text-text-secondary">
-            {t("tasksCount", { count: dayItems.length })}
-          </span>
-        </div>
-        <div className="flex max-h-[40rem] min-w-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain pr-1">
-          <CalendarContextItems events={dayEvents} bills={dayBills} compact />
-          <TimelineBoard date={date} userId={userId} items={timelineItems} groups={timeline.groups} hasMoreTasks={timeline.hasMoreTasks} blocks={schedule.blocks} busyItems={busyItems} />
-          <CalendarRangeTimeBlocks timeBlocks={dayTimeBlocks} visibleTaskIds={visibleTaskIds} busyLabel={t("busyTimeBlock")} />
-          {doneDayItems.length || skippedDayItems.length ? (
-            <TaskList items={[...doneDayItems, ...skippedDayItems]} today={today} goalOptions={goalOptions} showGoal variant="plain" />
-          ) : null}
-        </div>
-      </aside>
+    <div className="@container/calendar-month">
+      <div className="grid min-w-0 items-start gap-4 @min-[69rem]/calendar-month:grid-cols-[20rem_minmax(0,1fr)]">
+        <CalendarMonth
+          date={date}
+          weeks={monthGrid(date)}
+          byDay={byDay}
+          contextByDay={contextByDay}
+          today={today}
+          selected={date}
+          scope={scope}
+        />
+        <aside
+          aria-label={formatDate(date, "weekday", locale)}
+          className="flex min-w-0 flex-col rounded-xl border border-border bg-bg-surface p-4 shadow-xs min-[761px]:p-6"
+        >
+          <div className="mb-3 flex min-w-0 flex-wrap items-baseline justify-between gap-3">
+            <h2 className="text-h2 break-words text-text-primary">{formatDate(date, "weekday", locale)}</h2>
+            <span className="text-small text-text-secondary">
+              {t("tasksCount", { count: dayItems.length })}
+            </span>
+          </div>
+          <div className="min-w-0 space-y-3">
+            <CalendarContextItems events={dayEvents} bills={dayBills} compact />
+            <TimelineBoard date={date} userId={userId} items={timelineItems} groups={timeline.groups} hasMoreTasks={timeline.hasMoreTasks} blocks={schedule.blocks} busyItems={busyItems} />
+            <CalendarRangeTimeBlocks timeBlocks={dayTimeBlocks} visibleTaskIds={visibleTaskIds} busyLabel={t("busyTimeBlock")} />
+            {doneDayItems.length || skippedDayItems.length ? (
+              <TaskList items={[...doneDayItems, ...skippedDayItems]} today={today} goalOptions={goalOptions} showGoal variant="plain" />
+            ) : null}
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
@@ -333,7 +335,7 @@ async function CalendarContextItems({
   const locale = (await getLocale()) as AppLocale;
 
   return (
-    <div className={compact ? "max-h-[28rem] space-y-2 overflow-y-auto overscroll-contain pr-1" : "mt-4 max-h-[28rem] space-y-2 overflow-y-auto overscroll-contain pr-1"}>
+    <div className={compact ? "min-w-0 shrink-0 space-y-2" : "mt-4 min-w-0 space-y-2"}>
       {events.map((event) => (
         <div key={event.id} className="flex items-start gap-3 rounded-lg bg-brand-50 p-3">
           <CalendarClock className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden="true" />
@@ -384,7 +386,7 @@ async function CalendarRangeTimeBlocks({
   return (
     <ol className="space-y-2">
       {timeBlocks.map((block) => (
-        <li key={block.id} className="rounded-lg bg-brand-50 p-3">
+        <li key={block.id} className="relative rounded-lg bg-brand-50 p-3">
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-3 gap-y-1">
             <span className="min-w-0 flex-1 basis-40 text-small font-medium break-words text-text-primary">
               {block.task_id && !visibleTaskIds.has(block.task_id) ? busyLabel : block.title}

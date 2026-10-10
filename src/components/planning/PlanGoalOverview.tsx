@@ -21,6 +21,8 @@ import { DomainTag } from "@/components/domain/DomainTag";
 import { GoalCard } from "@/components/domain/GoalCard";
 import { PeriodLabel } from "@/components/domain/PeriodLabel";
 
+const VISIBLE_GOALS_PER_DOMAIN = 1;
+
 export async function PlanGoalOverview({
   goals,
   nextActions,
@@ -50,9 +52,66 @@ export async function PlanGoalOverview({
         {t("planner.overviewTitle")}
       </h2>
       {populatedDomains.length > 0 ? (
-        <div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid min-w-0 items-start gap-3 md:grid-cols-2 xl:grid-cols-3">
           {populatedDomains.map((domain) => {
             const domainGoals = goals.filter((goal) => goal.domain === domain);
+            const visibleGoals = domainGoals.slice(0, VISIBLE_GOALS_PER_DOMAIN);
+            const additionalGoals = domainGoals.slice(VISIBLE_GOALS_PER_DOMAIN);
+
+            const renderGoal = (goal: GoalWithProgress) => {
+              const nextAction = nextActions.get(goal.id);
+              const actionDate = nextAction?.planned_date ?? nextAction?.due_date ?? null;
+
+              return (
+                <li key={goal.id} className="min-w-0 space-y-2">
+                  {hasMeasuredGoalProgress(goal) ? (
+                    <GoalCard goal={goal} compact href={buildGoalDetailHref(goal.id, returnTo)} />
+                  ) : (
+                    <Link
+                      href={buildGoalDetailHref(goal.id, returnTo)}
+                      className="block min-w-0 rounded-xl border border-border bg-bg-surface px-4 py-3 shadow-xs hover:border-border-strong focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none"
+                    >
+                      <div className="flex min-w-0 items-center justify-between gap-2">
+                        <PeriodLabel
+                          period={goal.period}
+                          className="truncate text-caption text-text-secondary"
+                        />
+                        <span className="text-caption text-text-secondary">
+                          {t("goalKinds.execution")}
+                        </span>
+                      </div>
+                      <h3 className="mt-2 truncate text-body font-medium text-text-primary">
+                        {goal.title}
+                      </h3>
+                    </Link>
+                  )}
+
+                  <div className="rounded-lg bg-bg-surface px-3 py-2">
+                    <p className="text-caption font-semibold text-text-secondary">
+                      {t("planner.nextAction")}
+                    </p>
+                    {nextAction ? (
+                      <>
+                        <p className="mt-1 text-small break-words text-text-primary">
+                          {nextAction.title}
+                        </p>
+                        {actionDate ? (
+                          <p className="mt-0.5 text-caption text-text-secondary">
+                            {t("planner.nextActionPlanned", {
+                              date: formatDate(actionDate, "short", locale),
+                            })}
+                          </p>
+                        ) : null}
+                      </>
+                    ) : goal.status === "active" ? (
+                      <p className="mt-1 text-small text-text-secondary">
+                        {t("planner.noNextAction")}
+                      </p>
+                    ) : null}
+                  </div>
+                </li>
+              );
+            };
 
             return (
               <article
@@ -67,66 +126,15 @@ export async function PlanGoalOverview({
                   </span>
                 </div>
 
-                <ul className="mt-3 space-y-3">
-                  {domainGoals.map((goal) => {
-                    const nextAction = nextActions.get(goal.id);
-                    const actionDate = nextAction?.planned_date ?? nextAction?.due_date ?? null;
-
-                    return (
-                      <li key={goal.id} className="min-w-0 space-y-2">
-                        {hasMeasuredGoalProgress(goal) ? (
-                          <GoalCard
-                            goal={goal}
-                            compact
-                            href={buildGoalDetailHref(goal.id, returnTo)}
-                          />
-                        ) : (
-                          <Link
-                            href={buildGoalDetailHref(goal.id, returnTo)}
-                            className="block min-w-0 rounded-xl border border-border bg-bg-surface px-4 py-3 shadow-xs hover:border-border-strong focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none"
-                          >
-                            <div className="flex min-w-0 items-center justify-between gap-2">
-                              <PeriodLabel
-                                period={goal.period}
-                                className="truncate text-caption text-text-secondary"
-                              />
-                              <span className="text-caption text-text-secondary">
-                                {t("goalKinds.execution")}
-                              </span>
-                            </div>
-                            <h3 className="mt-2 truncate text-body font-medium text-text-primary">
-                              {goal.title}
-                            </h3>
-                          </Link>
-                        )}
-
-                        <div className="rounded-lg bg-bg-surface px-3 py-2">
-                          <p className="text-caption font-semibold text-text-secondary">
-                            {t("planner.nextAction")}
-                          </p>
-                          {nextAction ? (
-                            <>
-                              <p className="mt-1 text-small break-words text-text-primary">
-                                {nextAction.title}
-                              </p>
-                              {actionDate ? (
-                                <p className="mt-0.5 text-caption text-text-secondary">
-                                  {t("planner.nextActionPlanned", {
-                                    date: formatDate(actionDate, "short", locale),
-                                  })}
-                                </p>
-                              ) : null}
-                            </>
-                          ) : goal.status === "active" ? (
-                            <p className="mt-1 text-small text-text-secondary">
-                              {t("planner.noNextAction")}
-                            </p>
-                          ) : null}
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
+                <ul className="mt-3 space-y-3">{visibleGoals.map(renderGoal)}</ul>
+                {additionalGoals.length > 0 ? (
+                  <details className="mt-3 rounded-lg bg-bg-surface px-3">
+                    <summary className="min-h-11 cursor-pointer py-3 text-small font-medium text-brand-700 focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:outline-none">
+                      {t("planner.showAdditionalGoals", { count: additionalGoals.length })}
+                    </summary>
+                    <ul className="space-y-3 pb-3">{additionalGoals.map(renderGoal)}</ul>
+                  </details>
+                ) : null}
               </article>
             );
           })}
