@@ -3,20 +3,24 @@
 import {
   BarChart3,
   CalendarDays,
-  ChevronDown,
+  CalendarRange,
+  ClipboardCheck,
   ChevronsLeft,
+  FolderKanban,
   Goal,
   HeartPulse,
   Home,
+  Inbox,
   Layers3,
+  ListTodo,
   Settings,
+  Store,
   WalletCards,
   type LucideIcon,
 } from "@/components/icons/ui-icons";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
 import { cn } from "cn";
 
 import { BrandLogo } from "@/components/BrandLogo";
@@ -39,13 +43,12 @@ type Props = {
   };
 };
 
-type ChildItem = { key: string; label: string; href: string; badge?: number };
-type GroupItem = {
+type NavItem = {
   key: string;
   label: string;
   href: string;
   icon: LucideIcon;
-  children?: ChildItem[];
+  badge?: number;
 };
 
 function hrefMatches(pathname: string, searchParams: { get: (key: string) => string | null }, href: string) {
@@ -64,7 +67,6 @@ export function Sidebar({ collapsed, onToggle, shell, profile }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const t = useTranslations();
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   const nameLabel = profile.displayName?.trim() || profile.email || "";
   const workModeLabel = profile.workMode ? t(`workModes.${profile.workMode}`) : null;
@@ -76,81 +78,43 @@ export function Sidebar({ collapsed, onToggle, shell, profile }: Props) {
         ? "life"
         : "all";
 
-  const workspaceChildren: ChildItem[] = [
-    { key: "inbox", label: t("nav.inbox"), href: "/inbox" },
-    { key: "tasks", label: t("nav.tasks"), href: "/tasks", badge: shell.openTasks },
+  const navItems: NavItem[] = [
+    { key: "today", label: t("nav.today"), href: "/today", icon: Home },
+    { key: "inbox", label: t("nav.inbox"), href: "/inbox", icon: Inbox },
+    {
+      key: "tasks",
+      label: t("nav.tasks"),
+      href: "/tasks",
+      icon: ListTodo,
+      badge: shell.openTasks,
+    },
   ];
 
   if (profile.workMode === "professional") {
-    workspaceChildren.push({ key: "projects", label: t("nav.projects"), href: "/work/projects" });
+    navItems.push({
+      key: "projects",
+      label: t("nav.projects"),
+      href: "/work/projects",
+      icon: FolderKanban,
+    });
   } else if (profile.workMode === "seller") {
-    workspaceChildren.push({ key: "sales", label: t("nav.workSales"), href: "/work/sales" });
+    navItems.push({
+      key: "sales",
+      label: t("nav.workSales"),
+      href: "/work/sales",
+      icon: Store,
+    });
   }
 
-  const groups: GroupItem[] = [
-    { key: "today", label: t("nav.today"), href: "/today", icon: Home },
-    {
-      key: "workspace",
-      label: t("nav.workspace"),
-      href: "/inbox",
-      icon: Layers3,
-      children: workspaceChildren,
-    },
-    {
-      key: "planner",
-      label: t("nav.plan"),
-      href: "/plan",
-      icon: CalendarDays,
-      children: [
-        { key: "planner-year", label: t("planner.views.year"), href: "/plan?view=year" },
-        { key: "planner-month", label: t("planner.views.month"), href: "/plan?view=month" },
-        { key: "planner-week", label: t("planner.views.week"), href: "/plan?view=week" },
-      ],
-    },
-    {
-      key: "calendar",
-      label: t("nav.calendar"),
-      href: "/calendar",
-      icon: CalendarDays,
-      children: [
-        { key: "calendar-day", label: t("calendar.views.day"), href: "/calendar?view=day" },
-        { key: "calendar-week", label: t("calendar.views.week"), href: "/calendar?view=week" },
-        { key: "calendar-month", label: t("calendar.views.month"), href: "/calendar?view=month" },
-      ],
-    },
+  navItems.push(
+    { key: "plan", label: t("nav.plan"), href: "/plan", icon: CalendarDays },
+    { key: "calendar", label: t("nav.calendar"), href: "/calendar", icon: CalendarRange },
     { key: "goals", label: t("nav.goals"), href: "/goals", icon: Goal },
     { key: "finance", label: t("nav.finance"), href: "/finance", icon: WalletCards },
-    {
-      key: "routine",
-      label: t("nav.routine"),
-      href: "/life",
-      icon: HeartPulse,
-      children: [
-        { key: "habits", label: t("nav.life"), href: "/life" },
-        { key: "reviews", label: t("nav.reviews"), href: "/reviews" },
-      ],
-    },
-    {
-      key: "insights",
-      label: t("nav.insights"),
-      href: "/insights",
-      icon: BarChart3,
-      children: [
-        { key: "insights-overview", label: t("insights.tabs.overview"), href: "/insights?tab=overview" },
-        {
-          key: "insights-productivity",
-          label: t("insights.tabs.productivity"),
-          href: "/insights?tab=productivity",
-        },
-        { key: "insights-time", label: t("insights.tabs.time"), href: "/insights?tab=time" },
-        {
-          key: "insights-balance",
-          label: t("insights.tabs.lifeBalance"),
-          href: "/insights?tab=lifeBalance",
-        },
-      ],
-    },
-  ];
+    { key: "life", label: t("nav.life"), href: "/life", icon: HeartPulse },
+    { key: "reviews", label: t("nav.reviews"), href: "/reviews", icon: ClipboardCheck },
+    { key: "insights", label: t("nav.insights"), href: "/insights", icon: BarChart3 },
+  );
 
   return (
     <aside
@@ -250,93 +214,50 @@ export function Sidebar({ collapsed, onToggle, shell, profile }: Props) {
 
       <nav aria-label={t("a11y.mainNav")} className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
         <div className="grid gap-0.5">
-          {groups.map((group) => {
-            const childActive = group.children?.some((child) =>
-              hrefMatches(pathname, searchParams, child.href),
-            );
-            const active = hrefMatches(pathname, searchParams, group.href) || Boolean(childActive);
-            const open = group.children ? (openGroups[group.key] ?? active) : false;
-            const Icon = group.icon;
+          {navItems.map((item) => {
+            const active = hrefMatches(pathname, searchParams, item.href);
+            const Icon = item.icon;
 
             return (
-              <div key={group.key} className="min-w-0">
-                <div className="flex min-w-0 items-center gap-1">
-                  <Link
-                    href={group.href}
-                    aria-label={collapsed ? group.label : undefined}
-                    aria-current={hrefMatches(pathname, searchParams, group.href) ? "page" : undefined}
-                    title={collapsed ? group.label : undefined}
+              <Link
+                key={item.key}
+                href={item.href}
+                aria-label={
+                  item.badge ? `${item.label} (${item.badge})` : collapsed ? item.label : undefined
+                }
+                aria-current={active ? "page" : undefined}
+                title={collapsed ? item.label : undefined}
+                className={cn(
+                  "relative flex min-h-11 min-w-0 items-center gap-2.5 rounded-lg px-2 text-small font-medium transition-colors focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none",
+                  collapsed && "justify-center px-0",
+                  active
+                    ? "font-semibold text-brand-700"
+                    : "text-text-secondary hover:bg-bg-subtle hover:text-text-primary",
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex size-[30px] shrink-0 items-center justify-center rounded-md border transition-colors",
+                    active
+                      ? "border-brand-200 bg-brand-50 text-brand-700"
+                      : "border-border bg-bg-surface text-text-muted",
+                  )}
+                >
+                  <Icon className="size-4" strokeWidth={1.8} aria-hidden="true" />
+                </span>
+                {!collapsed ? <span className="min-w-0 flex-1 truncate">{item.label}</span> : null}
+                {item.badge ? (
+                  <span
                     className={cn(
-                      "flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 text-small font-medium transition-colors focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none",
-                      collapsed && "justify-center px-0",
-                      active
-                        ? "font-semibold text-brand-700"
-                        : "text-text-secondary hover:bg-bg-subtle hover:text-text-primary",
+                      "inline-flex min-w-5 items-center justify-center rounded-full bg-brand-50 px-1.5 text-[10px] font-semibold text-brand-700",
+                      collapsed && "absolute top-0 right-1",
                     )}
+                    aria-hidden={collapsed ? true : undefined}
                   >
-                    <span
-                      className={cn(
-                        "flex size-[30px] shrink-0 items-center justify-center rounded-md border transition-colors",
-                        active
-                          ? "border-brand-200 bg-brand-50 text-brand-700"
-                          : "border-border bg-bg-surface text-text-muted",
-                      )}
-                    >
-                      <Icon className="size-4" strokeWidth={1.8} aria-hidden="true" />
-                    </span>
-                    {!collapsed ? <span className="min-w-0 flex-1 truncate">{group.label}</span> : null}
-                  </Link>
-
-                  {!collapsed && group.children ? (
-                    <button
-                      type="button"
-                      aria-label={
-                        open
-                          ? t("nav.collapseItem", { item: group.label })
-                          : t("nav.expandItem", { item: group.label })
-                      }
-                      aria-expanded={open}
-                      onClick={() =>
-                        setOpenGroups((current) => ({ ...current, [group.key]: !open }))
-                      }
-                      className="flex size-11 shrink-0 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-bg-subtle hover:text-text-primary focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none"
-                    >
-                      <ChevronDown
-                        className={cn("size-3.5 transition-transform", open && "rotate-180")}
-                        aria-hidden="true"
-                      />
-                    </button>
-                  ) : null}
-                </div>
-
-                {!collapsed && group.children && open ? (
-                  <div className="mt-0.5 mb-1 ml-10 grid gap-0.5">
-                    {group.children.map((child) => {
-                      const activeChild = hrefMatches(pathname, searchParams, child.href);
-                      return (
-                        <Link
-                          key={child.key}
-                          href={child.href}
-                          aria-current={activeChild ? "page" : undefined}
-                          className={cn(
-                            "flex min-h-11 min-w-0 items-center gap-2 rounded-md px-2 text-[12px] font-medium transition-colors focus-visible:ring-[3px] focus-visible:ring-brand-500/15 focus-visible:outline-none",
-                            activeChild
-                              ? "bg-brand-50 text-brand-700"
-                              : "text-text-secondary hover:bg-bg-subtle hover:text-text-primary",
-                          )}
-                        >
-                          <span className="min-w-0 flex-1 truncate">{child.label}</span>
-                          {child.badge ? (
-                            <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-brand-50 px-1.5 text-[10px] font-semibold text-brand-700">
-                              {child.badge}
-                            </span>
-                          ) : null}
-                        </Link>
-                      );
-                    })}
-                  </div>
+                    {item.badge}
+                  </span>
                 ) : null}
-              </div>
+              </Link>
             );
           })}
         </div>
